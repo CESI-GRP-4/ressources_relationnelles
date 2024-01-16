@@ -22,3 +22,6 @@ Homestead.json
 /.vagrant
 .phpunit.result.cache
 .env.*
+
+# PHPStorm directory
+.idea/
