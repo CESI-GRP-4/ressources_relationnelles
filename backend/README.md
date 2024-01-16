@@ -13,22 +13,17 @@
 ### 0. [Optional] Install XAMPP (Apache + MariaDB + PHP)
 https://www.apachefriends.org/fr/download.html
 
+Add your PHP runtime directory to your Windows `PATH` environment variable and follow the installation procedure.
+_Exemple_ : `E:\xampp\php`
+
+
 ### 1. Install PHP 8.2.12 
 (do not install if you install XAMPP)
 
 https://www.php.net/downloads
-#### Activer l'extension ZIP pour PHP :
-- Open your `php.ini`
-- Find the line `;extension=zip`
-- Delete the `;`
-
 
 ### 2. Install composer 2.6.6
 https://getcomposer.org/download/
-
-Add your PHP runtime directory to your Windows `PATH` environment variable and follow the installation procedure.
-
-_Exemple_ : `E:\xampp\php`
 
 
 ## How init
@@ -43,6 +38,12 @@ cd ./ressources_relationnelles/backend
 ```
 
 ### 3. Install Composer Dependencies
+#### Activer l'extension ZIP pour PHP :
+- Open your `php.ini`
+- Find the line `;extension=zip`
+- Delete the `;`
+
+And 
 ```bash
 composer install
 ```
@@ -58,10 +59,20 @@ php artisan key:generate
 ```
 
 ### For XAMPP user
-To init your localhost on the right folder.
-You can change Apaches `httpd.conf` by clicking (in xampp control panel) `apache/conf/httpd.conf` and adjust the entries for `DocumentRoot` and the corresponding `Directory` entry. Just `Ctrl`+`F` for "htdocs" and change the entries to your new path.
+To start your server in the correct directory, you can change Apache's `httpd.conf` by clicking (in xampp control panel) `apache/conf/httpd.conf` and adjust the entries for `DocumentRoot` and the corresponding `Directory` entry. Simply `Ctrl`+`F` and look for "htdocs" and change the entries to the correct path.
 
-    ~/ressources_relationnelles/backend/public
+Change :
+
+    DocumentRoot "C:/xampp/htdocs"
+    <Directory "C:/xampp/htdocs">
+ 
+To :
+
+    DocumentRoot "{{yourPath}}/ressources_relationnelles/backend/public"
+    <Directory "{{yourPath}}/ressources_relationnelles/backend/public">
+    
+### Now Laravel should be running
+You can access it at http://localhost:80 .
 
 ## Sources / links
 - clone repo laravel : https://devmarketer.io/learn/setup-laravel-project-cloned-github-com/
