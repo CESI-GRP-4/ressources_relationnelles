@@ -2,5 +2,3 @@ This folder should contain **folders that represent routable pages. Each folder 
 
 - "pages/profil/page.tsx"
 - "pages/login/page.tsx"
-
-
