@@ -1,4 +1,4 @@
-@tailwind base;
+/* @tailwind base; */ /*The base style is not applied to avoid conflicts with our component library*/
 @tailwind components;
 @tailwind utilities;
 
