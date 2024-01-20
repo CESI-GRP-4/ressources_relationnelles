@@ -9,6 +9,13 @@ export default function SignUpForm() {
        const { setUser } = useUser();
        const [isSignUpLoading, setSignUpLoading] = useState(false);
 
+       const emailValidationRule = {
+              pattern: new RegExp(
+                     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@(([^<>()[\]\\.,;:\s@"]+\.)+[^<>()[\]\\.,;:\s@"]{2,})$/i
+              ),
+              message: "L'adresse e-mail n'est pas valide",
+       };
+
        type SignUpForm = {
               email: string;
               firstName: string;
@@ -62,16 +69,22 @@ export default function SignUpForm() {
                      initialValues={{ remember: true }}
                      onFinish={handleSignUpForm}
                      size='large'
+                     disabled={true} // * Disabled until the sign up feature is implemented
+                     // disabled={isSignUpLoading} // * Commented out because the sign up feature is not implemented yet
                      // onFinishFailed={onFinishFailed}
                      autoComplete="off">
+
                      {/* email */}
                      <Form.Item<SignUpForm>
                             style={{ marginBottom: 0 }}
                             label="Adresse e-mail"
                             name="email"
                             tooltip="Votre adresse e-mail sera utilisée pour vous connecter, recevoir des notifications et réinitialiser votre mot de passe en cas d'oubli. Elle ne sera (par défaut) pas visible par les autres utilisateurs."
-                            rules={[{ required: true, message: 'Veuillez entrer votre adresse e-mail' }]}>
-                            <Input disabled allowClear/>
+                            rules={[
+                                   { required: true, message: 'Veuillez entrer votre adresse e-mail' },
+                                   emailValidationRule
+                            ]}                            >
+                            <Input allowClear />
                      </Form.Item>
 
                      {/* firstName */}
@@ -81,7 +94,7 @@ export default function SignUpForm() {
                             label="Prénom"
                             name="firstName"
                             rules={[{ required: true, message: 'Veuillez entrer votre adresse e-mail' }]}>
-                            <Input disabled allowClear/>
+                            <Input allowClear />
                      </Form.Item>
 
                      {/* lastName */}
@@ -91,7 +104,7 @@ export default function SignUpForm() {
                             name="lastName"
                             tooltip="Votre nom ne sera pas visible par les autres utilisateurs."
                             rules={[{ required: true, message: 'Veuillez entrer votre adresse e-mail' }]}>
-                            <Input disabled allowClear/>
+                            <Input allowClear />
                      </Form.Item>
 
                      {/* password */}
@@ -106,11 +119,11 @@ export default function SignUpForm() {
                      <Form.Item<SignUpForm>
                             name="remember"
                             valuePropName="checked">
-                            <Checkbox disabled>Remember me</Checkbox>
+                            <Checkbox >Remember me</Checkbox>
                      </Form.Item>
 
                      <Form.Item>
-                            <Button disabled type="primary" className='w-full' shape="round" loading={isSignUpLoading} size='large' htmlType="submit">
+                            <Button type="primary" className='w-full' shape="round" loading={isSignUpLoading} size='large' htmlType="submit">
                                    {`S'inscrire`}
                             </Button>
                      </Form.Item>

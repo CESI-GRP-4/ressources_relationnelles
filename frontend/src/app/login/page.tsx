@@ -20,6 +20,7 @@ export default function Login() {
               {
                      label: <Title level={2}>{`S'inscrire`}</Title>,
                      key: 'signUp',
+                     disabled: true, // * Disabled until the sign up feature is implemented
               },
        ];
 

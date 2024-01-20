@@ -16,6 +16,12 @@ export default function LogInForm() {
               remember: boolean;
        };
 
+       const emailValidationRule = {
+              pattern: new RegExp(
+                     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@(([^<>()[\]\\.,;:\s@"]+\.)+[^<>()[\]\\.,;:\s@"]{2,})$/i // ! à apprendre par coeur :)
+              ),
+              message: "L'adresse e-mail n'est pas valide",
+       };
        async function handleLoginForm(form: LogInForm): Promise<User | null> {
               setSignInLoading(true);
               try {
@@ -42,6 +48,15 @@ export default function LogInForm() {
                                    case 401:
                                           message.error('Email ou mot de passe incorrect');
                                           break;
+                                   case 403:
+                                          message.error('Compte non activé');
+                                          break;
+                                   case 429:
+                                          message.error('Trop de tentatives de connexion');
+                                          break;
+                                   case 422:
+                                          message.error('Champs manquants ou invalides');
+                                          break;
                                    default:
                                           message.error('Échec de la connexion');
                                           break;
@@ -52,7 +67,9 @@ export default function LogInForm() {
                      return null;
               }
               finally {
-                     setSignInLoading(false);
+                     setTimeout(() => {
+                            setSignInLoading(false);
+                     }, 1000);
               }
        }
 
@@ -63,6 +80,7 @@ export default function LogInForm() {
                      style={{ marginBottom: 0, paddingTop: 20, paddingLeft: 20, paddingRight: 20 }} // * padding left & right are used to create a space between the log in form and the sign up form when changing carousel slide
                      initialValues={{ remember: true }}
                      onFinish={handleLoginForm}
+                     disabled={isSignInLoading}
                      size='large'
                      // onFinishFailed={onFinishFailed}
                      autoComplete="off">
@@ -72,16 +90,22 @@ export default function LogInForm() {
                             style={{ marginBottom: 0 }}
                             label="Adresse e-mail"
                             name="email"
-                            rules={[{ required: true, message: 'Veuillez entrer votre adresse e-mail' }]}>
-                            <Input disabled={isSignInLoading} allowClear />
+                            rules={[
+                                   { required: true, message: 'Veuillez entrer votre adresse e-mail' },
+                                   emailValidationRule
+                            ]}>
+                            <Input allowClear />
                      </Form.Item>
 
                      {/* password */}
                      <Form.Item<LogInForm>
                             label="Password"
                             name="password"
-                            rules={[{ required: true, message: 'Veuillez entrer votre mot de passe' }]}>
-                            <Input.Password disabled={isSignInLoading} />
+                            rules={[{
+                                   required: true,
+                                   message: 'Veuillez entrer votre mot de passe'
+                            }]}>
+                            <Input.Password />
                      </Form.Item>
 
                      {/* remember */}
@@ -93,7 +117,7 @@ export default function LogInForm() {
 
                      {/* submit */}
                      <Form.Item>
-                            <Button type="primary" className='w-full' shape="round" loading={isSignInLoading} size='large' htmlType="submit">
+                            <Button type="primary" className='w-full' shape="round" size='large' htmlType="submit">
                                    Se connecter
                             </Button>
                      </Form.Item>
