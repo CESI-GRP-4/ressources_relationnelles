@@ -14,6 +14,7 @@ Route::get('/aze', function (Request $request) {
 });
 
 Route::post('login', [AuthController::class, 'login']);
+Route::post('signup', [AuthController::class, 'signup']);
 
 
 Route::group(['middleware' => ['jwt.auth']], function() {

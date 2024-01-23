@@ -6,14 +6,18 @@ use App\Models\City;
 use App\Models\Country;
 use App\Models\PostalCode;
 use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Cookie;
 
-class AuthController extends Controller
-{
-    public function login(Request $request)
-    {
+class AuthController extends Controller{
+    private const DEFAULT_ROLE_ID = 2; // User role
+    private const EMAIL_NOT_VERIFIED = 0;
+
+
+    public function login(Request $request){
         // Request data validation
         $credentials = $request->validate([
             'email' => 'required|email',
@@ -31,24 +35,35 @@ class AuthController extends Controller
         // Retrieving the authenticated user
         $user = Auth::guard('api')->user();
 
-        $userData = [
-            'firstName' => $user->first_name,
-            'lastName' => $user->last_name,
-            'email' => $user->email,
-            'imgURL' => $user->path_picture,
-            'id' => $user->id_user,
-            'role' => $this->getRoleName($user->id_role),
-            'isEmailVerified' => $user->is_verified,
-            'city' => $this->getCityName($user->id_city),
-            'country' => $this->getCountryName($user->id_country),
-            'postalCode' => $this->getPostalCode($user->id_postal_code),
-        ];
-
-        return $this->respondWithTokenAndUserData($token, $userData);
+        return $this->respondWithTokenAndUserData($token, $this->getUserData($user));
     }
 
-    public function logout()
-    {
+    public function signup(Request $request){
+
+        $data = $request->validate([
+            'email' => 'required|email',
+            'firstName' => 'required',
+            'lastName' => 'required',
+            'password' => 'required|min:8',
+        ]);
+
+        if (User::where('email', $data['email'])->exists()) {
+            return response()->json(['error' => "L'adresse email est déjà utilisée."], 401);
+        }
+
+        User::create([
+            'email' => $data['email'],
+            'first_name' => $data['firstName'],
+            'last_name' => $data['lastName'],
+            'password' => Hash::make($data['password']),
+            'id_role' => self::DEFAULT_ROLE_ID,
+            'is_verified' => self::EMAIL_NOT_VERIFIED,
+        ]);
+
+        return $this->login($request);
+    }
+
+    public function logout(){
         // Delete the cookie by setting its expiration to the past
         $cookie = \Cookie::forget('token');
 
@@ -59,30 +74,26 @@ class AuthController extends Controller
     }
 
 
-    protected function respondWithTokenAndUserData($token, $userData)
-    {
+    protected function respondWithTokenAndUserData($token, $userData){
         $cookie = cookie('token', $token, 60, null, null, false, true);
         return response()->json(['user' => $userData])->withCookie($cookie);
+    }
+
+    protected function getUserData($user){
+        return [
+            'firstName' => $user->first_name,
+            'lastName' => $user->last_name,
+            'email' => $user->email,
+            'imgURL' => $user->path_picture,
+            'id' => $user->id_user,
+            'role' => $this->getRoleName($user->id_role),
+            'isEmailVerified' => $user->is_verified,
+        ];
     }
 
     protected function getRoleName($id_role){
         $role = Role::find($id_role);
         return $role ? $role->name : null;
-    }
-
-    protected function getCityName($id_city){
-        $city = City::find($id_city);
-        return $city ? $city->name : null;
-    }
-
-    protected function getCountryName($id_country){
-        $country = Country::find($id_country);
-        return $country ? $country->name : null;
-    }
-
-    protected function getPostalCode($id_postal_code){
-        $postalCode = PostalCode::find($id_postal_code);
-        return $postalCode ? $postalCode->postal_code : null;
     }
 
 }
