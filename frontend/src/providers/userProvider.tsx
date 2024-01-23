@@ -21,9 +21,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
        // Effect to save the user to localStorage when it changes
        useEffect(() => {
-              if (user) {
                      localStorage.setItem('user', JSON.stringify(user));
-              }
        }, [user]);
 
        return (

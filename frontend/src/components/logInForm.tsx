@@ -18,10 +18,11 @@ export default function LogInForm() {
 
        const emailValidationRule = {
               pattern: new RegExp(
-                     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@(([^<>()[\]\\.,;:\s@"]+\.)+[^<>()[\]\\.,;:\s@"]{2,})$/i // ! à apprendre par coeur :)
+                     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@(([^<>()[\]\\.,;:\s@"]+\.)+[^<>()[\]\\.,;:\s@"]{2,})$/i
               ),
               message: "L'adresse e-mail n'est pas valide",
        };
+
        async function handleLoginForm(form: LogInForm): Promise<User | null> {
               setSignInLoading(true);
               try {
@@ -32,7 +33,7 @@ export default function LogInForm() {
                             data: form,
                             withCredentials: true,
                             responseType: 'json',
-                            timeout: 1000,
+                            timeout: 10000, // * Increased value because we had some timeout errors
                      });
 
                      const userData: User = logInResponse.data;
