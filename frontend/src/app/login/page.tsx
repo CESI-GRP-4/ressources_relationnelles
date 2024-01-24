@@ -56,6 +56,7 @@ export default function Login() {
        };
 
        // Return the login and sign-up forms when the user is not logged in
+       // ! This should always be the case since the login page is only accessible when the user is not logged in. (Must be handled by the middleware)
        return (
               <div className='flex flex-col items-center w-fit'>
                      <Menu onClick={onMenuClick} defaultActiveFirst mode="horizontal" items={items} />

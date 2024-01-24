@@ -3,8 +3,11 @@
 import { useState } from 'react';
 import { Button, message, Form, Input, Checkbox } from 'antd';
 import axios, { AxiosError, AxiosResponse } from 'axios';
-import type User from '@/types/user';
 import { useUser } from '@/providers/userProvider';
+import { emailRegex } from '@/utils/regex';
+
+import type User from '@/types/user';
+import type LogInResponse from '@/types/logInAndSignUpResponse';
 
 export default function LogInForm() {
        const { setUser } = useUser();
@@ -17,16 +20,14 @@ export default function LogInForm() {
        };
 
        const emailValidationRule = {
-              pattern: new RegExp(
-                     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@(([^<>()[\]\\.,;:\s@"]+\.)+[^<>()[\]\\.,;:\s@"]{2,})$/i
-              ),
+              pattern: new RegExp(emailRegex),
               message: "L'adresse e-mail n'est pas valide",
        };
 
        async function handleLoginForm(form: LogInForm): Promise<User | null> {
               setSignInLoading(true);
               try {
-                     const logInResponse: AxiosResponse<User> = await axios({
+                     const logInResponse: AxiosResponse<LogInResponse> = await axios({
                             method: 'post',
                             baseURL: 'http://localhost/api', // * Might be changed depending on the backend implementation
                             url: "/login",
@@ -36,7 +37,7 @@ export default function LogInForm() {
                             timeout: 10000, // * Increased value because we had some timeout errors
                      });
 
-                     const userData: User = logInResponse.data;
+                     const userData: User = logInResponse.data.user;
                      setUser(userData);
                      message.success('Connexion réussie');
                      return userData;
@@ -99,6 +100,7 @@ export default function LogInForm() {
                      </Form.Item>
 
                      {/* password */}
+                     {/* no regex for password input in case the password rule has changed in the time */}
                      <Form.Item<LogInForm>
                             label="Password"
                             name="password"

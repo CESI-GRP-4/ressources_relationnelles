@@ -4,7 +4,20 @@ import { Button, message, Form, Input } from 'antd';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import type User from '@/types/user';
 import { useUser } from '@/providers/userProvider';
-import {CloseCircleOutlined} from '@ant-design/icons';
+import { CloseCircleOutlined, CheckCircleOutlined } from '@ant-design/icons';
+import type SignUpResponse from '@/types/logInAndSignUpResponse';
+import {
+       emailRegex,
+       firstNameRegex,
+       lastNameRegex,
+       minLengthPasswdRegex,
+       oneLowerCasePasswdRegex,
+       oneUpperCasePasswdRegex,
+       oneDigitPasswdRegex,
+       oneSpecialCharPasswdRegex,
+       authorizedCharsPasswdRegex
+} from '@/utils/regex';
+import { RuleObject } from 'antd/lib/form'; // Import the RuleObject type from Ant Design
 
 export default function SignUpForm() {
        const { setUser } = useUser();
@@ -18,82 +31,104 @@ export default function SignUpForm() {
        };
 
        const emailValidationRule = {
-              pattern: new RegExp(
-                     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@(([^<>()[\]\\.,;:\s@"]+\.)+[^<>()[\]\\.,;:\s@"]{2,})$/i
-              ),
+              pattern: new RegExp(emailRegex),
               message: "L'adresse e-mail n'est pas valide",
        };
        const firstNameValidationRule = {
-              pattern: new RegExp(
-                     "^[A-Za-zÀ-ÖØ-öø-ÿ-]{2,50}$"
-              ),
+              pattern: new RegExp(firstNameRegex),
               message: "Le prénom n'est pas valide",
        };
        const lastNameValidationRule = {
-              pattern: new RegExp(
-                     "^[A-Za-zÀ-ÖØ-öø-ÿ-]{2,50}$"
-              ),
+              pattern: new RegExp(lastNameRegex),
               message: "Le nom de famille n'est pas valide",
        };
+
        const passwordValidationRule = {
-              pattern: new RegExp(
-                     "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"
-              ),
-              message: "Le mot de passe n'est pas valide",
+              validator: async (rule: RuleObject, password: string) => {
+                     if (!password) {
+                            return Promise.reject(new Error(undefined)); // Do not display any error message if the field is empty (handled by the required rule)
+                     }
+                     if (!minLengthPasswdRegex.test(password)) {
+                            return Promise.reject(new Error("Le mot de passe doit contenir au moins 8 caractères"));
+                     }
+                     if (!oneLowerCasePasswdRegex.test(password)) {
+                            return Promise.reject(new Error("Le mot de passe doit contenir au moins une lettre minuscule"));
+                     }
+                     if (!oneUpperCasePasswdRegex.test(password)) {
+                            return Promise.reject(new Error("Le mot de passe doit contenir au moins une lettre majuscule"));
+                     }
+                     if (!oneDigitPasswdRegex.test(password)) {
+                            return Promise.reject(new Error("Le mot de passe doit contenir au moins un chiffre"));
+                     }
+                     if (!oneSpecialCharPasswdRegex.test(password)) {
+                            return Promise.reject(new Error("Le mot de passe doit contenir au moins un caractère spécial (@$!%*?&)"));
+                     }
+                     if (!authorizedCharsPasswdRegex.test(password)) {
+                            return Promise.reject(new Error("Le mot de passe contient des caractères non autorisés"));
+                     }
+                     return Promise.resolve();
+              }
        };
+
        const [passwordValidationResults, setPasswordValidationResults] = useState({
               minLength: false,
               oneLowerCase: false,
               oneUpperCase: false,
               oneDigit: false,
               oneSpecialChar: false,
-              noInvalidChar: true, // Nouvelle règle pour les caractères non autorisés
+              noInvalidChar: true,
        });
        const validatePassword = (password: string) => {
-              const validCharsPattern = /^[A-Za-z\d@$!%*?&]+$/;
               setPasswordValidationResults({
-                     minLength: password.length >= 8,
-                     oneLowerCase: /[a-z]/.test(password),
-                     oneUpperCase: /[A-Z]/.test(password),
-                     oneDigit: /\d/.test(password),
-                     oneSpecialChar: /[@$!%*?&]/.test(password),
-                     noInvalidChar: validCharsPattern.test(password), // Vérification des caractères non autorisés
+                     minLength: minLengthPasswdRegex.test(password),
+                     oneLowerCase: oneLowerCasePasswdRegex.test(password),
+                     oneUpperCase: oneUpperCasePasswdRegex.test(password),
+                     oneDigit: oneDigitPasswdRegex.test(password),
+                     oneSpecialChar: oneSpecialCharPasswdRegex.test(password),
+                     noInvalidChar: authorizedCharsPasswdRegex.test(password),
               });
        };
        const passwordTooltipContent = (
               <div>
-                     {!passwordValidationResults.minLength &&
-                            <p className="text-white text-sm my-1">
-                                   <CloseCircleOutlined className="mr-2" style={{ color: 'red' }} />
-                                   Au moins 8 caractères
-                            </p>}
-                     {!passwordValidationResults.oneLowerCase &&
-                            <p className="text-white text-sm my-1">
-                                   <CloseCircleOutlined className="mr-2" style={{ color: 'red' }} />
-                                   Au moins une lettre minuscule
-                            </p>}
-                     {!passwordValidationResults.oneUpperCase &&
-                            <p className="text-white text-sm my-1">
-                                   <CloseCircleOutlined className="mr-2" style={{ color: 'red' }} />
-                                   Au moins une lettre majuscule
-                            </p>}
-                     {!passwordValidationResults.oneDigit &&
-                            <p className="text-white text-sm my-1">
-                                   <CloseCircleOutlined className="mr-2" style={{ color: 'red' }} />
-                                   Au moins un chiffre
-                            </p>}
-                     {!passwordValidationResults.oneSpecialChar &&
-                            <p className="text-white text-sm my-1">
-                                   <CloseCircleOutlined className="mr-2" style={{ color: 'red' }} />
-                                   Au moins un caractère spécial (@$!%*?&)
-                            </p>}
-                     {!passwordValidationResults.noInvalidChar &&
-                            <p className="text-white text-sm my-1">
-                                   <CloseCircleOutlined className="mr-2" style={{ color: 'red' }} />
-                                   Caractères non autorisés utilisés
-                            </p>}
+                     <p className="text-white text-sm my-1">
+                            {passwordValidationResults.minLength ?
+                                   <CheckCircleOutlined className="mr-2" style={{ color: 'green' }} /> :
+                                   <CloseCircleOutlined className="mr-2" style={{ color: 'red' }} />}
+                            Au moins 8 caractères
+                     </p>
+                     <p className="text-white text-sm my-1">
+                            {passwordValidationResults.oneLowerCase ?
+                                   <CheckCircleOutlined className="mr-2" style={{ color: 'green' }} /> :
+                                   <CloseCircleOutlined className="mr-2" style={{ color: 'red' }} />}
+                            Au moins une lettre minuscule
+                     </p>
+                     <p className="text-white text-sm my-1">
+                            {passwordValidationResults.oneUpperCase ?
+                                   <CheckCircleOutlined className="mr-2" style={{ color: 'green' }} /> :
+                                   <CloseCircleOutlined className="mr-2" style={{ color: 'red' }} />}
+                            Au moins une lettre majuscule
+                     </p>
+                     <p className="text-white text-sm my-1">
+                            {passwordValidationResults.oneDigit ?
+                                   <CheckCircleOutlined className="mr-2" style={{ color: 'green' }} /> :
+                                   <CloseCircleOutlined className="mr-2" style={{ color: 'red' }} />}
+                            Au moins un chiffre
+                     </p>
+                     <p className="text-white text-sm my-1">
+                            {passwordValidationResults.oneSpecialChar ?
+                                   <CheckCircleOutlined className="mr-2" style={{ color: 'green' }} /> :
+                                   <CloseCircleOutlined className="mr-2" style={{ color: 'red' }} />}
+                            Au moins un caractère spécial (@$!%*?&)
+                     </p>
+                     <p className="text-white text-sm my-1">
+                            {passwordValidationResults.noInvalidChar ?
+                                   <CheckCircleOutlined className="mr-2" style={{ color: 'green' }} /> :
+                                   <CloseCircleOutlined className="mr-2" style={{ color: 'red' }} />}
+                            Aucun caractère non autorisé utilisé
+                     </p>
               </div>
        );
+
        const allRulesRespected = () => {
               return Object.values(passwordValidationResults).every(Boolean);
        };
@@ -101,7 +136,7 @@ export default function SignUpForm() {
        async function handleSignUpForm(form: SignUpForm): Promise<User | null> {
               setSignUpLoading(true);
               try {
-                     const response: AxiosResponse<User> = await axios({
+                     const response: AxiosResponse<SignUpResponse> = await axios({
                             method: 'post',
                             baseURL: 'http://localhost/api', // * Might be changed depending on the backend implementation
                             url: "/signup",
@@ -111,7 +146,7 @@ export default function SignUpForm() {
                             timeout: 10000, // * Increased value because we had some timeout errors
                      });
 
-                     const userData: User = response.data;
+                     const userData: User = response.data.user;
                      setUser(userData);
                      message.success('Inscription réussie. Bienvenue ! 🎉');
                      return userData; // * Not sure if this is necessary. Information is already stored in the userProvider
@@ -121,7 +156,14 @@ export default function SignUpForm() {
 
                      if (axiosError.response) {
                             switch (axiosError.response.status) {
-                                   // TODO : Handle error with switch case on error.response.status
+                                   case 401:
+                                          message.error(`Vous n'êtes pas autorisé à effectuer cette action`);
+                                          break;
+                                   case 422:
+                                          message.error('Champs manquants ou invalides');
+                                          break;
+                                   case 409:
+                                          message.error(`Un compte avec cette adresse e-mail existe déjà`);
                                    default:
                                           message.error(`Échec de l'inscription`);
                                           break;
@@ -132,7 +174,9 @@ export default function SignUpForm() {
                      return null;
               }
               finally {
-                     setSignUpLoading(false);
+                     setTimeout(() => {
+                            setSignUpLoading(false);
+                     }, 1000);
               }
        }
 
