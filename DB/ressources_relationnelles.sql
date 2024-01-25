@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : jeu. 18 jan. 2024 à 22:38
+-- Généré le : mar. 23 jan. 2024 à 22:59
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -32,6 +32,13 @@ CREATE TABLE `asso_resource_game` (
   `id_game` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Déchargement des données de la table `asso_resource_game`
+--
+
+INSERT INTO `asso_resource_game` (`id_resource`, `id_game`) VALUES
+(1, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -42,6 +49,13 @@ CREATE TABLE `asso_resource_statistic` (
   `id_resource` int(11) NOT NULL,
   `id_statistic_archive` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `asso_resource_statistic`
+--
+
+INSERT INTO `asso_resource_statistic` (`id_resource`, `id_statistic_archive`) VALUES
+(1, 1);
 
 -- --------------------------------------------------------
 
@@ -54,6 +68,13 @@ CREATE TABLE `asso_role_right` (
   `id_right` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Déchargement des données de la table `asso_role_right`
+--
+
+INSERT INTO `asso_role_right` (`id_role`, `id_right`) VALUES
+(1, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -64,6 +85,13 @@ CREATE TABLE `asso_user_bookmark` (
   `id_user` int(11) NOT NULL,
   `id_resource` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `asso_user_bookmark`
+--
+
+INSERT INTO `asso_user_bookmark` (`id_user`, `id_resource`) VALUES
+(1, 1);
 
 -- --------------------------------------------------------
 
@@ -76,6 +104,13 @@ CREATE TABLE `asso_user_note` (
   `id_resource` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Déchargement des données de la table `asso_user_note`
+--
+
+INSERT INTO `asso_user_note` (`id_user`, `id_resource`) VALUES
+(1, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -86,6 +121,13 @@ CREATE TABLE `asso_user_resource` (
   `id_user` int(11) NOT NULL,
   `id_resource` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `asso_user_resource`
+--
+
+INSERT INTO `asso_user_resource` (`id_user`, `id_resource`) VALUES
+(1, 1);
 
 -- --------------------------------------------------------
 
@@ -100,6 +142,13 @@ CREATE TABLE `blocked_users` (
   `id_user` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Déchargement des données de la table `blocked_users`
+--
+
+INSERT INTO `blocked_users` (`id_blocked`, `start_date`, `end_date`, `id_user`) VALUES
+(1, '2024-01-18 22:38:55', '2024-01-19 22:38:55', 1);
+
 -- --------------------------------------------------------
 
 --
@@ -111,6 +160,14 @@ CREATE TABLE `categories` (
   `name` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Déchargement des données de la table `categories`
+--
+
+INSERT INTO `categories` (`id_category`, `name`) VALUES
+(1, 'Education'),
+(2, 'Entertainment');
+
 -- --------------------------------------------------------
 
 --
@@ -121,6 +178,15 @@ CREATE TABLE `cities` (
   `id_city` int(11) NOT NULL,
   `name` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `cities`
+--
+
+INSERT INTO `cities` (`id_city`, `name`) VALUES
+(1, 'Paris'),
+(2, 'New York'),
+(3, 'Tokyo');
 
 -- --------------------------------------------------------
 
@@ -137,6 +203,13 @@ CREATE TABLE `comments` (
   `id_user` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Déchargement des données de la table `comments`
+--
+
+INSERT INTO `comments` (`id_comment`, `content`, `posting_date`, `id_parent_comment`, `id_resource`, `id_user`) VALUES
+(1, 'Great Resource!', '2024-01-18 22:38:55', NULL, 1, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -148,6 +221,15 @@ CREATE TABLE `countries` (
   `name` varchar(100) NOT NULL,
   `country_code` varchar(8) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `countries`
+--
+
+INSERT INTO `countries` (`id_country`, `name`, `country_code`) VALUES
+(1, 'France', 'FR'),
+(2, 'United States', 'US'),
+(3, 'Japan', 'JP');
 
 -- --------------------------------------------------------
 
@@ -163,6 +245,13 @@ CREATE TABLE `files` (
   `id_resource` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Déchargement des données de la table `files`
+--
+
+INSERT INTO `files` (`id_file`, `path`, `is_verified`, `download_count`, `id_resource`) VALUES
+(1, '/path/to/file', 1, 50, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -174,6 +263,15 @@ CREATE TABLE `games` (
   `name` varchar(150) NOT NULL,
   `max_player` smallint(6) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `games`
+--
+
+INSERT INTO `games` (`id_game`, `name`, `max_player`) VALUES
+(1, 'Chess', 2),
+(2, 'Monopoly', 6);
+
 
 -- --------------------------------------------------------
 
@@ -190,6 +288,25 @@ CREATE TABLE `invitations` (
   `id_resource` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Déchargement des données de la table `invitations`
+--
+
+INSERT INTO `invitations` (`id_invitation`, `link`, `status`, `creation_date`, `expiration_date`, `id_resource`) VALUES
+(1, 'http://example.com/invite', 'Sent', '2024-01-18 22:38:55', '2024-01-19 22:38:55', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `migrations`
+--
+
+CREATE TABLE `migrations` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `migration` varchar(255) NOT NULL,
+  `batch` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- --------------------------------------------------------
 
 --
@@ -200,6 +317,15 @@ CREATE TABLE `postal_codes` (
   `id_postal_code` int(11) NOT NULL,
   `postal_code` varchar(12) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `postal_codes`
+--
+
+INSERT INTO `postal_codes` (`id_postal_code`, `postal_code`) VALUES
+(1, '75000'),
+(2, '10001'),
+(3, '100-0001');
 
 -- --------------------------------------------------------
 
@@ -219,6 +345,13 @@ CREATE TABLE `resources` (
   `id_status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Déchargement des données de la table `resources`
+--
+
+INSERT INTO `resources` (`id_resource`, `label`, `description`, `content`, `is_public`, `view_count`, `id_user`, `id_category`, `id_status`) VALUES
+(1, 'Resource 1', 'Description of Resource 1', 'Content of Resource 1', 1, 100, 1, 1, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -231,6 +364,14 @@ CREATE TABLE `rights` (
   `description` varchar(500) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Déchargement des données de la table `rights`
+--
+
+INSERT INTO `rights` (`id_right`, `label`, `description`) VALUES
+(1, 'Edit Post', 'Can edit any post'),
+(2, 'Delete Post', 'Can delete any post');
+
 -- --------------------------------------------------------
 
 --
@@ -241,6 +382,15 @@ CREATE TABLE `roles` (
   `id_role` int(11) NOT NULL,
   `name` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `roles`
+--
+
+INSERT INTO `roles` (`id_role`, `name`) VALUES
+(1, 'Admin'),
+(2, 'User'),
+(3, 'Moderator');
 
 -- --------------------------------------------------------
 
@@ -256,6 +406,13 @@ CREATE TABLE `statistics_archive` (
   `total_download_count` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Déchargement des données de la table `statistics_archive`
+--
+
+INSERT INTO `statistics_archive` (`id_statistic_archive`, `archive_date`, `bookmarks_count`, `views_count`, `total_download_count`) VALUES
+(1, '2024-01-18 22:38:55', 10, 150, 5);
+
 -- --------------------------------------------------------
 
 --
@@ -266,6 +423,15 @@ CREATE TABLE `status_resources` (
   `id_status` int(11) NOT NULL,
   `label` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `status_resources`
+--
+
+INSERT INTO `status_resources` (`id_status`, `label`) VALUES
+(1, 'Active'),
+(2, 'Inactive'),
+(3, 'Pending');
 
 -- --------------------------------------------------------
 
@@ -281,11 +447,20 @@ CREATE TABLE `users` (
   `password` varchar(65) NOT NULL,
   `is_verified` tinyint(1) DEFAULT NULL,
   `path_picture` varchar(255) DEFAULT NULL,
-  `id_city` int(11) NOT NULL,
-  `id_postal_code` int(11) NOT NULL,
-  `id_country` int(11) NOT NULL,
-  `id_role` int(11) NOT NULL
+  `id_city` int(11) DEFAULT NULL,
+  `id_postal_code` int(11) DEFAULT NULL,
+  `id_country` int(11) DEFAULT NULL,
+  `id_role` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `users`
+--
+
+INSERT INTO `users` (`id_user`, `email`, `first_name`, `last_name`, `password`, `is_verified`, `path_picture`, `id_city`, `id_postal_code`, `id_country`, `id_role`, `created_at`, `updated_at`) VALUES
+(1, 'john.doe@example.com', 'John', 'Doe', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, '/path/to/picture', 1, 1, 1, 1, '2024-01-23 21:58:57', '2024-01-23 21:58:57');
 
 --
 -- Index pour les tables déchargées
@@ -388,6 +563,12 @@ ALTER TABLE `invitations`
   ADD KEY `id_resource` (`id_resource`);
 
 --
+-- Index pour la table `migrations`
+--
+ALTER TABLE `migrations`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Index pour la table `postal_codes`
 --
 ALTER TABLE `postal_codes`
@@ -444,91 +625,98 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT pour la table `blocked_users`
 --
 ALTER TABLE `blocked_users`
-  MODIFY `id_blocked` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_blocked` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT pour la table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id_category` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_category` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT pour la table `cities`
 --
 ALTER TABLE `cities`
-  MODIFY `id_city` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_city` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT pour la table `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `id_comment` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_comment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
 
 --
 -- AUTO_INCREMENT pour la table `countries`
 --
 ALTER TABLE `countries`
-  MODIFY `id_country` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_country` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT pour la table `files`
 --
 ALTER TABLE `files`
-  MODIFY `id_file` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_file` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT pour la table `games`
 --
 ALTER TABLE `games`
-  MODIFY `id_game` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_game` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT pour la table `invitations`
 --
 ALTER TABLE `invitations`
-  MODIFY `id_invitation` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_invitation` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT pour la table `migrations`
+--
+ALTER TABLE `migrations`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT pour la table `postal_codes`
 --
 ALTER TABLE `postal_codes`
-  MODIFY `id_postal_code` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_postal_code` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT pour la table `resources`
 --
 ALTER TABLE `resources`
-  MODIFY `id_resource` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_resource` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT pour la table `rights`
 --
 ALTER TABLE `rights`
-  MODIFY `id_right` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_right` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT pour la table `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `id_role` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_role` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT pour la table `statistics_archive`
 --
 ALTER TABLE `statistics_archive`
-  MODIFY `id_statistic_archive` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_statistic_archive` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT pour la table `status_resources`
 --
 ALTER TABLE `status_resources`
-  MODIFY `id_status` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_status` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT pour la table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Contraintes pour les tables déchargées
