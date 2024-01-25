@@ -272,6 +272,7 @@ INSERT INTO `games` (`id_game`, `name`, `max_player`) VALUES
 (1, 'Chess', 2),
 (2, 'Monopoly', 6);
 
+
 -- --------------------------------------------------------
 
 --
@@ -643,6 +644,7 @@ ALTER TABLE `cities`
 --
 ALTER TABLE `comments`
   MODIFY `id_comment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
 
 --
 -- AUTO_INCREMENT pour la table `countries`
