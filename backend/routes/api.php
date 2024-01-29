@@ -11,12 +11,8 @@ use Illuminate\Support\Facades\Route;
 */
 Route::post('login', [AuthController::class, 'login']);
 Route::post('signup', [AuthController::class, 'signup']);
-
+Route::post('email/verify', [AuthController::class, 'verifyEmail'])->name('verify.email');
 
 Route::group(['middleware' => ['jwt.auth']], function() {
     Route::post('logout', [AuthController::class, 'logout']);
-
-    Route::get('/user', function (Request $request) {
-        return response()->json(['message' => "Validé!"],200);
-    });
 });
