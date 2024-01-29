@@ -1,4 +1,4 @@
-// login/page.tsx
+// /connexion/page.tsx
 "use client"
 
 import { useRef } from 'react';
@@ -10,6 +10,7 @@ import { CarouselRef } from 'antd/es/carousel';
 import LogInForm from '@/components/logInForm';
 import SignUpForm from '@/components/signUpForm';
 import LogoutButton from '@/components/logout';
+import ForgotPasswordLink from '@/components/forgotPasswordLink';
 
 export default function Login() {
        const { Title } = Typography;
@@ -65,7 +66,10 @@ export default function Login() {
                             ref={carouselRef}
                             dots={false}
                             style={{ width: 300 }}>
-                            <LogInForm />
+                            <div >
+                                   <LogInForm />
+                                   <ForgotPasswordLink />
+                            </div>
                             <SignUpForm />
                      </Carousel>
               </div>
