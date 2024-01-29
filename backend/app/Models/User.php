@@ -42,6 +42,7 @@ class User extends Authenticatable implements JWTSubject {
         'id_country',
         'id_role',
         'verification_token',
+        'password_reset_token',
     ];
 
     /**
