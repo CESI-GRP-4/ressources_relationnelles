@@ -1,4 +1,4 @@
-// /contact/page.tsx
+// /reinitialisation-mot-de-passe/page.tsx
 
 export default function ContactPage() {
        return (
