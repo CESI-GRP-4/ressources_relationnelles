@@ -16,7 +16,7 @@ class AuthController extends Controller{
     private const EMAIL_NOT_VERIFIED = 0;
 
 
-    public function login(Request $request){
+    public function login(Request $request, $isNewUser = false){
 
         $credentials = $request->validate([
             'email' => 'required|email',
@@ -34,7 +34,10 @@ class AuthController extends Controller{
         // Retrieving the authenticated user
         $user = Auth::guard('api')->user();
 
-        return $this->respondWithTokenAndUserData($token, $this->getUserData($user), $remember);
+        return $this->respondWithTokenAndUserData($token,
+            ['user' => $this->getUserData($user),
+            'newUser' => $isNewUser,
+            'remember' => $remember]);
     }
 
     public function signup(Request $request){
@@ -63,7 +66,7 @@ class AuthController extends Controller{
 
         $user->notify(new VerifyEmail());
 
-        return $this->login($request);
+        return $this->login($request,true);
     }
 
     public function logout(){
@@ -72,13 +75,13 @@ class AuthController extends Controller{
         return response(null, 200)->withCookie($cookie);
     }
 
-    protected function respondWithTokenAndUserData($token, $userData, $remember = false){
+    protected function respondWithTokenAndUserData($token, $data = []){
 
         $defaultTTL = config('jwt.ttl');
-        $minutes = $remember ? $defaultTTL : 0;
+        $minutes = $data['remember'] ? $defaultTTL : 0;
 
         $cookie = cookie('token', $token, $minutes, null, null, false, true);
-        return response()->json(['user' => $userData])->withCookie($cookie);
+        return response()->json(['user' => $data['user'],'newUser' => $data['newUser'] ?? false])->withCookie($cookie);
     }
 
     protected function getUserData($user){
