@@ -17,13 +17,13 @@ class AuthController extends Controller{
 
 
     public function login(Request $request){
-        // Request data validation
+
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required'
         ]);
+        $remember = $request->input('remember', false);
 
-        // Attempt to login
         if (!Auth::guard('api')->attempt($credentials)) {
             return response()->json(['error' => 'Les informations d\'identification fournies ne sont pas correctes.'], 401);
         }
@@ -34,7 +34,7 @@ class AuthController extends Controller{
         // Retrieving the authenticated user
         $user = Auth::guard('api')->user();
 
-        return $this->respondWithTokenAndUserData($token, $this->getUserData($user));
+        return $this->respondWithTokenAndUserData($token, $this->getUserData($user), $remember);
     }
 
     public function signup(Request $request){
@@ -68,15 +68,16 @@ class AuthController extends Controller{
 
     public function logout(){
         $cookie = \Cookie::forget('token');
-
-        // Vous pouvez invalider le token JWT ici
-        // auth()->logout();
-
+        auth()->logout();
         return response(null, 200)->withCookie($cookie);
     }
 
-    protected function respondWithTokenAndUserData($token, $userData){
-        $cookie = cookie('token', $token, 60, null, null, false, true);
+    protected function respondWithTokenAndUserData($token, $userData, $remember = false){
+
+        $defaultTTL = config('jwt.ttl');
+        $minutes = $remember ? $defaultTTL : 0;
+
+        $cookie = cookie('token', $token, $minutes, null, null, false, true);
         return response()->json(['user' => $userData])->withCookie($cookie);
     }
 
@@ -111,7 +112,7 @@ class AuthController extends Controller{
         $user->verification_token = null;
         $user->save();
 
-        return response()->json(['message' => 'Email vérifié avec succès']);
+        return response()->json(['message' => 'Email vérifié avec succès'],200);
     }
 
     public function forgotPassword(){
