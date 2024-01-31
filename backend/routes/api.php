@@ -17,6 +17,6 @@ Route::post('forgot-password/reset', [AuthController::class, 'resetPassword']);
 
 
 
-Route::group(['middleware' => ['jwt.auth']], function() {
+Route::group(['middleware' => ['jwt.auth','jwt.refresh']], function() {
     Route::post('logout', [AuthController::class, 'logout']);
 });
