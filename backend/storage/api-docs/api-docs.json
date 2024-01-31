@@ -57,10 +57,6 @@
                                     "properties": {
                                         "user": {
                                             "$ref": "#/components/schemas/User"
-                                        },
-                                        "newUser": {
-                                            "type": "boolean",
-                                            "example": false
                                         }
                                     },
                                     "type": "object"
@@ -140,10 +136,6 @@
                                     "properties": {
                                         "user": {
                                             "$ref": "#/components/schemas/User"
-                                        },
-                                        "newUser": {
-                                            "type": "boolean",
-                                            "example": true
                                         }
                                     },
                                     "type": "object"
@@ -203,6 +195,53 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Token de vérification invalide"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/verifyUser": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Verify the user's authentication status",
+                "operationId": "verifyUser",
+                "responses": {
+                    "200": {
+                        "description": "User is authenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "$ref": "#/components/schemas/User"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "User is not authenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Utilisateur non authentifié"
                                         }
                                     },
                                     "type": "object"
@@ -440,6 +479,10 @@
                     "isEmailVerified": {
                         "type": "boolean",
                         "example": true
+                    },
+                    "newUser": {
+                        "type": "boolean",
+                        "example": false
                     }
                 },
                 "type": "object"

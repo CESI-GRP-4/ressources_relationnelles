@@ -20,7 +20,8 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  *     @OA\Property(property="imgURL", type="string", example="http://example.com/image.jpg"),
  *     @OA\Property(property="id", type="integer", format="int64", example=1),
  *     @OA\Property(property="role", type="string", example="Admin"),
- *     @OA\Property(property="isEmailVerified", type="boolean", example=true)
+ *     @OA\Property(property="isEmailVerified", type="boolean", example=true),
+ *     @OA\Property(property="newUser", type="boolean", example=false)
  * )
  */
 class User extends Authenticatable implements JWTSubject {

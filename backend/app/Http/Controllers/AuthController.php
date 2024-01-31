@@ -36,7 +36,6 @@ class AuthController extends Controller{
      *          description="Successful login",
      *          @OA\JsonContent(
      *              @OA\Property(property="user", type="object", ref="#/components/schemas/User"),
-     *              @OA\Property(property="newUser", type="boolean", example=false),
      *          )
      *      ),
      *     @OA\Response(
@@ -48,7 +47,7 @@ class AuthController extends Controller{
      *      ),
      * )
      */
-    public function login(Request $request, $isNewUser = false){
+    public function login(Request $request){
 
         $credentials = $request->validate([
             'email' => 'required|email',
@@ -68,7 +67,6 @@ class AuthController extends Controller{
 
         return $this->respondWithTokenAndUserData($token,
             ['user' => $this->getUserData($user),
-            'newUser' => $isNewUser,
             'remember' => $remember]);
     }
 
@@ -94,7 +92,6 @@ class AuthController extends Controller{
      *         description="Successful registration and user login",
      *         @OA\JsonContent(
      *             @OA\Property(property="user", type="object", ref="#/components/schemas/User"),
-     *             @OA\Property(property="newUser", type="boolean", example=true),
      *         )
      *     ),
      *     @OA\Response(
@@ -132,7 +129,9 @@ class AuthController extends Controller{
 
     $user->notify(new VerifyEmail());
 
-    return $this->login($request,true);
+    session(['isNewUser' => true]);
+
+    return $this->login($request);
 }
 
     /**
@@ -179,6 +178,8 @@ class AuthController extends Controller{
     }
 
     protected function getUserData($user){
+        $isNewUser = session('isNewUser', false);
+
         return [
             'firstName' => $user->first_name,
             'lastName' => $user->last_name,
@@ -187,6 +188,7 @@ class AuthController extends Controller{
             'id' => $user->id_user,
             'role' => $this->getRoleName($user->id_role),
             'isEmailVerified' => $user->is_verified,
+            'newUser' => $isNewUser,
         ];
     }
 
@@ -195,6 +197,34 @@ class AuthController extends Controller{
         return $role ? $role->name : null;
     }
 
+    /**
+     * @OA\Post(
+     *     path="/verifyUser",
+     *     tags={"Authentication"},
+     *     summary="Verify the user's authentication status",
+     *     operationId="verifyUser",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *          response=200,
+     *          description="User is authenticated",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="user", type="object", ref="#/components/schemas/User"),
+     *          )
+     *      ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="User is not authenticated",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="error", type="string", example="Utilisateur non authentifié")
+     *          )
+     *      )
+     * )
+     */
+    public function verifyUser(){
+        $user = auth()->user();
+        if (!$user) return response()->json(['error' => 'Utilisateur non authentifié'], 401);
+        return response()->json(['user' => $this->getUserData($user)]);
+    }
 
     /**
      * @OA\Post(
