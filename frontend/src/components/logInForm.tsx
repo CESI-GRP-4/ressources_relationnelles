@@ -4,8 +4,6 @@ import { useState } from 'react';
 import { Button, message, Form, Input, Checkbox } from 'antd';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { useUser } from '@/providers/userProvider';
-import { emailRegex } from '@/utils/regex';
-
 import type User from '@/types/user';
 import type LogInResponse from '@/types/logInAndSignUpResponse';
 
@@ -18,13 +16,8 @@ export default function LogInForm() {
               password: string;
               remember: boolean;
        };
-
-       const emailValidationRule = {
-              pattern: new RegExp(emailRegex),
-              message: "L'adresse e-mail n'est pas valide",
-       };
-
-       async function handleLoginForm(form: LogInForm): Promise<User | null> {
+  
+       async function handleLoginForm(form: LogInForm){
               setSignInLoading(true);
               try {
                      const logInResponse: AxiosResponse<LogInResponse> = await axios({
@@ -40,7 +33,6 @@ export default function LogInForm() {
                      const userData: User = logInResponse.data.user;
                      setUser(userData);
                      message.success('Connexion réussie');
-                     return userData;
               } catch (error) {
                      const axiosError = error as AxiosError;
                      console.error('Erreur lors de la connexion. Axios error :', axiosError);
@@ -66,7 +58,6 @@ export default function LogInForm() {
                      } else {
                             message.error('Erreur réseau ou serveur indisponible');
                      }
-                     return null;
               }
               finally {
                      setTimeout(() => {
@@ -92,17 +83,14 @@ export default function LogInForm() {
                             style={{ marginBottom: 0 }}
                             label="Adresse e-mail"
                             name="email"
-                            rules={[
-                                   { required: true, message: 'Veuillez entrer votre adresse e-mail' },
-                                   emailValidationRule
-                            ]}>
+                            rules={[{ required: true, message: 'Veuillez entrer votre adresse e-mail' }]}>
                             <Input allowClear />
                      </Form.Item>
 
                      {/* password */}
                      {/* no regex for password input in case the password rule has changed in the time */}
                      <Form.Item<LogInForm>
-                            label="Password"
+                            label="Mot de passe"
                             name="password"
                             rules={[{
                                    required: true,

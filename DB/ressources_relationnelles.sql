@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : mar. 23 jan. 2024 à 22:59
+-- Généré le : lun. 29 jan. 2024 à 23:04
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -272,7 +272,6 @@ INSERT INTO `games` (`id_game`, `name`, `max_player`) VALUES
 (1, 'Chess', 2),
 (2, 'Monopoly', 6);
 
-
 -- --------------------------------------------------------
 
 --
@@ -452,15 +451,18 @@ CREATE TABLE `users` (
   `id_country` int(11) DEFAULT NULL,
   `id_role` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `verification_token` varchar(150) DEFAULT NULL,
+  `password_reset_token` varchar(100) DEFAULT NULL
+
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `users`
 --
 
-INSERT INTO `users` (`id_user`, `email`, `first_name`, `last_name`, `password`, `is_verified`, `path_picture`, `id_city`, `id_postal_code`, `id_country`, `id_role`, `created_at`, `updated_at`) VALUES
-(1, 'john.doe@example.com', 'John', 'Doe', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, '/path/to/picture', 1, 1, 1, 1, '2024-01-23 21:58:57', '2024-01-23 21:58:57');
+INSERT INTO `users` (`id_user`, `email`, `first_name`, `last_name`, `password`, `is_verified`, `path_picture`, `id_city`, `id_postal_code`, `id_country`, `id_role`, `created_at`, `updated_at`, `verification_token`, `password_reset_token`) VALUES
+(1, 'john.doe@example.com', 'John', 'Doe', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, '/path/to/picture', 1, 1, 1, 1, '2024-01-23 21:58:57', '2024-01-23 21:58:57', NULL, NULL);
 
 --
 -- Index pour les tables déchargées
@@ -645,7 +647,6 @@ ALTER TABLE `cities`
 ALTER TABLE `comments`
   MODIFY `id_comment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
-
 --
 -- AUTO_INCREMENT pour la table `countries`
 --
@@ -716,7 +717,8 @@ ALTER TABLE `status_resources`
 -- AUTO_INCREMENT pour la table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
 
 --
 -- Contraintes pour les tables déchargées
