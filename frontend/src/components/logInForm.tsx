@@ -16,7 +16,7 @@ export default function LogInForm() {
               password: string;
               remember: boolean;
        };
-
+  
        async function handleLoginForm(form: LogInForm){
               setSignInLoading(true);
               try {
@@ -79,7 +79,6 @@ export default function LogInForm() {
                      autoComplete="off">
 
                      {/* email */}
-                     {/* no regex for email input in case the email rules have changed in the time */}
                      <Form.Item<LogInForm>
                             style={{ marginBottom: 0 }}
                             label="Adresse e-mail"

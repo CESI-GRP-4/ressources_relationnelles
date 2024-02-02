@@ -14,7 +14,6 @@ use Illuminate\Support\Str;
 class AuthController extends Controller{
     private const DEFAULT_ROLE_ID = 2; // User role
     private const EMAIL_NOT_VERIFIED = 0;
-
     /**
      * @OA\Post(
      *     path="/login",
@@ -48,7 +47,6 @@ class AuthController extends Controller{
      * )
      */
     public function login(Request $request){
-
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required'
@@ -179,7 +177,6 @@ class AuthController extends Controller{
 
     protected function getUserData($user){
         $isNewUser = session('isNewUser', false);
-
         return [
             'firstName' => $user->first_name,
             'lastName' => $user->last_name,
@@ -189,6 +186,7 @@ class AuthController extends Controller{
             'role' => $this->getRoleName($user->id_role),
             'isEmailVerified' => $user->is_verified,
             'newUser' => $isNewUser,
+
         ];
     }
 
@@ -196,7 +194,6 @@ class AuthController extends Controller{
         $role = Role::find($id_role);
         return $role ? $role->name : null;
     }
-
     /**
      * @OA\Post(
      *     path="/verifyUser",
@@ -365,5 +362,4 @@ class AuthController extends Controller{
 
         return response()->json(['message' => 'Mot de passe réinitialisé avec succès'],200);
     }
-
 }

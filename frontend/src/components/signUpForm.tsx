@@ -35,7 +35,7 @@ export default function SignUpForm() {
               pattern: new RegExp(lastNameRegex),
               message: "Le nom de famille n'est pas valide",
        };
-
+  
        async function handleSignUpForm(form: SignUpForm): Promise<User | null> {
               setSignUpLoading(true);
               try {
