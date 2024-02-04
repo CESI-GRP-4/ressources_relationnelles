@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { Button, Tooltip, message } from 'antd';
 import { LogoutOutlined } from '@ant-design/icons';
 import { useUser } from "@/providers/userProvider";
@@ -20,23 +20,40 @@ export default function LogoutButton() {
                             timeout: 10000, // Increased value because we had some timeout errors
                      });
 
-                     if (logOutResponse.status === 200){
+                     if (logOutResponse.status === 200) {
                             message.success('Déconnexion réussie');
-                            setUser(null);
                      }
-                     // * Don't need to check for the status code here, because the request will throw an error if it fails
-                     
               } catch (error) {
                      console.error('Logout request failed:', error);
-                     // TODO : Handle error with switch case on error.response.status
+                     const axiosError = error as AxiosError;
+
+                     if (axiosError.response) {
+                            switch (axiosError.response.status) {
+                                   case 401:
+                                          message.error('Vous n\'êtes pas connecté');
+                                          break;
+                                   case 403:
+                                          message.error('Vous n\'êtes pas autorisé à effectuer cette action');
+                                          break;
+                                   case 429:
+                                          message.error('Trop de tentatives de connexion');
+                                          break;
+                                   default:
+                                          message.error('Échec de la déconnexion');
+                                          break;
+                            }
+                     } else {
+                            message.error('Erreur réseau ou serveur indisponible');
+                     }
               }
-              finally{
+              finally {
+                     setUser(null);
                      setLogoutLoading(false);
               }
        };
 
        return (
-              <Tooltip title="Logout">
+              <Tooltip title="Se déconnecter">
                      <Button loading={isLogoutLoading} danger size="large" onClick={handleLogout} shape="circle" icon={<LogoutOutlined />} />
               </Tooltip>
        );
