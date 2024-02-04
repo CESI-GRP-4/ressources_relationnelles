@@ -12,6 +12,13 @@ npm install cypress --save-dev
 npx cypress open
 ```
 
+## Run the frontend
+
+Start the development server
+```bash
+npm run dev
+```
+
 ## Choose your test (E2E Testing or Component Testing)
 
 If you want more information you can click on the link "Review the differences between each testing type" to choose your test
