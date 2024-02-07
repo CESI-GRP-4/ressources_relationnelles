@@ -2,7 +2,7 @@
 "use client"
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import type Resource from "@/types/ressource";
+import type Resource from "@/types/resource";
 import axios from 'axios';
 
 const DefaultResource = [
