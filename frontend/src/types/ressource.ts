@@ -3,4 +3,5 @@ export default interface Resource {
     label: string;
     description: string;
     content: string;
+    id_category: BigInteger;
   }
