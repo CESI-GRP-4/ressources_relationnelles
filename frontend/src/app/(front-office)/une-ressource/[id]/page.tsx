@@ -6,8 +6,8 @@ import type Resource from "@/types/ressource";
 import axios from 'axios';
 
 const DefaultResource = [
-  { id: 0, label: 'Ressource 0', description: 'Description 0', content: 'Contenu 0' },
-  { id: 1, label: 'Ressource 1', description: 'Description 1', content: 'Contenu 1' }
+  { id: 0, label: 'Ressource 0', description: 'Description 0', content: 'Contenu 0', id_category: 1 },
+  { id: 1, label: 'Ressource 1', description: 'Description 1', content: 'Contenu 1', id_category: 1 }
 ];
 
 
