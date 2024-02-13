@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,11 +11,15 @@ use Illuminate\Support\Facades\Route;
 Route::post('login', [AuthController::class, 'login']);
 Route::post('signup', [AuthController::class, 'signup']);
 
+Route::post('login', [AuthController::class, 'login']);
+Route::post('signup', [AuthController::class, 'signup']);
+Route::post('email/verify', [AuthController::class, 'verifyEmail'])->name('verify.email');
+Route::post('forgot-password/send-mail', [AuthController::class, 'forgotPassword'])->name('password.forgot');
+Route::post('forgot-password/reset', [AuthController::class, 'resetPassword']);
 
-Route::group(['middleware' => ['jwt.auth']], function() {
+
+
+Route::group(['middleware' => ['jwt.auth','jwt.refresh']], function() {
     Route::post('logout', [AuthController::class, 'logout']);
-
-    Route::get('/user', function (Request $request) {
-        return response()->json(['message' => "Validé!"],200);
-    });
+    Route::post('verifyUser', [AuthController::class, 'verifyUser']);
 });
