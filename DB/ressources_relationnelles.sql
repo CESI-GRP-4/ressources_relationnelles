@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : lun. 29 jan. 2024 à 23:04
+-- Généré le : mar. 13 fév. 2024 à 21:27
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -387,9 +387,10 @@ CREATE TABLE `roles` (
 --
 
 INSERT INTO `roles` (`id_role`, `name`) VALUES
-(1, 'Admin'),
-(2, 'User'),
-(3, 'Moderator');
+(1, 'SuperAdministrateur'),
+(2, 'Administrateur'),
+(3, 'Moderateur'),
+(4, 'Utilisateur');
 
 -- --------------------------------------------------------
 
@@ -454,7 +455,6 @@ CREATE TABLE `users` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `verification_token` varchar(150) DEFAULT NULL,
   `password_reset_token` varchar(100) DEFAULT NULL
-
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -462,7 +462,17 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id_user`, `email`, `first_name`, `last_name`, `password`, `is_verified`, `path_picture`, `id_city`, `id_postal_code`, `id_country`, `id_role`, `created_at`, `updated_at`, `verification_token`, `password_reset_token`) VALUES
-(1, 'john.doe@example.com', 'John', 'Doe', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, '/path/to/picture', 1, 1, 1, 1, '2024-01-23 21:58:57', '2024-01-23 21:58:57', NULL, NULL);
+(1, 'john.doe@example.com', 'John', 'Doe', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, '/path/to/picture', 1, 1, 1, 1, '2024-01-23 21:58:57', '2024-02-13 19:10:43', NULL, NULL),
+(22, 'jordan.davis53@example.com', 'Jordan', 'Davis', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, '/path/to/picture/user_1.jpg', 3, 3, 1, 3, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
+(23, 'dakota.wilson74@sample.com', 'Dakota', 'Wilson', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, '/path/to/picture/user_2.jpg', 2, 2, 3, 3, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
+(24, 'jordan.smith21@sample.com', 'Jordan', 'Smith', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, '/path/to/picture/user_3.jpg', 3, 1, 1, 3, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
+(25, 'morgan.davis85@sample.com', 'Morgan', 'Davis', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, '/path/to/picture/user_4.jpg', 2, 3, 3, 3, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
+(26, 'robin.wilson93@example.com', 'Robin', 'Wilson', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, '/path/to/picture/user_5.jpg', 1, 2, 1, 3, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
+(27, 'casey.brown77@sample.com', 'Casey', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, '/path/to/picture/user_6.jpg', 2, 3, 3, 2, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
+(28, 'robin.johnson19@example.com', 'Robin', 'Johnson', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, '/path/to/picture/user_7.jpg', 2, 2, 1, 1, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
+(29, 'riley.moore47@sample.com', 'Riley', 'Moore', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, '/path/to/picture/user_8.jpg', 2, 2, 1, 3, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
+(30, 'riley.williams18@sample.com', 'Riley', 'Williams', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, '/path/to/picture/user_9.jpg', 1, 1, 3, 3, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
+(31, 'dakota.brown54@demo.com', 'Dakota', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, '/path/to/picture/user_10.jpg', 3, 3, 3, 2, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL);
 
 --
 -- Index pour les tables déchargées
@@ -639,7 +649,7 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT pour la table `cities`
 --
 ALTER TABLE `cities`
-  MODIFY `id_city` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_city` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT pour la table `comments`
@@ -651,7 +661,7 @@ ALTER TABLE `comments`
 -- AUTO_INCREMENT pour la table `countries`
 --
 ALTER TABLE `countries`
-  MODIFY `id_country` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_country` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT pour la table `files`
@@ -681,7 +691,7 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT pour la table `postal_codes`
 --
 ALTER TABLE `postal_codes`
-  MODIFY `id_postal_code` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_postal_code` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT pour la table `resources`
@@ -699,7 +709,7 @@ ALTER TABLE `rights`
 -- AUTO_INCREMENT pour la table `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `id_role` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_role` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT pour la table `statistics_archive`
@@ -717,8 +727,7 @@ ALTER TABLE `status_resources`
 -- AUTO_INCREMENT pour la table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- Contraintes pour les tables déchargées
