@@ -4,9 +4,11 @@ export default interface User {
        email?: string;
        imgURL?: string;
        id?: string;
-       role?: 'user' | 'moderator' | 'administrator' | 'superadministrator';
+       role?: 'Utilisateur' | 'Moderateur' | 'Administrateur' | 'SuperAdministrateur';
        isEmailVerified?: boolean;
        city?: string;
        country?: string;
        postalCode?: string;
+       createdAt?: string;
+       updatedAt?: string;
 }

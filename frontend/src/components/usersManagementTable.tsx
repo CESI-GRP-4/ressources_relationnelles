@@ -1,10 +1,11 @@
 "use client"
-import React, { useState } from 'react';
-import { Table, Input, InputNumber, Popconfirm, Form, Typography } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Table, Input, InputNumber, Popconfirm, Form, Typography, Select, Button, Divider, message } from 'antd';
 import User from '@/types/user';
-import { Select } from 'antd';
 import { ColumnType } from 'antd/es/table';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { Avatar, Space } from 'antd';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 
 const originData: User[] = [];
 for (let i = 0; i < 100; i++) {
@@ -12,8 +13,8 @@ for (let i = 0; i < 100; i++) {
               id: i.toString(),
               firstName: `Edward ${i}`,
               lastName: `Smith ${i}`,
-              email: `edwafezefzfzefzefzefzfzefzefrd${i}@example.com`,
-              role: i % 2 === 0 ? 'user' : 'moderator', // Example role
+              email: `edward${i}@example.com`,
+              role: i % 2 === 0 ? 'Utilisateur' : 'Moderateur',
               city: `City ${i}`,
               country: `Country ${i}`,
               postalCode: `${i}${i}${i}${i}`,
@@ -21,17 +22,67 @@ for (let i = 0; i < 100; i++) {
        });
 }
 
-const EditableTable = () => {
+const EditableTable: React.FC = () => {
+       const [form] = Form.useForm();
        const [data, setData] = useState(originData);
        const [editingKey, setEditingKey] = useState('');
+       const isEditing = (record: User) => record.id === editingKey;
 
-       const expandedRowRender = (record: User) => (
-              <p>
-                     City: {record.city}, Country: {record.country}, Postal Code: {record.postalCode}
-              </p>
-       );
+       useEffect(() => {
+              try {
+                     const fetchData = async () => {
+                            const response = await axios({
+                                   method: 'get',
+                                   baseURL: 'http://localhost/api', // * Might be changed depending on the backend implementation
+                                   url: "/users",
+                                   withCredentials: true,
+                                   params: {
+                                          "perPage": 2,
+                                          "page": 1,
+                                   },
+                                   responseType: 'json',
+                                   timeout: 10000, // * Increased value because we had some timeout errors
+                            });
 
-       // Will return either the value of the cell or an input to edit the cell
+                            console.log("🚀 ~ fetchData ~ response", response.data);
+
+                            const userData: User[] = response.data.users;
+                            console.log("🚀 ~ fetchData ~ userData:", userData);
+                            setData(userData);
+                     };
+                     fetchData(); // Call the fetchData function
+
+              } catch (error) {
+                     const axiosError = error as AxiosError;
+
+                     if (axiosError.response) {
+                            switch (axiosError.response.status) {
+                                   case 401:
+                                          message.error(`Vous n'êtes pas autorisé à effectuer cette action`);
+                                          break;
+                                   case 422:
+                                          message.error('Champs manquants ou invalides');
+                                          break;
+                                   case 409:
+                                          message.error(`Un compte avec cette adresse e-mail existe déjà`);
+                                   default:
+                                          message.error(`Échec de l'inscription`);
+                                          break;
+                            }
+                     } else {
+                            message.error('Erreur réseau ou serveur indisponible');
+                     }
+                     // return null;
+              }
+              finally {
+                     setTimeout(() => {
+                            // setSignUpLoading(false);
+                     }, 1000);
+              }
+
+       }, []);
+
+
        const EditableCell: React.FC<{ editing: boolean; dataIndex: keyof User; title: string; inputType: 'text' | 'number' | 'select' | 'boolean'; record: User; index: number; children: React.ReactNode; }> = ({ editing, dataIndex, title, inputType, record, index, children, ...restProps }) => {
               let inputNode = <Input />;
               if (inputType === 'select' && dataIndex === 'role') {
@@ -61,7 +112,7 @@ const EditableTable = () => {
                      <td {...restProps}>
                             {editing ? (
                                    <Form.Item
-                                          name={dataIndex}
+                                          // name={dataIndex}
                                           style={{ margin: 0 }}
                                           rules={[{ required: true, message: `Please Input ${title}!` }]}
                                    >
@@ -74,13 +125,13 @@ const EditableTable = () => {
               );
        };
 
-       const [form] = Form.useForm();
-
-       const isEditing = (record: User) => record.id === editingKey;
-
        const edit = (record: User) => {
-              form.setFieldsValue({ ...record });
-              setEditingKey(record.id!);
+              form.setFieldsValue({ ...record, city: record.city, country: record.country, postalCode: record.postalCode });
+              if (record.id !== undefined) {
+                     setEditingKey(record.id);
+              } else {
+                     console.error('Attempted to edit a record without an ID.');
+              }
        };
 
        const cancel = () => {
@@ -89,9 +140,10 @@ const EditableTable = () => {
 
        const save = async (key: React.Key) => {
               try {
-                     const row = (await form.validateFields()) as User;
+                     const row = await form.validateFields();
                      const newData = [...data];
-                     const index = newData.findIndex((item) => key === item.id);
+                     const index = newData.findIndex(item => key === item.id);
+
                      if (index > -1) {
                             const item = newData[index];
                             newData.splice(index, 1, { ...item, ...row });
@@ -101,6 +153,62 @@ const EditableTable = () => {
               } catch (errInfo) {
                      console.log('Validate Failed:', errInfo);
               }
+       };
+
+       // Adjusted expandedRowRender to include Mail Verified and Image
+       const expandedRowRender = (record: User) => {
+              const editable = isEditing(record);
+              return (
+                     <div className='flex flex-col md:flex-row h-96 p-10'>
+                            <div className='w-full md:w-1/2 p-4'>
+                                   <Form
+                                          form={form}
+                                          layout="horizontal"
+                                          initialValues={{ city: record.city, country: record.country, postalCode: record.postalCode }}
+                                   >
+                                          <Form
+                                                 form={form}
+                                                 layout="horizontal"
+                                                 initialValues={{ city: record.city, country: record.country, postalCode: record.postalCode }}
+                                          >
+                                                 <Form.Item label="City" name="city"
+                                                        style={{ marginBottom: 7 }}
+                                                 >
+                                                        {editable ? <Input /> : record.city}
+                                                 </Form.Item>
+                                                 <Form.Item
+                                                        style={{ marginBottom: 7 }}
+
+                                                        label="Country" name="country">
+                                                        {editable ? <Input /> : record.country}
+                                                 </Form.Item>
+                                                 <Form.Item
+                                                        style={{ marginBottom: 7 }}
+
+                                                        label="Postal Code" name="postalCode">
+                                                        {editable ? <Input /> : record.postalCode}
+                                                 </Form.Item>
+
+                                                 <div className='flex flex-row items-center space-x-2'>
+
+                                                        <span>{"Mail Verified: "}</span>
+                                                        {record.isEmailVerified ? (
+                                                               <CheckCircleOutlined style={{ color: "green", fontSize: "1.2rem" }} />
+                                                        ) : (
+                                                               <CloseCircleOutlined style={{ color: "red", fontSize: "1.2rem" }} />
+                                                        )}
+                                                 </div>
+                                          </Form>
+                                   </Form>
+                            </div>
+                            <Divider className='md:!h-full' type='vertical'></Divider>
+                            <div className='w-full md:w-1/2 flex flex-row space-x-12 justify-center items-center p-4'>
+                                   <Avatar draggable={false} shape="square" size={150} src="https://cdn-icons-png.flaticon.com/512/1160/1160358.png" />
+
+                                   {/* <img src="https://cdn-icons-png.flaticon.com/512/1160/1160358.png" alt="User" style={{ width: "100px", height: "100px", borderRadius: "50%", marginTop: "10px" }} /> */}
+                            </div>
+                     </div>
+              );
        };
 
        const columns: ColumnType<User>[] = [
@@ -127,43 +235,11 @@ const EditableTable = () => {
                      editable: true,
                      render: (role: User['role']) => role ? role.charAt(0).toUpperCase() + role.slice(1) : '',
               },
-              {
-                     title: 'Mail Verified',
-                     dataIndex: 'isEmailVerified',
-                     editable: false,
-                     width: 150,
-                     align: 'center' as const,
-                     render: (_: unknown, { isEmailVerified }: User) => (
-                            isEmailVerified ? <CheckCircleOutlined style={{ color: "green", fontSize: "1.2rem" }} /> : <CloseCircleOutlined style={{ color: "red", fontSize: "1.2rem" }} />
-                     ),
-              },
-              {
-                     title: 'Image',
-                     dataIndex: 'imgURL',
-                     editable: false,
-                     render: (imgURL: string) => imgURL ? <img src={imgURL} alt="User" style={{ width: "50px", height: "50px", borderRadius: "50%" }} /> : "No image",
-              },
-              {
-                     title: 'City',
-                     dataIndex: 'city',
-                     editable: true,
-              },
-              {
-                     title: 'Country',
-                     dataIndex: 'country',
-                     editable: true,
-              },
-              {
-                     title: 'Postal Code',
-                     dataIndex: 'postalCode',
-                     editable: true,
-              },
-              // Operation column remains as previously defined...
        ].map(col => ({
               ...col,
               onCell: (record: User) => ({
                      record,
-                     inputType: col.dataIndex === 'isEmailVerified' ? 'boolean' : (col.dataIndex === 'email' ? 'email' : (col.dataIndex === 'role' ? 'select' : 'text')),
+                     inputType: col.dataIndex === 'isEmailVerified' ? 'boolean' : col.dataIndex === 'role' ? 'select' : 'text',
                      dataIndex: col.dataIndex,
                      title: col.title,
                      editing: isEditing(record),
@@ -204,20 +280,16 @@ const EditableTable = () => {
                             components={{ body: { cell: EditableCell } }}
                             bordered
                             dataSource={data}
-                            columns={columns as any}
-                            rowClassName="editable-row"
+                            columns={columns}
                             rowKey="id"
                             pagination={{ onChange: cancel }}
-                            rowSelection={{ type: 'checkbox' }}
-                            expandable={{
-                                   expandedRowRender: record => expandedRowRender(record),
-                            }}
-                            scroll={{ x: "max-content" }} // Adjust this value based on the total width of your columns
-
+                            // rowSelection={{ type: 'checkbox' }}
+                            expandable={{ expandedRowRender }}
+                            scroll={{ x: 'max-content' }}
                      />
-
               </Form>
        );
 };
+
 
 export default EditableTable;
