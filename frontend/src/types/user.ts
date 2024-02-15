@@ -8,6 +8,7 @@ export default interface User {
        isEmailVerified?: boolean;
        city?: string;
        country?: string;
+       countryCode?: string;
        postalCode?: string;
        createdAt?: string;
        updatedAt?: string;

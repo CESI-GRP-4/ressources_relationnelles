@@ -23,65 +23,68 @@ for (let i = 0; i < 100; i++) {
 }
 
 const EditableTable: React.FC = () => {
+       interface tableSettings {
+              perPage: number;
+              page: number;
+              total?: number;
+              lastPage?: number;
+       }
        const [form] = Form.useForm();
        const [data, setData] = useState(originData);
        const [editingKey, setEditingKey] = useState('');
        const isEditing = (record: User) => record.id === editingKey;
+       const [tableParams, setTableParams] = useState({ perPage: 10, page: 1 } as tableSettings);
+       const [loading, setLoading] = useState(false);
 
        useEffect(() => {
-              try {
-                     const fetchData = async () => {
+              setLoading(true);
+              const fetchData = async () => {
+                     try {
                             const response = await axios({
                                    method: 'get',
                                    baseURL: 'http://localhost/api', // * Might be changed depending on the backend implementation
                                    url: "/users",
                                    withCredentials: true,
-                                   params: {
-                                          "perPage": 2,
-                                          "page": 1,
-                                   },
+                                   params: tableParams,
                                    responseType: 'json',
                                    timeout: 10000, // * Increased value because we had some timeout errors
                             });
-
-                            console.log("🚀 ~ fetchData ~ response", response.data);
+                            setTableParams({ ...tableParams, total: response.data.totalUsers, lastPage: response.data.lastPage });
 
                             const userData: User[] = response.data.users;
-                            console.log("🚀 ~ fetchData ~ userData:", userData);
                             setData(userData);
-                     };
-                     fetchData(); // Call the fetchData function
 
-              } catch (error) {
-                     const axiosError = error as AxiosError;
+                     } catch (error) {
+                            console.log("we get tehe")
+                            const axiosError = error as AxiosError;
 
-                     if (axiosError.response) {
-                            switch (axiosError.response.status) {
-                                   case 401:
-                                          message.error(`Vous n'êtes pas autorisé à effectuer cette action`);
-                                          break;
-                                   case 422:
-                                          message.error('Champs manquants ou invalides');
-                                          break;
-                                   case 409:
-                                          message.error(`Un compte avec cette adresse e-mail existe déjà`);
-                                   default:
-                                          message.error(`Échec de l'inscription`);
-                                          break;
+                            if (axiosError.response) {
+                                   switch (axiosError.response.status) {
+                                          case 401:
+                                                 message.error(`Vous n'êtes pas autorisé à effectuer cette action`);
+                                                 break;
+                                          case 422:
+                                                 message.error('Champs manquants ou invalides');
+                                                 break;
+                                          case 409:
+                                                 message.error(`Un compte avec cette adresse e-mail existe déjà`);
+                                          default:
+                                                 message.error(`Échec de l'inscription`);
+                                                 break;
+                                   }
+                            } else {
+                                   message.error('Erreur réseau ou serveur indisponible');
                             }
-                     } else {
-                            message.error('Erreur réseau ou serveur indisponible');
+                            // return null;
                      }
-                     // return null;
-              }
-              finally {
-                     setTimeout(() => {
-                            // setSignUpLoading(false);
-                     }, 1000);
-              }
-
+                     finally {
+                            setTimeout(() => {
+                                   setLoading(false);
+                            }, 1000);
+                     }
+              };
+              fetchData(); // Call the fetchData function
        }, []);
-
 
        const EditableCell: React.FC<{ editing: boolean; dataIndex: keyof User; title: string; inputType: 'text' | 'number' | 'select' | 'boolean'; record: User; index: number; children: React.ReactNode; }> = ({ editing, dataIndex, title, inputType, record, index, children, ...restProps }) => {
               let inputNode = <Input />;
@@ -134,6 +137,53 @@ const EditableTable: React.FC = () => {
               }
        };
 
+       const handleTableChange = (pagination: any, filters: any, sorter: any) => {
+              setLoading(true);
+              const fetchData = async () => {
+                     try {
+                            const response = await axios({
+                                   method: 'get',
+                                   baseURL: 'http://localhost/api', // * Might be changed depending on the backend implementation
+                                   url: "/users",
+                                   withCredentials: true,
+                                   params: { perPage: pagination.pageSize, page: pagination.current },
+                                   responseType: 'json',
+                                   timeout: 10000, // * Increased value because we had some timeout errors
+                            });
+
+                            const userData: User[] = response.data.users;
+                            setData(userData);
+                            setTableParams({ ...tableParams, total: response.data.totalUsers, lastPage: response.data.lastPage, perPage: pagination.pageSize, page: pagination.current });
+                     } catch (error) { // TODO : Handle errors
+                            const axiosError = error as AxiosError;
+                            if (axiosError.response) {
+                                   switch (axiosError.response.status) {
+                                          case 401:
+                                                 message.error(`Vous n'êtes pas autorisé à effectuer cette action`);
+                                                 break;
+                                          case 422:
+                                                 message.error('Champs manquants ou invalides');
+                                                 break;
+                                          case 409:
+                                                 message.error(`Un compte avec cette adresse e-mail existe déjà`);
+                                          default:
+                                                 message.error(`Échec de l'inscription`);
+                                                 break;
+                                   }
+                            } else {
+                                   message.error('Erreur réseau ou serveur indisponible');
+                            }
+                            // return null;
+                     }
+                     finally {
+                            setTimeout(() => {
+                                   setLoading(false);
+                            }, 1000);
+                     }
+              };
+              fetchData(); // Call the fetchData function
+       }
+
        const cancel = () => {
               setEditingKey('');
        };
@@ -155,52 +205,38 @@ const EditableTable: React.FC = () => {
               }
        };
 
-       // Adjusted expandedRowRender to include Mail Verified and Image
        const expandedRowRender = (record: User) => {
               const editable = isEditing(record);
               return (
                      <div className='flex flex-col md:flex-row h-96 p-10'>
                             <div className='w-full md:w-1/2 p-4'>
-                                   <Form
-                                          form={form}
-                                          layout="horizontal"
-                                          initialValues={{ city: record.city, country: record.country, postalCode: record.postalCode }}
-                                   >
-                                          <Form
-                                                 form={form}
-                                                 layout="horizontal"
-                                                 initialValues={{ city: record.city, country: record.country, postalCode: record.postalCode }}
-                                          >
-                                                 <Form.Item label="City" name="city"
-                                                        style={{ marginBottom: 7 }}
-                                                 >
-                                                        {editable ? <Input /> : record.city}
+                                   {editable ? (
+                                          <>
+                                                 <Form.Item label="City" name="city" style={{ marginBottom: 7 }}>
+                                                        <Input />
                                                  </Form.Item>
-                                                 <Form.Item
-                                                        style={{ marginBottom: 7 }}
-
-                                                        label="Country" name="country">
-                                                        {editable ? <Input /> : record.country}
+                                                 <Form.Item label="Country" name="country" style={{ marginBottom: 7 }}>
+                                                        <Input />
                                                  </Form.Item>
-                                                 <Form.Item
-                                                        style={{ marginBottom: 7 }}
-
-                                                        label="Postal Code" name="postalCode">
-                                                        {editable ? <Input /> : record.postalCode}
+                                                 <Form.Item label="Postal Code" name="postalCode" style={{ marginBottom: 7 }}>
+                                                        <Input />
                                                  </Form.Item>
-
-                                                 <div className='flex flex-row items-center space-x-2'>
-
-                                                        <span>{"Mail Verified: "}</span>
-                                                        {record.isEmailVerified ? (
-                                                               <CheckCircleOutlined style={{ color: "green", fontSize: "1.2rem" }} />
-                                                        ) : (
-                                                               <CloseCircleOutlined style={{ color: "red", fontSize: "1.2rem" }} />
-                                                        )}
+                                          </>
+                                   ) : (
+                                          <>
+                                                 <div style={{ marginBottom: 7 }}>
+                                                        <strong>City:</strong> {record.city}
                                                  </div>
-                                          </Form>
-                                   </Form>
+                                                 <div style={{ marginBottom: 7 }}>
+                                                        <strong>Country:</strong> {record.country}
+                                                 </div>
+                                                 <div style={{ marginBottom: 7 }}>
+                                                        <strong>Postal Code:</strong> {record.postalCode}
+                                                 </div>
+                                          </>
+                                   )}
                             </div>
+
                             <Divider className='md:!h-full' type='vertical'></Divider>
                             <div className='w-full md:w-1/2 flex flex-row space-x-12 justify-center items-center p-4'>
                                    <Avatar draggable={false} shape="square" size={150} src="https://cdn-icons-png.flaticon.com/512/1160/1160358.png" />
@@ -210,6 +246,8 @@ const EditableTable: React.FC = () => {
                      </div>
               );
        };
+
+
 
        const columns: ColumnType<User>[] = [
               {
@@ -275,14 +313,16 @@ const EditableTable: React.FC = () => {
        return (
               <Form form={form} component={false}>
                      <Table
+                            onChange={handleTableChange}
                             style={{ overflow: 'auto' }}
                             sticky
+                            loading={loading}
                             components={{ body: { cell: EditableCell } }}
                             bordered
                             dataSource={data}
                             columns={columns}
                             rowKey="id"
-                            pagination={{ onChange: cancel }}
+                            pagination={{ onChange: cancel, total: tableParams.total, pageSize: tableParams.perPage, current: tableParams.page, showSizeChanger: true, pageSizeOptions: ['10', '20', '50', '100'], showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items` }}
                             // rowSelection={{ type: 'checkbox' }}
                             expandable={{ expandedRowRender }}
                             scroll={{ x: 'max-content' }}
@@ -290,6 +330,4 @@ const EditableTable: React.FC = () => {
               </Form>
        );
 };
-
-
 export default EditableTable;
