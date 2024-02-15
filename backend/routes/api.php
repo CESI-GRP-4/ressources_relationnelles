@@ -24,6 +24,7 @@ Route::group(['middleware' => ['jwt.auth']], function() {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('verifyUser', [AuthController::class, 'verifyUser']);
 
-    Route::get('users', [UserController::class, 'getUsers']);
-
+    Route::group(['middleware' => 'isAdmin'], function () {
+        Route::get('users', [UserController::class, 'getUsers']);
+    });
 });
