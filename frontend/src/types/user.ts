@@ -10,6 +10,6 @@ export default interface User {
        country?: string;
        countryCode?: string;
        postalCode?: string;
-       createdAt?: string;
-       updatedAt?: string;
+       createdAt?: string | number | Date;
+       updatedAt?: string | number | Date;
 }
