@@ -12,6 +12,8 @@ const EditableTable: React.FC = () => {
               page: number;
               total?: number;
               lastPage?: number;
+              sortBy?: string;
+              sortDirection?: "asc" | "desc";
        }
 
        const [form] = Form.useForm();
@@ -101,7 +103,8 @@ const EditableTable: React.FC = () => {
        };
 
        const handleTableChange = (pagination: any, filters: any, sorter: any) => {
-              fetchData({ ...tableParams, perPage: pagination.pageSize, page: pagination.current });
+              console.log(sorter.field, sorter.order, sorter.columnKey, sorter.column, sorter.order === 'ascend' ? 'asc' : 'desc')
+              fetchData({ ...tableParams, perPage: pagination.pageSize, page: pagination.current, sortBy: sorter.order ? sorter.field : undefined, sortDirection: sorter.order ? (sorter.order === 'ascend' ? 'asc' : 'desc') : undefined });
        }
 
        const fetchData = async (tableParams: tableSettings) => {
@@ -176,38 +179,46 @@ const EditableTable: React.FC = () => {
                      editable: true,
                      fixed: 'left' as const,
                      width: 200,
+                     // enable sorting
+                     sorter: true,
               },
               {
                      title: 'Prénom',
                      dataIndex: 'firstName',
                      editable: true,
+                     sorter: true,
               },
               {
                      title: 'Nom',
                      dataIndex: 'lastName',
                      editable: true,
+                     sorter: true,
               },
               {
                      title: 'Rôle',
                      dataIndex: 'role',
                      editable: true,
+                     sorter: true,
                      render: (role: User['role']) => role ? role.charAt(0).toUpperCase() + role.slice(1) : '',
               },
               {
                      title: 'Pays',
                      dataIndex: 'country',
+                     sorter: true,
                      editable: true,
               },
               {
                      title: 'Ville',
                      dataIndex: 'city',
                      editable: true,
+                     sorter: true,
               },
 
               {
                      title: 'Code Postal',
                      dataIndex: 'postalCode',
                      editable: true,
+                     sorter: true,
               },
               {
                      title: 'Email vérifié',
@@ -215,6 +226,7 @@ const EditableTable: React.FC = () => {
                      editable: true,
                      align: 'center' as const,
                      render: (isEmailVerified: User['isEmailVerified']) => isEmailVerified ? <CheckCircleOutlined style={{ color: 'green' }} className='px-4' /> : <CloseCircleOutlined className='px-4' style={{ color: 'red' }} />,
+                     sorter: true,
               },
               {
                      title: 'Créé le',
@@ -222,6 +234,8 @@ const EditableTable: React.FC = () => {
                      editable: false,
                      render: (createdAt: User['createdAt']) =>
                             createdAt ? new Date(createdAt).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A',
+                     sorter: true,
+
               },
               {
                      title: 'Modifié le',
@@ -229,6 +243,8 @@ const EditableTable: React.FC = () => {
                      editable: false,
                      render: (updatedAt: User['updatedAt']) =>
                             updatedAt ? new Date(updatedAt).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A',
+                     sorter: true,
+
               },
        ].map(col => ({
               ...col,
@@ -304,7 +320,7 @@ const EditableTable: React.FC = () => {
                                    dataSource={data}
                                    columns={getVisibleColumns()}
                                    rowKey="id"
-                                   pagination={{ onChange: cancel,showQuickJumper: true, total: tableParams.total, pageSize: tableParams.perPage, current: tableParams.page, showSizeChanger: true, pageSizeOptions: ['10', '20', '50', '100'], showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items` }}
+                                   pagination={{ onChange: cancel, showQuickJumper: true, total: tableParams.total, pageSize: tableParams.perPage, current: tableParams.page, showSizeChanger: true, pageSizeOptions: ['10', '20', '50', '100'], showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items` }}
                                    scroll={{ x: 'max-content', y: 500 }}
                             />
                      </Form>
