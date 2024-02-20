@@ -27,5 +27,6 @@ Route::group(['middleware' => ['jwt.auth']], function() {
     Route::group(['middleware' => 'isAdmin'], function () {
         Route::get('users', [UserController::class, 'getUsers']);
         Route::post('editUser/{id}', [UserController::class, 'editUser']);
+        Route::delete('deleteUser/{id}', [UserController::class, 'deleteUser']);
     });
 });

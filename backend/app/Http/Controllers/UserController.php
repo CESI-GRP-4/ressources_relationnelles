@@ -335,4 +335,58 @@ class UserController extends Controller
 
         return response()->json(['message' => 'Utilisateur mis à jour ', 'user' => Utils::getAllUserData($user)], 200);
     }
+
+    /**
+     * @OA\Delete(
+     *     path="/deleteUser/{id}",
+     *     tags={"Users"},
+     *     summary="Delete a user",
+     *     description="Deletes a user. This action is restricted to Super Administrators only.",
+     *     operationId="deleteUser",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the user to delete",
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User deleted successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="User deleted successfully.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Unauthorized: Only a Super Administrator can delete a user.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthorized: Only a Super Administrator can delete a user.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="User not found.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="User not found.")
+     *         )
+     *     )
+     * )
+     */
+    public function deleteUser($id){
+        if (auth()->user()->role->name != 'SuperAdministrateur') {
+            return response()->json(['message' => 'Unauthorized: Seul un superAdministrateur peut supprimer un utilisateur.'], 403);
+        }
+
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['message' => 'Utilisateur non trouvé.'], 404);
+        }
+        $user->delete();
+        return response()->json(['message' => 'Utilisateur supprimé avec succés.']);
+    }
+
 }
