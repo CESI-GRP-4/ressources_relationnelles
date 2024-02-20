@@ -560,6 +560,166 @@
                     }
                 ]
             }
+        },
+        "/editUser/{id}": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Edit a user's details",
+                "description": "Allows editing user details. Note: Only Super Administrators can change the user's role.",
+                "operationId": "editUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "User data to update",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "firstName": {
+                                        "type": "string",
+                                        "example": "John"
+                                    },
+                                    "lastName": {
+                                        "type": "string",
+                                        "example": "Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john.doe@example.com"
+                                    },
+                                    "isEmailVerified": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "country": {
+                                        "type": "string",
+                                        "example": "Japan"
+                                    },
+                                    "city": {
+                                        "type": "string",
+                                        "example": "Paris"
+                                    },
+                                    "postalCode": {
+                                        "type": "string",
+                                        "example": "75000"
+                                    },
+                                    "role": {
+                                        "description": "Role of the user. Can only be changed by Super Administrators.",
+                                        "type": "string",
+                                        "example": "User"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User updated successfully"
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 30
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "format": "email",
+                                                    "example": "john.doe@example.com"
+                                                },
+                                                "firstName": {
+                                                    "type": "string",
+                                                    "example": "John"
+                                                },
+                                                "lastName": {
+                                                    "type": "string",
+                                                    "example": "Doe"
+                                                },
+                                                "isEmailVerified": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "imgURL": {
+                                                    "type": "string",
+                                                    "example": "/path/to/picture/user_9.jpg"
+                                                },
+                                                "city": {
+                                                    "type": "string",
+                                                    "example": "Paris"
+                                                },
+                                                "country": {
+                                                    "type": "string",
+                                                    "example": "Japan"
+                                                },
+                                                "countryCode": {
+                                                    "type": "string",
+                                                    "example": "JP"
+                                                },
+                                                "postalCode": {
+                                                    "type": "string",
+                                                    "example": "75000"
+                                                },
+                                                "role": {
+                                                    "type": "string",
+                                                    "example": "User"
+                                                },
+                                                "createdAt": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-02-13T19:05:16.000000Z"
+                                                },
+                                                "updatedAt": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-02-20T19:45:22.000000Z"
+                                                },
+                                                "newUser": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -592,7 +752,7 @@
                     },
                     "role": {
                         "type": "string",
-                        "example": "Admin"
+                        "example": "Administrateur"
                     },
                     "isEmailVerified": {
                         "type": "boolean",

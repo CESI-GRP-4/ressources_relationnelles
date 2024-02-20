@@ -6,6 +6,7 @@ use App\Models\Role;
 use App\Models\User;
 use App\Notifications\ResetPass;
 use App\Notifications\VerifyEmail;
+use App\Utils\Utils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -64,7 +65,7 @@ class AuthController extends Controller{
         $user = Auth::guard('api')->user();
 
         return $this->respondWithTokenAndUserData($token,
-            ['user' => $this->getUserData($user),
+            ['user' => Utils::getUserData($user),
             'remember' => $remember]);
     }
 
@@ -175,25 +176,6 @@ class AuthController extends Controller{
         return response()->json(['user' => $data['user'],'newUser' => $data['newUser'] ?? false])->withCookie($cookie);
     }
 
-    protected function getUserData($user){
-        $isNewUser = session('isNewUser', false);
-        return [
-            'firstName' => $user->first_name,
-            'lastName' => $user->last_name,
-            'email' => $user->email,
-            'imgURL' => $user->path_picture,
-            'id' => $user->id_user,
-            'role' => $this->getRoleName($user->id_role),
-            'isEmailVerified' => $user->is_verified,
-            'newUser' => $isNewUser,
-
-        ];
-    }
-
-    protected function getRoleName($id_role){
-        $role = Role::find($id_role);
-        return $role ? $role->name : null;
-    }
     /**
      * @OA\Post(
      *     path="/verifyUser",
@@ -220,7 +202,7 @@ class AuthController extends Controller{
     public function verifyUser(){
         $user = auth()->user();
         if (!$user) return response()->json(['error' => 'Utilisateur non authentifié'], 401);
-        return response()->json(['user' => $this->getUserData($user)]);
+        return response()->json(['user' => Utils::getUserData($user)]);
     }
 
     /**

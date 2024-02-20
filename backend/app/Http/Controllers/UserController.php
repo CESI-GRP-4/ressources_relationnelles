@@ -2,7 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\City;
+use App\Models\Country;
+use App\Models\PostalCode;
+use App\Models\Role;
 use App\Traits\FieldMappingTrait;
+use App\Utils\Utils;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -204,5 +209,130 @@ class UserController extends Controller
         ];
 
         return response()->json($response);
+    }
+
+
+    /**
+     * @OA\Post(
+     *     path="/editUser/{id}",
+     *     tags={"Users"},
+     *     summary="Edit a user's details",
+     *     description="Allows editing user details. Note: Only Super Administrators can change the user's role.",
+     *     operationId="editUser",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="User ID",
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\RequestBody(
+     *         description="User data to update",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="firstName", type="string", example="John"),
+     *             @OA\Property(property="lastName", type="string", example="Doe"),
+     *             @OA\Property(property="email", type="string", format="email", example="john.doe@example.com"),
+     *             @OA\Property(property="isEmailVerified", type="boolean", example=true),
+     *             @OA\Property(property="country", type="string", example="Japan"),
+     *             @OA\Property(property="city", type="string", example="Paris"),
+     *             @OA\Property(property="postalCode", type="string", example="75000"),
+     *             @OA\Property(property="role", type="string", example="User", description="Role of the user. Can only be changed by Super Administrators.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User updated successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="User updated successfully"),
+     *             @OA\Property(
+     *                 property="user",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=30),
+     *                 @OA\Property(property="email", type="string", format="email", example="john.doe@example.com"),
+     *                 @OA\Property(property="firstName", type="string", example="John"),
+     *                 @OA\Property(property="lastName", type="string", example="Doe"),
+     *                 @OA\Property(property="isEmailVerified", type="boolean", example=true),
+     *                 @OA\Property(property="imgURL", type="string", example="/path/to/picture/user_9.jpg"),
+     *                 @OA\Property(property="city", type="string", example="Paris"),
+     *                 @OA\Property(property="country", type="string", example="Japan"),
+     *                 @OA\Property(property="countryCode", type="string", example="JP"),
+     *                 @OA\Property(property="postalCode", type="string", example="75000"),
+     *                 @OA\Property(property="role", type="string", example="User"),
+     *                 @OA\Property(property="createdAt", type="string", format="date-time", example="2024-02-13T19:05:16.000000Z"),
+     *                 @OA\Property(property="updatedAt", type="string", format="date-time", example="2024-02-20T19:45:22.000000Z"),
+     *                 @OA\Property(property="newUser", type="boolean", example=false)
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Validation error"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="User not found"
+     *     )
+     * )
+     */
+    public function editUser(Request $request, $id){
+
+        $user = User::findOrFail($id);
+
+        $isSuperAdmin = auth()->user()->role->name === 'SuperAdministrateur';
+
+        $rules = [
+            'firstName' => 'string|nullable',
+            'lastName' => 'string|nullable',
+            'email' => 'string|email|nullable',
+            'isEmailVerified' => 'boolean|nullable',
+            'country' => 'string|nullable',
+            'city' => 'string|nullable',
+            'postalCode' => 'string|nullable',
+        ];
+
+        if ($isSuperAdmin) {
+            $rules['role'] = 'string|nullable';
+        }
+
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
+
+
+        // Mise à jour des champs directs
+        $fieldMapping = $this->getFieldMapping(); // Utilisez votre trait pour obtenir les mappages
+        foreach ($validator->validated() as $key => $value) {
+            if (in_array($key, ['firstName', 'lastName', 'email', 'isEmailVerified']) && $value !== null) {
+                $dbKey = $fieldMapping[$key] ?? $key;
+                $user->$dbKey = $value;
+            }
+        }
+
+        if ($request->filled('country')) {
+            $country = Country::firstOrCreate(['name' => $request->country]);
+            $user->id_country = $country->id_country;
+        }
+        if ($request->filled('city')) {
+            $city = City::firstOrCreate(['name' => $request->city]);
+            $user->id_city = $city->id_city;
+        }
+        if ($request->filled('postalCode')) {
+            $postalCode = PostalCode::firstOrCreate(['postal_code' => $request->postalCode]);
+            $user->id_postal_code = $postalCode->id_postal_code;
+        }
+        if ($isSuperAdmin && $request->filled('role')) {
+            $role = Role::where('name', $request->role)->firstOrFail();
+            $user->id_role = $role->id_role;
+        }
+
+        $user->save();
+
+        return response()->json(['message' => 'Utilisateur mis à jour ', 'user' => Utils::getAllUserData($user)], 200);
     }
 }
