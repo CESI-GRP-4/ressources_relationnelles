@@ -4,7 +4,10 @@ import User from '@/types/user';
 import { ColumnType } from 'antd/es/table';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import axios, { AxiosError } from 'axios';
-import { Table, Input, InputNumber, Popconfirm, Form, Typography, Select, Button, message } from 'antd';
+import { Table, Input, InputNumber, Popconfirm, Form, Typography, Select, Button, message, Tooltip } from 'antd';
+import { useUser } from '@/providers/userProvider';
+import { DeleteOutlined } from '@ant-design/icons';
+import { Icon as Iconify } from '@iconify/react';
 
 const EditableTable: React.FC = () => {
        interface tableSettings {
@@ -15,7 +18,7 @@ const EditableTable: React.FC = () => {
               sortBy?: string;
               sortDirection?: "asc" | "desc";
        }
-
+       const currentUser = useUser();
        const [form] = Form.useForm();
        const [data, setData] = useState([] as User[]);
        const [editingKey, setEditingKey] = useState('');
@@ -26,9 +29,9 @@ const EditableTable: React.FC = () => {
               'email', 'firstName', 'lastName', 'role', 'isEmailVerified', 'operation'
        ]);
 
-
        useEffect(() => {
               fetchData(tableParams)
+
        }, []);
 
        const EditableCell: React.FC<{
@@ -49,6 +52,7 @@ const EditableTable: React.FC = () => {
               children,
               ...restProps
        }) => {
+                     const isEditable = canEdit(dataIndex, currentUser.user?.role ?? '');
                      let inputNode = <Input />;
                      if (inputType === 'select' && dataIndex === 'role') {
                             inputNode = (
@@ -75,7 +79,7 @@ const EditableTable: React.FC = () => {
 
                      return (
                             <td {...restProps}>
-                                   {editing ? (
+                                   {editing && isEditable ? (
                                           <Form.Item
                                                  name={dataIndex}
                                                  style={{ margin: 0 }}
@@ -103,7 +107,6 @@ const EditableTable: React.FC = () => {
        };
 
        const handleTableChange = (pagination: any, filters: any, sorter: any) => {
-              console.log(sorter.field, sorter.order, sorter.columnKey, sorter.column, sorter.order === 'ascend' ? 'asc' : 'desc')
               fetchData({ ...tableParams, perPage: pagination.pageSize, page: pagination.current, sortBy: sorter.order ? sorter.field : undefined, sortDirection: sorter.order ? (sorter.order === 'ascend' ? 'asc' : 'desc') : undefined });
        }
 
@@ -145,9 +148,7 @@ const EditableTable: React.FC = () => {
                      // return null;
               }
               finally {
-                     setTimeout(() => {
-                            setLoading(false);
-                     }, 1000);
+                     setLoading(false);
               }
        };
 
@@ -178,7 +179,7 @@ const EditableTable: React.FC = () => {
                      dataIndex: 'email',
                      editable: true,
                      fixed: 'left' as const,
-                     width: 200,
+                     width: 250,
                      // enable sorting
                      sorter: true,
               },
@@ -187,18 +188,21 @@ const EditableTable: React.FC = () => {
                      dataIndex: 'firstName',
                      editable: true,
                      sorter: true,
+                     width: 180,
               },
               {
                      title: 'Nom',
                      dataIndex: 'lastName',
                      editable: true,
                      sorter: true,
+                     width: 180,
               },
               {
                      title: 'Rôle',
                      dataIndex: 'role',
                      editable: true,
                      sorter: true,
+                     width: 180,
                      render: (role: User['role']) => role ? role.charAt(0).toUpperCase() + role.slice(1) : '',
               },
               {
@@ -206,19 +210,21 @@ const EditableTable: React.FC = () => {
                      dataIndex: 'country',
                      sorter: true,
                      editable: true,
+                     width: 100,
               },
               {
                      title: 'Ville',
                      dataIndex: 'city',
                      editable: true,
                      sorter: true,
+                     width: 150,
               },
-
               {
                      title: 'Code Postal',
                      dataIndex: 'postalCode',
                      editable: true,
                      sorter: true,
+                     width: 100,
               },
               {
                      title: 'Email vérifié',
@@ -227,6 +233,7 @@ const EditableTable: React.FC = () => {
                      align: 'center' as const,
                      render: (isEmailVerified: User['isEmailVerified']) => isEmailVerified ? <CheckCircleOutlined style={{ color: 'green' }} className='px-4' /> : <CloseCircleOutlined className='px-4' style={{ color: 'red' }} />,
                      sorter: true,
+                     width: 100,
               },
               {
                      title: 'Créé le',
@@ -235,7 +242,7 @@ const EditableTable: React.FC = () => {
                      render: (createdAt: User['createdAt']) =>
                             createdAt ? new Date(createdAt).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A',
                      sorter: true,
-
+                     width: 200,
               },
               {
                      title: 'Modifié le',
@@ -244,7 +251,7 @@ const EditableTable: React.FC = () => {
                      render: (updatedAt: User['updatedAt']) =>
                             updatedAt ? new Date(updatedAt).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A',
                      sorter: true,
-
+                     width: 200,
               },
        ].map(col => ({
               ...col,
@@ -256,7 +263,6 @@ const EditableTable: React.FC = () => {
                      editing: isEditing(record),
               }),
        }));
-
        columns.push({
               title: 'Actions',
               dataIndex: 'operation',
@@ -265,21 +271,40 @@ const EditableTable: React.FC = () => {
               render: (_, record: User) => {
                      const editable = isEditing(record);
                      return editable ? (
-                            <span>
+                            <div>
                                    <Popconfirm title="Sauvegarder ?" className='mr-2' onConfirm={() => save(record.id!)}>
                                           <Button type="primary" ghost>Enregistrer</Button>
                                    </Popconfirm>
-
                                    <Popconfirm title="Annuler ?" onConfirm={cancel}>
                                           <Button danger>Annuler</Button>
                                    </Popconfirm>
-                            </span>
+                            </div>
                      ) : (
-                            <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
-                                   Modifier
-                            </Typography.Link>
+                            <div className='space-x-8 flex flex-row items-center'>
+                                   <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
+                                          Modifier
+                                   </Typography.Link>
+
+                                   {(currentUser.user?.role === 'SuperAdministrateur' || currentUser.user?.role === 'Administrateur') && (
+                                          <Popconfirm title="Êtes-vous sûr de vouloir bannir cet utilisateur ?" onConfirm={() => {/* logique de suppression ici */ }}>
+                                                 <Tooltip title="bannir l'utilisateur">
+                                                        <Button type='text' disabled={editingKey !== ''} style={{ color: "orange" }} icon={<Iconify style={{ fontSize: '24px' }} icon="basil:user-block-solid" />}></Button>
+                                                 </Tooltip>
+                                          </Popconfirm>
+                                   )}
+
+                                   {currentUser.user?.role === 'SuperAdministrateur' && (
+                                          <Popconfirm title="Êtes-vous sûr de vouloir supprimer cet utilisateur ?" onConfirm={() => {/* logique de suppression ici */ }}>
+                                                 <Tooltip title="Supprimer l'utilisateur">
+                                                        <Button disabled={editingKey !== ''} danger icon={<DeleteOutlined />}></Button>
+                                                 </Tooltip>
+
+                                          </Popconfirm>
+                                   )}
+                            </div>
                      );
               },
+
        });
 
        const handleColumnChange = (value: string[]) => {
@@ -290,24 +315,45 @@ const EditableTable: React.FC = () => {
               return columns.filter(col => selectedColumns.includes(col.dataIndex as string));
        };
 
+       const canEdit = (dataIndex: string, role: string) => {
+              // Logique de permission pour l'édition
+              const editableByAdmin = ['email', 'firstName', 'lastName', 'isEmailVerified', 'city', 'postalCode', 'country'];
+              const editableBySuperAdmin = [...editableByAdmin, 'role'];
+
+              if (role === 'Administrateur') {
+                     return editableByAdmin.includes(dataIndex);
+              } else if (role === 'SuperAdministrateur') {
+                     return editableBySuperAdmin.includes(dataIndex);
+              }
+
+              return false;
+       };
+
        return (
               <div className='space-y-10'>
-                     <div className="flex flex-col">
-                            <span>Colonnes à afficher</span>
-                            <Select
-                                   maxTagCount={5}
-                                   mode="multiple"
-                                   allowClear
-                                   className='w-56' placeholder="Select columns"
-                                   defaultValue={selectedColumns.map(col => col as string)}
-                                   onChange={handleColumnChange}
-                            >
-                                   {columns.map(col => (
-                                          <Select.Option key={col.dataIndex as string} value={col.dataIndex as string}>
-                                                 {col.title as string}
-                                          </Select.Option>
-                                   ))}
-                            </Select>
+                     <div className="flex flex-row space-x-5 items-center">
+                            <div className="flex flex-col">
+                                   <Select
+                                          maxTagCount={5}
+                                          mode="multiple"
+                                          allowClear
+                                          className='w-56' placeholder="Select columns"
+                                          value={selectedColumns} // Utiliser value au lieu de defaultValue pour contrôler le composant
+                                          onChange={handleColumnChange}
+                                   >
+                                          {columns.map(col => (
+                                                 <Select.Option key={col.dataIndex as string} value={col.dataIndex as string}>
+                                                        {col.title as string}
+                                                 </Select.Option>
+                                          ))}
+                                   </Select>
+                            </div>
+                            <div>
+                                   <Button type="primary" onClick={() => setSelectedColumns(columns.map(col => col.dataIndex as string))}>Tout afficher</Button>
+                            </div>
+                            <div>
+                                   <Button type="primary" onClick={() => fetchData(tableParams)}>Rafraîchir</Button>
+                            </div>
                      </div>
                      <Form form={form} component={false}>
                             <Table
@@ -320,7 +366,7 @@ const EditableTable: React.FC = () => {
                                    dataSource={data}
                                    columns={getVisibleColumns()}
                                    rowKey="id"
-                                   pagination={{ onChange: cancel, showQuickJumper: true, total: tableParams.total, pageSize: tableParams.perPage, current: tableParams.page, showSizeChanger: true, pageSizeOptions: ['10', '20', '50', '100'], showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items` }}
+                                   pagination={{ onChange: cancel, showQuickJumper: true, total: tableParams.total, pageSize: tableParams.perPage, current: tableParams.page, showSizeChanger: true, pageSizeOptions: ['10', '20', '50', '100'], showTotal: (total, range) => `${range[0]}-${range[1]} sur ${total}` }}
                                    scroll={{ x: 'max-content', y: 500 }}
                             />
                      </Form>
