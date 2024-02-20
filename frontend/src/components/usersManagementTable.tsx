@@ -1,13 +1,16 @@
 "use client"
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import User from '@/types/user';
 import { ColumnType } from 'antd/es/table';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import axios, { AxiosError } from 'axios';
-import { Table, Input, InputNumber, Popconfirm, Form, Typography, Select, Button, message, Tooltip } from 'antd';
+import { Table, Input, InputNumber, Popconfirm, Form, Typography, Select, Button, message, Tooltip, Space } from 'antd';
 import { useUser } from '@/providers/userProvider';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Icon as Iconify } from '@iconify/react';
+import { SearchOutlined } from '@ant-design/icons';
+import { FilterDropdownProps } from 'antd/es/table/interface';
+import { RefObject } from 'react';
 
 const EditableTable: React.FC = () => {
        interface tableSettings {
@@ -17,6 +20,8 @@ const EditableTable: React.FC = () => {
               lastPage?: number;
               sortBy?: string;
               sortDirection?: "asc" | "desc";
+              searchColumn?: string;
+              searchValue?: string;
        }
        const currentUser = useUser();
        const [form] = Form.useForm();
@@ -28,10 +33,10 @@ const EditableTable: React.FC = () => {
        const [selectedColumns, setSelectedColumns] = useState<string[]>([
               'email', 'firstName', 'lastName', 'role', 'isEmailVerified', 'operation'
        ]);
+       const searchInput: RefObject<HTMLInputElement> = useRef<HTMLInputElement>(null);
 
        useEffect(() => {
               fetchData(tableParams)
-
        }, []);
 
        const EditableCell: React.FC<{
@@ -95,7 +100,6 @@ const EditableTable: React.FC = () => {
               };
 
        const edit = (record: User) => {
-              console.log("🚀 ~ edit ~ record:", record);
               form.setFieldsValue({ ...record, city: record.city, country: record.country, postalCode: record.postalCode });
               setEditingKey(record.id as string);
 
@@ -106,7 +110,49 @@ const EditableTable: React.FC = () => {
               }
        };
 
+       const getColumnSearchProps = (dataIndex: keyof User): ColumnType<User> => ({
+              filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }: FilterDropdownProps) => (
+                     <div style={{ padding: 8 }}>
+                            <Input
+                                   placeholder={`Search ${dataIndex}`}
+                                   value={selectedKeys[0]}
+                                   onChange={e => { setTableParams({ ...tableParams, searchColumn: dataIndex as string, searchValue: e.target.value }); setSelectedKeys([e.target.value]) }}
+                                   onPressEnter={() => { confirm() }}
+                                   style={{ marginBottom: 8, display: 'block' }}
+                            />
+                            <Space>
+                                   <Button
+                                          type="primary"
+                                          onClick={() => confirm()}
+                                          icon={<SearchOutlined />}
+                                          size="small"
+                                          style={{ width: 90 }}
+                                   >
+                                          Search
+                                   </Button>
+                                   <Button
+                                          onClick={() => { }}
+                                          size="small"
+                                          style={{ width: 90 }}
+                                   >
+                                          Reset
+                                   </Button>
+                            </Space>
+                     </div>
+              ),
+              filterIcon: (filtered: any) => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+              onFilter: (value, record) => {
+                     return true;
+              }, onFilterDropdownOpenChange: (visible: boolean) => {
+                     if (visible) {
+                            // Utiliser setTimeout pour assurer que le DOM est prêt
+                            setTimeout(() => searchInput.current?.select(), 100);
+                     }
+              },
+       });
+
        const handleTableChange = (pagination: any, filters: any, sorter: any) => {
+              console.log("table settings changed", tableParams)
               fetchData({ ...tableParams, perPage: pagination.pageSize, page: pagination.current, sortBy: sorter.order ? sorter.field : undefined, sortDirection: sorter.order ? (sorter.order === 'ascend' ? 'asc' : 'desc') : undefined });
        }
 
@@ -173,6 +219,74 @@ const EditableTable: React.FC = () => {
               }
        };
 
+       const deleteUser = async (id: string) => {
+              try {
+                     await axios({
+                            method: 'delete',
+                            baseURL: 'http://localhost/api', // * Might be changed depending on the backend implementation
+                            url: `/users/${id}`,
+                            withCredentials: true,
+                            responseType: 'json',
+                            timeout: 10000, // * Increased value because we had some timeout errors
+                     });
+                     message.success('Utilisateur supprimé avec succès');
+                     fetchData(tableParams);
+              } catch (error) { // TODO : Handle errors
+                     const axiosError = error as AxiosError;
+                     if (axiosError.response) {
+                            switch (axiosError.response.status) {
+                                   case 401:
+                                          message.error(`Vous n'êtes pas autorisé à effectuer cette action`);
+                                          break;
+                                   case 422:
+                                          message.error('Champs manquants ou invalides');
+                                          break;
+                                   case 409:
+                                          message.error(`Un compte avec cette adresse e-mail existe déjà`);
+                                   default:
+                                          message.error(`Échec de l'inscription`);
+                                          break;
+                            }
+                     } else {
+                            message.error('Erreur réseau ou serveur indisponible');
+                     }
+              }
+       }
+
+       const banUser = async (id: string) => {
+              try {
+                     await axios({
+                            method: 'post',
+                            baseURL: 'http://localhost/api', // * Might be changed depending on the backend implementation
+                            url: `/users/${id}/ban`,
+                            withCredentials: true,
+                            responseType: 'json',
+                            timeout: 10000, // * Increased value because we had some timeout errors
+                     });
+                     message.success('Utilisateur banni avec succès');
+                     fetchData(tableParams);
+              } catch (error) { // TODO : Handle errors
+                     const axiosError = error as AxiosError;
+                     if (axiosError.response) {
+                            switch (axiosError.response.status) {
+                                   case 401:
+                                          message.error(`Vous n'êtes pas autorisé à effectuer cette action`);
+                                          break;
+                                   case 422:
+                                          message.error('Champs manquants ou invalides');
+                                          break;
+                                   case 409:
+                                          message.error(`Un compte avec cette adresse e-mail existe déjà`);
+                                   default:
+                                          message.error(`Échec de l'inscription`);
+                                          break;
+                            }
+                     } else {
+                            message.error('Erreur réseau ou serveur indisponible');
+                     }
+              }
+       }
+
        const columns: ColumnType<User>[] = [
               {
                      title: 'Email',
@@ -182,6 +296,8 @@ const EditableTable: React.FC = () => {
                      width: 250,
                      // enable sorting
                      sorter: true,
+                     ...getColumnSearchProps('email'), // Ajouter la recherche à la colonne "Nom"
+
               },
               {
                      title: 'Prénom',
@@ -189,6 +305,7 @@ const EditableTable: React.FC = () => {
                      editable: true,
                      sorter: true,
                      width: 180,
+                     ...getColumnSearchProps('firstName'), // Ajouter la recherche à la colonne "Nom"
               },
               {
                      title: 'Nom',
@@ -196,6 +313,7 @@ const EditableTable: React.FC = () => {
                      editable: true,
                      sorter: true,
                      width: 180,
+                     ...getColumnSearchProps('lastName'), // Ajouter la recherche à la colonne "Nom"
               },
               {
                      title: 'Rôle',
@@ -204,6 +322,7 @@ const EditableTable: React.FC = () => {
                      sorter: true,
                      width: 180,
                      render: (role: User['role']) => role ? role.charAt(0).toUpperCase() + role.slice(1) : '',
+                     ...getColumnSearchProps('role'), // Ajouter la recherche à la colonne "Nom"
               },
               {
                      title: 'Pays',
@@ -211,6 +330,7 @@ const EditableTable: React.FC = () => {
                      sorter: true,
                      editable: true,
                      width: 100,
+                     ...getColumnSearchProps('country'), // Ajouter la recherche à la colonne "Nom"
               },
               {
                      title: 'Ville',
@@ -218,13 +338,16 @@ const EditableTable: React.FC = () => {
                      editable: true,
                      sorter: true,
                      width: 150,
+                     ...getColumnSearchProps('city'), // Ajouter la recherche à la colonne "Nom"
+
               },
               {
                      title: 'Code Postal',
                      dataIndex: 'postalCode',
                      editable: true,
                      sorter: true,
-                     width: 100,
+                     width: 150,
+                     ...getColumnSearchProps('postalCode'), // Ajouter la recherche à la colonne "Nom"
               },
               {
                      title: 'Email vérifié',
@@ -233,7 +356,7 @@ const EditableTable: React.FC = () => {
                      align: 'center' as const,
                      render: (isEmailVerified: User['isEmailVerified']) => isEmailVerified ? <CheckCircleOutlined style={{ color: 'green' }} className='px-4' /> : <CloseCircleOutlined className='px-4' style={{ color: 'red' }} />,
                      sorter: true,
-                     width: 100,
+                     width: 150,
               },
               {
                      title: 'Créé le',
@@ -286,17 +409,17 @@ const EditableTable: React.FC = () => {
                                    </Typography.Link>
 
                                    {(currentUser.user?.role === 'SuperAdministrateur' || currentUser.user?.role === 'Administrateur') && (
-                                          <Popconfirm title="Êtes-vous sûr de vouloir bannir cet utilisateur ?" onConfirm={() => {/* logique de suppression ici */ }}>
+                                          <Popconfirm title="Êtes-vous sûr de vouloir bannir cet utilisateur ?" onConfirm={() => { }}>
                                                  <Tooltip title="bannir l'utilisateur">
-                                                        <Button type='text' disabled={editingKey !== ''} style={{ color: "orange" }} icon={<Iconify style={{ fontSize: '24px' }} icon="basil:user-block-solid" />}></Button>
+                                                        <Button type='text' disabled={editingKey !== ''} style={{ color: "orange" }} icon={<Iconify style={{ fontSize: '20px' }} icon="basil:user-block-solid" />}></Button>
                                                  </Tooltip>
                                           </Popconfirm>
                                    )}
 
                                    {currentUser.user?.role === 'SuperAdministrateur' && (
-                                          <Popconfirm title="Êtes-vous sûr de vouloir supprimer cet utilisateur ?" onConfirm={() => {/* logique de suppression ici */ }}>
+                                          <Popconfirm title="Êtes-vous sûr de vouloir supprimer cet utilisateur ?" onConfirm={() => { deleteUser(record.id!) }}>
                                                  <Tooltip title="Supprimer l'utilisateur">
-                                                        <Button disabled={editingKey !== ''} danger icon={<DeleteOutlined />}></Button>
+                                                        <Button disabled={editingKey !== ''} danger type='text' icon={<DeleteOutlined />}></Button>
                                                  </Tooltip>
 
                                           </Popconfirm>
@@ -304,7 +427,6 @@ const EditableTable: React.FC = () => {
                             </div>
                      );
               },
-
        });
 
        const handleColumnChange = (value: string[]) => {
@@ -325,7 +447,6 @@ const EditableTable: React.FC = () => {
               } else if (role === 'SuperAdministrateur') {
                      return editableBySuperAdmin.includes(dataIndex);
               }
-
               return false;
        };
 
@@ -337,7 +458,7 @@ const EditableTable: React.FC = () => {
                                           maxTagCount={5}
                                           mode="multiple"
                                           allowClear
-                                          className='w-56' placeholder="Select columns"
+                                          className='w-76' placeholder="Select columns"
                                           value={selectedColumns} // Utiliser value au lieu de defaultValue pour contrôler le composant
                                           onChange={handleColumnChange}
                                    >
