@@ -57,6 +57,10 @@
                                     "properties": {
                                         "user": {
                                             "$ref": "#/components/schemas/User"
+                                        },
+                                        "remember": {
+                                            "type": "boolean",
+                                            "example": false
                                         }
                                     },
                                     "type": "object"
@@ -73,6 +77,22 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Les informations d'identification fournies ne sont pas correctes."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Account blocked",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Votre compte est bloqué."
                                         }
                                     },
                                     "type": "object"
@@ -635,7 +655,7 @@
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "User updated successfully"
+                                            "example": "Utilisateur mis à jour avec succés"
                                         },
                                         "user": {
                                             "properties": {
@@ -749,7 +769,7 @@
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "User deleted successfully."
+                                            "example": "Utilisateur supprimé avec succés."
                                         }
                                     },
                                     "type": "object"
@@ -765,7 +785,7 @@
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Unauthorized: Only a Super Administrator can delete a user."
+                                            "example": "Non autorisé : Seul un super administrateur peut supprimer un utilisateur."
                                         }
                                     },
                                     "type": "object"
@@ -781,7 +801,143 @@
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "User not found."
+                                            "example": "Utilisateur non trouvé."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/blockUser/{id}": {
+            "patch": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Block a user",
+                "description": "Blocks a user for 100 years. Administrators and Super Administrators cannot be blocked.",
+                "operationId": "blockUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "The ID of the user to block",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User has been banned for 100 years.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "L'utilisateur a été banni pour un durée de 100 ans."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Non autorisé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Utilisateur non trouvé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/unblockUser/{id}": {
+            "patch": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Unblock a user",
+                "description": "Unblocks a previously blocked user.",
+                "operationId": "unblockUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "The ID of the user to unblock",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User has been unblocked.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "L'utilisateur a été débanni"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found or not banned",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Utilisateur non trouvé ou pas banni"
                                         }
                                     },
                                     "type": "object"

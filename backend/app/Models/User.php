@@ -97,6 +97,10 @@ class User extends Authenticatable implements JWTSubject {
         return $this->belongsTo(PostalCode::class, 'id_postal_code');
     }
 
+    public function blockedUsers(){
+        return $this->hasMany(BlockedUser::class, 'id_user');
+    }
+
     public function getJWTIdentifier() {
         return $this->getKey();
     }

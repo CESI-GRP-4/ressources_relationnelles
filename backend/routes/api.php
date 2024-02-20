@@ -28,5 +28,7 @@ Route::group(['middleware' => ['jwt.auth']], function() {
         Route::get('users', [UserController::class, 'getUsers']);
         Route::post('editUser/{id}', [UserController::class, 'editUser']);
         Route::delete('deleteUser/{id}', [UserController::class, 'deleteUser']);
+        Route::patch('blockUser/{id}', [UserController::class, 'blockUser']);
+        Route::patch('unblockUser/{id}', [UserController::class, 'unblockUser']);
     });
 });

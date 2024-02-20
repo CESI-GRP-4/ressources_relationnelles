@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BlockedUser;
 use App\Models\City;
 use App\Models\Country;
 use App\Models\PostalCode;
@@ -248,7 +249,7 @@ class UserController extends Controller
      *         description="User updated successfully",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="message", type="string", example="User updated successfully"),
+     *             @OA\Property(property="message", type="string", example="Utilisateur mis à jour avec succés"),
      *             @OA\Property(
      *                 property="user",
      *                 type="object",
@@ -333,7 +334,7 @@ class UserController extends Controller
 
         $user->save();
 
-        return response()->json(['message' => 'Utilisateur mis à jour ', 'user' => Utils::getAllUserData($user)], 200);
+        return response()->json(['message' => 'Utilisateur mis à jour avec succés', 'user' => Utils::getAllUserData($user)], 200);
     }
 
     /**
@@ -357,21 +358,21 @@ class UserController extends Controller
      *         response=200,
      *         description="User deleted successfully",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="User deleted successfully.")
+     *             @OA\Property(property="message", type="string", example="Utilisateur supprimé avec succés.")
      *         )
      *     ),
      *     @OA\Response(
      *         response=403,
      *         description="Unauthorized: Only a Super Administrator can delete a user.",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Unauthorized: Only a Super Administrator can delete a user.")
+     *             @OA\Property(property="message", type="string", example="Non autorisé : Seul un super administrateur peut supprimer un utilisateur.")
      *         )
      *     ),
      *     @OA\Response(
      *         response=404,
      *         description="User not found.",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="User not found.")
+     *             @OA\Property(property="message", type="string", example="Utilisateur non trouvé.")
      *         )
      *     )
      * )
@@ -389,4 +390,111 @@ class UserController extends Controller
         return response()->json(['message' => 'Utilisateur supprimé avec succés.']);
     }
 
+    /**
+     * @OA\Patch(
+     *     path="/blockUser/{id}",
+     *     tags={"Users"},
+     *     summary="Block a user",
+     *     description="Blocks a user for 100 years. Administrators and Super Administrators cannot be blocked.",
+     *     operationId="blockUser",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="The ID of the user to block",
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User has been banned for 100 years.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="L'utilisateur a été banni pour un durée de 100 ans.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Non autorisé")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="User not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Utilisateur non trouvé")
+     *         )
+     *     )
+     * )
+     */
+    public function blockUser($id) {
+
+        $user = User::find($id);
+
+        if($user->role->name == 'SuperAdministrateur' || $user->role->name == 'Administrateur') {
+            return response()->json(['message' => 'Non autorisé'], 403);
+        }
+
+        if (!$user) {
+            return response()->json(['message' => 'Utilisateur non trouvé'], 404);
+        }
+
+        $blockedUser = new BlockedUser([
+            'start_date' => now(),
+            'end_date' => now()->addYears(100),
+            'id_user' => $id,
+        ]);
+        $blockedUser->save();
+
+        return response()->json(['message' => 'L\'utilisateur a été banni pour un durée de 100 ans.']);
+    }
+
+    /**
+     * @OA\Patch(
+     *     path="/unblockUser/{id}",
+     *     tags={"Users"},
+     *     summary="Unblock a user",
+     *     description="Unblocks a previously blocked user.",
+     *     operationId="unblockUser",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="The ID of the user to unblock",
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User has been unblocked.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="L'utilisateur a été débanni")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="User not found or not banned",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Utilisateur non trouvé ou pas banni")
+     *         )
+     *     )
+     * )
+     */
+    public function unblockUser($id) {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['message' => 'Utilisateur non trouvé'], 404);
+        }
+        $blockedUser = BlockedUser::where('id_user', $id)->first();
+        if (!$blockedUser) {
+            return response()->json(['message' => 'L\'utilisateur n\'est pas banni'], 404);
+        }
+        $blockedUser->delete();
+        return response()->json(['message' => 'L\'utilisateur a été débanni']);
+    }
 }

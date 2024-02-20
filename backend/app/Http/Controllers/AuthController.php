@@ -32,19 +32,27 @@ class AuthController extends Controller{
      *         ),
      *     ),
      *     @OA\Response(
-     *          response=200,
-     *          description="Successful login",
-     *          @OA\JsonContent(
-     *              @OA\Property(property="user", type="object", ref="#/components/schemas/User"),
-     *          )
-     *      ),
+     *         response=200,
+     *         description="Successful login",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="user", type="object", ref="#/components/schemas/User"),
+     *             @OA\Property(property="remember", type="boolean", example=false)
+     *         )
+     *     ),
      *     @OA\Response(
-     *          response=401,
-     *          description="Invalid credentials",
-     *          @OA\JsonContent(
-     *              @OA\Property(property="message", type="string", example="Les informations d'identification fournies ne sont pas correctes.")
-     *          )
-     *      ),
+     *         response=401,
+     *         description="Invalid credentials",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Les informations d'identification fournies ne sont pas correctes.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Account blocked",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Votre compte est bloqué.")
+     *         )
+     *     )
      * )
      */
     public function login(Request $request){
@@ -56,6 +64,12 @@ class AuthController extends Controller{
 
         if (!Auth::guard('api')->attempt($credentials)) {
             return response()->json(['message' => 'Les informations d\'identification fournies ne sont pas correctes.'], 401);
+        }
+
+        $user = User::where('email', $request->email)->first();
+        $isBlocked = $user->blockedUsers()->where('end_date', '>=', now())->exists();
+        if ($isBlocked) {
+            return response()->json(['message' => 'Votre compte est bloqué.'], 403);
         }
 
         // Generation of the JWT token
