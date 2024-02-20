@@ -128,9 +128,47 @@ class UserController extends Controller
 
          // Search on a specific column
          if ($request->filled('searchColumn') && $request->filled('searchValue')) {
-             $searchColumn = $fieldMapping[$request->searchColumn] ?? $request->searchColumn;
+             $searchColumn = $request->searchColumn; // Pas besoin de mappage ici, sauf si vos champs front-end ont des noms différents
              $searchValue = $request->searchValue;
-             $query->where($searchColumn, 'like', "%{$searchValue}%");
+
+             switch ($searchColumn) {
+                 case 'role':
+                     $query->whereHas('role', function ($q) use ($searchValue) {
+                         $q->where('name', 'like', "%{$searchValue}%");
+                     });
+                     break;
+
+                 case 'country':
+                     $query->whereHas('country', function ($q) use ($searchValue) {
+                         $q->where('name', 'like', "%{$searchValue}%");
+                     });
+                     break;
+
+                 case 'countryCode':
+                     $query->whereHas('country', function ($q) use ($searchValue) {
+                         $q->where('country_code', 'like', "%{$searchValue}%");
+                     });
+                     break;
+
+                 case 'city':
+                     $query->whereHas('city', function ($q) use ($searchValue) {
+                         $q->where('name', 'like', "%{$searchValue}%");
+                     });
+                     break;
+
+                 case 'postalCode':
+                     $query->whereHas('postalCode', function ($q) use ($searchValue) {
+                         $q->where('postal_code', 'like', "%{$searchValue}%");
+                     });
+                     break;
+
+                 default:
+                     if (array_key_exists($searchColumn, $fieldMapping)) {
+                         $dbColumn = $fieldMapping[$searchColumn];
+                         $query->where($dbColumn, 'like', "%{$searchValue}%");
+                     }
+                     break;
+             }
          }
 
          // Sorts
