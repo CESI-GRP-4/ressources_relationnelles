@@ -35,7 +35,7 @@ class AuthController extends Controller{
      *         response=200,
      *         description="Successful login",
      *         @OA\JsonContent(
-     *             @OA\Property(property="user", type="object", ref="#/components/schemas/User"),
+     *             @OA\Property(property="user", type="object", ref="#/components/schemas/UserData"),
      *             @OA\Property(property="remember", type="boolean", example=false)
      *         )
      *     ),
@@ -104,7 +104,7 @@ class AuthController extends Controller{
      *         response=200,
      *         description="Successful registration and user login",
      *         @OA\JsonContent(
-     *             @OA\Property(property="user", type="object", ref="#/components/schemas/User"),
+     *             @OA\Property(property="user", type="object", ref="#/components/schemas/UserData"),
      *         )
      *     ),
      *     @OA\Response(
@@ -201,7 +201,7 @@ class AuthController extends Controller{
      *          response=200,
      *          description="User is authenticated",
      *          @OA\JsonContent(
-     *              @OA\Property(property="user", type="object", ref="#/components/schemas/User"),
+     *              @OA\Property(property="user", type="object", ref="#/components/schemas/UserData"),
      *          )
      *      ),
      *     @OA\Response(

@@ -5,6 +5,21 @@ namespace App\Utils;
 use App\Models\Role;
 
 class Utils{
+
+    /**
+     * @OA\Schema(
+     *     schema="UserData",
+     *     type="object",
+     *     @OA\Property(property="firstName", type="string", description="User's first name"),
+     *     @OA\Property(property="lastName", type="string", description="User's last name"),
+     *     @OA\Property(property="email", type="string", format="email", description="User's email address"),
+     *     @OA\Property(property="imgURL", type="string", description="URL to the user's profile picture"),
+     *     @OA\Property(property="id", type="integer", description="User ID"),
+     *     @OA\Property(property="role", type="string", description="User's role name"),
+     *     @OA\Property(property="isEmailVerified", type="boolean", description="Indicates if the user's email is verified"),
+     *     @OA\Property(property="newUser", type="boolean", description="Indicates if the user is new")
+     * )
+     */
     public static function getUserData($user){
         // Default value for isNewUser is false
         $isNewUser = session('isNewUser', false);
@@ -21,6 +36,27 @@ class Utils{
         ];
     }
 
+    /**
+     * @OA\Schema(
+     *     schema="UserDetail",
+     *     type="object",
+     *     @OA\Property(property="id", type="integer"),
+     *     @OA\Property(property="email", type="string"),
+     *     @OA\Property(property="firstName", type="string"),
+     *     @OA\Property(property="lastName", type="string"),
+     *     @OA\Property(property="isEmailVerified", type="boolean"),
+     *     @OA\Property(property="imgURL", type="string"),
+     *     @OA\Property(property="city", type="string"),
+     *     @OA\Property(property="country", type="string"),
+     *     @OA\Property(property="countryCode", type="string"),
+     *     @OA\Property(property="postalCode", type="string"),
+     *     @OA\Property(property="role", type="string"),
+     *     @OA\Property(property="createdAt", type="string", format="date-time"),
+     *     @OA\Property(property="updatedAt", type="string", format="date-time"),
+     *     @OA\Property(property="isBlocked", type="boolean"),
+     *     @OA\Property(property="newUser", type="boolean")
+     * )
+     */
     public static function getAllUserData($user){
         // set false if not set
         $isNewUser = session('isNewUser', false);
@@ -38,6 +74,7 @@ class Utils{
             'role' => $user->role->name,
             'createdAt' => $user->created_at,
             'updatedAt' => $user->updated_at,
+            'isBlocked' => $user->getIsBlockedAttribute(),
             'newUser' => $isNewUser,
         ];
     }

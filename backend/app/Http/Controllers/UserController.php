@@ -19,12 +19,6 @@ class UserController extends Controller
     use FieldMappingTrait;
 
     /**
-     * Récupère une liste paginée des utilisateurs.
-     *
-     * @param Request $request
-     * @return JsonResponse
-     */
-    /**
      * @OA\Get(
      *     path="/users",
      *     tags={"Users"},
@@ -85,7 +79,7 @@ class UserController extends Controller
      *         description="Successful operation",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="users", type="array", @OA\Items(ref="#/components/schemas/User")),
+     *             @OA\Property(property="users", type="array", @OA\Items(ref="#/components/schemas/UserDetail")),
      *             @OA\Property(property="totalUsers", type="integer"),
      *             @OA\Property(property="perPage", type="integer"),
      *             @OA\Property(property="currentPage", type="integer"),
@@ -219,24 +213,7 @@ class UserController extends Controller
         $perPage = $request->input('perPage', 10);
         $usersPaginated = $query->paginate($perPage);
 
-        $usersTransformed = $usersPaginated->getCollection()->map(function ($user) {
-            return [
-                'id' => $user->id_user,
-                'email' => $user->email,
-                'firstName' => $user->first_name,
-                'lastName' => $user->last_name,
-                'role' => $user->role->name ?? null,
-                'isEmailVerified' => $user->is_verified,
-                'imgURL' => $user->path_picture,
-                'country' => $user->country->name ?? null,
-                'countryCode' => $user->country->country_code ?? null,
-                'city' => $user->city->name ?? null,
-                'postalCode' => $user->postalCode->postal_code ?? null,
-                'createdAt' => $user->created_at,
-                'updatedAt' => $user->updated_at,
-            ];
-        });
-
+        $usersTransformed = $usersPaginated->getCollection()->map([Utils::class, 'getAllUserData']);
         $usersPaginated->setCollection($usersTransformed);
 
         $response = [

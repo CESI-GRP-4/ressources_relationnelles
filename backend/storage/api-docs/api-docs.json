@@ -56,7 +56,7 @@
                                 "schema": {
                                     "properties": {
                                         "user": {
-                                            "$ref": "#/components/schemas/User"
+                                            "$ref": "#/components/schemas/UserData"
                                         },
                                         "remember": {
                                             "type": "boolean",
@@ -155,7 +155,7 @@
                                 "schema": {
                                     "properties": {
                                         "user": {
-                                            "$ref": "#/components/schemas/User"
+                                            "$ref": "#/components/schemas/UserData"
                                         }
                                     },
                                     "type": "object"
@@ -245,7 +245,7 @@
                                 "schema": {
                                     "properties": {
                                         "user": {
-                                            "$ref": "#/components/schemas/User"
+                                            "$ref": "#/components/schemas/UserData"
                                         }
                                     },
                                     "type": "object"
@@ -549,7 +549,7 @@
                                         "users": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/User"
+                                                "$ref": "#/components/schemas/UserDetail"
                                             }
                                         },
                                         "totalUsers": {
@@ -956,43 +956,92 @@
     },
     "components": {
         "schemas": {
-            "User": {
-                "title": "User",
-                "description": "Schéma d'un utilisateur",
+            "UserData": {
                 "properties": {
                     "firstName": {
-                        "type": "string",
-                        "example": "John"
+                        "description": "User's first name",
+                        "type": "string"
                     },
                     "lastName": {
-                        "type": "string",
-                        "example": "Doe"
+                        "description": "User's last name",
+                        "type": "string"
                     },
                     "email": {
+                        "description": "User's email address",
                         "type": "string",
-                        "format": "email",
-                        "example": "john.doe@example.com"
+                        "format": "email"
                     },
                     "imgURL": {
-                        "type": "string",
-                        "example": "http://example.com/image.jpg"
+                        "description": "URL to the user's profile picture",
+                        "type": "string"
                     },
                     "id": {
-                        "type": "integer",
-                        "format": "int64",
-                        "example": 1
+                        "description": "User ID",
+                        "type": "integer"
                     },
                     "role": {
-                        "type": "string",
-                        "example": "Administrateur"
+                        "description": "User's role name",
+                        "type": "string"
                     },
                     "isEmailVerified": {
-                        "type": "boolean",
-                        "example": true
+                        "description": "Indicates if the user's email is verified",
+                        "type": "boolean"
                     },
                     "newUser": {
-                        "type": "boolean",
-                        "example": false
+                        "description": "Indicates if the user is new",
+                        "type": "boolean"
+                    }
+                },
+                "type": "object"
+            },
+            "UserDetail": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "firstName": {
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "type": "string"
+                    },
+                    "isEmailVerified": {
+                        "type": "boolean"
+                    },
+                    "imgURL": {
+                        "type": "string"
+                    },
+                    "city": {
+                        "type": "string"
+                    },
+                    "country": {
+                        "type": "string"
+                    },
+                    "countryCode": {
+                        "type": "string"
+                    },
+                    "postalCode": {
+                        "type": "string"
+                    },
+                    "role": {
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "isBlocked": {
+                        "type": "boolean"
+                    },
+                    "newUser": {
+                        "type": "boolean"
                     }
                 },
                 "type": "object"

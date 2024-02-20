@@ -8,22 +8,6 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-/**
- * @OA\Schema(
- *     schema="User",
- *     type="object",
- *     title="User",
- *     description="Schéma d'un utilisateur",
- *     @OA\Property(property="firstName", type="string", example="John"),
- *     @OA\Property(property="lastName", type="string", example="Doe"),
- *     @OA\Property(property="email", type="string", format="email", example="john.doe@example.com"),
- *     @OA\Property(property="imgURL", type="string", example="http://example.com/image.jpg"),
- *     @OA\Property(property="id", type="integer", format="int64", example=1),
- *     @OA\Property(property="role", type="string", example="Administrateur"),
- *     @OA\Property(property="isEmailVerified", type="boolean", example=true),
- *     @OA\Property(property="newUser", type="boolean", example=false)
- * )
- */
 class User extends Authenticatable implements JWTSubject {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -101,6 +85,11 @@ class User extends Authenticatable implements JWTSubject {
         return $this->hasMany(BlockedUser::class, 'id_user');
     }
 
+    public function getIsBlockedAttribute(){
+        return $this->blockedUsers()->where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
+            ->exists();
+    }
     public function getJWTIdentifier() {
         return $this->getKey();
     }
