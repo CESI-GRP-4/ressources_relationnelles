@@ -11,6 +11,8 @@ import { Icon as Iconify } from '@iconify/react';
 import { SearchOutlined } from '@ant-design/icons';
 import { FilterDropdownProps } from 'antd/es/table/interface';
 import { RefObject } from 'react';
+import CreateUserForm from '@/components/createUserForm';
+import { ReloadOutlined } from '@ant-design/icons';
 
 const EditableTable: React.FC = () => {
        interface tableSettings {
@@ -62,10 +64,10 @@ const EditableTable: React.FC = () => {
                      if (inputType === 'select' && dataIndex === 'role') {
                             inputNode = (
                                    <Select>
-                                          <Select.Option value="user">User</Select.Option>
-                                          <Select.Option value="moderator">Moderator</Select.Option>
-                                          <Select.Option value="administrator">Administrator</Select.Option>
-                                          <Select.Option value="superadministrator">Super-administrator</Select.Option>
+                                          <Select.Option value="user">Utilisateur</Select.Option>
+                                          <Select.Option value="moderator">Modérateur</Select.Option>
+                                          <Select.Option value="administrator">Administrateur</Select.Option>
+                                          <Select.Option value="superadministrator">Super-administrateur</Select.Option>
                                    </Select>
                             );
                      } else if (inputType === 'number') {
@@ -452,13 +454,14 @@ const EditableTable: React.FC = () => {
 
        return (
               <div className='space-y-10'>
-                     <div className="flex flex-row space-x-5 items-center">
-                            <div className="flex flex-col">
+                     <div className="flex flex-row items-center justify-between">
+                            <div className="flex flex-row space-x-5 items-center">
                                    <Select
                                           maxTagCount={5}
                                           mode="multiple"
                                           allowClear
-                                          className='w-76' placeholder="Select columns"
+                                          className='w-72'
+                                          placeholder="Sélectionner les colonnes à afficher"
                                           value={selectedColumns} // Utiliser value au lieu de defaultValue pour contrôler le composant
                                           onChange={handleColumnChange}
                                    >
@@ -468,12 +471,16 @@ const EditableTable: React.FC = () => {
                                                  </Select.Option>
                                           ))}
                                    </Select>
+                                   <div>
+                                          <Button type="primary" onClick={() => setSelectedColumns(columns.map(col => col.dataIndex as string))}>Tout afficher</Button>
+                                   </div>
+                                   <div>
+                                          <Button type="primary" icon={<ReloadOutlined />} onClick={() => fetchData(tableParams)}>Rafraîchir</Button>
+                                   </div>
                             </div>
                             <div>
-                                   <Button type="primary" onClick={() => setSelectedColumns(columns.map(col => col.dataIndex as string))}>Tout afficher</Button>
-                            </div>
-                            <div>
-                                   <Button type="primary" onClick={() => fetchData(tableParams)}>Rafraîchir</Button>
+                                   {/* ajouter un utilisateur */}
+                                   <CreateUserForm></CreateUserForm>
                             </div>
                      </div>
                      <Form form={form} component={false}>
