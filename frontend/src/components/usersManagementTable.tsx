@@ -26,12 +26,12 @@ const EditableTable: React.FC = () => {
               searchValue?: string;
        }
        const currentUser = useUser();
-       const [form] = Form.useForm();
-       const [data, setData] = useState([] as User[]);
+       const [editUserForm] = Form.useForm();
+       const [tableData, setTableData] = useState([] as User[]);
        const [editingKey, setEditingKey] = useState('');
-       const isEditing = (record: User) => record.id === editingKey;
+       const isEditingUser = (record: User) => record.id === editingKey;
        const [tableParams, setTableParams] = useState({ perPage: 10, page: 1 } as tableSettings);
-       const [loading, setLoading] = useState(false);
+       const [isTableLoading, setIsTableLoading] = useState(false);
        const [selectedColumns, setSelectedColumns] = useState<string[]>([
               'email', 'firstName', 'lastName', 'role', 'isEmailVerified', 'operation'
        ]);
@@ -102,7 +102,7 @@ const EditableTable: React.FC = () => {
               };
 
        const edit = (record: User) => {
-              form.setFieldsValue({ ...record, city: record.city, country: record.country, postalCode: record.postalCode });
+              editUserForm.setFieldsValue({ ...record, city: record.city, country: record.country, postalCode: record.postalCode });
               setEditingKey(record.id as string);
 
               if (record.id !== undefined) {
@@ -159,7 +159,7 @@ const EditableTable: React.FC = () => {
        }
 
        const fetchData = async (tableParams: tableSettings) => {
-              setLoading(true);
+              setIsTableLoading(true);
               try {
                      const response = await axios({
                             method: 'get',
@@ -171,8 +171,9 @@ const EditableTable: React.FC = () => {
                             timeout: 10000, // * Increased value because we had some timeout errors
                      });
 
+                     console.log("response", response.data);
                      const userData: User[] = response.data.users;
-                     setData(userData);
+                     setTableData(userData);
                      setTableParams({ ...tableParams, total: response.data.totalUsers, lastPage: response.data.lastPage, perPage: tableParams.perPage, page: tableParams.page });
               } catch (error) { // TODO : Handle errors
                      const axiosError = error as AxiosError;
@@ -196,7 +197,7 @@ const EditableTable: React.FC = () => {
                      // return null;
               }
               finally {
-                     setLoading(false);
+                     setIsTableLoading(false);
               }
        };
 
@@ -206,14 +207,14 @@ const EditableTable: React.FC = () => {
 
        const save = async (key: React.Key) => {
               try {
-                     const row = await form.validateFields();
-                     const newData = [...data];
+                     const row = await editUserForm.validateFields();
+                     const newData = [...tableData];
                      const index = newData.findIndex(item => key === item.id);
 
                      if (index > -1) {
                             const item = newData[index];
                             newData.splice(index, 1, { ...item, ...row });
-                            setData(newData);
+                            setTableData(newData);
                             setEditingKey('');
                      }
               } catch (errInfo) {
@@ -356,7 +357,7 @@ const EditableTable: React.FC = () => {
                      dataIndex: 'isEmailVerified',
                      editable: true,
                      align: 'center' as const,
-                     render: (isEmailVerified: User['isEmailVerified']) => isEmailVerified ? <CheckCircleOutlined style={{ color: 'green' }} className='px-4' /> : <CloseCircleOutlined className='px-4' style={{ color: 'red' }} />,
+                     render: (isEmailVerified: User['isEmailVerified']) => isEmailVerified ? <CheckCircleOutlined style={{ fontSize: '20px', color: 'green' }} className='px-4' /> : <CloseCircleOutlined className='px-4' style={{ fontSize: '20px', color: 'red' }} />,
                      sorter: true,
                      width: 150,
               },
@@ -378,6 +379,17 @@ const EditableTable: React.FC = () => {
                      sorter: true,
                      width: 200,
               },
+              {
+                     title: 'Banni',
+                     dataIndex: 'isBlocked',
+                     editable: false,
+                     align: 'center' as const,
+                     render: (isBlocked: User['isBlocked']) => isBlocked ? <Iconify className='anticon' style={{ fontSize: '20px', color: "red" }} icon="fa6-solid:user-xmark" /> : <Iconify className='anticon' style={{ fontSize: '20px', color: "green" }} icon="fa6-solid:user-check" />,
+                     sorter: true,
+                     width: 150,
+              }
+              
+
        ].map(col => ({
               ...col,
               onCell: (record: User) => ({
@@ -385,7 +397,7 @@ const EditableTable: React.FC = () => {
                      inputType: col.dataIndex === 'isEmailVerified' ? 'boolean' : col.dataIndex === 'role' ? 'select' : 'text',
                      dataIndex: col.dataIndex,
                      title: col.title,
-                     editing: isEditing(record),
+                     editing: isEditingUser(record),
               }),
        }));
        columns.push({
@@ -394,7 +406,7 @@ const EditableTable: React.FC = () => {
               width: 250,
               fixed: 'right' as const,
               render: (_, record: User) => {
-                     const editable = isEditing(record);
+                     const editable = isEditingUser(record);
                      return editable ? (
                             <div>
                                    <Popconfirm title="Sauvegarder ?" className='mr-2' onConfirm={() => save(record.id!)}>
@@ -411,9 +423,9 @@ const EditableTable: React.FC = () => {
                                    </Typography.Link>
 
                                    {(currentUser.user?.role === 'SuperAdministrateur' || currentUser.user?.role === 'Administrateur') && (
-                                          <Popconfirm title="Êtes-vous sûr de vouloir bannir cet utilisateur ?" onConfirm={() => { }}>
-                                                 <Tooltip title="bannir l'utilisateur">
-                                                        <Button type='text' disabled={editingKey !== ''} style={{ color: "orange" }} icon={<Iconify style={{ fontSize: '20px' }} icon="basil:user-block-solid" />}></Button>
+                                          <Popconfirm title={record.isBlocked ? "Êtes-vous sûr de vouloir révoquer le bannissement de cet utilisateur ?" : "Êtes-vous sûr de vouloir bannir cet utilisateur ?"} onConfirm={() => { }}>
+                                                 <Tooltip title={record.isBlocked ? "Révoquer le bannissement" : "Bannir l'utilisateur"}>
+                                                 <Button type='text' disabled={editingKey !== ''} style={{ color: record.isBlocked ? "green" : "orange" }} icon={<Iconify style={{ fontSize: '26px' }} icon="basil:user-block-solid" />}></Button>
                                                  </Tooltip>
                                           </Popconfirm>
                                    )}
@@ -421,7 +433,7 @@ const EditableTable: React.FC = () => {
                                    {currentUser.user?.role === 'SuperAdministrateur' && (
                                           <Popconfirm title="Êtes-vous sûr de vouloir supprimer cet utilisateur ?" onConfirm={() => { deleteUser(record.id!) }}>
                                                  <Tooltip title="Supprimer l'utilisateur">
-                                                        <Button disabled={editingKey !== ''} danger type='text' icon={<DeleteOutlined />}></Button>
+                                                        <Button disabled={editingKey !== ''} danger type='text' icon={<DeleteOutlined style={{ fontSize: '22px' }}/>}></Button>
                                                  </Tooltip>
 
                                           </Popconfirm>
@@ -480,18 +492,18 @@ const EditableTable: React.FC = () => {
                             </div>
                             <div>
                                    {/* ajouter un utilisateur */}
-                                   <CreateUserForm></CreateUserForm>
+                                   {/* <CreateUserForm></CreateUserForm> */}
                             </div>
                      </div>
-                     <Form form={form} component={false}>
+                     <Form form={editUserForm} component={false}>
                             <Table
                                    onChange={handleTableChange}
                                    style={{ overflow: 'auto' }}
                                    sticky
-                                   loading={loading}
+                                   loading={isTableLoading}
                                    components={{ body: { cell: EditableCell } }}
                                    bordered
-                                   dataSource={data}
+                                   dataSource={tableData}
                                    columns={getVisibleColumns()}
                                    rowKey="id"
                                    pagination={{ onChange: cancel, showQuickJumper: true, total: tableParams.total, pageSize: tableParams.perPage, current: tableParams.page, showSizeChanger: true, pageSizeOptions: ['10', '20', '50', '100'], showTotal: (total, range) => `${range[0]}-${range[1]} sur ${total}` }}

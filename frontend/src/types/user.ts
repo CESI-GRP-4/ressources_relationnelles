@@ -12,4 +12,5 @@ export default interface User {
        postalCode?: string;
        createdAt?: string | number | Date;
        updatedAt?: string | number | Date;
+       isBlocked?: boolean;
 }
