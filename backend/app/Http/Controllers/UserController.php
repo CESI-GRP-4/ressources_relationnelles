@@ -9,7 +9,6 @@ use App\Models\PostalCode;
 use App\Models\Role;
 use App\Traits\FieldMappingTrait;
 use App\Utils\Utils;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
@@ -204,6 +203,13 @@ class UserController extends Controller
                          $query->select('users.*')
                              ->join('postal_codes', 'users.id_postal_code', '=', 'postal_codes.id_postal_code')
                              ->orderBy('postal_codes.postal_code', $sortDirection);
+                         break;
+
+                     case 'blocked':
+                         $query->leftJoin('blocked_users', 'users.id_user', '=', 'blocked_users.id_user')
+                             ->select('users.*', \DB::raw('ISNULL(blocked_users.end_date) as is_not_blocked'))
+                             ->orderBy('is_not_blocked', $sortDirection)
+                             ->orderBy('blocked_users.end_date', $sortDirection);
                          break;
                  }
             }
