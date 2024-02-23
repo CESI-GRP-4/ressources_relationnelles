@@ -13,6 +13,7 @@ import { FilterDropdownProps } from 'antd/es/table/interface';
 import { RefObject } from 'react';
 import CreateUserForm from '@/components/createUserForm';
 import { ReloadOutlined } from '@ant-design/icons';
+import BanUserButton from './user-management.tsx/banUserButton';
 
 const EditableTable: React.FC = () => {
        interface tableSettings {
@@ -423,11 +424,7 @@ const EditableTable: React.FC = () => {
                                    </Typography.Link>
 
                                    {(currentUser.user?.role === 'SuperAdministrateur' || currentUser.user?.role === 'Administrateur') && (
-                                          <Popconfirm title={record.isBlocked ? "Êtes-vous sûr de vouloir révoquer le bannissement de cet utilisateur ?" : "Êtes-vous sûr de vouloir bannir cet utilisateur ?"} onConfirm={() => { }}>
-                                                 <Tooltip title={record.isBlocked ? "Révoquer le bannissement" : "Bannir l'utilisateur"}>
-                                                 <Button type='text' disabled={editingKey !== ''} style={{ color: record.isBlocked ? "green" : "orange" }} icon={<Iconify style={{ fontSize: '26px' }} icon="basil:user-block-solid" />}></Button>
-                                                 </Tooltip>
-                                          </Popconfirm>
+                                          <BanUserButton user={record} isDisabled={editingKey !== ''}></BanUserButton>
                                    )}
 
                                    {currentUser.user?.role === 'SuperAdministrateur' && (
@@ -435,7 +432,6 @@ const EditableTable: React.FC = () => {
                                                  <Tooltip title="Supprimer l'utilisateur">
                                                         <Button disabled={editingKey !== ''} danger type='text' icon={<DeleteOutlined style={{ fontSize: '22px' }}/>}></Button>
                                                  </Tooltip>
-
                                           </Popconfirm>
                                    )}
                             </div>

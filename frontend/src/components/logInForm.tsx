@@ -43,7 +43,7 @@ export default function LogInForm() {
                                           message.error('Email ou mot de passe incorrect');
                                           break;
                                    case 403:
-                                          message.error('Compte non activé');
+                                          message.error('Compte banni');
                                           break;
                                    case 429:
                                           message.error('Trop de tentatives de connexion');
