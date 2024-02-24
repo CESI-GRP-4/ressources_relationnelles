@@ -16,8 +16,8 @@ export default function LogInForm() {
               password: string;
               remember: boolean;
        };
-  
-       async function handleLoginForm(form: LogInForm){
+
+       async function handleLoginForm(form: LogInForm) {
               setSignInLoading(true);
               try {
                      const logInResponse: AxiosResponse<LogInResponse> = await axios({

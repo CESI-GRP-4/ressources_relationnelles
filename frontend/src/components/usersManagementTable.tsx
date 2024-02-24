@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, Ref, forwardRef } from 'react';
 import User from '@/types/user';
 import { ColumnType } from 'antd/es/table';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
@@ -13,7 +13,8 @@ import { FilterDropdownProps } from 'antd/es/table/interface';
 import { RefObject } from 'react';
 import CreateUserForm from '@/components/createUserForm';
 import { ReloadOutlined } from '@ant-design/icons';
-import BanUserButton from './user-management.tsx/banUserButton';
+import BanUserButton from '@/components/user-management/banUserButton';
+import DeleteUserButton from "@/components/user-management/deleteUserButton";
 
 const EditableTable: React.FC = () => {
        interface tableSettings {
@@ -183,13 +184,14 @@ const EditableTable: React.FC = () => {
                                    case 401:
                                           message.error(`Vous n'êtes pas autorisé à effectuer cette action`);
                                           break;
+                                   case 403:
+                                          message.error(`Vous n'êtes pas autorisé à effectuer cette action`);
+                                          break;
                                    case 422:
                                           message.error('Champs manquants ou invalides');
                                           break;
-                                   case 409:
-                                          message.error(`Un compte avec cette adresse e-mail existe déjà`);
                                    default:
-                                          message.error(`Échec de l'inscription`);
+                                          message.error(`Erreur inconnue`);
                                           break;
                             }
                      } else {
@@ -224,71 +226,7 @@ const EditableTable: React.FC = () => {
        };
 
        const deleteUser = async (id: string) => {
-              try {
-                     await axios({
-                            method: 'delete',
-                            baseURL: 'http://localhost/api', // * Might be changed depending on the backend implementation
-                            url: `/users/${id}`,
-                            withCredentials: true,
-                            responseType: 'json',
-                            timeout: 10000, // * Increased value because we had some timeout errors
-                     });
-                     message.success('Utilisateur supprimé avec succès');
-                     fetchData(tableParams);
-              } catch (error) { // TODO : Handle errors
-                     const axiosError = error as AxiosError;
-                     if (axiosError.response) {
-                            switch (axiosError.response.status) {
-                                   case 401:
-                                          message.error(`Vous n'êtes pas autorisé à effectuer cette action`);
-                                          break;
-                                   case 422:
-                                          message.error('Champs manquants ou invalides');
-                                          break;
-                                   case 409:
-                                          message.error(`Un compte avec cette adresse e-mail existe déjà`);
-                                   default:
-                                          message.error(`Échec de l'inscription`);
-                                          break;
-                            }
-                     } else {
-                            message.error('Erreur réseau ou serveur indisponible');
-                     }
-              }
-       }
 
-       const banUser = async (id: string) => {
-              try {
-                     await axios({
-                            method: 'post',
-                            baseURL: 'http://localhost/api', // * Might be changed depending on the backend implementation
-                            url: `/users/${id}/ban`,
-                            withCredentials: true,
-                            responseType: 'json',
-                            timeout: 10000, // * Increased value because we had some timeout errors
-                     });
-                     message.success('Utilisateur banni avec succès');
-                     fetchData(tableParams);
-              } catch (error) { // TODO : Handle errors
-                     const axiosError = error as AxiosError;
-                     if (axiosError.response) {
-                            switch (axiosError.response.status) {
-                                   case 401:
-                                          message.error(`Vous n'êtes pas autorisé à effectuer cette action`);
-                                          break;
-                                   case 422:
-                                          message.error('Champs manquants ou invalides');
-                                          break;
-                                   case 409:
-                                          message.error(`Un compte avec cette adresse e-mail existe déjà`);
-                                   default:
-                                          message.error(`Échec de l'inscription`);
-                                          break;
-                            }
-                     } else {
-                            message.error('Erreur réseau ou serveur indisponible');
-                     }
-              }
        }
 
        const columns: ColumnType<User>[] = [
@@ -389,7 +327,7 @@ const EditableTable: React.FC = () => {
                      sorter: true,
                      width: 150,
               }
-              
+
 
        ].map(col => ({
               ...col,
@@ -428,11 +366,7 @@ const EditableTable: React.FC = () => {
                                    )}
 
                                    {currentUser.user?.role === 'SuperAdministrateur' && (
-                                          <Popconfirm title="Êtes-vous sûr de vouloir supprimer cet utilisateur ?" onConfirm={() => { deleteUser(record.id!) }}>
-                                                 <Tooltip title="Supprimer l'utilisateur">
-                                                        <Button disabled={editingKey !== ''} danger type='text' icon={<DeleteOutlined style={{ fontSize: '22px' }}/>}></Button>
-                                                 </Tooltip>
-                                          </Popconfirm>
+                                          <DeleteUserButton user={record} isDisabled={editingKey !== ''} onDelete={handleDeleteUser}></DeleteUserButton>
                                    )}
                             </div>
                      );
@@ -458,6 +392,12 @@ const EditableTable: React.FC = () => {
                      return editableBySuperAdmin.includes(dataIndex);
               }
               return false;
+       };
+
+       const handleDeleteUser = (userId: string) => {
+              const newData = tableData.filter(user => user.id !== userId);
+              setTableData(newData);
+              message.success('Utilisateur supprimé avec succès');
        };
 
        return (

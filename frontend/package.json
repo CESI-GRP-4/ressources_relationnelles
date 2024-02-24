@@ -10,7 +10,7 @@
        },
        "dependencies": {
               "@ant-design/nextjs-registry": "^1.0.0",
-              "antd": "^5.13.1",
+              "antd": "^5.14.2",
               "axios": "^1.6.5",
               "next": "14.0.4",
               "react": "^18",

@@ -10,7 +10,7 @@ export default function BanUserButton({ user, isDisabled }: { user: User, isDisa
        const { user: currentUser } = useUser();
        const [isBlocked, setIsBlocked] = useState(user.isBlocked);
 
-       if (!currentUser || (!currentUser.role || currentUser.role === 'Utilisateur') || user.role === 'Administrateur' || user.role === 'SuperAdministrateur') {
+       if (!currentUser || (!currentUser.role || currentUser.role === 'Utilisateur') || (user.id === currentUser.id) || user.role === 'Administrateur' || user.role === 'SuperAdministrateur') {
               isDisabled = true;
        }
        const handleBan = async () => {
@@ -19,10 +19,9 @@ export default function BanUserButton({ user, isDisabled }: { user: User, isDisa
                             method: 'patch',
                             baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
                             url: isBlocked ? `/unblockUser/${user.id}` : `/blockUser/${user.id}`,
-                            headers: {
-                                   'Content-Type': 'application/json',
-                            },
                             withCredentials: true,
+                            responseType: 'json',
+                            timeout: 10000, // * Increased value because we had some timeout errors
                      });
                      if (response.status === 200) {
                             const actionMessage = isBlocked ? "Bannissement révoqué" : "Utilisateur banni";
@@ -44,6 +43,12 @@ export default function BanUserButton({ user, isDisabled }: { user: User, isDisa
                                    case 404:
                                           message.error(`Utilisateur introuvable`);
                                           break;
+                                   case 429:
+                                          message.error('Trop de tentatives');
+                                          break;
+                                   case 422:
+                                          message.error('Erreur de validation des données');
+                                          break;
                                    default:
                                           message.error(`Erreur inconnue`);
                                           break;
@@ -64,7 +69,7 @@ export default function BanUserButton({ user, isDisabled }: { user: User, isDisa
                      onConfirm={handleBan}
               >
                      <Tooltip title={isBlocked ? "Révoquer le bannissement" : "Bannir l'utilisateur"}>
-                            <Button type='text' disabled={isDisabled} style={{ color: isBlocked ? "green" : "orange" }} icon={<Iconify style={{ fontSize: '26px' }} icon="basil:user-block-solid" />}></Button>
+                            <Button type='text' disabled={isDisabled} style={{ color: isDisabled ? "rgba(0, 0, 0, 0.25)" : isBlocked ? "green" : "orange" }} icon={<Iconify style={{ fontSize: '26px' }} icon="basil:user-block-solid" />}></Button>
                      </Tooltip>
               </Popconfirm>
        );
