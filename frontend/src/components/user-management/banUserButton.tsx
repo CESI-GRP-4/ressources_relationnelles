@@ -6,13 +6,14 @@ import { Icon as Iconify } from '@iconify/react';
 import axios, { AxiosError } from "axios";
 import { useUser } from '@/providers/userProvider';
 
-export default function BanUserButton({ user, isDisabled }: { user: User, isDisabled: boolean }) {
+export default function BanUserButton({ user, isDisabled, onBanChange }: { user: User, isDisabled: boolean, onBanChange: (userId: string, isBlocked: boolean) => void }) {
        const { user: currentUser } = useUser();
        const [isBlocked, setIsBlocked] = useState(user.isBlocked);
 
        if (!currentUser || (!currentUser.role || currentUser.role === 'Utilisateur') || (user.id === currentUser.id) || user.role === 'Administrateur' || user.role === 'SuperAdministrateur') {
               isDisabled = true;
        }
+
        const handleBan = async () => {
               try {
                      const response = await axios({
@@ -27,6 +28,7 @@ export default function BanUserButton({ user, isDisabled }: { user: User, isDisa
                             const actionMessage = isBlocked ? "Bannissement révoqué" : "Utilisateur banni";
                             message.success(actionMessage);
                             setIsBlocked(!isBlocked); // Update state to trigger re-render
+                            onBanChange(user.id ?? '', !isBlocked); // Invoke callback function with default value
                      }
               } catch (error) {
                      console.error('An error occurred:', error);

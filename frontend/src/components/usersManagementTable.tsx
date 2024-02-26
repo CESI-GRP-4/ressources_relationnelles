@@ -61,41 +61,42 @@ const EditableTable: React.FC = () => {
               children,
               ...restProps
        }) => {
+
+                     console.log("🚀 ~ children:", children);
+
                      const isEditable = canEdit(dataIndex, currentUser.user?.role ?? '');
                      let inputNode = <Input />;
                      if (inputType === 'select' && dataIndex === 'role') {
                             inputNode = (
-                                   <Select>
-                                          <Select.Option value="user">Utilisateur</Select.Option>
-                                          <Select.Option value="moderator">Modérateur</Select.Option>
-                                          <Select.Option value="administrator">Administrateur</Select.Option>
-                                          <Select.Option value="superadministrator">Super-administrateur</Select.Option>
+                                   <Select
+                                          disabled={record.id === currentUser.user?.id}
+                                   >
+                                          <Select.Option value="Utilisateur">Utilisateur</Select.Option>
+                                          <Select.Option value="Moderateur">Modérateur</Select.Option>
+                                          <Select.Option value="Administrateur">Administrateur</Select.Option>
+                                          <Select.Option value="SuperAdministrateur">Super-administrateur</Select.Option>
                                    </Select>
                             );
                      } else if (inputType === 'number') {
                             inputNode = <InputNumber />;
                      } else if (inputType === 'boolean') {
-                            inputNode = (
-                                   <Form.Item
-                                          name={dataIndex}
-                                          valuePropName="checked"
-                                          style={{ margin: 0 }}
-                                   >
-                                          <Input type="checkbox" />
-                                   </Form.Item>
-                            );
+                            inputNode = <Input type="checkbox" />;
                      }
 
                      return (
                             <td {...restProps}>
                                    {editing && isEditable ? (
-                                          <Form.Item
-                                                 name={dataIndex}
-                                                 style={{ margin: 0 }}
-                                                 rules={[{ required: true, message: `Please Input ${title}!` }]}
-                                          >
-                                                 {inputNode}
-                                          </Form.Item>
+                                          <div>
+                                                 <Form.Item
+                                                        valuePropName={inputType === 'boolean' ? 'checked' : 'value'}
+                                                        name={dataIndex}
+                                                        style={{ margin: 0 }}
+                                                        rules={inputType !== 'boolean' ? [{ required: true, message: `Please Input ${title}!` }] : undefined}
+                                                 >
+                                                        {inputNode}
+                                                 </Form.Item>
+                                          </div>
+
                                    ) : (
                                           children
                                    )}
@@ -208,26 +209,60 @@ const EditableTable: React.FC = () => {
               setEditingKey('');
        };
 
-       const save = async (key: React.Key) => {
+       const save = async (user: User) => {
+              setIsTableLoading(true);
+              console.log(editUserForm.getFieldsValue())
               try {
-                     const row = await editUserForm.validateFields();
-                     const newData = [...tableData];
-                     const index = newData.findIndex(item => key === item.id);
+                     const editUserResponse = await axios({
+                            method: 'post',
+                            baseURL: 'http://localhost/api', // * Might be changed depending on the backend implementation
+                            url: `/editUser/${user.id}`,
+                            withCredentials: true,
+                            responseType: 'json',
+                            data: editUserForm.getFieldsValue(),
+                            timeout: 10000, // * Increased value because we had some timeout errors
+                     });
 
-                     if (index > -1) {
+                     if (editUserResponse.status === 200) {
+                            message.success('Utilisateur modifié avec succès');
+                            // fetchData(tableParams);
+                            // update the table data
+                            const newData = [...tableData];
+                            const index = newData.findIndex(item => user.id === item.id);
                             const item = newData[index];
-                            newData.splice(index, 1, { ...item, ...row });
+                            newData.splice(index, 1, { ...item, ...editUserForm.getFieldsValue() });
                             setTableData(newData);
-                            setEditingKey('');
                      }
-              } catch (errInfo) {
-                     console.log('Validate Failed:', errInfo);
+              }
+              catch (error) {
+                     const axiosError = error as AxiosError;
+                     if (axiosError.response) {
+                            switch (axiosError.response.status) {
+                                   case 401:
+                                          message.error(`Vous n'êtes pas autorisé à effectuer cette action`);
+                                          break;
+                                   case 403:
+                                          message.error(`Vous n'êtes pas autorisé à effectuer cette action`);
+                                          break;
+                                   case 422:
+                                          message.error('Champs manquants ou invalides');
+                                          break;
+                                   case 429:
+                                          message.error('Trop de tentatives');
+                                          break;
+                                   default:
+                                          message.error(`Erreur inconnue`);
+                                          break;
+                            }
+                     } else {
+                            message.error('Erreur réseau ou serveur indisponible');
+                     }
+              }
+              finally {
+                     setEditingKey('');
+                     setIsTableLoading(false);
               }
        };
-
-       const deleteUser = async (id: string) => {
-
-       }
 
        const columns: ColumnType<User>[] = [
               {
@@ -326,9 +361,7 @@ const EditableTable: React.FC = () => {
                      render: (isBlocked: User['isBlocked']) => isBlocked ? <Iconify className='anticon' style={{ fontSize: '20px', color: "red" }} icon="fa6-solid:user-xmark" /> : <Iconify className='anticon' style={{ fontSize: '20px', color: "green" }} icon="fa6-solid:user-check" />,
                      sorter: true,
                      width: 150,
-              }
-
-
+              },
        ].map(col => ({
               ...col,
               onCell: (record: User) => ({
@@ -348,7 +381,7 @@ const EditableTable: React.FC = () => {
                      const editable = isEditingUser(record);
                      return editable ? (
                             <div>
-                                   <Popconfirm title="Sauvegarder ?" className='mr-2' onConfirm={() => save(record.id!)}>
+                                   <Popconfirm title="Sauvegarder ?" className='mr-2' onConfirm={() => save(record)}>
                                           <Button type="primary" ghost>Enregistrer</Button>
                                    </Popconfirm>
                                    <Popconfirm title="Annuler ?" onConfirm={cancel}>
@@ -362,7 +395,19 @@ const EditableTable: React.FC = () => {
                                    </Typography.Link>
 
                                    {(currentUser.user?.role === 'SuperAdministrateur' || currentUser.user?.role === 'Administrateur') && (
-                                          <BanUserButton user={record} isDisabled={editingKey !== ''}></BanUserButton>
+                                          <BanUserButton
+                                                 user={record}
+                                                 isDisabled={editingKey !== ''}
+                                                 onBanChange={(userId, isBlocked) => {
+                                                        const newData = [...tableData];
+                                                        const index = newData.findIndex(item => item.id === userId);
+                                                        if (index > -1) {
+                                                               const updatedUser = { ...newData[index], isBlocked };
+                                                               newData.splice(index, 1, updatedUser);
+                                                               setTableData(newData);
+                                                        }
+                                                 }}
+                                          ></BanUserButton>
                                    )}
 
                                    {currentUser.user?.role === 'SuperAdministrateur' && (
