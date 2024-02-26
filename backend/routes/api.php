@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CountryController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,6 +18,10 @@ Route::post('signup', [AuthController::class, 'signup']);
 Route::post('email/verify', [AuthController::class, 'verifyEmail'])->name('verify.email');
 Route::post('forgot-password/send-mail', [AuthController::class, 'forgotPassword'])->name('password.forgot');
 Route::post('forgot-password/reset', [AuthController::class, 'resetPassword']);
+
+
+Route::get('countries', [CountryController::class, 'getCountries']);
+
 
 
 

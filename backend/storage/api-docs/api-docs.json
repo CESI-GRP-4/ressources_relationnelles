@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "title": "(Re)Sources Relationnelles",
-        "version": "0.2"
+        "version": "0.22"
     },
     "servers": [
         {
@@ -459,6 +459,42 @@
                                 }
                             }
                         }
+                    }
+                }
+            }
+        },
+        "/countries": {
+            "get": {
+                "tags": [
+                    "Countries"
+                ],
+                "summary": "Get list of countries",
+                "description": "Returns a list of countries with their ID, name, and code.",
+                "operationId": "getCountries",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "countries": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Country"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found"
                     }
                 }
             }
@@ -956,6 +992,23 @@
     },
     "components": {
         "schemas": {
+            "Country": {
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the country",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "Name of the country",
+                        "type": "string"
+                    },
+                    "code": {
+                        "description": "Country code",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
             "UserData": {
                 "properties": {
                     "firstName": {
