@@ -337,9 +337,10 @@ class UserController extends Controller
         }
 
         if ($request->filled('country')) {
-            $country = Country::firstOrCreate(['name' => $request->country]);
+            $country = Country::where('name', $request->country)->firstOrFail();
             $user->id_country = $country->id_country;
         }
+
         if ($request->filled('city')) {
             $city = City::firstOrCreate(['name' => $request->city]);
             $user->id_city = $city->id_city;
