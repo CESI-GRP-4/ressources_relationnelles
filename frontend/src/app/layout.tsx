@@ -20,7 +20,6 @@ export default function RootLayout({
        return (
               <html lang="fr">
                      <body className={inter.className}>
-                            <div className='border border-l-pink-500 border-pink-500 p-4 m-4 w-fit'>Layout of the app</div>
                             <Providers>{children}</Providers>
                      </body>
               </html>
