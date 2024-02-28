@@ -1,8 +1,8 @@
 "use client"
-import React, { useEffect, useRef, useState, Ref, forwardRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import User from '@/types/user';
 import { ColumnType } from 'antd/es/table';
-import { CheckCircleOutlined, CloseCircleOutlined, SearchOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, CloseCircleOutlined, SearchOutlined, ReloadOutlined } from '@ant-design/icons';
 import axios, { AxiosError } from 'axios';
 import { Table, Input, InputNumber, Popconfirm, Form, Typography, Select, Button, message, Tooltip, Space } from 'antd';
 import { useUser } from '@/providers/userProvider';
@@ -58,10 +58,8 @@ const EditableTable: React.FC = () => {
               children,
               ...restProps
        }) => {
-
-                     console.log("🚀 ~ children:", children);
-
                      const isEditable = canEdit(dataIndex, currentUser.user?.role ?? '');
+                     console.log(dataIndex)
                      let inputNode = <Input />;
                      if (inputType === 'select' && dataIndex === 'role') {
                             inputNode = (
@@ -94,6 +92,22 @@ const EditableTable: React.FC = () => {
                                                  </Form.Item>
                                           </div>
 
+                                   ) : dataIndex ? (
+                                          <Tooltip
+                                                 title={
+                                                        dataIndex === 'isEmailVerified'
+                                                               ? record.isEmailVerified
+                                                                      ? "L'adresse email est vérifiée"
+                                                                      : "L'adresse email n'est pas vérifiée"
+                                                               : dataIndex === 'isBlocked'
+                                                                      ? record.isBlocked
+                                                                             ? "L'utilisateur est banni"
+                                                                             : "L'utilisateur n'est pas banni"
+                                                                      : children
+                                                 }
+                                          >
+                                                 {dataIndex === 'email' ? <Typography.Link>{children}</Typography.Link> : children}
+                                          </Tooltip>
                                    ) : (
                                           children
                                    )}
@@ -369,7 +383,7 @@ const EditableTable: React.FC = () => {
                      editing: isEditingUser(record),
               }),
 
-             
+
        }));
        columns.push({
               title: 'Actions',
