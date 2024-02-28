@@ -4,7 +4,7 @@ import User from '@/types/user';
 import { ColumnType } from 'antd/es/table';
 import { CheckCircleOutlined, CloseCircleOutlined, SearchOutlined, ReloadOutlined } from '@ant-design/icons';
 import axios, { AxiosError } from 'axios';
-import { Table, Input, InputNumber, Popconfirm, Form, Typography, Select, Button, message, Tooltip, Space } from 'antd';
+import { Table, Input, InputNumber, Popconfirm, Form, Typography, Select, Button, message, Tooltip, Space, Avatar } from 'antd';
 import { useUser } from '@/providers/userProvider';
 import { Icon as Iconify } from '@iconify/react';
 import { FilterDropdownProps } from 'antd/es/table/interface';
@@ -12,6 +12,7 @@ import { RefObject } from 'react';
 import CreateUserForm from '@/components/createUserForm';
 import BanUserButton from '@/components/user-management/banUserButton';
 import DeleteUserButton from "@/components/user-management/deleteUserButton";
+import Country from '@/types/country';
 
 const EditableTable: React.FC = () => {
        interface tableSettings {
@@ -35,10 +36,56 @@ const EditableTable: React.FC = () => {
               'email', 'firstName', 'lastName', 'role', 'isEmailVerified', 'operation'
        ]);
        const searchInput: RefObject<HTMLInputElement> = useRef<HTMLInputElement>(null);
+       const [countries, setCountries] = useState([] as Country[]);
 
        useEffect(() => {
               fetchData(tableParams)
+              getCountries();
        }, []);
+
+       const getCountries = async () => {
+              try {
+                     const response = await axios({
+                            method: 'get',
+                            baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
+                            url: '/countries',
+                            withCredentials: true,
+                            responseType: 'json',
+                            timeout: 10000,
+                     });
+
+                     if (response.status === 200) {
+                            console.log("response", response.data);
+                            setCountries(response.data.countries);
+                     }
+              } catch (error) {
+                     const axiosError = error as AxiosError;
+                     if (axiosError.response) {
+                            switch (axiosError.response.status) {
+                                   case 400:
+                                          message.error(`Requête invalide`);
+                                          break;
+                                   case 401:
+                                          message.error(`Vous n'êtes pas autorisé à effectuer cette action`);
+                                          break;
+                                   case 403:
+                                          message.error(`Vous n'êtes pas autorisé à effectuer cette action`);
+                                          break;
+                                   case 404:
+                                          message.error(`Ressource introuvable`);
+                                          break;
+                                   case 422:
+                                          message.error('Champs manquants ou invalides');
+                                          break;
+                                   default:
+                                          message.error(`Erreur inconnue`);
+                                          break;
+                            }
+                     } else {
+                            message.error('Erreur réseau ou serveur indisponible');
+                     }
+              }
+       };
 
        const EditableCell: React.FC<{
               editing: boolean;
@@ -59,11 +106,36 @@ const EditableTable: React.FC = () => {
               ...restProps
        }) => {
                      const isEditable = canEdit(dataIndex, currentUser.user?.role ?? '');
-                     console.log(dataIndex)
                      let inputNode = <Input />;
-                     if (inputType === 'select' && dataIndex === 'role') {
+                     if (inputType === 'select' && dataIndex === 'country') {
                             inputNode = (
                                    <Select
+                                          size='large'
+                                          showSearch
+                                          optionFilterProp="value"
+                                          filterOption={(input, option) => {
+                                                 return (option?.value?.toString() ?? '').toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                          }
+
+                                          }
+                                   >
+                                          {countries.map(country => (
+                                                 <Select.Option key={country.code} value={country.name}>
+                                                        <Space>
+                                                               {country && <Avatar alt={country?.name} src={`https://flagcdn.com/h240/${country.code.toLowerCase()}.png`} />}
+
+                                                               <span>{country.name}</span>
+                                                        </Space>
+                                                 </Select.Option>
+
+                                          ))}
+                                   </Select>
+                            );
+                     } else if (inputType === 'select' && dataIndex === 'role') {
+                            inputNode = (
+                                   <Select
+                                          showSearch
+
                                           disabled={record.id === currentUser.user?.id}
                                    >
                                           <Select.Option value="Utilisateur">Utilisateur</Select.Option>
@@ -81,40 +153,36 @@ const EditableTable: React.FC = () => {
                      return (
                             <td {...restProps}>
                                    {editing && isEditable ? (
-                                          <div>
-                                                 <Form.Item
-                                                        valuePropName={inputType === 'boolean' ? 'checked' : 'value'}
-                                                        name={dataIndex}
-                                                        style={{ margin: 0 }}
-                                                        rules={inputType !== 'boolean' ? [{ required: true, message: `Please Input ${title}!` }] : undefined}
-                                                 >
-                                                        {inputNode}
-                                                 </Form.Item>
-                                          </div>
-
-                                   ) : dataIndex ? (
-                                          <Tooltip
-                                                 title={
-                                                        dataIndex === 'isEmailVerified'
-                                                               ? record.isEmailVerified
-                                                                      ? "L'adresse email est vérifiée"
-                                                                      : "L'adresse email n'est pas vérifiée"
-                                                               : dataIndex === 'isBlocked'
-                                                                      ? record.isBlocked
-                                                                             ? "L'utilisateur est banni"
-                                                                             : "L'utilisateur n'est pas banni"
-                                                                      : children
-                                                 }
+                                          <Form.Item
+                                                 valuePropName={inputType === 'boolean' ? 'checked' : 'value'}
+                                                 name={dataIndex}
+                                                 style={{ margin: 0 }}
+                                                 rules={inputType !== 'boolean' ? [{ required: true, message: `Veuillez saisir une valeur dans le champs ${title}!` }] : undefined}
                                           >
-                                                 {dataIndex === 'email' ? <Typography.Link>{children}</Typography.Link> : children}
-                                          </Tooltip>
+                                                 {inputNode}
+                                          </Form.Item>
                                    ) : (
-                                          children
+                                          dataIndex ? (
+                                                 <Tooltip
+                                                        title={
+                                                               dataIndex === 'isEmailVerified'
+                                                                      ? record.isEmailVerified
+                                                                             ? "L'adresse email est vérifiée"
+                                                                             : "L'adresse email n'est pas vérifiée"
+                                                                      : dataIndex === 'isBlocked'
+                                                                             ? record.isBlocked
+                                                                                    ? "L'utilisateur est banni"
+                                                                                    : "L'utilisateur n'est pas banni"
+                                                                             : children
+                                                        }
+                                                 >
+                                                        {dataIndex === 'email' ? <Typography.Link>{children}</Typography.Link> : children}
+                                                 </Tooltip>
+                                          ) : children
                                    )}
                             </td>
                      );
               };
-
        const edit = (record: User) => {
               editUserForm.setFieldsValue({ ...record, city: record.city, country: record.country, postalCode: record.postalCode });
               setEditingKey(record.id as string);
@@ -225,7 +293,6 @@ const EditableTable: React.FC = () => {
 
        const save = async (user: User) => { // * Save the user. Data wont be fetched again, the table will be updated with the new data from the form if the request is successful
               setIsTableLoading(true);
-              console.log(editUserForm.getFieldsValue())
               try {
                      const editUserResponse = await axios({
                             method: 'post',
@@ -315,10 +382,19 @@ const EditableTable: React.FC = () => {
               {
                      title: 'Pays',
                      dataIndex: 'country',
-                     sorter: true,
                      editable: true,
-                     width: 100,
+                     sorter: true,
+                     width: 180,
                      ...getColumnSearchProps('country', 'Pays'),
+                     render: (text: string, record: User) => {
+                            const country = countries.find(country => country.name === text);
+                            return (
+                                   <Space>
+                                          {country && <Avatar alt={country?.name} src={`https://flagcdn.com/h240/${country.code.toLowerCase()}.png`} />}
+                                          <span>{text}</span>
+                                   </Space>
+                            );
+                     },
               },
               {
                      title: 'Ville',
@@ -377,7 +453,7 @@ const EditableTable: React.FC = () => {
               ...col,
               onCell: (record: User) => ({
                      record,
-                     inputType: col.dataIndex === 'isEmailVerified' ? 'boolean' : col.dataIndex === 'role' ? 'select' : 'text',
+                     inputType: col.dataIndex === 'isEmailVerified' ? 'boolean' : col.dataIndex === 'role' || col.dataIndex === 'country' ? 'select' : 'text',
                      dataIndex: col.dataIndex,
                      title: col.title as string,
                      editing: isEditingUser(record),
