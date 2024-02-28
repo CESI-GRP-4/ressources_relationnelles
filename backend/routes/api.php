@@ -17,7 +17,9 @@ Route::post('email/verify', [AuthController::class, 'verifyEmail'])->name('verif
 Route::post('forgot-password/send-mail', [AuthController::class, 'forgotPassword'])->name('password.forgot');
 Route::post('forgot-password/reset', [AuthController::class, 'resetPassword']);
 
-Route::group(['middleware' => ['jwt.auth','jwt.refresh']], function() {
+// Route::group(['middleware' => ['jwt.auth','jwt.refresh']], function() { // for refresh token. Commented for now as we got errors
+Route::group(['middleware' => ['jwt.auth']], function() {
+
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('verifyUser', [AuthController::class, 'verifyUser']);
 });
