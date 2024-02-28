@@ -2,17 +2,14 @@
 import React, { useEffect, useRef, useState, Ref, forwardRef } from 'react';
 import User from '@/types/user';
 import { ColumnType } from 'antd/es/table';
-import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, CloseCircleOutlined, SearchOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
 import axios, { AxiosError } from 'axios';
 import { Table, Input, InputNumber, Popconfirm, Form, Typography, Select, Button, message, Tooltip, Space } from 'antd';
 import { useUser } from '@/providers/userProvider';
-import { DeleteOutlined } from '@ant-design/icons';
 import { Icon as Iconify } from '@iconify/react';
-import { SearchOutlined } from '@ant-design/icons';
 import { FilterDropdownProps } from 'antd/es/table/interface';
 import { RefObject } from 'react';
 import CreateUserForm from '@/components/createUserForm';
-import { ReloadOutlined } from '@ant-design/icons';
 import BanUserButton from '@/components/user-management/banUserButton';
 import DeleteUserButton from "@/components/user-management/deleteUserButton";
 
@@ -115,11 +112,11 @@ const EditableTable: React.FC = () => {
               }
        };
 
-       const getColumnSearchProps = (dataIndex: keyof User): ColumnType<User> => ({
+       const getColumnSearchProps = (dataIndex: keyof User, title: string): ColumnType<User> => ({
               filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }: FilterDropdownProps) => (
                      <div style={{ padding: 8 }}>
                             <Input
-                                   placeholder={`Search ${dataIndex}`}
+                                   placeholder={`Rechercher un(e) ${title}`}
                                    value={selectedKeys[0]}
                                    onChange={e => { setTableParams({ ...tableParams, searchColumn: dataIndex as string, searchValue: e.target.value }); setSelectedKeys([e.target.value]) }}
                                    onPressEnter={() => { confirm() }}
@@ -131,16 +128,21 @@ const EditableTable: React.FC = () => {
                                           onClick={() => confirm()}
                                           icon={<SearchOutlined />}
                                           size="small"
-                                          style={{ width: 90 }}
                                    >
-                                          Search
+                                          Rechercher
                                    </Button>
                                    <Button
-                                          onClick={() => { }}
+                                          icon={<Iconify className='anticon' icon="mdi:filter-off-outline" />}
+
+                                          onClick={() => {
+                                                 setTableParams({ ...tableParams, searchColumn: undefined, searchValue: undefined });
+                                                 setSelectedKeys([]);
+                                                 clearFilters?.(); // Use optional chaining here
+                                                 fetchData({ ...tableParams, searchColumn: undefined, searchValue: undefined });
+                                          }}
                                           size="small"
-                                          style={{ width: 90 }}
                                    >
-                                          Reset
+                                          Réinitialiser
                                    </Button>
                             </Space>
                      </div>
@@ -150,7 +152,6 @@ const EditableTable: React.FC = () => {
                      return true;
               }, onFilterDropdownOpenChange: (visible: boolean) => {
                      if (visible) {
-                            // Utiliser setTimeout pour assurer que le DOM est prêt
                             setTimeout(() => searchInput.current?.select(), 100);
                      }
               },
@@ -178,7 +179,7 @@ const EditableTable: React.FC = () => {
                      const userData: User[] = response.data.users;
                      setTableData(userData);
                      setTableParams({ ...tableParams, total: response.data.totalUsers, lastPage: response.data.lastPage, perPage: tableParams.perPage, page: tableParams.page });
-              } catch (error) { // TODO : Handle errors
+              } catch (error) {
                      const axiosError = error as AxiosError;
                      if (axiosError.response) {
                             switch (axiosError.response.status) {
@@ -198,7 +199,6 @@ const EditableTable: React.FC = () => {
                      } else {
                             message.error('Erreur réseau ou serveur indisponible');
                      }
-                     // return null;
               }
               finally {
                      setIsTableLoading(false);
@@ -209,24 +209,22 @@ const EditableTable: React.FC = () => {
               setEditingKey('');
        };
 
-       const save = async (user: User) => {
+       const save = async (user: User) => { // * Save the user. Data wont be fetched again, the table will be updated with the new data from the form if the request is successful
               setIsTableLoading(true);
               console.log(editUserForm.getFieldsValue())
               try {
                      const editUserResponse = await axios({
                             method: 'post',
-                            baseURL: 'http://localhost/api', // * Might be changed depending on the backend implementation
+                            baseURL: 'http://localhost/api',
                             url: `/editUser/${user.id}`,
                             withCredentials: true,
                             responseType: 'json',
                             data: editUserForm.getFieldsValue(),
-                            timeout: 10000, // * Increased value because we had some timeout errors
+                            timeout: 10000,
                      });
 
                      if (editUserResponse.status === 200) {
                             message.success('Utilisateur modifié avec succès');
-                            // fetchData(tableParams);
-                            // update the table data
                             const newData = [...tableData];
                             const index = newData.findIndex(item => user.id === item.id);
                             const item = newData[index];
@@ -271,9 +269,8 @@ const EditableTable: React.FC = () => {
                      editable: true,
                      fixed: 'left' as const,
                      width: 250,
-                     // enable sorting
                      sorter: true,
-                     ...getColumnSearchProps('email'), // Ajouter la recherche à la colonne "Nom"
+                     ...getColumnSearchProps('email', 'Email'),
 
               },
               {
@@ -282,7 +279,7 @@ const EditableTable: React.FC = () => {
                      editable: true,
                      sorter: true,
                      width: 180,
-                     ...getColumnSearchProps('firstName'), // Ajouter la recherche à la colonne "Nom"
+                     ...getColumnSearchProps('firstName', 'Prénom'),
               },
               {
                      title: 'Nom',
@@ -290,7 +287,7 @@ const EditableTable: React.FC = () => {
                      editable: true,
                      sorter: true,
                      width: 180,
-                     ...getColumnSearchProps('lastName'), // Ajouter la recherche à la colonne "Nom"
+                     ...getColumnSearchProps('lastName', 'Nom'),
               },
               {
                      title: 'Rôle',
@@ -299,7 +296,7 @@ const EditableTable: React.FC = () => {
                      sorter: true,
                      width: 180,
                      render: (role: User['role']) => role ? role.charAt(0).toUpperCase() + role.slice(1) : '',
-                     ...getColumnSearchProps('role'), // Ajouter la recherche à la colonne "Nom"
+                     ...getColumnSearchProps('role', 'Rôle'),
               },
               {
                      title: 'Pays',
@@ -307,7 +304,7 @@ const EditableTable: React.FC = () => {
                      sorter: true,
                      editable: true,
                      width: 100,
-                     ...getColumnSearchProps('country'), // Ajouter la recherche à la colonne "Nom"
+                     ...getColumnSearchProps('country', 'Pays'),
               },
               {
                      title: 'Ville',
@@ -315,7 +312,7 @@ const EditableTable: React.FC = () => {
                      editable: true,
                      sorter: true,
                      width: 150,
-                     ...getColumnSearchProps('city'), // Ajouter la recherche à la colonne "Nom"
+                     ...getColumnSearchProps('city', 'Ville'),
 
               },
               {
@@ -324,7 +321,7 @@ const EditableTable: React.FC = () => {
                      editable: true,
                      sorter: true,
                      width: 150,
-                     ...getColumnSearchProps('postalCode'), // Ajouter la recherche à la colonne "Nom"
+                     ...getColumnSearchProps('postalCode', 'Code postal'),
               },
               {
                      title: 'Email vérifié',
@@ -427,7 +424,6 @@ const EditableTable: React.FC = () => {
        };
 
        const canEdit = (dataIndex: string, role: string) => {
-              // Logique de permission pour l'édition
               const editableByAdmin = ['email', 'firstName', 'lastName', 'isEmailVerified', 'city', 'postalCode', 'country'];
               const editableBySuperAdmin = [...editableByAdmin, 'role'];
 
@@ -455,7 +451,7 @@ const EditableTable: React.FC = () => {
                                           allowClear
                                           className='w-72'
                                           placeholder="Sélectionner les colonnes à afficher"
-                                          value={selectedColumns} // Utiliser value au lieu de defaultValue pour contrôler le composant
+                                          value={selectedColumns}
                                           onChange={handleColumnChange}
                                    >
                                           {columns.map(col => (
