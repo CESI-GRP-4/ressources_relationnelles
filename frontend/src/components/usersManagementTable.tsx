@@ -365,9 +365,11 @@ const EditableTable: React.FC = () => {
                      record,
                      inputType: col.dataIndex === 'isEmailVerified' ? 'boolean' : col.dataIndex === 'role' ? 'select' : 'text',
                      dataIndex: col.dataIndex,
-                     title: col.title,
+                     title: col.title as string,
                      editing: isEditingUser(record),
               }),
+
+             
        }));
        columns.push({
               title: 'Actions',
