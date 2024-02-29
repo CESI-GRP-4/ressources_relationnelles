@@ -80,11 +80,17 @@ class User extends Authenticatable implements JWTSubject {
         'is_verified' => 'boolean',
     ];
 
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'id_role');
+    }
     public function getJWTIdentifier() {
         return $this->getKey();
     }
 
     public function getJWTCustomClaims() {
-        return [];
+        return [
+            'role' => $this->role->name,
+        ];
     }
 }
