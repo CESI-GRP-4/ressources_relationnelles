@@ -13,6 +13,7 @@ import CreateUserForm from '@/components/createUserForm';
 import BanUserButton from '@/components/user-management/banUserButton';
 import DeleteUserButton from "@/components/user-management/deleteUserButton";
 import Country from '@/types/country';
+import SelectCountry, { fetchCountries } from './selectCountry';
 
 const EditableTable: React.FC = () => {
        interface tableSettings {
@@ -40,52 +41,16 @@ const EditableTable: React.FC = () => {
 
        useEffect(() => {
               fetchData(tableParams)
-              getCountries();
-       }, []);
 
-       const getCountries = async () => {
-              try {
-                     const response = await axios({
-                            method: 'get',
-                            baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
-                            url: '/countries',
-                            withCredentials: true,
-                            responseType: 'json',
-                            timeout: 10000,
-                     });
-
-                     if (response.status === 200) {
-                            console.log("response", response.data);
-                            setCountries(response.data.countries);
-                     }
-              } catch (error) {
-                     const axiosError = error as AxiosError;
-                     if (axiosError.response) {
-                            switch (axiosError.response.status) {
-                                   case 400:
-                                          message.error(`Requête invalide`);
-                                          break;
-                                   case 401:
-                                          message.error(`Vous n'êtes pas autorisé à effectuer cette action`);
-                                          break;
-                                   case 403:
-                                          message.error(`Vous n'êtes pas autorisé à effectuer cette action`);
-                                          break;
-                                   case 404:
-                                          message.error(`Ressource introuvable`);
-                                          break;
-                                   case 422:
-                                          message.error('Champs manquants ou invalides');
-                                          break;
-                                   default:
-                                          message.error(`Erreur inconnue`);
-                                          break;
-                            }
+              fetchCountries().then(fetchedCountries => {
+                     if (fetchedCountries) {
+                            setCountries(fetchedCountries);
                      } else {
                             message.error('Erreur réseau ou serveur indisponible');
+                            setCountries([]);
                      }
-              }
-       };
+              });
+       }, []);
 
        const EditableCell: React.FC<{
               editing: boolean;
@@ -109,33 +74,15 @@ const EditableTable: React.FC = () => {
                      let inputNode = <Input />;
                      if (inputType === 'select' && dataIndex === 'country') {
                             inputNode = (
-                                   <Select
-                                          size='large'
-                                          showSearch
-                                          optionFilterProp="value"
-                                          filterOption={(input, option) => {
-                                                 return (option?.value?.toString() ?? '').toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                          }
-
-                                          }
-                                   >
-                                          {countries.map(country => (
-                                                 <Select.Option key={country.code} value={country.name}>
-                                                        <Space>
-                                                               {country && <Avatar alt={country?.name} src={`https://flagcdn.com/h240/${country.code.toLowerCase()}.png`} />}
-
-                                                               <span>{country.name}</span>
-                                                        </Space>
-                                                 </Select.Option>
-
-                                          ))}
-                                   </Select>
+                                   <SelectCountry
+                                          value={record.country}
+                                          onChange={(value: string) => editUserForm.setFieldsValue({ country: value })}
+                                   />
                             );
                      } else if (inputType === 'select' && dataIndex === 'role') {
                             inputNode = (
                                    <Select
                                           showSearch
-
                                           disabled={record.id === currentUser.user?.id}
                                    >
                                           <Select.Option value="Utilisateur">Utilisateur</Select.Option>
@@ -169,8 +116,8 @@ const EditableTable: React.FC = () => {
                                                                       ? record.isEmailVerified
                                                                              ? "L'adresse email est vérifiée"
                                                                              : "L'adresse email n'est pas vérifiée"
-                                                                      : dataIndex === 'isBlocked'
-                                                                             ? record.isBlocked
+                                                                      : dataIndex === 'isBanned'
+                                                                             ? record.isBanned
                                                                                     ? "L'utilisateur est banni"
                                                                                     : "L'utilisateur n'est pas banni"
                                                                              : children
@@ -442,10 +389,10 @@ const EditableTable: React.FC = () => {
               },
               {
                      title: 'Banni',
-                     dataIndex: 'isBlocked',
+                     dataIndex: 'isBanned',
                      editable: false,
                      align: 'center' as const,
-                     render: (isBlocked: User['isBlocked']) => isBlocked ? <Iconify className='anticon' style={{ fontSize: '20px', color: "red" }} icon="fa6-solid:user-xmark" /> : <Iconify className='anticon' style={{ fontSize: '20px', color: "green" }} icon="fa6-solid:user-check" />,
+                     render: (isBanned: User['isBanned']) => isBanned ? <Iconify className='anticon' style={{ fontSize: '20px', color: "red" }} icon="fa6-solid:user-xmark" /> : <Iconify className='anticon' style={{ fontSize: '20px', color: "green" }} icon="fa6-solid:user-check" />,
                      sorter: true,
                      width: 150,
               },
@@ -487,11 +434,11 @@ const EditableTable: React.FC = () => {
                                           <BanUserButton
                                                  user={record}
                                                  isDisabled={editingKey !== ''}
-                                                 onBanChange={(userId, isBlocked) => {
+                                                 onBanChange={(userId, isBanned) => {
                                                         const newData = [...tableData];
                                                         const index = newData.findIndex(item => item.id === userId);
                                                         if (index > -1) {
-                                                               const updatedUser = { ...newData[index], isBlocked };
+                                                               const updatedUser = { ...newData[index], isBanned };
                                                                newData.splice(index, 1, updatedUser);
                                                                setTableData(newData);
                                                         }
@@ -528,9 +475,8 @@ const EditableTable: React.FC = () => {
        };
 
        const handleDeleteUser = (userId: string) => {
-              const newData = tableData.filter(user => user.id !== userId);
-              setTableData(newData);
               message.success('Utilisateur supprimé avec succès');
+              fetchData(tableParams);
        };
 
        return (

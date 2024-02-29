@@ -5,12 +5,10 @@ import User from '@/types/user';
 
 export default function DeleteUserButton({ user, isDisabled, onDelete }: { user: User | null, isDisabled: boolean, onDelete: (userId: string) => void }) {
        // if user is a super admin, disable the button
-       
        if (user?.role === 'SuperAdministrateur') {
               isDisabled = true;
        }
        const deleteUser = async () => {
-
               try {
                      const deleteUserResponse = await axios({
                             method: 'delete',

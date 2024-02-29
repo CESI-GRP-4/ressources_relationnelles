@@ -6,9 +6,9 @@ import { Icon as Iconify } from '@iconify/react';
 import axios, { AxiosError } from "axios";
 import { useUser } from '@/providers/userProvider';
 
-export default function BanUserButton({ user, isDisabled, onBanChange }: { user: User, isDisabled: boolean, onBanChange: (userId: string, isBlocked: boolean) => void }) {
+export default function BanUserButton({ user, isDisabled, onBanChange }: { user: User, isDisabled: boolean, onBanChange: (userId: string, isBanned: boolean) => void }) {
        const { user: currentUser } = useUser();
-       const [isBlocked, setIsBlocked] = useState(user.isBlocked);
+       const [isBanned, setisBanned] = useState(user.isBanned);
 
        if (!currentUser || (!currentUser.role || currentUser.role === 'Utilisateur') || (user.id === currentUser.id) || user.role === 'Administrateur' || user.role === 'SuperAdministrateur') {
               isDisabled = true;
@@ -19,16 +19,16 @@ export default function BanUserButton({ user, isDisabled, onBanChange }: { user:
                      const response = await axios({
                             method: 'patch',
                             baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
-                            url: isBlocked ? `/unblockUser/${user.id}` : `/blockUser/${user.id}`,
+                            url: isBanned ? `/unbanUser/${user.id}` : `/banUser/${user.id}`,
                             withCredentials: true,
                             responseType: 'json',
                             timeout: 10000, // * Increased value because we had some timeout errors
                      });
                      if (response.status === 200) {
-                            const actionMessage = isBlocked ? "Bannissement révoqué" : "Utilisateur banni";
+                            const actionMessage = isBanned ? "Bannissement révoqué" : "Utilisateur banni";
                             message.success(actionMessage);
-                            setIsBlocked(!isBlocked); // Update state to trigger re-render
-                            onBanChange(user.id ?? '', !isBlocked); // Invoke callback function with default value
+                            setisBanned(!isBanned); // Update state to trigger re-render
+                            onBanChange(user.id ?? '', !isBanned); // Invoke callback function with default value
                      }
               } catch (error) {
                      console.error('An error occurred:', error);
@@ -62,16 +62,16 @@ export default function BanUserButton({ user, isDisabled, onBanChange }: { user:
        };
 
        useEffect(() => {
-              setIsBlocked(user.isBlocked);
-       }, [user.isBlocked]);
+              setisBanned(user.isBanned);
+       }, [user.isBanned]);
 
        return (
               <Popconfirm
-                     title={isBlocked ? "Êtes-vous sûr de vouloir révoquer le bannissement de cet utilisateur ?" : "Êtes-vous sûr de vouloir bannir cet utilisateur ?"}
+                     title={isBanned ? "Êtes-vous sûr de vouloir révoquer le bannissement de cet utilisateur ?" : "Êtes-vous sûr de vouloir bannir cet utilisateur ?"}
                      onConfirm={handleBan}
               >
-                     <Tooltip title={isBlocked ? "Révoquer le bannissement" : "Bannir l'utilisateur"}>
-                            <Button type='text' disabled={isDisabled} style={{ color: isDisabled ? "rgba(0, 0, 0, 0.25)" : isBlocked ? "green" : "orange" }} icon={<Iconify style={{ fontSize: '26px' }} icon="basil:user-block-solid" />}></Button>
+                     <Tooltip title={isBanned ? "Révoquer le bannissement" : "Bannir l'utilisateur"}>
+                            <Button type='text' disabled={isDisabled} style={{ color: isDisabled ? "rgba(0, 0, 0, 0.25)" : isBanned ? "green" : "orange" }} icon={<Iconify style={{ fontSize: '26px' }} icon="basil:user-block-solid" />}></Button>
                      </Tooltip>
               </Popconfirm>
        );
