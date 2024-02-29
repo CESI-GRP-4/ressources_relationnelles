@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BlockedUser;
 use App\Models\City;
 use App\Models\Country;
 use App\Models\PostalCode;
@@ -170,7 +169,7 @@ class UserController extends Controller
 
          if (!empty($sortBy)) {
              $mappedSortBy = $fieldMapping[$sortBy] ?? $sortBy;
-             if (in_array($mappedSortBy, ['first_name', 'last_name', 'email', 'id_user', 'is_verified', 'path_picture', 'created_at', 'updated_at'])) {
+             if (in_array($mappedSortBy, ['first_name', 'last_name', 'email', 'id_user', 'is_verified', 'is_banned', 'path_picture', 'created_at', 'updated_at'])) {
                  $query->orderBy($mappedSortBy, $sortDirection);
              } else {
                  switch ($sortBy) {
@@ -205,12 +204,6 @@ class UserController extends Controller
                              ->orderBy('postal_codes.postal_code', $sortDirection);
                          break;
 
-                     case 'blocked':
-                         $query->leftJoin('blocked_users', 'users.id_user', '=', 'blocked_users.id_user')
-                             ->select('users.*', \DB::raw('ISNULL(blocked_users.end_date) as is_not_blocked'))
-                             ->orderBy('is_not_blocked', $sortDirection)
-                             ->orderBy('blocked_users.end_date', $sortDirection);
-                         break;
                  }
             }
         }
@@ -414,26 +407,26 @@ class UserController extends Controller
 
     /**
      * @OA\Patch(
-     *     path="/blockUser/{id}",
+     *     path="/banUser/{id}",
      *     tags={"Users"},
-     *     summary="Block a user",
-     *     description="Blocks a user for 100 years. Administrators and Super Administrators cannot be blocked.",
-     *     operationId="blockUser",
+     *     summary="Ban a user",
+     *     description="Ban a user . Administrators and Super Administrators cannot be ban.",
+     *     operationId="banUser",
      *     security={{ "BearerAuth": {} }},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="The ID of the user to block",
+     *         description="The ID of the user to ban",
      *         @OA\Schema(
      *             type="integer"
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="User has been banned for 100 years.",
+     *         description="User has been banned.",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="L'utilisateur a été banni pour un durée de 100 ans.")
+     *             @OA\Property(property="message", type="string", example="L'utilisateur a été banni.")
      *         )
      *     ),
      *     @OA\Response(
@@ -452,7 +445,7 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function blockUser($id) {
+    public function banUser($id) {
 
         $user = User::find($id);
 
@@ -464,36 +457,31 @@ class UserController extends Controller
             return response()->json(['message' => 'Utilisateur non trouvé'], 404);
         }
 
-        $blockedUser = new BlockedUser([
-            'start_date' => now(),
-            'end_date' => now()->addYears(100),
-            'id_user' => $id,
-        ]);
-        $blockedUser->save();
+        $user->is_banned = true;
 
-        return response()->json(['message' => 'L\'utilisateur a été banni pour un durée de 100 ans.']);
+        return response()->json(['message' => 'L\'utilisateur a été banni.']);
     }
 
     /**
      * @OA\Patch(
-     *     path="/unblockUser/{id}",
+     *     path="/unbanUser/{id}",
      *     tags={"Users"},
-     *     summary="Unblock a user",
-     *     description="Unblocks a previously blocked user.",
-     *     operationId="unblockUser",
+     *     summary="Unban a user",
+     *     description="Unban a previously unban user.",
+     *     operationId="unbanUser",
      *     security={{ "BearerAuth": {} }},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="The ID of the user to unblock",
+     *         description="The ID of the user to unban",
      *         @OA\Schema(
      *             type="integer"
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="User has been unblocked.",
+     *         description="User has been unban.",
      *         @OA\JsonContent(
      *             @OA\Property(property="message", type="string", example="L'utilisateur a été débanni")
      *         )
@@ -507,16 +495,18 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function unblockUser($id) {
+    public function unbanUser($id) {
         $user = User::find($id);
         if (!$user) {
             return response()->json(['message' => 'Utilisateur non trouvé'], 404);
         }
-        $blockedUser = BlockedUser::where('id_user', $id)->first();
-        if (!$blockedUser) {
+
+
+        if (!$user->is_banned) {
             return response()->json(['message' => 'L\'utilisateur n\'est pas banni'], 404);
         }
-        $blockedUser->delete();
+
+        $user->is_banned = false;
         return response()->json(['message' => 'L\'utilisateur a été débanni']);
     }
 }

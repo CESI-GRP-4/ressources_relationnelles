@@ -51,7 +51,7 @@ class Utils{
      *     @OA\Property(property="role", type="string"),
      *     @OA\Property(property="createdAt", type="string", format="date-time"),
      *     @OA\Property(property="updatedAt", type="string", format="date-time"),
-     *     @OA\Property(property="isBlocked", type="boolean"),
+     *     @OA\Property(property="isBanned", type="boolean"),
      *     @OA\Property(property="newUser", type="boolean")
      * )
      */
@@ -68,7 +68,7 @@ class Utils{
             'role' => $user->role->name,
             'createdAt' => $user->created_at,
             'updatedAt' => $user->updated_at,
-            'isBlocked' => $user->getIsBlockedAttribute(),
+            'isBanned' => $user->is_banned,
             'newUser' => $isNewUser,
         ];
 

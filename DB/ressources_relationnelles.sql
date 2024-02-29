@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : mar. 13 fév. 2024 à 21:27
+-- Généré le : jeu. 29 fév. 2024 à 22:11
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -147,7 +147,8 @@ CREATE TABLE `blocked_users` (
 --
 
 INSERT INTO `blocked_users` (`id_blocked`, `start_date`, `end_date`, `id_user`) VALUES
-(1, '2024-01-18 22:38:55', '2024-01-19 22:38:55', 1);
+(6, '2024-02-22 20:15:30', '2124-02-22 20:15:30', 31),
+(8, '2024-02-26 20:50:48', '2124-02-26 20:50:48', 25);
 
 -- --------------------------------------------------------
 
@@ -186,7 +187,8 @@ CREATE TABLE `cities` (
 INSERT INTO `cities` (`id_city`, `name`) VALUES
 (1, 'Paris'),
 (2, 'New York'),
-(3, 'Tokyo');
+(3, 'Tokyo'),
+(7, 'Pariss');
 
 -- --------------------------------------------------------
 
@@ -683,7 +685,8 @@ CREATE TABLE `users` (
   `first_name` varchar(100) NOT NULL,
   `last_name` varchar(100) DEFAULT NULL,
   `password` varchar(65) NOT NULL,
-  `is_verified` tinyint(1) DEFAULT NULL,
+  `is_verified` tinyint(1) DEFAULT 0,
+  `is_banned` tinyint(1) DEFAULT 0,
   `path_picture` varchar(255) DEFAULT NULL,
   `id_city` int(11) DEFAULT NULL,
   `id_postal_code` int(11) DEFAULT NULL,
@@ -699,18 +702,21 @@ CREATE TABLE `users` (
 -- Déchargement des données de la table `users`
 --
 
-INSERT INTO `users` (`id_user`, `email`, `first_name`, `last_name`, `password`, `is_verified`, `path_picture`, `id_city`, `id_postal_code`, `id_country`, `id_role`, `created_at`, `updated_at`, `verification_token`, `password_reset_token`) VALUES
-(1, 'john.doe@example.com', 'John', 'Doe', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, '/path/to/picture', 1, 1, 1, 1, '2024-01-23 21:58:57', '2024-02-13 19:10:43', NULL, NULL),
-(22, 'jordan.davis53@example.com', 'Jordan', 'Davis', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, '/path/to/picture/user_1.jpg', 3, 3, 1, 3, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
-(23, 'dakota.wilson74@sample.com', 'Dakota', 'Wilson', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, '/path/to/picture/user_2.jpg', 2, 2, 3, 3, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
-(24, 'jordan.smith21@sample.com', 'Jordan', 'Smith', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, '/path/to/picture/user_3.jpg', 3, 1, 1, 3, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
-(25, 'morgan.davis85@sample.com', 'Morgan', 'Davis', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, '/path/to/picture/user_4.jpg', 2, 3, 3, 3, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
-(26, 'robin.wilson93@example.com', 'Robin', 'Wilson', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, '/path/to/picture/user_5.jpg', 1, 2, 1, 3, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
-(27, 'casey.brown77@sample.com', 'Casey', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, '/path/to/picture/user_6.jpg', 2, 3, 3, 2, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
-(28, 'robin.johnson19@example.com', 'Robin', 'Johnson', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, '/path/to/picture/user_7.jpg', 2, 2, 1, 1, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
-(29, 'riley.moore47@sample.com', 'Riley', 'Moore', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, '/path/to/picture/user_8.jpg', 2, 2, 1, 3, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
-(30, 'riley.williams18@sample.com', 'Riley', 'Williams', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, '/path/to/picture/user_9.jpg', 1, 1, 3, 3, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
-(31, 'dakota.brown54@demo.com', 'Dakota', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, '/path/to/picture/user_10.jpg', 3, 3, 3, 2, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL);
+INSERT INTO `users` (`id_user`, `email`, `first_name`, `last_name`, `password`, `is_verified`, `is_banned`, `path_picture`, `id_city`, `id_postal_code`, `id_country`, `id_role`, `created_at`, `updated_at`, `verification_token`, `password_reset_token`) VALUES
+(1, 'john.doe@example.com', 'John', 'Doe', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, '/path/to/picture', 1, 1, 1, 1, '2024-01-23 21:58:57', '2024-02-26 20:57:50', NULL, NULL),
+(22, 'jordan.davis53@example.com', 'Jordan', 'Davis', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, 0, '/path/to/picture/user_1.jpg', 3, 3, 1, 3, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
+(23, 'dakota.wilson74@sample.com', 'Dakota', 'Wilsoaze', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, '/path/to/picture/user_2.jpg', 2, 2, 3, 3, '2024-02-13 18:05:16', '2024-02-26 19:56:33', NULL, NULL),
+(24, 'jordan.smith21@sample.com', 'Jordan', 'Smith', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, '/path/to/picture/user_3.jpg', 3, 1, 1, 3, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
+(25, 'morgan.davis85@sample.com', 'Morgan', 'Davis', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, 0, '/path/to/picture/user_4.jpg', 2, 3, 3, 3, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
+(26, 'robin.wilson93@example.com', 'Robin', 'Wilson', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, '/path/to/picture/user_5.jpg', 1, 2, 1, 3, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
+(27, 'casey.brown77@sample.com', 'Casey', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, '/path/to/picture/user_6.jpg', 2, 3, 3, 2, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
+(28, 'robin.johnson19@example.com', 'Robin', 'Johnson', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, 0, '/path/to/picture/user_7.jpg', 2, 2, 1, 1, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
+(29, 'riley.moore47@sample.com', 'Riley', 'Moore', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, '/path/to/picture/user_8.jpg', 2, 2, 1, 3, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
+(30, 'riley.williams18@sample.com', 'Rileyy', 'Williams', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, '/path/to/picture/user_9.jpg', 1, 1, 3, 4, '2024-02-13 18:05:16', '2024-02-22 19:08:45', NULL, NULL),
+(31, 'dakota.brown54@demo.com', 'Dakota', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, '/path/to/picture/user_10.jpg', 7, 3, 3, 4, '2024-02-13 18:05:16', '2024-02-20 17:41:27', NULL, NULL),
+(32, 'azeaze.brown54@demo.com', 'Dakota', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, '/path/to/picture/user_10.jpg', 7, 3, 3, 4, '2024-02-13 18:05:16', '2024-02-20 17:41:27', NULL, NULL),
+(33, 'aze.brown54@demo.com', 'Dakota', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, '/path/to/picture/user_10.jpg', 7, 3, 3, 4, '2024-02-13 18:05:16', '2024-02-20 17:41:27', NULL, NULL),
+(36, 'nicolas.chwiej@viacesi.fr', 'Nicolas', 'CHWIEJ', '$2y$12$z3TTUPvA6a0lH5ShBVAUaOqORGu6sndLbG.Cji6/ceB430eKQUXHi', 0, 0, '', NULL, NULL, NULL, 2, '2024-02-29 18:17:50', '2024-02-29 20:29:57', 'EnkYq05kxT9njZmzbpG8BngNEuWLz3Zi7gOfjYq4HUpoDMGgXxGv4jw6cYzutAhJ2Jtb1IFT0L6eoqzSQYj5IhWDmk91cBWA6eXF', NULL);
 
 --
 -- Index pour les tables déchargées
@@ -875,7 +881,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT pour la table `blocked_users`
 --
 ALTER TABLE `blocked_users`
-  MODIFY `id_blocked` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_blocked` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT pour la table `categories`
@@ -887,7 +893,7 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT pour la table `cities`
 --
 ALTER TABLE `cities`
-  MODIFY `id_city` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_city` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT pour la table `comments`
@@ -899,7 +905,7 @@ ALTER TABLE `comments`
 -- AUTO_INCREMENT pour la table `countries`
 --
 ALTER TABLE `countries`
-  MODIFY `id_country` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_country` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=242;
 
 --
 -- AUTO_INCREMENT pour la table `files`
@@ -965,7 +971,7 @@ ALTER TABLE `status_resources`
 -- AUTO_INCREMENT pour la table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- Contraintes pour les tables déchargées

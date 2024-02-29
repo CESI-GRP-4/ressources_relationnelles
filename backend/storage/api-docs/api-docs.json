@@ -85,14 +85,14 @@
                         }
                     },
                     "403": {
-                        "description": "Account blocked",
+                        "description": "Account banned",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Votre compte est bloqué."
+                                            "example": "Votre compte est banni."
                                         }
                                     },
                                     "type": "object"
@@ -853,19 +853,19 @@
                 ]
             }
         },
-        "/blockUser/{id}": {
+        "/banUser/{id}": {
             "patch": {
                 "tags": [
                     "Users"
                 ],
-                "summary": "Block a user",
-                "description": "Blocks a user for 100 years. Administrators and Super Administrators cannot be blocked.",
-                "operationId": "blockUser",
+                "summary": "Ban a user",
+                "description": "Ban a user . Administrators and Super Administrators cannot be ban.",
+                "operationId": "banUser",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "The ID of the user to block",
+                        "description": "The ID of the user to ban",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -874,14 +874,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "User has been banned for 100 years.",
+                        "description": "User has been banned.",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "L'utilisateur a été banni pour un durée de 100 ans."
+                                            "example": "L'utilisateur a été banni."
                                         }
                                     },
                                     "type": "object"
@@ -929,19 +929,19 @@
                 ]
             }
         },
-        "/unblockUser/{id}": {
+        "/unbanUser/{id}": {
             "patch": {
                 "tags": [
                     "Users"
                 ],
-                "summary": "Unblock a user",
-                "description": "Unblocks a previously blocked user.",
-                "operationId": "unblockUser",
+                "summary": "Unban a user",
+                "description": "Unban a previously unban user.",
+                "operationId": "unbanUser",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "The ID of the user to unblock",
+                        "description": "The ID of the user to unban",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -950,7 +950,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "User has been unblocked.",
+                        "description": "User has been unban.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1090,7 +1090,7 @@
                         "type": "string",
                         "format": "date-time"
                     },
-                    "isBlocked": {
+                    "isBanned": {
                         "type": "boolean"
                     },
                     "newUser": {

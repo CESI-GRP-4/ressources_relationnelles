@@ -37,6 +37,7 @@ class User extends Authenticatable implements JWTSubject {
         'last_name',
         'password',
         'is_verified',
+        'is_banned',
         'path_picture',
         'id_city',
         'id_postal_code',
@@ -63,6 +64,7 @@ class User extends Authenticatable implements JWTSubject {
      */
     protected $casts = [
         'is_verified' => 'boolean',
+        'is_banned' => 'boolean',
     ];
 
     public function role() {
@@ -81,9 +83,6 @@ class User extends Authenticatable implements JWTSubject {
         return $this->belongsTo(PostalCode::class, 'id_postal_code');
     }
 
-    public function blockedUsers(){
-        return $this->hasMany(BlockedUser::class, 'id_user');
-    }
 
     public function getIsBlockedAttribute(){
         return $this->blockedUsers()->where('start_date', '<=', now())

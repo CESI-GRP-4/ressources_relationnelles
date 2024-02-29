@@ -15,6 +15,7 @@ use Illuminate\Support\Str;
 class AuthController extends Controller{
     private const DEFAULT_ROLE_ID = 4; // User role
     private const EMAIL_NOT_VERIFIED = 0;
+    private const IS_NOT_BANNED = 0;
     /**
      * @OA\Post(
      *     path="/login",
@@ -48,9 +49,9 @@ class AuthController extends Controller{
      *     ),
      *     @OA\Response(
      *         response=403,
-     *         description="Account blocked",
+     *         description="Account banned",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Votre compte est bloqué.")
+     *             @OA\Property(property="message", type="string", example="Votre compte est banni.")
      *         )
      *     )
      * )
@@ -67,9 +68,8 @@ class AuthController extends Controller{
         }
 
         $user = User::where('email', $request->email)->first();
-        $isBlocked = $user->blockedUsers()->where('end_date', '>=', now())->exists();
-        if ($isBlocked) {
-            return response()->json(['message' => 'Votre compte est bloqué.'], 403);
+        if ($user->is_banned) {
+            return response()->json(['message' => 'Votre compte est banni.'], 403);
         }
 
         // Generation of the JWT token
@@ -137,6 +137,7 @@ class AuthController extends Controller{
         'password' => Hash::make($data['password']),
         'id_role' => self::DEFAULT_ROLE_ID,
         'is_verified' => self::EMAIL_NOT_VERIFIED,
+        'is_banned' => self::IS_NOT_BANNED,
         'verification_token' => $verificationToken,
     ]);
 
