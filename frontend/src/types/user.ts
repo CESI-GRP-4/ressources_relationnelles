@@ -13,5 +13,5 @@ export default interface User {
        createdAt?: string | number | Date;
        updatedAt?: string | number | Date;
        isBanned?: boolean;
-       newUser: boolean;
+       newUser?: boolean;
 }

@@ -1,11 +1,5 @@
-import EditableTable from "@/components/usersManagementTable";
+import EditableTable from "@/components/back-office/user-management/usersManagementTable";
 
-export default function GestionUtilisateurs(){
-       return(
-              <div className="m-10">
-                     {/* <h1>Gestion des utilisateurs</h1> */}
-                     <EditableTable />
-              </div>
-       )
-
+export default function GestionUtilisateurs() {
+       return (< EditableTable />);
 }

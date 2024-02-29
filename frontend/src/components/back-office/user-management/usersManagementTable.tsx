@@ -10,10 +10,10 @@ import { Icon as Iconify } from '@iconify/react';
 import { FilterDropdownProps } from 'antd/es/table/interface';
 import { RefObject } from 'react';
 import CreateUserForm from '@/components/createUserForm';
-import BanUserButton from '@/components/user-management/banUserButton';
-import DeleteUserButton from "@/components/user-management/deleteUserButton";
+import BanUserButton from '@/components/back-office/user-management/banUserButton';
+import DeleteUserButton from "@/components/back-office/user-management/deleteUserButton";
 import Country from '@/types/country';
-import SelectCountry, { fetchCountries } from './selectCountry';
+import SelectCountry, { fetchCountries } from '../../selectCountry';
 
 const EditableTable: React.FC = () => {
        interface tableSettings {
@@ -522,7 +522,7 @@ const EditableTable: React.FC = () => {
                                    columns={getVisibleColumns()}
                                    rowKey="id"
                                    pagination={{ onChange: cancel, showQuickJumper: true, total: tableParams.total, pageSize: tableParams.perPage, current: tableParams.page, showSizeChanger: true, pageSizeOptions: ['10', '20', '50', '100'], showTotal: (total, range) => `${range[0]}-${range[1]} sur ${total}` }}
-                                   scroll={{ x: 'max-content', y: 500 }}
+                                   scroll={{ x: 'max-content', y: 610 }}
                             />
                      </Form>
               </div>
