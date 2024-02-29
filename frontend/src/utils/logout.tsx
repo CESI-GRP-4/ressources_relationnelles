@@ -1,27 +1,28 @@
-import { useState } from "react";
-import axios, { AxiosError, AxiosResponse } from 'axios';
-import { Button, Tooltip, message } from 'antd';
-import { LogoutOutlined } from '@ant-design/icons';
-import { useUser } from "@/providers/userProvider";
+// logout.js
+import axios, { AxiosError } from 'axios';
+import { message } from 'antd';
+import { useUser } from "@/providers/userProvider"; // Assuming useUserContext is a hook to access setUser
+import { useRouter } from 'next/navigation';
 
-export default function LogoutButton() {
+const useLogout = () => {
        const { setUser } = useUser();
-       const [isLogoutLoading, setLogoutLoading] = useState(false);
+       const router = useRouter();
 
-       const handleLogout = async (): Promise<void> => {
-              setLogoutLoading(true);
+       const logout = async () => {
               try {
                      const logOutResponse = await axios({
                             method: 'post',
                             baseURL: 'http://localhost/api',
                             url: "/logout",
-                            withCredentials: true, // Necessary for HTTP-only cookies in cross-origin scenarios
+                            withCredentials: true,
                             responseType: 'json',
-                            timeout: 10000, // Increased value because we had some timeout errors
+                            timeout: 10000,
                      });
 
                      if (logOutResponse.status === 200) {
                             message.success('Déconnexion réussie');
+                            setUser(null); // Remove user from context/state
+                            router.replace('/connexion'); // Redirect to home page
                      }
               } catch (error) {
                      console.error('Logout request failed:', error);
@@ -46,15 +47,8 @@ export default function LogoutButton() {
                             message.error('Erreur réseau ou serveur indisponible');
                      }
               }
-              finally {
-                     setUser(null);
-                     setLogoutLoading(false);
-              }
        };
+       return logout;
+};
 
-       return (
-              <Tooltip title="Se déconnecter">
-                     <Button loading={isLogoutLoading} danger size="large" onClick={handleLogout} shape="circle" icon={<LogoutOutlined />} />
-              </Tooltip>
-       );
-}
+export default useLogout;
