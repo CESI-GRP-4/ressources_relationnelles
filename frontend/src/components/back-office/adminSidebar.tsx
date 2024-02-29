@@ -16,8 +16,6 @@ const { Sider } = Layout;
 export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: boolean, setCollapsed: (collapsed: boolean) => void }) {
        const pathname = usePathname();
        const selectedKey = pathname.split('/')[1];
-       console.log("🚀 ~ AdminSidebar ~ selectedKey:", selectedKey);
-
 
        const ConditionalTooltip = ({ title, children }: { title: string, children: React.ReactNode }) => {
               const [isOverflowing, setIsOverflowing] = useState(false);
@@ -31,7 +29,6 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                                    setIsOverflowing(isOverflow);
                             }
                      };
-
                      checkOverflow();
                      window.addEventListener('resize', checkOverflow);
                      return () => window.removeEventListener('resize', checkOverflow);
@@ -46,9 +43,10 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
               );
        }
        const adminSidebarItems = [
-              // ! Keys must be unique and must have the same name as the route
+              // ! Keys must be unique and must have the same value as the route
               {
                      icon: <UserOutlined />,
+                     style: { marginTop: '30px' },
                      label: (
                             <ConditionalTooltip title="Utilisateurs">
                                    <Link href={'/gestion-utilisateurs'}>Utilisateurs</Link>
@@ -58,7 +56,7 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
               },
               {
                      icon: <LineChartOutlined />,
-                     
+
                      label: (
                             <ConditionalTooltip title="Statistiques">
                                    <span>Statistiques</span>
@@ -94,15 +92,18 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
               >
                      <div className="flex justify-center">
                             <Image
+                                   draggable={false}
                                    className='m-2 rounded-lg'
                                    src="https://upload.wikimedia.org/wikipedia/fr/5/50/Bloc_Marianne.svg"
                                    alt="Logo du ministère des solidarités et de la santé"
-                                   width={140}
-                                   height={160}
+                                   width={130}
+                                   height={150}
                             />
                      </div>
-                     <div className="mt-8 ">
-                            <Menu mode="inline" theme="light" items={adminSidebarItems} selectedKeys={[selectedKey]}/>
+                     <div className="">
+                            <Menu mode="inline"
+                                   style={{ height: '100vh' }}
+                                   theme="light" items={adminSidebarItems} selectedKeys={[selectedKey]} />
                      </div>
               </Sider>
        )

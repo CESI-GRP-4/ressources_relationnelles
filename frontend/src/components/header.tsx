@@ -18,8 +18,6 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
        }, [user?.imgURL]);
 
        const handleImgError = () => {
-              console.log("error loading image : ", user?.imgURL)
-
               setAvatarSrc(undefined);
               return true; // Returning true tells the Avatar component not to retry loading the image
        };
@@ -28,6 +26,7 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
               {
                      icon: <FolderOpenOutlined />,
                      label: `Catégories`,
+                     style: { marginLeft: '30px'},
                      key: 'categories',
                      // children: [],
               },
@@ -73,7 +72,6 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                                    key: 'my-profile',
                             },
                             {
-
                                    icon: (<LogoutOutlined />),
                                    danger: true,
                                    label: <span onClick={logout}>Se déconnecter</span>,
@@ -90,6 +88,7 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                      top: 0,
                      display: 'flex',
                      alignItems: 'center',
+                     zIndex: 9999,
               }}>
                      <div className='flex flex-row justify-between w-full'>
                             <Menu
