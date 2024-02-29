@@ -458,6 +458,7 @@ class UserController extends Controller
         }
 
         $user->is_banned = true;
+        $user->save();
 
         return response()->json(['message' => 'L\'utilisateur a été banni.']);
     }
@@ -507,6 +508,8 @@ class UserController extends Controller
         }
 
         $user->is_banned = false;
+        $user->save();
+
         return response()->json(['message' => 'L\'utilisateur a été débanni']);
     }
 }

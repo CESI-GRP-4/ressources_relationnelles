@@ -45,7 +45,6 @@ class User extends Authenticatable implements JWTSubject {
         'id_role',
         'verification_token',
         'password_reset_token',
-
     ];
 
     /**
@@ -83,12 +82,6 @@ class User extends Authenticatable implements JWTSubject {
         return $this->belongsTo(PostalCode::class, 'id_postal_code');
     }
 
-
-    public function getIsBlockedAttribute(){
-        return $this->blockedUsers()->where('start_date', '<=', now())
-            ->where('end_date', '>=', now())
-            ->exists();
-    }
     public function getJWTIdentifier() {
         return $this->getKey();
     }
