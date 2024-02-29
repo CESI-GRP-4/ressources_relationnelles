@@ -18,9 +18,10 @@ Route::post('signup', [AuthController::class, 'signup']);
 Route::post('email/verify', [AuthController::class, 'verifyEmail'])->name('verify.email');
 Route::post('forgot-password/send-mail', [AuthController::class, 'forgotPassword'])->name('password.forgot');
 Route::post('forgot-password/reset', [AuthController::class, 'resetPassword']);
-
-
 Route::get('countries', [CountryController::class, 'getCountries']);
+
+// Route::group(['middleware' => ['jwt.auth','jwt.refresh']], function() { // for refresh token. Commented for now as we got errors
+
 
 
 
