@@ -79,7 +79,7 @@ class AuthController extends Controller{
         $user = Auth::guard('api')->user();
 
         return $this->respondWithTokenAndUserData($token,
-            ['user' => Utils::getUserData($user),
+            ['user' => Utils::getAllUserData($user),
             'remember' => $remember]);
     }
 
