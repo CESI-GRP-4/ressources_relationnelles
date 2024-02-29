@@ -2,8 +2,6 @@
 
 namespace App\Utils;
 
-use App\Models\Role;
-
 class Utils{
 
     /**
@@ -60,23 +58,34 @@ class Utils{
     public static function getAllUserData($user){
         // set false if not set
         $isNewUser = session('isNewUser', false);
-        return [
+        $userData = [
             'id' => $user->id_user,
             'email' => $user->email,
             'firstName' => $user->first_name,
             'lastName' => $user->last_name,
             'isEmailVerified' => $user->is_verified,
             'imgURL' => $user->path_picture,
-            'city' => $user->city->name,
-            'country' => $user->country->name,
-            'countryCode' => $user->country->country_code,
-            'postalCode' => $user->postalCode->postal_code,
             'role' => $user->role->name,
             'createdAt' => $user->created_at,
             'updatedAt' => $user->updated_at,
             'isBlocked' => $user->getIsBlockedAttribute(),
             'newUser' => $isNewUser,
         ];
+
+        if ($user->country) {
+            $userData['country'] = $user->country->name;
+            $userData['countryCode'] = $user->country->country_code;
+        }
+
+        if ($user->postalCode) {
+            $userData['postalCode'] = $user->postalCode->postal_code;
+        }
+
+        if ($user->city) {
+            $userData['city'] = $user->city->name;
+        }
+
+        return $userData;
     }
 
 }

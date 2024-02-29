@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller{
-    private const DEFAULT_ROLE_ID = 2; // User role
+    private const DEFAULT_ROLE_ID = 4; // User role
     private const EMAIL_NOT_VERIFIED = 0;
     /**
      * @OA\Post(
