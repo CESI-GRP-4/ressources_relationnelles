@@ -1,27 +1,29 @@
-// login/page.tsx
+// /connexion/page.tsx
 "use client"
 
 import { useRef } from 'react';
 import { useUser } from '@/providers/userProvider';
-import { Carousel, Menu, Typography, type MenuProps } from 'antd';
+import { Carousel, Menu, Typography, type MenuProps, Button } from 'antd';
 import { CarouselRef } from 'antd/es/carousel';
+import { LogoutOutlined } from '@ant-design/icons';
 
 // Components
 import LogInForm from '@/components/logInForm';
 import SignUpForm from '@/components/signUpForm';
-import LogoutButton from '@/components/logout';
+import useLogout from '@/utils/logout';
+import ForgotPasswordLink from '@/components/forgotPasswordLink';
 
 export default function Login() {
        const { Title } = Typography;
        const carouselRef = useRef<CarouselRef>(null);
        const { user } = useUser();
-
+       const logout = useLogout();
        // * If user is logged in, return only the LogoutButton.
        // ! However, this should never happen since the login page is only accessible when the user is not logged in. (Must be handled by the middleware)
        if (user) {
               return (
                      <div className='flex flex-col items-center w-fit'>
-                            <LogoutButton />
+                            <Button danger size="large" onClick={logout} icon={<LogoutOutlined />}>Se déconnecter</Button>
                      </div>
               );
        }
@@ -65,7 +67,10 @@ export default function Login() {
                             ref={carouselRef}
                             dots={false}
                             style={{ width: 300 }}>
-                            <LogInForm />
+                            <div >
+                                   <LogInForm />
+                                   <ForgotPasswordLink />
+                            </div>
                             <SignUpForm />
                      </Carousel>
               </div>
