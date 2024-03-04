@@ -26,7 +26,7 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
               {
                      icon: <FolderOpenOutlined />,
                      label: `Catégories`,
-                     style: { marginLeft: '30px'},
+                     style: { marginLeft: '30px'}, // TODO: When the menu is collapsed, we shouldnt have this margin
                      key: 'categories',
                      // children: [],
               },
@@ -97,11 +97,14 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                                    theme="light"
                                    selectedKeys={[selectedKey]}
                                    className='flex-auto'
+                                   style={{ minWidth: 0, flex: "auto" }} // * https://ant.design/components/menu#why-menu-do-not-responsive-collapse-in-flex-layout
                             />
                             <Menu
                                    mode="horizontal"
                                    items={[headerItems[headerItems.length - 1]]} // Only the last item
                                    selectedKeys={[selectedKey]}
+                                   className="flex flex-row justify-end"
+                                   style={{ minWidth: 0, flex: "auto" }} // * https://ant.design/components/menu#why-menu-do-not-responsive-collapse-in-flex-layout
                                    theme="light"
                             />
                      </div>
