@@ -27,7 +27,6 @@ export default function History() {
                      email: "aa@aa.aa",
                      imgURL: "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
                      id: "1",
-                     role: "Utilisateur",
                      isEmailVerified: true,
                      city: "New York",
                      country: "USA",
@@ -39,7 +38,6 @@ export default function History() {
                      email: "aa@aa.aa",
                      imgURL: "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
                      id: "1",
-                     role: "Utilisateur",
                      isEmailVerified: true,
                      city: "New York",
                      country: "USA",
@@ -53,7 +51,6 @@ export default function History() {
                      email: "aa@aa.aasssssssssssssssssssssss",
                      imgURL: "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
                      id: "1",
-                     role: "Utilisateur",
                      isEmailVerified: true,
                      city: "New York",
                      country: "USA",
@@ -65,7 +62,6 @@ export default function History() {
                      email: "aa@aa.aasssssssssssssssssssssss",
                      imgURL: "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
                      id: "1",
-                     role: "Utilisateur",
                      isEmailVerified: true,
                      city: "New York",
                      country: "USA",
@@ -80,7 +76,6 @@ export default function History() {
                      email: "aa@aa.aasssssssssssssssssssssss",
                      imgURL: "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
                      id: "1",
-                     role: "Utilisateur",
                      isEmailVerified: true,
                      city: "New York",
                      country: "USA",
@@ -92,7 +87,6 @@ export default function History() {
                      email: "aa@aa.aasssssssssssssssssssssss",
                      imgURL: "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
                      id: "1",
-                     role: "Utilisateur",
                      isEmailVerified: true,
                      city: "New York",
                      country: "USA",
@@ -114,9 +108,9 @@ export default function History() {
                                                  <Avatar src={item.userModified.imgURL} />
                                                  <div style={{ margin: '0 8px', display: 'flex', alignItems: 'center' }}>
                                                         <div>
-                                                               {`${item.userModified.firstName} ${item.userModified.lastName} was `}
+                                                               {`${item.userModified.firstName} ${item.userModified.lastName} a été `}
                                                                <Tag color={getTagColor(item.action)}>{item.action}</Tag>
-                                                               {` by `}
+                                                               {`par `}
                                                                <Typography.Link href={`mailto:${item.by.email}`}>
                                                                       {item.by.email}
                                                                </Typography.Link>

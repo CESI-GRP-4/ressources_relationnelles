@@ -9,5 +9,5 @@ export default interface User {
        city?: string;
        country?: string;
        postalCode?: string;
-       newUser: boolean;
+       newUser?: boolean;
 }

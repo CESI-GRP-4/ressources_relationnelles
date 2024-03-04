@@ -1,10 +1,13 @@
 "use client"
-import { Card, Avatar, Typography } from "antd"
+import { Card, Avatar, Typography, Button } from "antd"
 const { Meta } = Card;
 import { useUser } from "@/providers/userProvider";
 const { Text } = Typography;
 import Link from "next/link";
 import History from "@/components/user-management/history";
+import ConnectionsChart from "@/components/testChart";
+import {PlusCircleOutlined} from "@ant-design/icons";
+
 export default function AdminDashboard() {
        const { user } = useUser();
 
@@ -29,10 +32,16 @@ export default function AdminDashboard() {
                                    </div>
                             </Card>
                      </div>
-                     
+
                      <div>
                             <History></History>
                      </div>
+                     <Card title="Statistiques de connexions (semaine actuelle)" extra={<Button type="text" shape="circle" icon={<PlusCircleOutlined style={{ color: "blue"}} />} />} className="w-1/2 min-w-96 max-w-[600px] h-auto">
+                            <div style={{ width: '100%', aspectRatio: '16 / 9' }}> {/* Removed fixed height */}
+                                   <ConnectionsChart></ConnectionsChart>
+                            </div>
+                     </Card>
+
               </div>
        )
 }
