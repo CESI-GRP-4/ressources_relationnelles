@@ -6,14 +6,16 @@ use App\Models\Role;
 use App\Models\User;
 use App\Notifications\ResetPass;
 use App\Notifications\VerifyEmail;
+use App\Utils\Utils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller{
-    private const DEFAULT_ROLE_ID = 2; // User role
+    private const DEFAULT_ROLE_ID = 4; // User role
     private const EMAIL_NOT_VERIFIED = 0;
+    private const IS_NOT_BANNED = 0;
     /**
      * @OA\Post(
      *     path="/login",
@@ -31,19 +33,27 @@ class AuthController extends Controller{
      *         ),
      *     ),
      *     @OA\Response(
-     *          response=200,
-     *          description="Successful login",
-     *          @OA\JsonContent(
-     *              @OA\Property(property="user", type="object", ref="#/components/schemas/User"),
-     *          )
-     *      ),
+     *         response=200,
+     *         description="Successful login",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="user", type="object", ref="#/components/schemas/UserData"),
+     *             @OA\Property(property="remember", type="boolean", example=false)
+     *         )
+     *     ),
      *     @OA\Response(
-     *          response=401,
-     *          description="Invalid credentials",
-     *          @OA\JsonContent(
-     *              @OA\Property(property="message", type="string", example="Les informations d'identification fournies ne sont pas correctes.")
-     *          )
-     *      ),
+     *         response=401,
+     *         description="Invalid credentials",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Les informations d'identification fournies ne sont pas correctes.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Account banned",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Votre compte est banni.")
+     *         )
+     *     )
      * )
      */
     public function login(Request $request){
@@ -57,6 +67,11 @@ class AuthController extends Controller{
             return response()->json(['message' => 'Les informations d\'identification fournies ne sont pas correctes.'], 401);
         }
 
+        $user = User::where('email', $request->email)->first();
+        if ($user->is_banned) {
+            return response()->json(['message' => 'Votre compte est banni.'], 403);
+        }
+
         // Generation of the JWT token
         $token = Auth::guard('api')->attempt($credentials);
 
@@ -64,7 +79,7 @@ class AuthController extends Controller{
         $user = Auth::guard('api')->user();
 
         return $this->respondWithTokenAndUserData($token,
-            ['user' => $this->getUserData($user),
+            ['user' => Utils::getAllUserData($user),
             'remember' => $remember]);
     }
 
@@ -89,7 +104,7 @@ class AuthController extends Controller{
      *         response=200,
      *         description="Successful registration and user login",
      *         @OA\JsonContent(
-     *             @OA\Property(property="user", type="object", ref="#/components/schemas/User"),
+     *             @OA\Property(property="user", type="object", ref="#/components/schemas/UserData"),
      *         )
      *     ),
      *     @OA\Response(
@@ -122,6 +137,7 @@ class AuthController extends Controller{
         'password' => Hash::make($data['password']),
         'id_role' => self::DEFAULT_ROLE_ID,
         'is_verified' => self::EMAIL_NOT_VERIFIED,
+        'is_banned' => self::IS_NOT_BANNED,
         'verification_token' => $verificationToken,
     ]);
 
@@ -175,25 +191,6 @@ class AuthController extends Controller{
         return response()->json(['user' => $data['user'],'newUser' => $data['newUser'] ?? false])->withCookie($cookie);
     }
 
-    protected function getUserData($user){
-        $isNewUser = session('isNewUser', false);
-        return [
-            'firstName' => $user->first_name,
-            'lastName' => $user->last_name,
-            'email' => $user->email,
-            'imgURL' => $user->path_picture,
-            'id' => $user->id_user,
-            'role' => $this->getRoleName($user->id_role),
-            'isEmailVerified' => $user->is_verified,
-            'newUser' => $isNewUser,
-
-        ];
-    }
-
-    protected function getRoleName($id_role){
-        $role = Role::find($id_role);
-        return $role ? $role->name : null;
-    }
     /**
      * @OA\Post(
      *     path="/verifyUser",
@@ -205,7 +202,7 @@ class AuthController extends Controller{
      *          response=200,
      *          description="User is authenticated",
      *          @OA\JsonContent(
-     *              @OA\Property(property="user", type="object", ref="#/components/schemas/User"),
+     *              @OA\Property(property="user", type="object", ref="#/components/schemas/UserData"),
      *          )
      *      ),
      *     @OA\Response(
@@ -220,7 +217,7 @@ class AuthController extends Controller{
     public function verifyUser(){
         $user = auth()->user();
         if (!$user) return response()->json(['error' => 'Utilisateur non authentifié'], 401);
-        return response()->json(['user' => $this->getUserData($user)]);
+        return response()->json(['user' => Utils::getUserData($user)]);
     }
 
     /**

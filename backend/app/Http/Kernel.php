@@ -70,5 +70,6 @@ class Kernel extends HttpKernel
 
     protected $routeMiddleware = [
         'jwt.auth' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
+        'isAdmin' => \App\Http\Middleware\IsAdminMiddleware::class,
     ];
 }

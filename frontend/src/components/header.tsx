@@ -88,7 +88,7 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                      top: 0,
                      display: 'flex',
                      alignItems: 'center',
-                     zIndex: 9999,
+                     zIndex: 5,
               }}>
                      <div className='flex flex-row justify-between w-full'>
                             <Menu

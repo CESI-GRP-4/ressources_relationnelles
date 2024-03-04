@@ -103,8 +103,8 @@ export default function History() {
 
        return (
               <Card
-              title="Actions récentes sur les utilisateurs"
-              extra={<Typography.Link href="/gestion-utilisateurs">Plus</Typography.Link>}>
+                     title="Actions récentes sur les utilisateurs"
+                     extra={<Typography.Link href="/gestion-utilisateurs">Plus</Typography.Link>}>
                      <List
                             itemLayout="horizontal"
                             dataSource={list}
