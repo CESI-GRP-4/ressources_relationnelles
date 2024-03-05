@@ -50,13 +50,25 @@ export const fetchCountries = async () => {
               } else {
                      message.error('Erreur réseau ou serveur indisponible');
               }
-       }
-       finally {
+       } finally {
               return globalCountries;
        }
 };
 
-function SelectCountry({ value, onChange }: { value: any, onChange: any }) {
+/**
+ * A select dropdown component for choosing a country. It fetches the list of countries
+ * from the backend upon initialization and provides a searchable dropdown list to select a country.
+ * 
+ * @component
+ * @example
+ * return <SelectCountry value={selectedCountry} onChange={handleCountryChange} />
+ * 
+ * @param {object} props - The props for the SelectCountry component.
+ * @param {any} props.value - The current value of the select dropdown.
+ * @param {Function} props.onChange - The function to call when the selected value changes.
+ * @param {object} rest - Any additional props to pass to the Ant Design Select component.
+ */
+function SelectCountry({ value, onChange, ...rest }: { value: any, onChange: any, [key: string]: any }) {
        const [countries, setCountries] = useState<Country[]>([]);
 
        useEffect(() => {
@@ -79,6 +91,7 @@ function SelectCountry({ value, onChange }: { value: any, onChange: any }) {
                      filterOption={(input, option) => {
                             return (option?.value?.toString() ?? '').toLowerCase().indexOf(input.toLowerCase()) >= 0;
                      }}
+                     {...rest} // Spread the remaining props onto the Select component
               >
                      {countries.map(country => (
                             <Select.Option key={country.code} value={country.name}>
