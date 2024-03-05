@@ -38,7 +38,7 @@ export default function AdminDashboard() {
                      </div>
                      <Card title="Statistiques de connexions (semaine actuelle)" extra={<Button type="text" shape="circle" icon={<PlusCircleOutlined style={{ color: "blue"}} />} />} className="w-1/2 min-w-96 max-w-[600px] h-auto">
                             <div style={{ width: '100%', aspectRatio: '16 / 9' }}> {/* Removed fixed height */}
-                                   <ConnectionsChart></ConnectionsChart>
+                                   <ConnectionsChart isPreview></ConnectionsChart>
                             </div>
                      </Card>
 

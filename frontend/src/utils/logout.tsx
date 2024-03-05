@@ -1,14 +1,16 @@
-// logout.js
+import { useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import { message } from 'antd';
-import { useUser } from "@/providers/userProvider"; // Assuming useUserContext is a hook to access setUser
+import { useUser } from "@/providers/userProvider"; // Supposons que useUser est un hook pour accéder à setUser
 import { useRouter } from 'next/navigation';
 
 const useLogout = () => {
        const { setUser } = useUser();
        const router = useRouter();
+       const [isLoading, setIsLoading] = useState(false); // Ajout de l'état isLoading
 
        const logout = async () => {
+              setIsLoading(true); // Commence le chargement
               try {
                      const logOutResponse = await axios({
                             method: 'post',
@@ -22,7 +24,7 @@ const useLogout = () => {
                      if (logOutResponse.status === 200) {
                             message.success('Déconnexion réussie');
                             setUser(null); // Remove user from context/state
-                            router.replace('/connexion'); // Redirect to home page
+                            router.replace('/connexion'); // Redirect to login page
                      }
               } catch (error) {
                      console.error('Logout request failed:', error);
@@ -46,9 +48,12 @@ const useLogout = () => {
                      } else {
                             message.error('Erreur réseau ou serveur indisponible');
                      }
+              } finally {
+                     setIsLoading(false); // Arrête le chargement quelle que soit l'issue
               }
        };
-       return logout;
+
+       return { logout, isLoading }; // Retourne à la fois la fonction logout et l'état isLoading
 };
 
 export default useLogout;
