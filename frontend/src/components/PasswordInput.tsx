@@ -120,7 +120,6 @@ const PasswordInputComponent: React.FC<PasswordInputComponentProps> = ({ label, 
                      {...props}
                      tooltip={!allRulesRespected() ? passwordTooltipContent : undefined}
                      rules={[{ required: true, message: 'Veuillez entrer votre mot de passe' }, passwordValidationRule]}
-                     
               >
                      <Input.Password maxLength={150} onChange={(e) => validatePassword(e.target.value)} />
               </Form.Item>

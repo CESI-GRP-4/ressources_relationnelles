@@ -4,10 +4,10 @@ const { Meta } = Card;
 import { useUser } from "@/providers/userProvider";
 const { Text } = Typography;
 import Link from "next/link";
-import History from "@/components/user-management/history";
 import ConnectionsChart from "@/components/testChart";
 import {PlusCircleOutlined} from "@ant-design/icons";
 
+import History from "@/components/back-office/user-management/history";
 export default function AdminDashboard() {
        const { user } = useUser();
 

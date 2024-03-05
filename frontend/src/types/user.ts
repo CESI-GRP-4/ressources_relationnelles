@@ -4,10 +4,14 @@ export default interface User {
        email?: string;
        imgURL?: string;
        id?: string;
-       role?: 'user' | 'moderator' | 'administrator' | 'superadministrator';
+       role?: 'Utilisateur' | 'Moderateur' | 'Administrateur' | 'SuperAdministrateur';
        isEmailVerified?: boolean;
        city?: string;
        country?: string;
+       countryCode?: string;
        postalCode?: string;
+       createdAt?: string | number | Date;
+       updatedAt?: string | number | Date;
+       isBanned?: boolean;
        newUser?: boolean;
 }

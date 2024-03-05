@@ -15,7 +15,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                      <Layout
                             style={{ marginLeft: !collapsed ? 200 : 0, }}>
                             <Header collapsed={collapsed} setCollapsed={setCollapsed} />
-                            <Content className="py-10 px-16">
+                            <Content className="py-12 px-3 lg:px-16">
                                    {children}
                             </Content>
                             <div className='!bg-white'>
