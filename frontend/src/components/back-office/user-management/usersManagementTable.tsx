@@ -4,7 +4,7 @@ import User from '@/types/user';
 import { ColumnType } from 'antd/es/table';
 import { CheckCircleOutlined, CloseCircleOutlined, SearchOutlined, ReloadOutlined } from '@ant-design/icons';
 import axios, { AxiosError } from 'axios';
-import { Table, Input, InputNumber, Popconfirm, Form, Typography, Select, Button, message, Tooltip, Space, Avatar } from 'antd';
+import { Table, Input, InputNumber, Popconfirm, Form, Typography, Select, Button, message, Tooltip, Space, Avatar, Checkbox } from 'antd';
 import { useUser } from '@/providers/userProvider';
 import { Icon as Iconify } from '@iconify/react';
 import { FilterDropdownProps } from 'antd/es/table/interface';
@@ -38,10 +38,12 @@ const EditableTable: React.FC = () => {
        ]);
        const searchInput: RefObject<HTMLInputElement> = useRef<HTMLInputElement>(null);
        const [countries, setCountries] = useState([] as Country[]);
+       const [isFixed, setIsFixed] = useState(true); // New state for tracking checkbox
 
        useEffect(() => {
               fetchData(tableParams)
 
+              // TODO: change it to a better solution, remove .then and use async/await
               fetchCountries().then(fetchedCountries => {
                      if (fetchedCountries) {
                             setCountries(fetchedCountries);
@@ -295,7 +297,7 @@ const EditableTable: React.FC = () => {
                      title: 'Email',
                      dataIndex: 'email',
                      editable: true,
-                     fixed: 'left' as const,
+                     fixed: isFixed ? 'left' as const : undefined,
                      width: 250,
                      sorter: true,
                      ...getColumnSearchProps('email', 'Email'),
@@ -411,7 +413,7 @@ const EditableTable: React.FC = () => {
               title: 'Actions',
               dataIndex: 'operation',
               width: 250,
-              fixed: 'right' as const,
+              fixed: isFixed ? 'right' as const : undefined,
               render: (_, record: User) => {
                      const editable = isEditingUser(record);
                      return editable ? (
@@ -480,34 +482,41 @@ const EditableTable: React.FC = () => {
 
        return (
               <div className='space-y-10'>
-                     <div className="flex flex-row items-center justify-between">
-                            <div className="flex flex-row space-x-5 items-center">
-                                   <Select
-                                          maxTagCount={5}
-                                          mode="multiple"
-                                          allowClear
-                                          className='w-72'
-                                          placeholder="Sélectionner les colonnes à afficher"
-                                          value={selectedColumns}
-                                          onChange={handleColumnChange}
-                                   >
-                                          {columns.map(col => (
-                                                 <Select.Option key={col.dataIndex as string} value={col.dataIndex as string}>
-                                                        {col.title as string}
-                                                 </Select.Option>
-                                          ))}
-                                   </Select>
-                                   <div>
-                                          <Button type="primary" onClick={() => setSelectedColumns(columns.map(col => col.dataIndex as string))}>Tout afficher</Button>
-                                   </div>
-                                   <div>
-                                          <Button type="primary" icon={<ReloadOutlined />} onClick={() => fetchData(tableParams)}>Rafraîchir</Button>
-                                   </div>
+                     <div className="flex flex-col items-start lg:flex-row lg:items-center gap-5">
+                            <Select
+                                   maxTagCount={5}
+                                   mode="multiple"
+                                   allowClear
+                                   className='w-72'
+                                   placeholder="Sélectionner les colonnes à afficher"
+                                   value={selectedColumns}
+                                   onChange={handleColumnChange}
+                            >
+                                   {columns.map(col => (
+                                          <Select.Option key={col.dataIndex as string} value={col.dataIndex as string}>
+                                                 {col.title as string}
+                                          </Select.Option>
+                                   ))}
+                            </Select>
+                            <div>
+                                   <Button type="primary" onClick={() => setSelectedColumns(columns.map(col => col.dataIndex as string))}>Tout afficher</Button>
                             </div>
                             <div>
-                                   {/* ajouter un utilisateur */}
-                                   {/* <CreateUserForm></CreateUserForm> */}
+                                   <Button type="primary" icon={<ReloadOutlined />} onClick={() => fetchData(tableParams)}>Rafraîchir</Button>
                             </div>
+
+                            <div>
+                                   <Checkbox
+                                          checked={isFixed}
+                                          onChange={(e) => setIsFixed(e.target.checked)}
+                                   >
+                                          {`Rendre les colonnes "Email et Actions" fixes`}
+                                   </Checkbox>
+                            </div>
+                     </div>
+                     <div>
+                            {/* ajouter un utilisateur */}
+                            {/* <CreateUserForm></CreateUserForm> */}
                      </div>
                      <Form form={editUserForm} component={false}>
                             <Table
