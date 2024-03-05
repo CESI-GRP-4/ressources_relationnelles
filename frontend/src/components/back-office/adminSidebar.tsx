@@ -6,6 +6,7 @@ import {
        FileDoneOutlined,
        RightOutlined,
        LeftOutlined,
+       LoginOutlined
 } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from "next/link";
@@ -53,16 +54,32 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                             </ConditionalTooltip>
                      ),
                      key: 'gestion-utilisateurs',
+                     title: 'gestion-utilisateurs',
               },
               {
                      icon: <LineChartOutlined />,
-
                      label: (
                             <ConditionalTooltip title="Statistiques">
-                                   <Link href={'/statistiques'}>Statistiques</Link>
+                                   <Link href={'/statistiques'} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                          Statistiques
+                                   </Link>
                             </ConditionalTooltip>
                      ),
                      key: 'statistiques',
+                     title: 'statistiques',
+                     children: [
+                            {
+                                   icon: <LoginOutlined />,
+                                   label: (
+                                          <ConditionalTooltip title="Connexions">
+                                                 <Link href={'/statistiques/connexions'}>Connexions</Link>
+                                          </ConditionalTooltip>
+                                   ),
+                                   key: 'connexions',
+                                   title: 'connexions',
+                            },
+                            
+                     ]
               },
               {
                      icon: <FileDoneOutlined />,
@@ -92,23 +109,26 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
               >
                      <div className="flex justify-center">
                             <Tooltip title="Dashboard">
-                            <Link href={"/dashboard"}>
-                                   <Image
-                                          draggable={false}
-                                          className='m-2 rounded-lg'
-                                          src="https://upload.wikimedia.org/wikipedia/fr/5/50/Bloc_Marianne.svg"
-                                          alt="Logo du ministère des solidarités et de la santé"
-                                          width={130}
-                                          height={150}
-                                   />
-                            </Link></Tooltip>
+                                   <Link href={"/dashboard"}>
+                                          <Image
+                                                 draggable={false}
+                                                 className='m-2 rounded-lg'
+                                                 src="https://upload.wikimedia.org/wikipedia/fr/5/50/Bloc_Marianne.svg"
+                                                 alt="Logo du ministère des solidarités et de la santé"
+                                                 width={130}
+                                                 height={150}
+                                          />
+                                   </Link></Tooltip>
                      </div>
                      <div className="">
-                            <Menu mode="inline"
+                            <Menu
+                                   mode="inline"
+                                   triggerSubMenuAction="click"
                                    style={{ height: '100vh' }}
-                                   theme="light" items={adminSidebarItems}
-
-                                   selectedKeys={[selectedKey]} />
+                                   theme="light"
+                                   items={adminSidebarItems}
+                                   // selectedKeys={[selectedKey]}
+                            />
                      </div>
               </Sider>
        )

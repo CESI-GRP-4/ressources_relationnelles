@@ -1,9 +1,9 @@
-// layout.tsx (root layout)
+// layout.tsx
 import React from 'react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-       title: 'Statistiques - Ressources relationnelles',
+       title: 'Statistiques - Connexions - Ressources relationnelles',
 };
 
 export default function Layout({
