@@ -56,10 +56,6 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                      icon: <DashboardOutlined />,
                      key: "dashboard",
                      style: { marginLeft: '15px'},
-                     onClick: () => {
-                       // Ajoutez ici la logique de redirection vers le tableau de bord
-                       // par exemple, en utilisant react-router-dom : history.push('/dashboard');
-                     },
               },
               
               {
