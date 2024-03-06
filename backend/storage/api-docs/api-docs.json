@@ -504,30 +504,30 @@
                 "tags": [
                     "Statistics"
                 ],
-                "summary": "Get connection statistics",
-                "description": "Fetches connection statistics within a given date range. The end date is adjusted to the current date if it's set in the future.",
+                "summary": "Get connections statistics",
+                "description": "Retrieves the number of connections for each day between the specified start and end dates.",
                 "operationId": "getConnections",
                 "parameters": [
                     {
                         "name": "startDate",
                         "in": "query",
-                        "description": "Start date for fetching connection statistics (inclusive)",
+                        "description": "Start date for the statistics period in DD-MM-YYYY format.",
                         "required": true,
                         "schema": {
                             "type": "string",
                             "format": "date",
-                            "example": "01-01-2023"
+                            "example": "01-01-2024"
                         }
                     },
                     {
                         "name": "endDate",
                         "in": "query",
-                        "description": "End date for fetching connection statistics (inclusive). Adjusted to current date if set in the future.",
+                        "description": "End date for the statistics period in DD-MM-YYYY format, must be after or equal to the start date.",
                         "required": true,
                         "schema": {
                             "type": "string",
                             "format": "date",
-                            "example": "31-01-2023"
+                            "example": "31-01-2024"
                         }
                     }
                 ],
@@ -543,13 +543,12 @@
                                             "items": {
                                                 "properties": {
                                                     "date": {
-                                                        "type": "string",
-                                                        "format": "date",
-                                                        "example": "01-01-2023"
+                                                        "description": "The date in DD-MM-YYYY format.",
+                                                        "type": "string"
                                                     },
                                                     "numberConnections": {
-                                                        "type": "integer",
-                                                        "example": 150
+                                                        "description": "The number of connections for the date.",
+                                                        "type": "integer"
                                                     }
                                                 },
                                                 "type": "object"
@@ -561,15 +560,22 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "Validation Error",
+                    "422": {
+                        "description": "Validation error",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "error": {
-                                            "type": "string",
-                                            "example": "La date de début et la date de fin sont requises."
+                                        "errors": {
+                                            "type": "object",
+                                            "additionalProperties": [
+                                                {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            ]
                                         }
                                     },
                                     "type": "object"
@@ -577,7 +583,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
             }
         },
         "/users": {

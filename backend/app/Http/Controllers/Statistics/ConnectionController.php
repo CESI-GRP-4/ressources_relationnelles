@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Statistics;
 
 use App\Http\Controllers\Controller;
 use App\Models\LoginLog;
+use DateInterval;
+use DatePeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
@@ -14,30 +16,23 @@ class ConnectionController extends Controller {
      * @OA\Get(
      *     path="/stats/connections",
      *     tags={"Statistics"},
-     *     summary="Get connection statistics",
-     *     description="Fetches connection statistics within a given date range. The end date is adjusted to the current date if it's set in the future.",
+     *     summary="Get connections statistics",
+     *     description="Retrieves the number of connections for each day between the specified start and end dates.",
      *     operationId="getConnections",
+     *     security={{ "BearerAuth": {} }},
      *     @OA\Parameter(
      *         name="startDate",
      *         in="query",
      *         required=true,
-     *         description="Start date for fetching connection statistics (inclusive)",
-     *         @OA\Schema(
-     *             type="string",
-     *             format="date",
-     *             example="01-01-2023"
-     *         )
+     *         description="Start date for the statistics period in DD-MM-YYYY format.",
+     *         @OA\Schema(type="string", format="date", example="01-01-2024")
      *     ),
      *     @OA\Parameter(
      *         name="endDate",
      *         in="query",
      *         required=true,
-     *         description="End date for fetching connection statistics (inclusive). Adjusted to current date if set in the future.",
-     *         @OA\Schema(
-     *             type="string",
-     *             format="date",
-     *             example="31-01-2023"
-     *         )
+     *         description="End date for the statistics period in DD-MM-YYYY format, must be after or equal to the start date.",
+     *         @OA\Schema(type="string", format="date", example="31-01-2024")
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -49,17 +44,24 @@ class ConnectionController extends Controller {
      *                 type="array",
      *                 @OA\Items(
      *                     type="object",
-     *                     @OA\Property(property="date", type="string", format="date", example="01-01-2023"),
-     *                     @OA\Property(property="numberConnections", type="integer", example=150)
+     *                     @OA\Property(property="date", type="string", description="The date in DD-MM-YYYY format."),
+     *                     @OA\Property(property="numberConnections", type="integer", description="The number of connections for the date.")
      *                 )
      *             )
      *         )
      *     ),
      *     @OA\Response(
-     *         response=400,
-     *         description="Validation Error",
+     *         response=422,
+     *         description="Validation error",
      *         @OA\JsonContent(
-     *             @OA\Property(property="error", type="string", example="La date de début et la date de fin sont requises.")
+     *             type="object",
+     *             @OA\Property(
+     *                 property="errors",
+     *                 type="object",
+     *                 additionalProperties={
+     *                     @OA\Schema(type="array", @OA\Items(type="string"))
+     *                 }
+     *             )
      *         )
      *     )
      * )
@@ -85,19 +87,34 @@ class ConnectionController extends Controller {
 
         // Convert the dates to the correct format DD-MM-YYYY to YYYY-MM-DD
         // Add one day to the end date to include the end day completely
-        $startDate = Carbon::createFromFormat('d-m-Y', $request->input('startDate'))->format('Y-m-d');
-        $endDate = Carbon::createFromFormat('d-m-Y', $request->input('endDate'))->addDay()->format('Y-m-d');
+        $startDate = Carbon::createFromFormat('d-m-Y', $request->input('startDate'))->startOfDay();
+        $endDateInput  = Carbon::createFromFormat('d-m-Y', $request->input('endDate'))->addDay()->startOfDay();
 
-        $connections = LoginLog::whereBetween('login_datetime', [$startDate, $endDate])
-            ->selectRaw('DATE(login_datetime) as date, COUNT(*) as numberConnections')
-            ->groupBy('date')
-            ->orderBy('date')
-            ->get()
-            ->map(function ($item) {
-                $item->date = Carbon::createFromFormat('Y-m-d', $item->date)->format('d-m-Y');
-                return $item;
-            });
+        // If the end date is set in the future, adjust it to tomorrow
+        $tomorrow = Carbon::tomorrow()->startOfDay();
+        $endDate = $endDateInput->gt($tomorrow) ? $tomorrow : $endDateInput->addDay();
 
-        return response()->json(['connections' => $connections]);
+
+        // Create the interval for the period of time between the start and end date (1 day)
+        $interval = new DateInterval('P1D');
+
+        // Create the period of time between the start and end date
+        $period = new DatePeriod($startDate, $interval, $endDate);
+
+        $dates = [];
+        foreach ($period as $date) {
+            $dateFormatted = $date->format('Y-m-d');
+            $logins = LoginLog::whereBetween('login_datetime', [$startDate, $endDate])
+                ->selectRaw('DATE(login_datetime) as date, COUNT(*) as numberConnections')
+                ->groupBy('date')
+                ->get()
+                ->keyBy('date');
+            $dates[$dateFormatted] = [
+                'date' => $date->format('d-m-Y'),
+                'numberConnections' => isset($logins[$dateFormatted]) ? $logins[$dateFormatted]['numberConnections'] : 0,
+            ];
+        }
+
+        return response()->json(['connections' => array_values($dates)]);
     }
 }
