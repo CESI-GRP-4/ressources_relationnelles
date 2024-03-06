@@ -43,7 +43,6 @@ export default function ConnectionsChart({ dateRange, isPreview = false }: { dat
               datasets: [{
                      label: 'Nombre de connexions',
                      data: [],
-
                      backgroundColor: 'rgb(75, 192, 192)',
                      borderColor: 'rgba(75, 192, 192, 0.2)',
                      // borderRadius: Number.MAX_VALUE,
@@ -88,7 +87,8 @@ export default function ConnectionsChart({ dateRange, isPreview = false }: { dat
 
                      if (response.status === 200) {
                             const connectionData = response.data.connections;
-                            const labels = connectionData.map(item => dayjs(item.date, 'DD-MM-YYYY').format('DD/MM/YYYY'));
+                            
+                            const labels = connectionData.map(item => item.date.replace(/-/g, '/'));
                             const datasetData = connectionData.map(item => item.numberConnections);
 
                             setData({
