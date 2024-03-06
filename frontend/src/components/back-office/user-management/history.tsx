@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Avatar, Button, List, Skeleton, Card, Typography, Tag } from 'antd';
 import User from '@/types/user';
+import Link from 'next/link';
+import {PlusCircleOutlined} from '@ant-design/icons';
 interface DataType {
        userModified: User;
        by: User;
@@ -27,7 +29,6 @@ export default function History() {
                      email: "aa@aa.aa",
                      imgURL: "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
                      id: "1",
-                     role: "Utilisateur",
                      isEmailVerified: true,
                      city: "New York",
                      country: "USA",
@@ -39,7 +40,6 @@ export default function History() {
                      email: "aa@aa.aa",
                      imgURL: "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
                      id: "1",
-                     role: "Utilisateur",
                      isEmailVerified: true,
                      city: "New York",
                      country: "USA",
@@ -53,7 +53,6 @@ export default function History() {
                      email: "aa@aa.aasssssssssssssssssssssss",
                      imgURL: "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
                      id: "1",
-                     role: "Utilisateur",
                      isEmailVerified: true,
                      city: "New York",
                      country: "USA",
@@ -65,7 +64,6 @@ export default function History() {
                      email: "aa@aa.aasssssssssssssssssssssss",
                      imgURL: "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
                      id: "1",
-                     role: "Utilisateur",
                      isEmailVerified: true,
                      city: "New York",
                      country: "USA",
@@ -80,7 +78,6 @@ export default function History() {
                      email: "aa@aa.aasssssssssssssssssssssss",
                      imgURL: "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
                      id: "1",
-                     role: "Utilisateur",
                      isEmailVerified: true,
                      city: "New York",
                      country: "USA",
@@ -92,7 +89,6 @@ export default function History() {
                      email: "aa@aa.aasssssssssssssssssssssss",
                      imgURL: "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
                      id: "1",
-                     role: "Utilisateur",
                      isEmailVerified: true,
                      city: "New York",
                      country: "USA",
@@ -104,7 +100,8 @@ export default function History() {
        return (
               <Card
                      title="Actions récentes sur les utilisateurs"
-                     extra={<Typography.Link href="/gestion-utilisateurs">Plus</Typography.Link>}>
+                     extra={<Link href="/gestion-utilisateurs"><Button type="text" shape="circle" icon={<PlusCircleOutlined style={{ color: "blue" }} />} /></Link>}
+              >
                      <List
                             itemLayout="horizontal"
                             dataSource={list}
@@ -114,9 +111,9 @@ export default function History() {
                                                  <Avatar src={item.userModified.imgURL} />
                                                  <div style={{ margin: '0 8px', display: 'flex', alignItems: 'center' }}>
                                                         <div>
-                                                               {`${item.userModified.firstName} ${item.userModified.lastName} was `}
+                                                               {`${item.userModified.firstName} ${item.userModified.lastName} a été `}
                                                                <Tag color={getTagColor(item.action)}>{item.action}</Tag>
-                                                               {` by `}
+                                                               {`par `}
                                                                <Typography.Link href={`mailto:${item.by.email}`}>
                                                                       {item.by.email}
                                                                </Typography.Link>
