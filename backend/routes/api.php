@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Statistics\ConnectionController;
+use App\Http\Controllers\UserHistoryController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,6 +28,8 @@ Route::group(['middleware' => ['jwt.auth']], function() {
 
     Route::group(['middleware' => 'isAdmin'], function () {
         Route::get('users', [UserController::class, 'getUsers']);
+        Route::get('usershistory', [UserHistoryController::class, 'getUsersHistory']);
+
         Route::post('editUser/{id}', [UserController::class, 'editUser']);
         Route::delete('deleteUser/{id}', [UserController::class, 'deleteUser']);
         Route::patch('banUser/{id}', [UserController::class, 'banUser']);

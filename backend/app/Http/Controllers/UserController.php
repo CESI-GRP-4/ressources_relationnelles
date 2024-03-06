@@ -105,6 +105,7 @@ class UserController extends Controller
          if ($validator->fails()) { return response()->json($validator->errors(), 400); }
 
          $query = User::query();
+         $query->whereNull('deleted_at');
          $fieldMapping = $this->getFieldMapping();
 
          // Filters
@@ -401,7 +402,8 @@ class UserController extends Controller
         if (!$user) {
             return response()->json(['message' => 'Utilisateur non trouvé.'], 404);
         }
-        $user->delete();
+        $user->deleted_at = now();
+        $user->save();
         return response()->json(['message' => 'Utilisateur supprimé avec succés.']);
     }
 

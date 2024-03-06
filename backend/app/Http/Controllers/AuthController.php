@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\LoginLog;
-use App\Models\Role;
 use App\Models\User;
 use App\Notifications\ResetPass;
 use App\Notifications\VerifyEmail;
@@ -14,9 +13,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller{
-    private const DEFAULT_ROLE_ID = 4; // User role
-    private const EMAIL_NOT_VERIFIED = 0;
-    private const IS_NOT_BANNED = 0;
+    const DEFAULT_ROLE_ID = 4; // User role
+    const EMAIL_NOT_VERIFIED = 0;
+    const IS_NOT_BANNED = 0;
     /**
      * @OA\Post(
      *     path="/login",
@@ -71,6 +70,9 @@ class AuthController extends Controller{
         $user = User::where('email', $request->email)->first();
         if ($user->is_banned) {
             return response()->json(['message' => 'Votre compte est banni.'], 403);
+        }
+        if($user->deleted_at){
+            return response()->json(['message' => 'Votre compte a été supprimé.'], 403);
         }
 
         // Generation of the JWT token
@@ -129,8 +131,13 @@ class AuthController extends Controller{
         'password' => 'required|min:8',
     ]);
 
-    if (User::where('email', $data['email'])->exists()) {
-        return response()->json(['message' => "L'adresse email est déjà utilisée."], 401);
+    $userExiste = User::where('email', $data['email'])->first();
+    if ($userExiste) {
+        if($userExiste->deleted_at){
+            return response()->json(['message' => "L'adresse email est déjà utilisée par un compte supprimé. Merci de nous contacter."], 403);
+        }else{
+            return response()->json(['message' => "L'adresse email est déjà utilisée."], 401);
+        }
     }
     $verificationToken = Str::random(100);
 

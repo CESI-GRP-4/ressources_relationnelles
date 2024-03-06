@@ -19,9 +19,6 @@ class Utils{
      * )
      */
     public static function getUserData($user){
-        // Default value for isNewUser is false
-        $isNewUser = session('isNewUser', false);
-
         return [
             'firstName' => $user->first_name,
             'lastName' => $user->last_name,
@@ -29,8 +26,6 @@ class Utils{
             'imgURL' => $user->path_picture,
             'id' => $user->id_user,
             'role' => $user->role->name,
-            'isEmailVerified' => $user->is_verified,
-            'newUser' => $isNewUser,
         ];
     }
 
