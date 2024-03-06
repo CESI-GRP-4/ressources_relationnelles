@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "title": "(Re)Sources Relationnelles",
-        "version": "0.22"
+        "version": "0.23"
     },
     "servers": [
         {
@@ -495,6 +495,87 @@
                     },
                     "404": {
                         "description": "Not Found"
+                    }
+                }
+            }
+        },
+        "/stats/connections": {
+            "get": {
+                "tags": [
+                    "Statistics"
+                ],
+                "summary": "Get connection statistics",
+                "description": "Fetches connection statistics within a given date range. The end date is adjusted to the current date if it's set in the future.",
+                "operationId": "getConnections",
+                "parameters": [
+                    {
+                        "name": "startDate",
+                        "in": "query",
+                        "description": "Start date for fetching connection statistics (inclusive)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2023-01-01"
+                        }
+                    },
+                    {
+                        "name": "endDate",
+                        "in": "query",
+                        "description": "End date for fetching connection statistics (inclusive). Adjusted to current date if set in the future.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2023-01-31"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "connections": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "date": {
+                                                        "type": "string",
+                                                        "format": "date",
+                                                        "example": "2023-01-01"
+                                                    },
+                                                    "numberConnections": {
+                                                        "type": "integer",
+                                                        "example": 150
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "La date de début et la date de fin sont requises."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -1108,11 +1189,5 @@
                 "in": "header"
             }
         }
-    },
-    "tags": [
-        {
-            "name": "User",
-            "description": "Utilisateurs"
-        }
-    ]
+    }
 }
