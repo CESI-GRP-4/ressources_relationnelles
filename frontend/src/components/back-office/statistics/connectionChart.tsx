@@ -57,7 +57,7 @@ export default function ConnectionsChart({ dateRange, isPreview = false }: { dat
               let endDate = '';
 
               if (isPreview) { // Calculate the date range for the last 7 days if isPreview is true
-                     startDate = dayjs().subtract(7, 'days').format('DD/MM/YYYY');
+                     startDate = dayjs().subtract(6, 'days').format('DD/MM/YYYY');
                      endDate = dayjs().format('DD/MM/YYYY');
               } else if (dateRange) {
                      startDate = dateRange.startDate;
@@ -87,7 +87,7 @@ export default function ConnectionsChart({ dateRange, isPreview = false }: { dat
 
                      if (response.status === 200) {
                             const connectionData = response.data.connections;
-                            
+
                             const labels = connectionData.map(item => item.date.replace(/-/g, '/'));
                             const datasetData = connectionData.map(item => item.numberConnections);
 
@@ -138,15 +138,16 @@ export default function ConnectionsChart({ dateRange, isPreview = false }: { dat
        };
 
        return (
-              <div className="flex flex-col gap-5">
-                     {(average && !isPreview) ? (
+              <>
+                     {(average && !isPreview) && (
                             <Card title="Statistique moyenne" bordered={false} className='w-fit'>
                                    <Paragraph>
                                           Le jour avec le plus de connexions en moyenne est le <strong>{average.day}</strong> avec <strong>{average.value}</strong> connexion(s).
                                    </Paragraph>
                             </Card>
-                     ) : null}
+                     )}
                      <Bar className='w-full' data={data} options={options} />
-              </div>
+              </>
+
        );
 }

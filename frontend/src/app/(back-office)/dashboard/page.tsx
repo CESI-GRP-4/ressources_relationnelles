@@ -25,8 +25,8 @@ export default function AdminDashboard() {
                                    <Meta
                                           avatar={
                                                  <Avatar
-                                                 draggable={false}
-                                                 shape='square'
+                                                        draggable={false}
+                                                        shape='square'
                                                         src={!avatarError ? user?.imgURL : null}
                                                         icon={avatarError ? <UserOutlined /> : null}
                                                         onError={() => {
@@ -58,6 +58,7 @@ export default function AdminDashboard() {
                             title="Statistiques de connexions (semaine actuelle)"
                             extra={<Link href="/statistiques/connexions"><Button type="text" shape="circle" icon={<PlusCircleOutlined style={{ color: "blue" }} />} /></Link>}
                             className="w-1/2 min-w-96 max-w-[600px] h-auto">
+                                   
                             <div style={{ width: '100%', aspectRatio: '16 / 9' }}>
                                    <ConnectionsChart isPreview></ConnectionsChart>
                             </div>
