@@ -6,7 +6,9 @@ import {
        FileDoneOutlined,
        RightOutlined,
        LeftOutlined,
-       LoginOutlined
+       LoginOutlined,
+       EditOutlined,
+       HistoryOutlined
 } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from "next/link";
@@ -16,7 +18,8 @@ const { Sider } = Layout;
 
 export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: boolean, setCollapsed: (collapsed: boolean) => void }) {
        const pathname = usePathname();
-       const selectedKey = pathname.split('/')[1];
+       const selectedKey = pathname.split('/').filter(Boolean).join('/');
+       console.log("🚀 ~ AdminSidebar ~ selectedKey:", selectedKey);
 
        const ConditionalTooltip = ({ title, children }: { title: string, children: React.ReactNode }) => {
               const [isOverflowing, setIsOverflowing] = useState(false);
@@ -50,22 +53,40 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                      style: { marginTop: '30px' },
                      label: (
                             <ConditionalTooltip title="Utilisateurs">
-                                   <Link href={'/gestion-utilisateurs'}>Utilisateurs</Link>
+                                   Utilisateurs
                             </ConditionalTooltip>
                      ),
-                     key: 'gestion-utilisateurs',
-                     title: 'gestion-utilisateurs',
+                     title: 'Utilisateurs',
+                     children: [
+                            {
+                                   icon: <EditOutlined />,
+                                   label: (
+                                          <ConditionalTooltip title="Gestion des utilisateurs">
+                                                 <Link href={'/gestion-utilisateurs'}>Gérer</Link>
+                                          </ConditionalTooltip>
+                                   ),
+                                   key: 'gestion-utilisateurs',
+                                   title: 'gestion-utilisateurs',
+                            },
+                            {
+                                   icon: <HistoryOutlined />,
+                                   label: (
+                                          <ConditionalTooltip title="Historique">
+                                                 <Link href={'/gestion-utilisateurs-historique'}>Historique</Link>
+                                          </ConditionalTooltip>
+                                   ),
+                                   key: 'gestion-utilisateurs-historique',
+                                   title: 'gestion-utilisateurs-historique',
+                            },
+                     ]
               },
               {
                      icon: <LineChartOutlined />,
                      label: (
                             <ConditionalTooltip title="Statistiques">
-                                   <Link href={'/statistiques'} style={{ textDecoration: 'none', color: 'inherit' }}>
                                           Statistiques
-                                   </Link>
                             </ConditionalTooltip>
                      ),
-                     key: 'statistiques',
                      title: 'statistiques',
                      children: [
                             {
@@ -75,20 +96,10 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                                                  <Link href={'/statistiques/connexions'}>Connexions</Link>
                                           </ConditionalTooltip>
                                    ),
-                                   key: 'connexions',
+                                   key: 'statistiques/connexions',
                                    title: 'connexions',
                             },
-                            
                      ]
-              },
-              {
-                     icon: <FileDoneOutlined />,
-                     label: (
-                            <ConditionalTooltip title="Ressources">
-                                   <span>Ressources</span>
-                            </ConditionalTooltip>
-                     ),
-                     key: 'resources',
               },
        ];
 
@@ -118,16 +129,16 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                                                  width={130}
                                                  height={150}
                                           />
-                                   </Link></Tooltip>
+                                   </Link>
+                            </Tooltip>
                      </div>
                      <div className="">
                             <Menu
                                    mode="inline"
-                                   triggerSubMenuAction="click"
                                    style={{ height: '100vh' }}
                                    theme="light"
                                    items={adminSidebarItems}
-                                   // selectedKeys={[selectedKey]}
+                                   selectedKeys={[selectedKey]}
                             />
                      </div>
               </Sider>

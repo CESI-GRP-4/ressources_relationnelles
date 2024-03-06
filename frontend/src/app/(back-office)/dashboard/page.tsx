@@ -50,7 +50,6 @@ export default function AdminDashboard() {
                                    </div>
                             </Card>
                      </div>
-
                      <div>
                             <History></History>
                      </div>
