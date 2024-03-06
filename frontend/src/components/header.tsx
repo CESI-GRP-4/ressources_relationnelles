@@ -4,6 +4,7 @@ import { useUser } from "@/providers/userProvider";
 import { useState, useEffect } from "react";
 import useLogout from "@/utils/logout";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 const { Header: AntdHeader } = Layout;
 
 export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean, setCollapsed: (collapsed: boolean) => void }) {
@@ -52,6 +53,7 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                      label: (<>
                             {avatarSrc ? (
                                    <Avatar
+                                          draggable={false}
                                           size={40}
                                           shape="square"
                                           src={avatarSrc}
@@ -61,21 +63,22 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                                    <Avatar
                                           size={40}
                                           shape="square"
+                                          draggable={false}
                                           icon={<UserOutlined />}
                                    />
                             )}
                      </>),
-                     key: 'Profile',
+                     key: 'User',
                      children: [
                             {
-                                   label: `Mon profil`,
-                                   key: 'my-profile',
+                                   label: <Link href={"/profil"}>{`Mon profil`}</Link>,
+                                   key: 'profil',
                             },
                             {
                                    icon: (isLoading ? <Spin size="small" /> : <LogoutOutlined />),
                                    disabled: isLoading,
                                    danger: true,
-                                   label: <span onClick={() => {if (!isLoading) logout()}}>Se déconnecter</span>,
+                                   label: <span onClick={() => { if (!isLoading) logout() }}>Se déconnecter</span>,
                                    key: 'logout',
                             }
                      ]

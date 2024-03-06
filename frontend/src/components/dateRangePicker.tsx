@@ -32,7 +32,6 @@ const { RangePicker } = DatePicker;
  * If both `disableAfterToday` and `disableBeforeToday` are provided, only the last one takes effect.
  */
 export default function DateRangePicker({ onChange, format = 'DD/MM/YYYY', disabledDate, disableAfterToday, disableBeforeToday, defaultValue }: { onChange?: (dates: [string, string]) => void, format?: string, disabledDate?: (current: Dayjs | null) => boolean, disableAfterToday?: boolean, disableBeforeToday?: boolean, defaultValue?: [Dayjs, Dayjs] }) {
-
        if (disableAfterToday) {
               disabledDate = (current: Dayjs | null): boolean => {
                      return current ? current > dayjs().endOf('day') : false;

@@ -23,12 +23,16 @@ export default function ConnectionStats() {
 
        return (
               <>
-                     <DateRangePicker
-                            onChange={handleDateChange}
-                            disableAfterToday
-                            defaultValue={defaultDateRange}
-                     />
-                     <TestChart dateRange={dateRange}></TestChart>
+                     <div className="w-full flex flex-row justify-center">
+                            <div className='xl:w-4/5 w-full space-y-5'>
+                                   <DateRangePicker
+                                          onChange={handleDateChange}
+                                          disableAfterToday
+                                          defaultValue={defaultDateRange}
+                                   />
+                                   <TestChart dateRange={dateRange}></TestChart>
+                            </div>
+                     </div>
               </>
        );
 }

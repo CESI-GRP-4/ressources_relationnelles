@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Avatar, Button, List, Skeleton, Card, Typography, Tag } from 'antd';
 import User from '@/types/user';
+import Link from 'next/link';
+import {PlusCircleOutlined} from '@ant-design/icons';
 interface DataType {
        userModified: User;
        by: User;
@@ -98,7 +100,8 @@ export default function History() {
        return (
               <Card
                      title="Actions récentes sur les utilisateurs"
-                     extra={<Typography.Link href="/gestion-utilisateurs">Plus</Typography.Link>}>
+                     extra={<Link href="/gestion-utilisateurs"><Button type="text" shape="circle" icon={<PlusCircleOutlined style={{ color: "blue" }} />} /></Link>}
+              >
                      <List
                             itemLayout="horizontal"
                             dataSource={list}

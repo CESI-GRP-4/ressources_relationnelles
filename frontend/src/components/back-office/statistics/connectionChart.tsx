@@ -8,12 +8,14 @@ import {
        Title,
        Tooltip,
        Legend,
-       ChartData 
+       ChartData
 } from 'chart.js';
 import { useEffect, useState } from 'react';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { message } from 'antd';
 import dayjs from 'dayjs';
+import { Card, Typography } from "antd";
+const { Paragraph } = Typography;
 
 ChartJS.register(
        CategoryScale,
@@ -25,10 +27,14 @@ ChartJS.register(
 );
 
 interface ConnectionResponse {
-       connection: {
+       connections: {
               date: string;
               numberConnections: number;
        }[];
+       average: {
+              day: string;
+              value: number;
+       };
 }
 
 export default function ConnectionsChart({ dateRange, isPreview = false }: { dateRange?: { startDate: string, endDate: string }, isPreview?: boolean }) {
@@ -40,17 +46,17 @@ export default function ConnectionsChart({ dateRange, isPreview = false }: { dat
 
                      backgroundColor: 'rgb(75, 192, 192)',
                      borderColor: 'rgba(75, 192, 192, 0.2)',
-                     borderRadius: Number.MAX_VALUE,
-                     
+                     // borderRadius: Number.MAX_VALUE,
               }],
        });
 
        const [isGraphLoading, setIsGraphLoading] = useState(true);
+       const [average, setAverage] = useState<{ day: string, value: number } | null>(null);
 
        useEffect(() => {
               let startDate = '';
               let endDate = '';
-              
+
               if (isPreview) { // Calculate the date range for the last 7 days if isPreview is true
                      startDate = dayjs().subtract(7, 'days').format('DD/MM/YYYY');
                      endDate = dayjs().format('DD/MM/YYYY');
@@ -70,31 +76,37 @@ export default function ConnectionsChart({ dateRange, isPreview = false }: { dat
                      const response: AxiosResponse<ConnectionResponse> = await axios({
                             method: 'get',
                             baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
-                            url: "/", // ! The actual endpoint must be set
+                            url: "/stats/connections",
                             withCredentials: true,
                             params: {
-                                   startDate: startDate,
-                                   endDate: endDate,
+                                   startDate: startDate.replace(/\//g, '-'), // Replace '/' with '-'
+                                   endDate: endDate.replace(/\//g, '-'), // Replace '/' with '-'
                             },
                             responseType: 'json',
                             timeout: 10000,
                      });
 
-                     const connectionData = response.data.connection;
-                     const labels = connectionData.map(item => dayjs(item.date).format('DD/MM/YYYY')); // Formatting dates to 'DD/MM/YYYY'
-                     const datasetData = connectionData.map(item => item.numberConnections);
+                     if (response.status === 200) {
+                            const connectionData = response.data.connections;
+                            const labels = connectionData.map(item => dayjs(item.date, 'DD-MM-YYYY').format('DD/MM/YYYY'));
+                            const datasetData = connectionData.map(item => item.numberConnections);
 
-                     setData({
-                            labels: labels,
-                            datasets: [{
-                                   label: 'Nombre de connexions',
-                                   data: datasetData,
-                                   backgroundColor: 'rgb(75, 192, 192)',
-                                   borderColor: 'rgba(75, 192, 192, 0.2)',
-                                   borderRadius: Number.MAX_VALUE,
-                            }],
-                     });
+                            setData({
+                                   labels: labels,
+                                   datasets: [{
+                                          label: 'Nombre de connexions',
+                                          data: datasetData,
+                                          backgroundColor: 'rgb(75, 192, 192)',
+                                          borderColor: 'rgba(75, 192, 192, 0.2)',
+                                          // borderRadius: Number.MAX_VALUE,
+                                   }],
+                            });
+                            setAverage(response.data.average);
+                     } else {
+                            throw new Error('Invalid status code')
+                     }
               } catch (error) {
+                     console.log("🚀 ~ fetchData ~ error", error);
                      const axiosError = error as AxiosError;
                      if (axiosError.response) {
                             switch (axiosError.response.status) {
@@ -125,5 +137,16 @@ export default function ConnectionsChart({ dateRange, isPreview = false }: { dat
               aspectRatio: 2,
        };
 
-       return <Bar className='w-full' data={data} options={options} />;
+       return (
+              <div className="flex flex-col gap-5">
+                     {(average && !isPreview) ? (
+                            <Card title="Statistique moyenne" bordered={false} className='w-fit'>
+                                   <Paragraph>
+                                          Le jour avec le plus de connexions en moyenne est le <strong>{average.day}</strong> avec <strong>{average.value}</strong> connexion(s).
+                                   </Paragraph>
+                            </Card>
+                     ) : null}
+                     <Bar className='w-full' data={data} options={options} />
+              </div>
+       );
 }
