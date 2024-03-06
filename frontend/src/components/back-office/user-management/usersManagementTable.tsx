@@ -198,7 +198,7 @@ const EditableTable: React.FC = () => {
               try {
                      const response = await axios({
                             method: 'get',
-                            baseURL: 'http://localhost/api', // * Might be changed depending on the backend implementation
+                            baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL, // * Might be changed depending on the backend implementation
                             url: "/users",
                             withCredentials: true,
                             params: tableParams,
@@ -245,7 +245,7 @@ const EditableTable: React.FC = () => {
               try {
                      const editUserResponse = await axios({
                             method: 'post',
-                            baseURL: 'http://localhost/api',
+                            baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
                             url: `/editUser/${user.id}`,
                             withCredentials: true,
                             responseType: 'json',

@@ -19,7 +19,7 @@ export default function MotDePasseOublie() {
               try{
                      const response: AxiosResponse = await axios({
                             method: 'post',
-                            baseURL: 'http://localhost/api',
+                            baseURL:  process.env.NEXT_PUBLIC_BACKEND_API_URL,
                             url: '/forgot-password/send-mail',
                             data: {
                                    email: form.email,

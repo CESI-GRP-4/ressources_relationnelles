@@ -14,7 +14,7 @@ const useLogout = () => {
               try {
                      const logOutResponse = await axios({
                             method: 'post',
-                            baseURL: 'http://localhost/api',
+                            baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
                             url: "/logout",
                             withCredentials: true,
                             responseType: 'json',
@@ -52,7 +52,6 @@ const useLogout = () => {
                      setIsLoading(false); // Arrête le chargement quelle que soit l'issue
               }
        };
-
        return { logout, isLoading }; // Retourne à la fois la fonction logout et l'état isLoading
 };
 
