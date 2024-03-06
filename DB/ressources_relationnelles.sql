@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : mer. 06 mars 2024 à 08:58
+-- Généré le : mer. 06 mars 2024 à 12:51
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -567,11 +567,38 @@ INSERT INTO `login_logs` (`id`, `id_user`, `login_datetime`) VALUES
 (32, 30, '2024-01-06 09:45:00'),
 (33, 31, '2024-01-06 11:00:00'),
 (34, 32, '2024-01-07 08:30:00'),
-(35, 33, '2024-01-07 09:30:00'),
+(35, 29, '2024-01-07 09:30:00'),
 (36, 36, '2024-01-07 10:45:00'),
 (37, 1, '2024-03-05 18:48:39'),
 (38, 1, '2024-03-05 19:01:22'),
-(39, 1, '2024-03-06 08:53:58');
+(39, 1, '2024-03-06 08:53:58'),
+(40, 1, '2024-03-06 09:32:49'),
+(41, 28, '2024-01-09 08:00:00'),
+(42, 32, '2024-01-09 09:45:00'),
+(43, 1, '2024-01-09 11:00:00'),
+(44, 1, '2024-03-06 08:53:58'),
+(45, 1, '2024-03-06 08:53:58'),
+(46, 32, '2024-03-06 08:53:58'),
+(47, 1, '2024-03-06 08:53:58'),
+(48, 33, '2024-03-06 08:53:58'),
+(49, 33, '2024-03-06 08:53:58'),
+(50, 29, '2024-03-06 08:53:58'),
+(51, 1, '2024-03-06 08:53:58'),
+(52, 33, '2024-03-06 08:53:58'),
+(53, 1, '2024-03-06 08:53:58'),
+(54, 1, '2024-03-06 08:53:58'),
+(55, 33, '2024-03-06 08:53:58'),
+(56, 29, '2024-03-06 08:53:58'),
+(57, 1, '2024-03-06 08:53:58'),
+(58, 33, '2024-03-06 08:53:58'),
+(59, 1, '2024-03-06 08:53:58'),
+(60, 1, '2024-03-06 08:53:58'),
+(61, 29, '2024-03-06 08:53:58'),
+(62, 1, '2024-03-06 08:53:58'),
+(63, 33, '2024-03-06 08:53:58'),
+(64, 29, '2024-03-06 08:53:58'),
+(65, 1, '2024-03-06 08:53:58'),
+(66, 1, '2024-03-06 08:53:58');
 
 -- --------------------------------------------------------
 
@@ -743,20 +770,20 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id_user`, `email`, `first_name`, `last_name`, `password`, `is_verified`, `is_banned`, `path_picture`, `id_city`, `id_postal_code`, `id_country`, `id_role`, `created_at`, `updated_at`, `verification_token`, `password_reset_token`) VALUES
-(1, 'john.doe@example.com', 'John', 'Doe', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, '/path/to/picture', 1, 1, 1, 1, '2024-01-23 21:58:57', '2024-02-26 20:57:50', NULL, NULL),
-(22, 'jordan.davis53@example.com', 'Jordan', 'Davis', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, 0, '/path/to/picture/user_1.jpg', 3, 3, 1, 3, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
-(23, 'dakota.wilson74@sample.com', 'Dakota', 'Wilsoaze', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, '/path/to/picture/user_2.jpg', 2, 2, 3, 3, '2024-02-13 18:05:16', '2024-02-26 19:56:33', NULL, NULL),
-(24, 'jordan.smith21@sample.com', 'Jordan', 'Smith', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, '/path/to/picture/user_3.jpg', 3, 1, 1, 3, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
-(25, 'morgan.davis85@sample.com', 'Morgan', 'Davis', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, 0, '/path/to/picture/user_4.jpg', 2, 7, 18, 3, '2024-02-13 18:05:16', '2024-03-05 17:08:45', NULL, NULL),
-(26, 'robin.wilson93@example.com', 'Robin', 'Wilson', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, '/path/to/picture/user_5.jpg', 1, 2, 1, 3, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
-(27, 'casey.brown77@sample.com', 'Casey', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, '/path/to/picture/user_6.jpg', 2, 3, 3, 2, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
-(28, 'robin.johnson19@example.com', 'Robin', 'Johnson', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, 0, '/path/to/picture/user_7.jpg', 2, 2, 1, 1, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
-(29, 'riley.moore47@sample.com', 'Riley', 'Moore', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, '/path/to/picture/user_8.jpg', 2, 2, 1, 3, '2024-02-13 18:05:16', '2024-02-13 18:05:16', NULL, NULL),
-(30, 'riley.williams18@sample.com', 'Rileyy', 'Williams', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, '/path/to/picture/user_9.jpg', 1, 1, 3, 4, '2024-02-13 18:05:16', '2024-02-22 19:08:45', NULL, NULL),
-(31, 'dakota.brown54@demo.com', 'Dakota', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, '/path/to/picture/user_10.jpg', 7, 3, 3, 4, '2024-02-13 18:05:16', '2024-02-20 17:41:27', NULL, NULL),
-(32, 'azeaze.brown54@demo.com', 'Dakota', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, '/path/to/picture/user_10.jpg', 7, 3, 3, 4, '2024-02-13 18:05:16', '2024-02-20 17:41:27', NULL, NULL),
-(33, 'aze.brown54@demo.com', 'Dakota', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, '/path/to/picture/user_10.jpg', 7, 3, 3, 4, '2024-02-13 18:05:16', '2024-02-20 17:41:27', NULL, NULL),
-(36, 'nicolas.chwiej@viacesi.fr', 'Nicolas', 'CHWIEJ', '$2y$12$z3TTUPvA6a0lH5ShBVAUaOqORGu6sndLbG.Cji6/ceB430eKQUXHi', 0, 0, '', NULL, NULL, NULL, 2, '2024-02-29 18:17:50', '2024-02-29 20:29:57', 'EnkYq05kxT9njZmzbpG8BngNEuWLz3Zi7gOfjYq4HUpoDMGgXxGv4jw6cYzutAhJ2Jtb1IFT0L6eoqzSQYj5IhWDmk91cBWA6eXF', NULL);
+(1, 'john.doe@example.com', 'John', 'Doe', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Toby', 1, 1, 1, 1, '2024-01-23 21:58:57', '2024-03-06 10:15:04', NULL, NULL),
+(22, 'jordan.davis53@example.com', 'Jordan', 'Davis', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, 0, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Socks', 3, 3, 1, 3, '2024-02-13 18:05:16', '2024-03-06 10:15:04', NULL, NULL),
+(23, 'dakota.wilson74@sample.com', 'Dakota', 'Wilsoaze', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Angel', 2, 2, 3, 3, '2024-02-13 18:05:16', '2024-03-06 10:15:04', NULL, NULL),
+(24, 'jordan.smith21@sample.com', 'Jordan', 'Smith', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Kiki', 3, 1, 1, 3, '2024-02-13 18:05:16', '2024-03-06 10:15:04', NULL, NULL),
+(25, 'morgan.davis85@sample.com', 'Morgan', 'Davis', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, 0, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Toby', 2, 7, 18, 3, '2024-02-13 18:05:16', '2024-03-06 10:15:04', NULL, NULL),
+(26, 'robin.wilson93@example.com', 'Robin', 'Wilson', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Toby', 1, 2, 1, 3, '2024-02-13 18:05:16', '2024-03-06 10:15:04', NULL, NULL),
+(27, 'casey.brown77@sample.com', 'Casey', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Angel', 2, 3, 3, 2, '2024-02-13 18:05:16', '2024-03-06 10:15:04', NULL, NULL),
+(28, 'robin.johnson19@example.com', 'Robin', 'Johnson', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, 0, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Angel', 2, 2, 1, 1, '2024-02-13 18:05:16', '2024-03-06 10:15:04', NULL, NULL),
+(29, 'riley.moore47@sample.com', 'Riley', 'Moore', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Kiki', 2, 2, 1, 3, '2024-02-13 18:05:16', '2024-03-06 10:15:04', NULL, NULL),
+(30, 'riley.williams18@sample.com', 'Rileyy', 'Williams', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Toby', 1, 1, 3, 4, '2024-02-13 18:05:16', '2024-03-06 10:15:04', NULL, NULL),
+(31, 'dakota.brown54@demo.com', 'Dakota', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Socks', 7, 3, 3, 4, '2024-02-13 18:05:16', '2024-03-06 10:15:04', NULL, NULL),
+(32, 'azeaze.brown54@demo.com', 'Dakota', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Angel', 7, 3, 3, 4, '2024-02-13 18:05:16', '2024-03-06 10:15:04', NULL, NULL),
+(33, 'aze.brown54@demo.com', 'Dakota', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Kiki', 7, 3, 3, 4, '2024-02-13 18:05:16', '2024-03-06 10:15:04', NULL, NULL),
+(36, 'nicolas.chwiej@viacesi.fr', 'Nicolas', 'CHWIEJ', '$2y$12$z3TTUPvA6a0lH5ShBVAUaOqORGu6sndLbG.Cji6/ceB430eKQUXHi', 0, 0, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Toby', NULL, NULL, NULL, 2, '2024-02-29 18:17:50', '2024-03-06 10:15:04', 'EnkYq05kxT9njZmzbpG8BngNEuWLz3Zi7gOfjYq4HUpoDMGgXxGv4jw6cYzutAhJ2Jtb1IFT0L6eoqzSQYj5IhWDmk91cBWA6eXF', NULL);
 
 --
 -- Index pour les tables déchargées
@@ -976,7 +1003,7 @@ ALTER TABLE `invitations`
 -- AUTO_INCREMENT pour la table `login_logs`
 --
 ALTER TABLE `login_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
 
 --
 -- AUTO_INCREMENT pour la table `migrations`
