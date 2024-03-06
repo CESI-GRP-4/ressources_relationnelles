@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useEffect } from 'react';
-import TestChart from "@/components/back-office/statistics/connectionChart"; // Assuming TestChart is your ConnectionsChart
+import ConnectionsChart from "@/components/back-office/statistics/connectionChart";
 import DateRangePicker from '@/components/dateRangePicker';
 import dayjs from 'dayjs';
 
@@ -30,7 +30,7 @@ export default function ConnectionStats() {
                                           disableAfterToday
                                           defaultValue={defaultDateRange}
                                    />
-                                   <TestChart dateRange={dateRange}></TestChart>
+                                   <ConnectionsChart dateRange={dateRange}></ConnectionsChart>
                             </div>
                      </div>
               </>
