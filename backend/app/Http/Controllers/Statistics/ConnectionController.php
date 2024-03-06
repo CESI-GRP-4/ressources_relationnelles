@@ -15,24 +15,24 @@ class ConnectionController extends Controller {
     /**
      * @OA\Get(
      *     path="/stats/connections",
-     *     tags={"Statistics"},
-     *     summary="Get connections statistics",
-     *     description="Retrieves the number of connections for each day between the specified start and end dates.",
+     *     tags={"Stats"},
+     *     summary="Get connection statistics",
+     *     description="Fetches connection counts for a given date range along with the day having the highest average connections.",
      *     operationId="getConnections",
      *     security={{ "BearerAuth": {} }},
      *     @OA\Parameter(
      *         name="startDate",
      *         in="query",
      *         required=true,
-     *         description="Start date for the statistics period in DD-MM-YYYY format.",
-     *         @OA\Schema(type="string", format="date", example="01-01-2024")
+     *         description="Start date for fetching connections (format: DD-MM-YYYY)",
+     *         @OA\Schema(type="string", format="date")
      *     ),
      *     @OA\Parameter(
      *         name="endDate",
      *         in="query",
      *         required=true,
-     *         description="End date for the statistics period in DD-MM-YYYY format, must be after or equal to the start date.",
-     *         @OA\Schema(type="string", format="date", example="31-01-2024")
+     *         description="End date for fetching connections (format: DD-MM-YYYY)",
+     *         @OA\Schema(type="string", format="date")
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -44,9 +44,15 @@ class ConnectionController extends Controller {
      *                 type="array",
      *                 @OA\Items(
      *                     type="object",
-     *                     @OA\Property(property="date", type="string", description="The date in DD-MM-YYYY format."),
-     *                     @OA\Property(property="numberConnections", type="integer", description="The number of connections for the date.")
+     *                     @OA\Property(property="date", type="string", example="06-03-2024"),
+     *                     @OA\Property(property="numberConnections", type="integer", example=2)
      *                 )
+     *             ),
+     *             @OA\Property(
+     *                 property="average",
+     *                 type="object",
+     *                 @OA\Property(property="day", type="string", example="mercredi"),
+     *                 @OA\Property(property="value", type="string", example="2,0")
      *             )
      *         )
      *     ),
@@ -54,14 +60,7 @@ class ConnectionController extends Controller {
      *         response=422,
      *         description="Validation error",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(
-     *                 property="errors",
-     *                 type="object",
-     *                 additionalProperties={
-     *                     @OA\Schema(type="array", @OA\Items(type="string"))
-     *                 }
-     *             )
+     *             @OA\Property(property="errors", type="object")
      *         )
      *     )
      * )
@@ -85,6 +84,17 @@ class ConnectionController extends Controller {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
+        $connections = $this->findConnections($request);
+        $average = $this->findMaxDailyAverage($connections);
+
+        return response()->json([
+            'connections' => $connections,
+            'average' => $average
+        ]);
+    }
+
+    public function findConnections(Request $request){
+
         // Convert the dates to the correct format DD-MM-YYYY to YYYY-MM-DD
         // Add one day to the end date to include the end day completely
         $startDate = Carbon::createFromFormat('d-m-Y', $request->input('startDate'))->startOfDay();
@@ -92,15 +102,14 @@ class ConnectionController extends Controller {
 
         // If the end date is set in the future, adjust it to tomorrow
         $tomorrow = Carbon::tomorrow()->startOfDay();
-        $endDate = $endDateInput->gt($tomorrow) ? $tomorrow : $endDateInput->addDay();
+        $endDate = ($endDateInput > $tomorrow) ? $tomorrow : $endDateInput;
 
 
-        // Create the interval for the period of time between the start and end date (1 day)
         $interval = new DateInterval('P1D');
-
-        // Create the period of time between the start and end date
         $period = new DatePeriod($startDate, $interval, $endDate);
 
+        // Loop through the period and get the number of connections for each day
+        // If there are no connections for a day, set the number to 0
         $dates = [];
         foreach ($period as $date) {
             $dateFormatted = $date->format('Y-m-d');
@@ -115,6 +124,34 @@ class ConnectionController extends Controller {
             ];
         }
 
-        return response()->json(['connections' => array_values($dates)]);
+        return array_values($dates);
+    }
+
+    public function findMaxDailyAverage($connections){
+        $totals = [];
+        $occurrences = [];
+
+        foreach ($connections as $connection) {
+            $dayOfWeek = Carbon::createFromFormat('d-m-Y', $connection['date'])->locale('fr')->isoFormat('dddd');
+            if (!isset($totals[$dayOfWeek])) {
+                $totals[$dayOfWeek] = 0;
+                $occurrences[$dayOfWeek] = 0;
+            }
+            $totals[$dayOfWeek] += $connection['numberConnections'];
+            $occurrences[$dayOfWeek]++;
+        }
+
+        $averages = [];
+        foreach ($totals as $day => $total) {
+            $averages[$day] = $total / $occurrences[$day];
+        }
+
+        $maxAverage = max($averages);
+        $maxDay = array_search($maxAverage, $averages);
+
+        return [
+            'day' => $maxDay,
+            'value' => number_format($maxAverage, 1, ',', '')
+        ];
     }
 }
