@@ -6,6 +6,7 @@ import { EditOutlined, SaveOutlined, LeftOutlined } from '@ant-design/icons';
 import { UserOutlined } from '@ant-design/icons';
 import type User from '@/types/user';
 import { useUser } from '@/providers/userProvider';
+import { Row, Col } from 'antd';
 import axios from 'axios';
 import SelectCountry from '@/components/selectCountry';
 
@@ -120,7 +121,7 @@ const UserProfilePage = () => {
 
   return (
     <Card
-      style={{ width: '400px', margin: 'auto' }}
+      style={{ width: '100%', maxWidth: '1000px', margin: 'auto', marginTop: '2%', marginBottom: '2%' }}
       actions={[
         <Button
           icon={editing ? <LeftOutlined /> : <EditOutlined />}
@@ -133,10 +134,11 @@ const UserProfilePage = () => {
     >
       <Meta
         avatar={<Avatar src={userData?.imgURL} icon={<UserOutlined />} />}
+        style={{ marginBottom: '2%' }}
         title={`${userData?.firstName} ${userData?.lastName}`}
         description="Les informations vous concernant"
       />
-      <Title level={4}>Détails</Title>
+
       <Form
         form={form}
         initialValues={{
@@ -148,149 +150,140 @@ const UserProfilePage = () => {
           country: userData?.country,
           role: userData?.role,
         }}
+        labelCol={{ span: 8 }}
+        wrapperCol={{ span: 16 }}
       >
+        <Row gutter={16}>
+          <Col span={12}>
+            <Card title="Détails" bordered={false} style={{ marginBottom: 16 }}>
+              <Form.Item
+                label="Nom"
+                name="lastName"
+                rules={[
+                  {
+                    required: editing,
+                    message: 'Veuillez renseigner un nom',
+                  },
+                ]}
+              >
+                {editing ? <Input /> : <span>{userData?.lastName}</span>}
+              </Form.Item>
 
-        <Form.Item
-          label="Nom"
-          name="lastName"
-          rules={[
-            {
-              required: editing,
-              message: 'Veuillez renseigner un nom',
-            },
-            // Ajoutez d'autres règles de validation au besoin
-          ]}
-        >
-          {editing ? (
-            <Input />
-          ) : (
-            <span>{userData?.lastName}</span>
-          )}
-        </Form.Item>
+              <Form.Item
+                label="Prénom"
+                name="firstName"
+                rules={[
+                  {
+                    required: editing,
+                    message: 'Veuillez renseigner un prénom',
+                  },
+                ]}
+              >
+                {editing ? <Input /> : <span>{userData?.firstName}</span>}
+              </Form.Item>
 
-        <Form.Item
-          label="Prénom"
-          name="firstName"
-          rules={[
-            {
-              required: editing,
-              message: 'Veuillez renseigner un prénom',
-            },
-            // Ajoutez d'autres règles de validation au besoin
-          ]}
-        >
-          {editing ? (
-            <Input />
-          ) : (
-            <span>{userData?.firstName}</span>
-          )}
-        </Form.Item>
-        <Form.Item
-          label="Email"
-          name="email"
-          rules={[
-            {
-              required: editing,
-              message: 'Veuillez renseigner une adresse mail',
-            },
-            {
-              min: 5,
-              max: 100,
-              type: 'email',
-              message: 'Entrez une adresse mail valide',
-            },
+              <Form.Item
+                label="Email"
+                name="email"
+                rules={[
+                  {
+                    required: editing,
+                    message: 'Veuillez renseigner une adresse mail',
+                  },
+                  {
+                    min: 5,
+                    max: 100,
+                    type: 'email',
+                    message: 'Entrez une adresse mail valide',
+                  },
+                ]}
+              >
+                {editing ? <Input /> : <span>{userData?.email}</span>}
+              </Form.Item>
+            </Card>
+          </Col>
+          <Col span={12}>
+            <Card title="Localisation" bordered={false} style={{ marginBottom: 16 }}>
+              <Form.Item
+                label="Ville"
+                name="city"
+                rules={[
+                  {
+                    min: 2,
+                    max: 50,
+                    required: editing,
+                    message: 'Veuillez renseigner une ville',
+                  },
+                  {
+                    pattern: /^[a-zA-Z\s-']*$/,
+                    message: 'Le nom de la ville ne peut contenir que des lettres, des tirets et des apostrophes',
+                  }
+                ]}
+              >
+                {editing ? <Input /> : <span>{userData?.city}</span>}
+              </Form.Item>
 
-          ]}
-        >
-          {editing ? (
-            <Input />
-          ) : (
-            <span>{userData?.email}</span>
-          )}
-        </Form.Item>
+              <Form.Item
+                label="Code postal"
+                name="postalCode"
+                rules={[
+                  {
+                    required: editing,
+                    message: 'Veuillez renseigner un code postal',
+                  },
+                  {
+                    pattern: /^[0-9]+$/,
+                    len: 5,
+                    message: 'Le code postal doit contenir uniquement des chiffres et doit avoir une longueur de 5',
+                  }
+                ]}
+              >
+                {editing ? <Input /> : <span>{userData?.postalCode}</span>}
+              </Form.Item>
 
-        <Form.Item
-          label="Ville"
-          name="city"
-          rules={[
-            {
-              min: 2,
-              max: 50,
-              required: editing,
-              message: 'Veuillez renseigner une ville',
-            },
-            {
-              pattern: /^[a-zA-Z\s-']*$/,
-              message: 'Le nom de la ville ne peut contenir que des lettres, des tirets et des apostrophes',
-            }
-          ]}
-        >
-          {editing ? (
-            <Input />
-          ) : (
-            <span>{userData?.city}</span>
-          )}
-        </Form.Item>
-
-        <Form.Item
-          label="Code postal"
-          name="postalCode"
-          rules={[
-            {
-              required: editing,
-              message: 'Veuillez renseigner un code postal',
-            },
-            {
-              pattern: /^[0-9]+$/,
-              len: 5,
-              message: 'Le code postal doit contenir uniquement des chiffres et doit avoir une longueur de 5',
-            }
-          ]}
-        >
-          {editing ? (
-            <Input />
-          ) : (
-            <span>{userData?.postalCode}</span>
-          )}
-        </Form.Item>
-
-        <Form.Item
-          label="Pays"
-          name="country"
-          rules={[
-            {
-              required: editing,
-              message: 'Veuillez renseigner un pays',
-            },
-          ]}
-        >
-          {editing ? (
-            // Utilisez le composant SelectCountry ici
-            <SelectCountry
-              value={selectedCountry}
-              onChange={(value: any) => setSelectedCountry(value)}
-            />
-          ) : (
-            <Space>
-              <Avatar src={`https://flagcdn.com/h240/${userData?.countryCode?.toLowerCase()}.png`} />
-              <span>{userData?.country}</span>
-            </Space>
-          )}
-        </Form.Item>
-
-        <Form.Item
-          label="Role"
-          name="role"
-          rules={[
-          ]}
-        >
-          <span>{userData?.role}</span>
-        </Form.Item>
-
+              <Form.Item
+                label="Pays"
+                name="country"
+                rules={[
+                  {
+                    required: editing,
+                    message: 'Veuillez renseigner un pays',
+                  },
+                ]}
+              >
+                {editing ? (
+                  <SelectCountry
+                    value={selectedCountry}
+                    onChange={(value: any) => setSelectedCountry(value)}
+                  />
+                ) : (
+                  <Space>
+                    <Avatar src={`https://flagcdn.com/h240/${userData?.countryCode?.toLowerCase()}.png`} />
+                    <span>{userData?.country}</span>
+                  </Space>
+                )}
+              </Form.Item>
+            </Card>
+          </Col>
+        </Row>
+        <Col span={12}>
+          <Card title="Vos accès" bordered={false} style={{ marginBottom: 16 }}>
+            <Form.Item
+              label="Role"
+              name="role"
+              rules={[
+              ]}
+            >
+              <span>{userData?.role}</span>
+            </Form.Item>
+          </Card>
+        </Col>
         {editing && (
-          <Button type="primary" onClick={handleSave} icon={<SaveOutlined />}>
-            Enregistrer
-          </Button>
+          <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '1%' }}>
+            <Button type="primary" onClick={handleSave} icon={<SaveOutlined />} style={{}}>
+              Enregistrer
+            </Button>
+          </div>
         )}
       </Form>
     </Card>
