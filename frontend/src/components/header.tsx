@@ -1,15 +1,16 @@
-import { Layout, Menu, Avatar } from "antd"
+import { Layout, Menu, Avatar, Spin } from "antd"
 import { FileDoneOutlined, FolderOpenOutlined, StarOutlined, PlusCircleOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons';
 import { useUser } from "@/providers/userProvider";
 import { useState, useEffect } from "react";
 import useLogout from "@/utils/logout";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 const { Header: AntdHeader } = Layout;
 
 export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean, setCollapsed: (collapsed: boolean) => void }) {
        const { user } = useUser();
        const [avatarSrc, setAvatarSrc] = useState<string | undefined | null>(user?.imgURL);
-       const logout = useLogout();
+       const { logout, isLoading } = useLogout();
        const pathname = usePathname();
        const selectedKey = pathname.split('/')[1];
 
@@ -26,7 +27,7 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
               {
                      icon: <FolderOpenOutlined />,
                      label: `Catégories`,
-                     style: { marginLeft: '30px'}, // TODO: When the menu is collapsed, we shouldnt have this margin
+                     style: { marginLeft: '30px' }, // TODO: When the menu is collapsed, we shouldnt have this margin
                      key: 'categories',
                      // children: [],
               },
@@ -52,6 +53,7 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                      label: (<>
                             {avatarSrc ? (
                                    <Avatar
+                                          draggable={false}
                                           size={40}
                                           shape="square"
                                           src={avatarSrc}
@@ -61,20 +63,22 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                                    <Avatar
                                           size={40}
                                           shape="square"
+                                          draggable={false}
                                           icon={<UserOutlined />}
                                    />
                             )}
                      </>),
-                     key: 'Profile',
+                     key: 'User',
                      children: [
                             {
-                                   label: `Mon profil`,
-                                   key: 'my-profile',
+                                   label: <Link href={"/profil"}>{`Mon profil`}</Link>,
+                                   key: 'profil',
                             },
                             {
-                                   icon: (<LogoutOutlined />),
+                                   icon: (isLoading ? <Spin size="small" /> : <LogoutOutlined />),
+                                   disabled: isLoading,
                                    danger: true,
-                                   label: <span onClick={logout}>Se déconnecter</span>,
+                                   label: <span onClick={() => { if (!isLoading) logout() }}>Se déconnecter</span>,
                                    key: 'logout',
                             }
                      ]

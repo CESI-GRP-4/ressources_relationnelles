@@ -9,7 +9,7 @@ import type LogInResponse from '@/types/logInAndSignUpResponse';
 
 export default function LogInForm() {
        const { setUser } = useUser();
-       const [isSignInLoading, setSignInLoading] = useState(false);
+       const [isLoginLoading, setLoginLoading] = useState(false);
 
        type LogInForm = {
               email: string;
@@ -18,7 +18,7 @@ export default function LogInForm() {
        };
 
        async function handleLoginForm(form: LogInForm) {
-              setSignInLoading(true);
+              setLoginLoading(true);
               try {
                      const logInResponse: AxiosResponse<LogInResponse> = await axios({
                             method: 'post',
@@ -61,7 +61,7 @@ export default function LogInForm() {
               }
               finally {
                      setTimeout(() => {
-                            setSignInLoading(false);
+                            setLoginLoading(false);
                      }, 1000);
               }
        }
@@ -73,7 +73,6 @@ export default function LogInForm() {
                      style={{ marginBottom: 0, paddingTop: 20, paddingLeft: 20, paddingRight: 20 }} // * padding left & right are used to create a space between the log in form and the sign up form when changing carousel slide
                      initialValues={{ remember: true }}
                      onFinish={handleLoginForm}
-                     disabled={isSignInLoading}
                      size='large'
                      // onFinishFailed={onFinishFailed}
                      autoComplete="off">
@@ -107,8 +106,9 @@ export default function LogInForm() {
                      </Form.Item>
 
                      {/* submit */}
-                     <Form.Item>
-                            <Button type="primary" className='w-full' shape="round" size='large' htmlType="submit">
+                     <Form.Item
+                     >
+                            <Button type="primary" className='w-full' shape="round" size='large' htmlType="submit" loading={isLoginLoading}>
                                    Se connecter
                             </Button>
                      </Form.Item>

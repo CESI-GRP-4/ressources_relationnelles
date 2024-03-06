@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LoginLog;
 use App\Models\Role;
 use App\Models\User;
 use App\Notifications\ResetPass;
@@ -77,6 +78,9 @@ class AuthController extends Controller{
 
         // Retrieving the authenticated user
         $user = Auth::guard('api')->user();
+
+        // Log connection
+        LoginLog::create([ 'id_user' => $user->id_user]);
 
         return $this->respondWithTokenAndUserData($token,
             ['user' => Utils::getAllUserData($user),

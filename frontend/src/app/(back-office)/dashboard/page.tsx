@@ -1,19 +1,40 @@
 "use client"
-import { Card, Avatar, Typography } from "antd"
+import { useState } from 'react';
+import { Card, Avatar, Typography, Button } from "antd";
 const { Meta } = Card;
 import { useUser } from "@/providers/userProvider";
 const { Text } = Typography;
 import Link from "next/link";
+import ConnectionsChart from "@/components/back-office/statistics/connectionChart";
+import { PlusCircleOutlined, UserOutlined } from "@ant-design/icons";
+
 import History from "@/components/back-office/user-management/history";
+
 export default function AdminDashboard() {
        const { user } = useUser();
+       console.log("🚀 ~ AdminDashboard ~ user:", user);
+       const [avatarError, setAvatarError] = useState(false); // État pour gérer l'erreur de chargement de l'avatar
 
        return (
               <div className="flex-wrap flex gap-5">
                      <div>
-                            <Card title="Informations du gestionnaire" extra={<Link href="/profile">Plus</Link>} style={{ width: 300 }}>
+                            <Card
+                                   title="Informations du gestionnaire"
+                                   extra={<Link href="/profil"><Button type="text" shape="circle" icon={<PlusCircleOutlined style={{ color: "blue" }} />} /></Link>}
+                            >
                                    <Meta
-                                          avatar={<Avatar src={user?.imgURL} />}
+                                          avatar={
+                                                 <Avatar
+                                                 draggable={false}
+                                                 shape='square'
+                                                        src={!avatarError ? user?.imgURL : null}
+                                                        icon={avatarError ? <UserOutlined /> : null}
+                                                        onError={() => {
+                                                               setAvatarError(true); // En cas d'erreur, utilisez l'icône UserOutlined
+                                                               return false; // Retournez false pour indiquer que l'erreur de chargement est gérée
+                                                        }}
+                                                 />
+                                          }
                                           title={`${user?.firstName} ${user?.lastName}`}
                                           description={<Text>{user?.role}</Text>}
                                    />
@@ -29,10 +50,19 @@ export default function AdminDashboard() {
                                    </div>
                             </Card>
                      </div>
-                     
+
                      <div>
                             <History></History>
                      </div>
+                     <Card
+                            title="Statistiques de connexions (semaine actuelle)"
+                            extra={<Link href="/statistiques/connexions"><Button type="text" shape="circle" icon={<PlusCircleOutlined style={{ color: "blue" }} />} /></Link>}
+                            className="w-1/2 min-w-96 max-w-[600px] h-auto">
+                            <div style={{ width: '100%', aspectRatio: '16 / 9' }}>
+                                   <ConnectionsChart isPreview></ConnectionsChart>
+                            </div>
+                     </Card>
+
               </div>
-       )
+       );
 }
