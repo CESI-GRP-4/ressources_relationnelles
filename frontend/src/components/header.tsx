@@ -1,5 +1,5 @@
 import { Layout, Menu, Avatar } from "antd"
-import { FileDoneOutlined, FolderOpenOutlined, StarOutlined, PlusCircleOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons';
+import { FileDoneOutlined, FolderOpenOutlined, StarOutlined, PlusCircleOutlined, UserOutlined, LogoutOutlined, DashboardOutlined } from '@ant-design/icons';
 import { useUser } from "@/providers/userProvider";
 import { useState, useEffect } from "react";
 import useLogout from "@/utils/logout";
@@ -49,6 +49,17 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                      // children: [],
               },
               {
+                     label: "Dashboard",
+                     icon: <DashboardOutlined />,
+                     key: "dashboard",
+                     style: { marginLeft: '15px', backgroundColor: 'red', color: 'white' },
+                     onClick: () => {
+                       // Ajoutez ici la logique de redirection vers le tableau de bord
+                       // par exemple, en utilisant react-router-dom : history.push('/dashboard');
+                     },
+              },
+              
+              {
                      label: (<>
                             {avatarSrc ? (
                                    <Avatar
@@ -79,6 +90,7 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                             }
                      ]
               }
+              
        ];
 
        return (

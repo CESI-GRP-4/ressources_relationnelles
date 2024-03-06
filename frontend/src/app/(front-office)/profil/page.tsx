@@ -1,89 +1,54 @@
-// /profil/[id]/page.tsx
+// /profil/page.tsx
 "use client"
 import React, { useEffect, useState } from 'react';
-import { Card, Avatar, Typography, Spin, Button, Input, message, Form } from 'antd';
+import { Card, Avatar, Typography, Spin, Button, Input, message, Form, Space } from 'antd';
 import { EditOutlined, SaveOutlined, LeftOutlined } from '@ant-design/icons';
 import { UserOutlined } from '@ant-design/icons';
 import type User from '@/types/user';
+import { useUser } from '@/providers/userProvider';
 import axios from 'axios';
+import SelectCountry from '@/components/selectCountry';
 
 const { Meta } = Card;
-const { Title, Paragraph } = Typography;
+const { Title } = Typography;
 
-const DefaultUserData: User[] = [{
-  firstName: 'John',
-  lastName: 'Doe',
-  email: 'user@example.com',
-  imgURL: '/vercel.svg',
-  id: '0',
-  role: 'user',
-  isEmailVerified: true,
-  city: 'Toulon',
-  country: 'France',
-  postalCode: '83000',
-  newUser: false,
-}];
-
-const UserProfilePage = ({ params }: { params: { id: string } }) => {
-  const { id } = params;
+const UserProfilePage = () => {
   const [userData, setUserData] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
-
+  const { user } = useUser();
   const [form] = Form.useForm();
+  const [selectedCountry, setSelectedCountry] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response: any = await axios({
-          method: 'post',
-          baseURL: 'http://localhost/api',
-          url: "/getUserData",
-          data: { userId: id },
-          withCredentials: true,
-          responseType: 'json',
-          timeout: 10000,
-        });
-        setUserData(response.data);
+        console.log('Fetching user data...');
+        console.log('User before fetch:', user);
 
+        // Mettez à jour le state avec les données utilisateur
+        setUserData(user);
+
+        // Remplissez le formulaire avec les données de l'utilisateur
         form.setFieldsValue({
-          lastName: response.data?.lastName,
-          firstName: response.data?.firstName,
-          email: response.data?.email,
-          city: response.data?.city,
-          postalCode: response.data?.postalCode,
-          country: response.data?.country,
-          role: response.data?.role,
+          lastName: user?.lastName,
+          firstName: user?.firstName,
+          email: user?.email,
+          city: user?.city,
+          postalCode: user?.postalCode,
+          country: user?.country,
+          role: user?.role,
         });
       } catch (error) {
-        console.error('Erreur lors de la récupération de la ressource:', error);
-        const defaultResource = DefaultUserData.find(item => item.id === String(id));
-
-        if (defaultResource) {
-          console.log("user found");
-          setUserData(defaultResource);
-
-          form.setFieldsValue({
-            lastName: defaultResource.lastName,
-            firstName: defaultResource.firstName,
-            email: defaultResource.email,
-            city: defaultResource.city,
-            postalCode: defaultResource.postalCode,
-            country: defaultResource.country,
-          });
-        }
+        console.error('Error fetching user data:', error);
+        throw new Error('Utilisateur non connecté ou non trouvé');
       } finally {
         setLoading(false);
       }
     };
 
-    if (id) {
-      fetchUserData();
-    } else {
-      setUserData(null);
-      setLoading(false);
-    }
-  }, [id, form]);
+    fetchUserData();
+  }, [form, user]);
 
   const handleEdit = () => {
     // Activer le mode d'édition lors du clic sur le bouton "Modifier"
@@ -126,8 +91,7 @@ const UserProfilePage = ({ params }: { params: { id: string } }) => {
       // });
 
       // Temporairement utilisé pour simuler une réponse du serveur
-      const response = { data: { ...values, isEmailVerified: values.isEmailVerified }};
-
+      const response = { data: { ...values, isEmailVerified: values.isEmailVerified } };
 
       setUserData(response.data);
       message.success('Data saved successfully!');
@@ -149,7 +113,7 @@ const UserProfilePage = ({ params }: { params: { id: string } }) => {
     form.resetFields();
   };
 
-  if (loading || userData === null) {
+  if (loading || user === null) {
     console.log('Utilisateur non trouvé ');
     return <Spin />;
   }
@@ -160,7 +124,7 @@ const UserProfilePage = ({ params }: { params: { id: string } }) => {
       actions={[
         <Button
           icon={editing ? <LeftOutlined /> : <EditOutlined />}
-          onClick={editing ? handleCancel : handleEdit}  // Utilisez handleCancel lors de l'édition, handleEdit autrement
+          onClick={editing ? handleCancel : handleEdit}
           key="edit"
         >
           {editing ? 'Retour' : 'Modifier'}
@@ -295,21 +259,22 @@ const UserProfilePage = ({ params }: { params: { id: string } }) => {
           name="country"
           rules={[
             {
-              min: 2, // Longueur minimale du nom du pays
-              max: 50, // Longueur maximale du nom du pays
               required: editing,
               message: 'Veuillez renseigner un pays',
             },
-            {
-              pattern: /^[a-zA-Z\s]+$/, // Autorise les lettres majuscules et minuscules ainsi que les espaces
-              message: 'Le nom du pays ne peut contenir que des lettres et des espaces',
-            }
           ]}
         >
           {editing ? (
-            <Input />
+            // Utilisez le composant SelectCountry ici
+            <SelectCountry
+              value={selectedCountry}
+              onChange={(value: any) => setSelectedCountry(value)}
+            />
           ) : (
-            <span>{userData?.country}</span>
+            <Space>
+              <Avatar src={`https://flagcdn.com/h240/${userData?.countryCode?.toLowerCase()}.png`} />
+              <span>{userData?.country}</span>
+            </Space>
           )}
         </Form.Item>
 
