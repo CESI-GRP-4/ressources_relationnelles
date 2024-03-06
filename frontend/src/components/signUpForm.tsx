@@ -41,7 +41,7 @@ export default function SignUpForm() {
               try {
                      const response: AxiosResponse<SignUpResponse> = await axios({
                             method: 'post',
-                            baseURL: 'http://localhost/api', // * Might be changed depending on the backend implementation
+                            baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL, // * Might be changed depending on the backend implementation
                             url: "/signup",
                             data: form,
                             withCredentials: true,
