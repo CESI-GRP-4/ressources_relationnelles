@@ -10,6 +10,7 @@ import { Row, Col } from 'antd';
 import axios from 'axios';
 import SelectCountry from '@/components/selectCountry';
 import PasswordInputComponent from '@/components/PasswordInput';
+import { emailRegex,firstNameRegex, lastNameRegex, cityRegex, postalCodeRegex } from '@/utils/regex';
 
 const { Meta } = Card;
 const { Title } = Typography;
@@ -184,6 +185,7 @@ const UserProfilePage = () => {
                   {
                     required: editing,
                     message: 'Veuillez renseigner un nom',
+                    pattern: lastNameRegex
                   },
                 ]}
               >
@@ -197,6 +199,7 @@ const UserProfilePage = () => {
                   {
                     required: editing,
                     message: 'Veuillez renseigner un prénom',
+                    pattern: firstNameRegex
                   },
                 ]}
               >
@@ -215,6 +218,7 @@ const UserProfilePage = () => {
                     min: 5,
                     max: 100,
                     type: 'email',
+                    pattern: emailRegex,
                     message: 'Entrez une adresse mail valide',
                   },
                 ]}
@@ -256,7 +260,7 @@ const UserProfilePage = () => {
                     message: 'Veuillez renseigner une ville',
                   },
                   {
-                    pattern: /^[a-zA-Z\s-']*$/,
+                    pattern: cityRegex,
                     message: 'Le nom de la ville ne peut contenir que des lettres, des tirets et des apostrophes',
                   }
                 ]}
@@ -273,7 +277,7 @@ const UserProfilePage = () => {
                     message: 'Veuillez renseigner un code postal',
                   },
                   {
-                    pattern: /^[0-9]+$/,
+                    pattern: postalCodeRegex,
                     len: 5,
                     message: 'Le code postal doit contenir uniquement des chiffres et doit avoir une longueur de 5',
                   }
