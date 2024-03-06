@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "title": "(Re)Sources Relationnelles",
-        "version": "0.22"
+        "version": "0.23"
     },
     "servers": [
         {
@@ -497,6 +497,101 @@
                         "description": "Not Found"
                     }
                 }
+            }
+        },
+        "/stats/connections": {
+            "get": {
+                "tags": [
+                    "Stats"
+                ],
+                "summary": "Get connection statistics",
+                "description": "Fetches connection counts for a given date range along with the day having the highest average connections.",
+                "operationId": "getConnections",
+                "parameters": [
+                    {
+                        "name": "startDate",
+                        "in": "query",
+                        "description": "Start date for fetching connections (format: DD-MM-YYYY)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "endDate",
+                        "in": "query",
+                        "description": "End date for fetching connections (format: DD-MM-YYYY)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "connections": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "date": {
+                                                        "type": "string",
+                                                        "example": "06-03-2024"
+                                                    },
+                                                    "numberConnections": {
+                                                        "type": "integer",
+                                                        "example": 2
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "average": {
+                                            "properties": {
+                                                "day": {
+                                                    "type": "string",
+                                                    "example": "mercredi"
+                                                },
+                                                "value": {
+                                                    "type": "string",
+                                                    "example": "2,0"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
             }
         },
         "/users": {
@@ -1108,11 +1203,5 @@
                 "in": "header"
             }
         }
-    },
-    "tags": [
-        {
-            "name": "User",
-            "description": "Utilisateurs"
-        }
-    ]
+    }
 }

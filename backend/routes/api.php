@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\Statistics\ConnectionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -10,8 +11,6 @@ use Illuminate\Support\Facades\Route;
 | API Routes
 |--------------------------------------------------------------------------
 */
-Route::post('login', [AuthController::class, 'login']);
-Route::post('signup', [AuthController::class, 'signup']);
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('signup', [AuthController::class, 'signup']);
@@ -21,10 +20,6 @@ Route::post('forgot-password/reset', [AuthController::class, 'resetPassword']);
 Route::get('countries', [CountryController::class, 'getCountries']);
 
 // Route::group(['middleware' => ['jwt.auth','jwt.refresh']], function() { // for refresh token. Commented for now as we got errors
-
-
-
-
 
 Route::group(['middleware' => ['jwt.auth']], function() {
     Route::post('logout', [AuthController::class, 'logout']);
@@ -36,5 +31,10 @@ Route::group(['middleware' => ['jwt.auth']], function() {
         Route::delete('deleteUser/{id}', [UserController::class, 'deleteUser']);
         Route::patch('banUser/{id}', [UserController::class, 'banUser']);
         Route::patch('unbanUser/{id}', [UserController::class, 'unbanUser']);
+
+        Route::group(['prefix' => 'stats'], function () {
+            Route::get('connections', [ConnectionController::class, 'getConnections']);
+        });
+
     });
 });
