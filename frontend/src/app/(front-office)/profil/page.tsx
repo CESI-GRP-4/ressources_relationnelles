@@ -9,6 +9,7 @@ import { useUser } from '@/providers/userProvider';
 import { Row, Col } from 'antd';
 import axios from 'axios';
 import SelectCountry from '@/components/selectCountry';
+import PasswordInputComponent from '@/components/PasswordInput';
 
 const { Meta } = Card;
 const { Title } = Typography;
@@ -20,7 +21,6 @@ const UserProfilePage = () => {
   const { user } = useUser();
   const [form] = Form.useForm();
   const [selectedCountry, setSelectedCountry] = useState(null);
-
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -58,17 +58,37 @@ const UserProfilePage = () => {
 
   const handleSave = async () => {
     let isFormValid = false;
-
+  
     try {
       console.log('Entré dans le bloc try.');
-
+  
       // Forcer une validation manuelle du formulaire pour s'assurer que les règles de validation sont appliquées
       await form.validateFields();
-
+  
+      // Vérifiez si les mots de passe correspondent
+      const oldPassword = form.getFieldValue('old-password');
+      const password = form.getFieldValue('password');
+      const confirmPassword = form.getFieldValue('password-confirm');
+  
+      // Arrêtez le processus d'enregistrement si le mot de passe actuel n'est pas fourni
+      if (!oldPassword && (password || confirmPassword)) {
+        message.error('Veuillez saisir votre mot de passe actuel pour effectuer cette modification.');
+        return;
+      }
+  
+      // Arrêtez le processus d'enregistrement si les mots de passe ne correspondent pas
+      if (password !== confirmPassword) {
+        message.error('Les mots de passe ne correspondent pas.');
+        return;
+      }
+  
       // Si la validation réussit, les valeurs dans le formulaire sont récupérées avec getFieldsValue
-      const values = form.getFieldsValue();
+      const values = {
+        ...form.getFieldsValue(),
+        password,
+      };
       console.log('Form values:', values);
-
+  
       // Vérifiez si l'email a été modifié
       const emailChanged = values.email !== userData?.email;
       if (emailChanged) {
@@ -76,7 +96,7 @@ const UserProfilePage = () => {
       } else {
         values.isEmailVerified = userData?.isEmailVerified; // Conserve la valeur actuelle si l'email n'a pas changé
       }
-
+  
       // Temporairement retiré pour tester les champs sans connexion à l'API
       // const response: any = await axios({
       //   method: 'post',
@@ -90,13 +110,13 @@ const UserProfilePage = () => {
       //   responseType: 'json',
       //   timeout: 10000,
       // });
-
+  
       // Temporairement utilisé pour simuler une réponse du serveur
       const response = { data: { ...values, isEmailVerified: values.isEmailVerified } };
-
+  
       setUserData(response.data);
       message.success('Data saved successfully!');
-
+  
       isFormValid = true;
     } catch (error) {
       console.error('Error saving user data:', error);
@@ -106,6 +126,7 @@ const UserProfilePage = () => {
       }
     }
   };
+  
 
   const handleCancel = () => {
     // Désactiver le mode édition lors du clic sur le bouton "Retour"
@@ -133,7 +154,7 @@ const UserProfilePage = () => {
       ]}
     >
       <Meta
-        avatar={<Avatar src={userData?.imgURL} icon={<UserOutlined />} />}
+        avatar={<Avatar src={userData?.imgURL} style={{ height: 50, width: 50 }} icon={<UserOutlined />} />}
         style={{ marginBottom: '2%' }}
         title={`${userData?.firstName} ${userData?.lastName}`}
         description="Les informations vous concernant"
@@ -201,6 +222,26 @@ const UserProfilePage = () => {
                 {editing ? <Input /> : <span>{userData?.email}</span>}
               </Form.Item>
             </Card>
+            {editing ? <Card title="Modification de votre mot de passe" bordered={false} style={{ marginBottom: 16, width: '200%' }}>
+            <PasswordInputComponent
+                  label="Ancien mot de passe"
+                  name="old-password"
+                  required={editing} // Specify whether the password is required based on the editing mode
+                  style={{ width: '70%'}}
+                />
+                <PasswordInputComponent
+                  label="Mot de passe"
+                  name="password"
+                  required={editing} // Specify whether the password is required based on the editing mode
+                  style={{ width: '70%'}}
+                />
+                <PasswordInputComponent
+                  label="Confirmer le mot de passe"
+                  name="password-confirm"
+                  required={editing} // Specify whether the password is required based on the editing mode
+                  style={{ width: '70%'}}
+                />
+              </Card> : null}
           </Col>
           <Col span={12}>
             <Card title="Localisation" bordered={false} style={{ marginBottom: 16 }}>
@@ -267,10 +308,11 @@ const UserProfilePage = () => {
           </Col>
         </Row>
         <Col span={12}>
-          <Card title="Vos accès" bordered={false} style={{ marginBottom: 16 }}>
+          <Card title="Vos accès" bordered={false} style={{ marginBottom: 16, width: '200%' }}>
             <Form.Item
               label="Role"
               name="role"
+              style={{ width: '50%' }}
               rules={[
               ]}
             >
@@ -287,6 +329,7 @@ const UserProfilePage = () => {
         )}
       </Form>
     </Card>
+    
   );
 };
 

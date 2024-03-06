@@ -95,8 +95,8 @@ function SelectCountry({ value, onChange, ...rest }: { value: any, onChange: any
               >
                      {countries.map(country => (
                             <Select.Option key={country.code} value={country.name}>
-                                   <Space>
-                                          <Avatar src={`https://flagcdn.com/h240/${country.code.toLowerCase()}.png`} />
+                                   <Space style={{marginBottom: '1%'}}>
+                                          <Avatar src={`https://flagcdn.com/h240/${country.code.toLowerCase()}.png`}/>
                                           <span>{country.name}</span>
                                    </Space>
                             </Select.Option>
