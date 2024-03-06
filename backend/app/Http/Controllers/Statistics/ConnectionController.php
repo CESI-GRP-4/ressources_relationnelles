@@ -149,6 +149,11 @@ class ConnectionController extends Controller {
         $maxAverage = max($averages);
         $maxDay = array_search($maxAverage, $averages);
 
+        // If the max average is 0, return a null object
+        if ($maxAverage == 0) {
+            return null;
+        }
+
         return [
             'day' => $maxDay,
             'value' => number_format($maxAverage, 1, ',', '')
