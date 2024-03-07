@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import ConnectionsChart from "@/components/back-office/statistics/connectionChart";
 import DateRangePicker from '@/components/dateRangePicker';
 import dayjs from 'dayjs';
+import { Typography } from 'antd';
 
 export default function ConnectionStats() {
        const defaultStartDate = dayjs().subtract(30, 'days').format('DD/MM/YYYY');
@@ -23,14 +24,19 @@ export default function ConnectionStats() {
 
        return (
               <>
-                     <div className="w-full flex flex-row justify-center">
-                            <div className='xl:w-4/5 w-full space-y-5'>
-                                   <DateRangePicker
-                                          onChange={handleDateChange}
-                                          disableAfterToday
-                                          defaultValue={defaultDateRange}
-                                   />
-                                   <ConnectionsChart dateRange={dateRange}></ConnectionsChart>
+                     <div className="flex flex-col gap-5">
+                            <Typography.Title level={2}>Statistiques de connexion</Typography.Title>
+                            <Typography.Paragraph>Visualiser le nombre de connexions par jour sur un lapse de temps souhaité.</Typography.Paragraph>
+
+                            <div className="w-full flex flex-row justify-center">
+                                   <div className='xl:w-4/5 w-full space-y-5'>
+                                          <DateRangePicker
+                                                 onChange={handleDateChange}
+                                                 disableAfterToday
+                                                 defaultValue={defaultDateRange}
+                                          />
+                                          <ConnectionsChart dateRange={dateRange}></ConnectionsChart>
+                                   </div>
                             </div>
                      </div>
               </>
