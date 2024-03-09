@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useEffect } from 'react';
-import ConnectionsChart from "@/components/back-office/statistics/connectionChart";
+import ConnectionsChart from "@/components/back-office/statistics/connections/connectionChart";
 import DateRangePicker from '@/components/dateRangePicker';
 import dayjs from 'dayjs';
 import { Typography } from 'antd';

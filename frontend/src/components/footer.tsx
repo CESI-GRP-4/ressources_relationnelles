@@ -9,7 +9,7 @@ export default function Footer() {
                      <div className="flex flex-col items-center">
                             <Image
                                    className='m-2 rounded-lg'
-                                   src="https://upload.wikimedia.org/wikipedia/fr/5/50/Bloc_Marianne.svg"
+                                   src="/logo.png"
                                    alt="Logo du ministère des solidarités et de la santé"
                                    width={140}
                                    height={160}
@@ -18,7 +18,7 @@ export default function Footer() {
                             <p>{`© 2024 (RE)Sources Relationnelles.`}</p>
                             <p>Ministère des solidarités et de la santé</p>
 
-                            <div className="mt-10 flex flex-row items-center">
+                            <div className="mt-6 flex flex-row items-center">
                                    <Tooltip title="CESI Aix-en-Provence | Groupe n°4" placement="top">
                                           <Image
                                                  draggable={false}

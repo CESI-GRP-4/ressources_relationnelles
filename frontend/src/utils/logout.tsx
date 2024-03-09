@@ -23,8 +23,6 @@ const useLogout = () => {
 
                      if (logOutResponse.status === 200) {
                             message.success('Déconnexion réussie');
-                            setUser(null); // Remove user from context/state
-                            router.replace('/connexion'); // Redirect to login page
                      }
               } catch (error) {
                      console.error('Logout request failed:', error);
@@ -49,7 +47,9 @@ const useLogout = () => {
                             message.error('Erreur réseau ou serveur indisponible');
                      }
               } finally {
+                     setUser(null); // Remove user from context/state
                      setIsLoading(false); // Arrête le chargement quelle que soit l'issue
+                     router.replace('/connexion'); // Redirect to login page
               }
        };
        return { logout, isLoading }; // Retourne à la fois la fonction logout et l'état isLoading

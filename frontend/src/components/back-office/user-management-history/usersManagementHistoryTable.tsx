@@ -176,19 +176,19 @@ const UserManagementHistoryTable: React.FC = () => {
                      dataIndex: 'change',
                      render: (_: unknown, record: userHistory) => {
                             const translatedColName = userLabelsInFrench[record.colName]; // Assume this is correctly translating
-                          
+
                             return (
-                              record.action === 'Modify' && record.colName && record.oldValue !== undefined && record.newValue !== undefined
-                                ? <span>
-                                    {translatedColName}: 
-                                    <span style={{ backgroundColor: '#ffebee', color: '#d32f2f' }} className='ml-1'>{record.oldValue}</span>
-                                    <RightCircleOutlined style={{ color: 'blue' }} className='mx-1' />
-                                    <span style={{ backgroundColor: '#e8f5e9', color: '#2e7d32' }}>{record.newValue}</span>
-                                  </span> // Use the translated column name
-                                : null
+                                   record.action === 'Modify' && record.colName && record.oldValue !== undefined && record.newValue !== undefined
+                                          ? <span>
+                                                 {translatedColName}:
+                                                 <span style={{ backgroundColor: '#ffebee', color: '#d32f2f' }} className='ml-1'>{record.oldValue}</span>
+                                                 <RightCircleOutlined style={{ color: 'blue' }} className='mx-1' />
+                                                 <span style={{ backgroundColor: '#e8f5e9', color: '#2e7d32' }}>{record.newValue}</span>
+                                          </span> // Use the translated column name
+                                          : null
                             );
-                          },
-                          
+                     },
+
               }
               ,
               {
@@ -258,14 +258,7 @@ const UserManagementHistoryTable: React.FC = () => {
 
                             <Button type="primary" icon={<ReloadOutlined />} onClick={() => fetchData(tableParams)}>Rafraîchir</Button>
 
-                            {/* <div>
-                                   <Checkbox
-                                          checked={isFixed}
-                                          onChange={(e) => setIsFixed(e.target.checked)}
-                                   >
-                                          {`Rendre les colonnes "Email et Actions" fixes`}
-                                   </Checkbox>
-                            </div> */}
+                            
                      </div>
                      <Table
                             onChange={handleTableChange}

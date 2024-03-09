@@ -49,6 +49,7 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
        const adminSidebarItems = [
               // ! Keys must be unique and must have the same value as the route
               {
+                     key: "utilisateurs",
                      icon: <UserOutlined />,
                      style: { marginTop: '30px' },
                      label: (
@@ -81,6 +82,7 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                      ]
               },
               {
+                     key: "statistiques",
                      icon: <LineChartOutlined />,
                      label: (
                             <ConditionalTooltip title="Statistiques">
@@ -119,17 +121,15 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                      style={{ height: '100vh', position: 'fixed', left: 0, top: 0 }}
               >
                      <div className="flex justify-center">
-                            <Tooltip title="Dashboard">
-                                   <Link href={"/dashboard"}>
+                            <Tooltip title="(Re)Sources Relationnelles - Ministère des solidarités et de la santé ">
                                           <Image
                                                  draggable={false}
-                                                 className='m-2 rounded-lg'
-                                                 src="https://upload.wikimedia.org/wikipedia/fr/5/50/Bloc_Marianne.svg"
+                                                 className='m-2 rounded-none'
+                                                 src="/logo.png"
                                                  alt="Logo du ministère des solidarités et de la santé"
                                                  width={130}
                                                  height={150}
                                           />
-                                   </Link>
                             </Tooltip>
                      </div>
                      <div className="">
