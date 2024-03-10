@@ -93,7 +93,10 @@ export default function History({ isPreview = false }: { isPreview?: boolean }) 
                             renderItem={(item) => (
                                    <List.Item>
                                           <div className='flex flex-row justify-start items-center'>
-                                                 <Avatar src={item.userModified.imgURL} />
+                                                 <Avatar
+                                                        src={item.userModified.imgURL}
+                                                        alt={`${item.userModified.firstName} ${item.userModified.lastName}`}
+                                                 />
                                                  <div style={{ margin: '0 8px', display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
                                                         <div>
                                                                {`${item.userModified.firstName} ${item.userModified.lastName} a été `}

@@ -27,11 +27,12 @@ export default function AdminDashboard() {
                             <div>
                                    <Card
                                           title="Informations du gestionnaire"
-                                          extra={<Link href="/profil"><Button type="text" shape="circle" icon={<PlusCircleOutlined style={{ color: "blue" }} />} /></Link>}
+                                          extra={<Link href="/profil"><Button type="text" aria-label='profil du gestionnaire' shape="circle" icon={<PlusCircleOutlined style={{ color: "blue" }} />} /></Link>}
                                    >
                                           <Meta
                                                  avatar={user?.imgURL && !avatarError ? (
                                                         <Avatar
+                                                               alt="Avatar de l'utilisateur"
                                                                draggable={false}
                                                                size={40}
                                                                shape="square"
@@ -43,6 +44,7 @@ export default function AdminDashboard() {
                                                         />
                                                  ) : (
                                                         <Avatar
+                                                               alt="Avatar par défault de l'utilisateur"
                                                                size={40}
                                                                shape="square"
                                                                draggable={false}

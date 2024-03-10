@@ -155,7 +155,10 @@ const UserManagementHistoryTable: React.FC = () => {
                      key: 'userModified',
                      render: (_: any, record: userHistory) => (
                             <div className='flex flex-row justify-start items-center'>
-                                   <Avatar src={record.userModified.imgURL} />
+                                   <Avatar
+                                          src={record.userModified.imgURL}
+                                          alt={`${record.userModified.firstName} ${record.userModified.lastName}`}
+                                   />
                                    <div style={{ marginLeft: 8 }}>
                                           {`${record.userModified.firstName} ${record.userModified.lastName}`}
                                    </div>
@@ -258,7 +261,7 @@ const UserManagementHistoryTable: React.FC = () => {
 
                             <Button type="primary" icon={<ReloadOutlined />} onClick={() => fetchData(tableParams)}>Rafraîchir</Button>
 
-                            
+
                      </div>
                      <Table
                             onChange={handleTableChange}

@@ -106,7 +106,7 @@ export default function BanUserButton({ user, isDisabled, onBanChange }: { user:
        return (
               <>
                      <Tooltip title={isBanned ? "Révoquer le bannissement" : "Bannir l'utilisateur"}>
-                            <Button type='text' onClick={showBanModal} disabled={isDisabled} icon={<Iconify style={{ fontSize: '26px', color: isDisabled ? "rgba(0, 0, 0, 0.25)" : isBanned ? "green" : "orange" }} icon="basil:user-block-solid" />}></Button>
+                            <Button type='text' aria-label="Bannir l'utilisateur" onClick={showBanModal} disabled={isDisabled} icon={<Iconify style={{ fontSize: '26px', color: isDisabled ? "rgba(0, 0, 0, 0.25)" : isBanned ? "green" : "orange" }} icon="basil:user-block-solid" />}></Button>
                      </Tooltip>
                      <Modal title="Bannir l'utilisateur pour une durée" open={isModalVisible} onOk={handleBan} onCancel={handleCancel}>
                             <div className="mt-5">

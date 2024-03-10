@@ -53,6 +53,7 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                      label: (<>
                             {avatarSrc ? (
                                    <Avatar
+                                          alt="Avatar de l'utilisateur"
                                           draggable={false}
                                           size={40}
                                           shape="square"
@@ -61,6 +62,7 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                                    />
                             ) : (
                                    <Avatar
+                                          alt="Avatar par défault de l'utilisateur"
                                           size={40}
                                           shape="square"
                                           draggable={false}

@@ -32,22 +32,22 @@ export default function Footer() {
                                    <Avatar.Group>
                                           <Tooltip title="Tristan Roos" placement="top">
                                                  <a href="https://github.com/Tristan13R" target="_blank">
-                                                        <Avatar draggable={false} src="https://media.licdn.com/dms/image/D4D03AQHok1gjkCcz0A/profile-displayphoto-shrink_400_400/0/1683907687734?e=1714608000&v=beta&t=2QOnvgDGveQb-JA-fECjvSPj9IQRoYhSeeIA1FA2GbE" alt="Tristan Roos" />
+                                                        <Avatar alt="Photo de Tristan Roos" draggable={false} src="https://media.licdn.com/dms/image/D4D03AQHok1gjkCcz0A/profile-displayphoto-shrink_400_400/0/1683907687734?e=1714608000&v=beta&t=2QOnvgDGveQb-JA-fECjvSPj9IQRoYhSeeIA1FA2GbE" />
                                                  </a>
                                           </Tooltip>
                                           <Tooltip title="Nicolas Chwiej" placement="top">
                                                  <a href="https://github.com/Capryc0rne" target="_blank">
-                                                        <Avatar draggable={false} src="https://media.licdn.com/dms/image/C4E03AQEDd1CWgoEOzA/profile-displayphoto-shrink_200_200/0/1642267651204?e=1714608000&v=beta&t=ZzZjKjYTksPtV7e7rjFEahxNE5DaCJ8k1YFC1iDBENw" alt="Nicolas Chwiej" />
+                                                        <Avatar alt="Photo de Nicolas Chwiej" draggable={false} src="https://media.licdn.com/dms/image/C4E03AQEDd1CWgoEOzA/profile-displayphoto-shrink_200_200/0/1642267651204?e=1714608000&v=beta&t=ZzZjKjYTksPtV7e7rjFEahxNE5DaCJ8k1YFC1iDBENw"/>
                                                  </a>
                                           </Tooltip>
                                           <Tooltip title="Kilian Breton" placement="top">
                                                  <a href="https://github.com/KilianBre" target="_blank">
-                                                        <Avatar draggable={false} src="https://media.licdn.com/dms/image/C4E03AQGmDAiuCikMxw/profile-displayphoto-shrink_200_200/0/1660986972543?e=1714608000&v=beta&t=N-0q_XMByd0xeyBNRAaeWqazh1Ixgp7oEC4r_wECvZ4" alt="Kilian Breton" />
+                                                        <Avatar alt="Photo de Kilian Breton" draggable={false} src="https://media.licdn.com/dms/image/C4E03AQGmDAiuCikMxw/profile-displayphoto-shrink_200_200/0/1660986972543?e=1714608000&v=beta&t=N-0q_XMByd0xeyBNRAaeWqazh1Ixgp7oEC4r_wECvZ4"/>
                                                  </a>
                                           </Tooltip>
                                           <Tooltip title="Arthur Crahé" placement="top">
                                                  <a href="https://github.com/khylpe" target="_blank">
-                                                        <Avatar draggable={false} src="https://github.com/khylpe.png" alt="Arthur Crahé" />
+                                                        <Avatar alt="Photo de Arthur Crahé" draggable={false} src="https://github.com/khylpe.png" />
                                                  </a>
                                           </Tooltip>
                                    </Avatar.Group>
