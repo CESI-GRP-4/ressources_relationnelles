@@ -28,31 +28,31 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
        const headerItems = [
               {
                      icon: <FolderOpenOutlined />,
-                     label: `Catégories`,
+                     label: <Link href={"/categories"}>{`Catégories`}</Link>,
                      style: { marginLeft: '30px' }, // TODO: When the menu is collapsed, we shouldnt have this margin
                      key: 'categories',
                      // children: [],
               },
               {
                      icon: <PlusCircleOutlined />,
-                     label: `Créer une ressource`,
+                     label: <Link href={"/creer-ressource"}>{`Créer une ressource`}</Link>,
                      key: 'create-resource',
                      // children: [],
               },
               {
                      icon: <FileDoneOutlined />,
-                     label: `Mes ressources`,
+                     label: <Link href={"/mes-ressources"}>{`Mes ressources`}</Link>,
                      key: 'my-resources',
                      // children: [],
               },
               {
-                     label: `Mes favoris`,
+                     label: <Link href={"/mes-favoris"}>{`Mes favoris`}</Link>,
                      icon: <StarOutlined />,
                      key: 'my-favorites',
                      // children: [],
               },
               {
-                     label: "Dashboard",
+                     label: <Link href={"/dashboard"}>{`Dashboard`}</Link>,
                      icon: <DashboardOutlined />,
                      key: "dashboard",
                      style: { marginLeft: '15px'},
