@@ -6,8 +6,10 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 import { useUser } from '@/providers/userProvider';
 import type User from '@/types/user';
 import type LogInResponse from '@/types/logInAndSignUpResponse';
+import { useRouter } from 'next/navigation';
 
 export default function LogInForm() {
+       const router = useRouter();
        const { setUser } = useUser();
        const [isLoginLoading, setLoginLoading] = useState(false);
 
@@ -18,6 +20,7 @@ export default function LogInForm() {
        };
 
        async function handleLoginForm(form: LogInForm) {
+              console.log('form', form)
               setLoginLoading(true);
               try {
                      const logInResponse: AxiosResponse<LogInResponse> = await axios({
@@ -31,8 +34,11 @@ export default function LogInForm() {
                      });
 
                      const userData: User = logInResponse.data.user;
-                     setUser(userData);
-                     message.success('Connexion réussie');
+                     if(userData){
+                            setUser(userData);
+                            message.success('Connexion réussie');
+                            router.push('/'); // * Redirect to the home page
+                     }
               } catch (error) {
                      const axiosError = error as AxiosError;
                      console.error('Erreur lors de la connexion. Axios error :', axiosError);
