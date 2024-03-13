@@ -7,8 +7,11 @@ import { useUser } from '@/providers/userProvider';
 import type User from '@/types/user';
 import type LogInResponse from '@/types/logInAndSignUpResponse';
 import { useRouter } from 'next/navigation';
+import { useConsent } from '@/contexts/CookiesConsentContext';
 
 export default function LogInForm() {
+       const { consentStatus, setConsent } = useConsent();
+
        const router = useRouter();
        const { setUser } = useUser();
        const [isLoginLoading, setLoginLoading] = useState(false);
@@ -25,7 +28,7 @@ export default function LogInForm() {
               try {
                      const logInResponse: AxiosResponse<LogInResponse> = await axios({
                             method: 'post',
-                            baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL, // * Might be changed depending on the backend implementation
+                            baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
                             url: "/login",
                             data: form,
                             withCredentials: true,
@@ -34,8 +37,8 @@ export default function LogInForm() {
                      });
 
                      const userData: User = logInResponse.data.user;
-                     if(userData){
-                            setUser(userData);
+                     if (userData) {
+                            setUser(userData, form.remember);
                             message.success('Connexion réussie');
                             router.push('/'); // * Redirect to the home page
                      }
@@ -72,12 +75,15 @@ export default function LogInForm() {
               }
        }
 
+       const handleRememberMeChange = (e: any) => {
+       }
+
        return (
               <Form
                      name="logInForm"
                      layout='vertical'
                      style={{ marginBottom: 0, paddingTop: 20, paddingLeft: 20, paddingRight: 20 }} // * padding left & right are used to create a space between the log in form and the sign up form when changing carousel slide
-                     initialValues={{ remember: true }}
+                     initialValues={{ remember: (consentStatus === 'accepted') }}
                      onFinish={handleLoginForm}
                      size='large'
                      // onFinishFailed={onFinishFailed}
@@ -107,8 +113,9 @@ export default function LogInForm() {
                      {/* remember */}
                      <Form.Item<LogInForm>
                             name="remember"
-                            valuePropName="checked">
-                            <Checkbox>Se souvenir de moi</Checkbox>
+                            valuePropName="checked"
+                     >
+                            <Checkbox disabled={consentStatus !== 'accepted'}>Se souvenir de moi</Checkbox>
                      </Form.Item>
 
                      {/* submit */}
@@ -121,4 +128,3 @@ export default function LogInForm() {
               </Form>
        )
 }
-
