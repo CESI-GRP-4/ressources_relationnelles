@@ -23,7 +23,6 @@ export default function LogInForm() {
        };
 
        async function handleLoginForm(form: LogInForm) {
-              console.log('form', form)
               setLoginLoading(true);
               try {
                      const logInResponse: AxiosResponse<LogInResponse> = await axios({

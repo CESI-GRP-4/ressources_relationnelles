@@ -3,6 +3,7 @@ import axios, { AxiosError } from 'axios';
 import { message } from 'antd';
 import { useUser } from "@/providers/userProvider"; // Supposons que useUser est un hook pour accéder à setUser
 import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 const useLogout = () => {
        const { setUser } = useUser();
@@ -47,7 +48,9 @@ const useLogout = () => {
                             message.error('Erreur réseau ou serveur indisponible');
                      }
               } finally {
-                     setUser(null); // Remove user from context/state
+                     setUser(null); // Met à jour le contexte utilisateur
+                     Cookies.remove('user'); // Supprime le cookie utilisateur
+                     sessionStorage.removeItem('user'); // Supprime les données utilisateur de la session
                      setIsLoading(false); // Arrête le chargement quelle que soit l'issue
                      router.replace('/connexion'); // Redirect to login page
               }
