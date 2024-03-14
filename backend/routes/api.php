@@ -32,7 +32,7 @@ Route::group(['middleware' => ['jwt.auth']], function() {
 
         Route::post('editUser/{id}', [UserController::class, 'editUser']);
         Route::delete('deleteUser/{id}', [UserController::class, 'deleteUser']);
-        Route::patch('banUser/{id}', [UserController::class, 'banUser']);
+        Route::post('banUser/{id}', [UserController::class, 'banUser']);
         Route::patch('unbanUser/{id}', [UserController::class, 'unbanUser']);
 
         Route::group(['prefix' => 'stats'], function () {

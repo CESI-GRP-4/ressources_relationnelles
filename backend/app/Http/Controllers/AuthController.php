@@ -15,7 +15,7 @@ use Illuminate\Support\Str;
 class AuthController extends Controller{
     const DEFAULT_ROLE_ID = 4; // User role
     const EMAIL_NOT_VERIFIED = 0;
-    const IS_NOT_BANNED = 0;
+    const IS_NOT_BANNED = null;
     /**
      * @OA\Post(
      *     path="/login",
@@ -68,7 +68,7 @@ class AuthController extends Controller{
         }
 
         $user = User::where('email', $request->email)->first();
-        if ($user->is_banned) {
+        if ($user->ban_until && $user->ban_until > now()) {
             return response()->json(['message' => 'Votre compte est banni.'], 403);
         }
         if($user->deleted_at){
@@ -148,7 +148,7 @@ class AuthController extends Controller{
         'password' => Hash::make($data['password']),
         'id_role' => self::DEFAULT_ROLE_ID,
         'is_verified' => self::EMAIL_NOT_VERIFIED,
-        'is_banned' => self::IS_NOT_BANNED,
+        'ban_until' => self::IS_NOT_BANNED,
         'verification_token' => $verificationToken,
     ]);
 
@@ -191,7 +191,6 @@ class AuthController extends Controller{
             return response()->json(['message' => 'Token de vérification invalide'], 401);
         }
     }
-
 
     protected function respondWithTokenAndUserData($token, $data = []){
 

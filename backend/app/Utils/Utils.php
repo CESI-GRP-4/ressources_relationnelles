@@ -2,6 +2,8 @@
 
 namespace App\Utils;
 
+use App\Models\UserHistory;
+
 class Utils{
 
     /**
@@ -63,7 +65,7 @@ class Utils{
             'role' => $user->role->name,
             'createdAt' => $user->created_at,
             'updatedAt' => $user->updated_at,
-            'isBanned' => $user->is_banned,
+            'isBanned' => $user->ban_until ? true : false,
             'newUser' => $isNewUser,
         ];
 
@@ -83,4 +85,15 @@ class Utils{
         return $userData;
     }
 
+
+    public static function addUserHistoryEntry($authUserId, $affectedUserId, $action, $columnName=null, $oldValue=null, $newValue=null) {
+        UserHistory::create([
+            'user_id' => $authUserId,
+            'affected_user_id' => $affectedUserId,
+            'action' => $action,
+            'modified_column' => $columnName,
+            'old_value' => $oldValue,
+            'new_value' => $newValue,
+        ]);
+    }
 }

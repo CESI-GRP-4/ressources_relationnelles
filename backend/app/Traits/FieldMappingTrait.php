@@ -18,7 +18,7 @@ trait FieldMappingTrait {
             'countryCode' => 'country.country_code',
             'city' => 'city.name',
             'postalCode' => 'postalCode.postal_code',
-            'isBanned' => 'is_banned',
+            'isBanned' => 'ban_until',
         ];
     }
 }

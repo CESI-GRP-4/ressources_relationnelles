@@ -9,6 +9,61 @@ use Illuminate\Support\Facades\Validator;
 
 class UserHistoryController extends Controller {
 
+    /**
+     * @OA\Get(
+     *     path="/usershistory",
+     *     tags={"Users"},
+     *     summary="Fetch users' history",
+     *     description="Retrieves a paginated history of actions performed on users, including detailed information about the user modified and the user who performed the modification.",
+     *     operationId="getUsersHistory",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Parameter(
+     *         name="perPage",
+     *         in="query",
+     *         description="Number of history records per page",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="integer",
+     *             default=10
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="Page number to retrieve",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="integer",
+     *             default=1
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="userHistory",
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/UserHistoryRecord")
+     *             ),
+     *             @OA\Property(property="total", type="integer"),
+     *             @OA\Property(property="perPage", type="integer"),
+     *             @OA\Property(property="currentPage", type="integer"),
+     *             @OA\Property(property="lastPage", type="integer")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Validation Error"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Not Found"
+     *     )
+     * )
+     */
+
     public function getUsersHistory(Request $request){
         $validator = Validator::make($request->all(), [
             'perPage' => 'integer|min:1',
@@ -33,9 +88,18 @@ class UserHistoryController extends Controller {
                 'time' => $history->created_at,
             ];
 
-            if ($history->action === 'Modify') {
+            if ($history->action === 'Modify' ) {
                 $item['colName'] = $history->modified_column;
                 $item['newValue'] = $history->new_value;
+                $item['oldValue'] = $history->old_value;
+            }
+
+            if ($history->action === 'Ban' ) {
+                $item['colName'] = $history->modified_column;
+                $item['newValue'] = $history->new_value;
+                if($history->new_value === 253402297199){
+                    $item['newValue'] = 'Permanent';
+                }
                 $item['oldValue'] = $history->old_value;
             }
 
