@@ -9,7 +9,6 @@ import { useUser } from '@/providers/userProvider';
 import { Icon as Iconify } from '@iconify/react';
 import { FilterDropdownProps } from 'antd/es/table/interface';
 import { RefObject } from 'react';
-import CreateUserForm from '@/components/createUserForm';
 import BanUserButton from '@/components/back-office/user-management/banUserButton';
 import DeleteUserButton from "@/components/back-office/user-management/deleteUserButton";
 import Country from '@/types/country';
