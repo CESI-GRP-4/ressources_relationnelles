@@ -53,9 +53,9 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                      label: <Link href={"/dashboard"}>{`Dashboard`}</Link>,
                      icon: <DashboardOutlined />,
                      key: "dashboard",
-                     style: { marginLeft: '15px'},
+                     style: { marginLeft: '15px' },
               },
-              
+
               {
                      label: (<>
                             {avatarSrc ? (
@@ -94,7 +94,7 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                             }
                      ]
               }
-              
+
        ];
 
        return (
@@ -104,26 +104,25 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                      top: 0,
                      display: 'flex',
                      alignItems: 'center',
+                     justifyContent: 'space-between', // Utilisez cette propriété pour aligner les éléments à gauche et à droite
                      zIndex: 5,
               }}>
-                     <div className='flex flex-row justify-between w-full'>
-                            <Menu
-                                   mode="horizontal"
-                                   items={headerItems.slice(0, -1)} // All items except the last
-                                   theme="light"
-                                   selectedKeys={[selectedKey]}
-                                   className='flex-auto'
-                                   style={{ minWidth: 0, flex: "auto" }} // * https://ant.design/components/menu#why-menu-do-not-responsive-collapse-in-flex-layout
-                            />
-                            <Menu
-                                   mode="horizontal"
-                                   items={[headerItems[headerItems.length - 1]]} // Only the last item
-                                   selectedKeys={[selectedKey]}
-                                   className="flex flex-row justify-end"
-                                   style={{ minWidth: 0, flex: "auto" }} // * https://ant.design/components/menu#why-menu-do-not-responsive-collapse-in-flex-layout
-                                   theme="light"
-                            />
-                     </div>
+                     <Menu
+                            mode="horizontal"
+                            items={headerItems.slice(0, -2)} // Tous les éléments sauf les deux derniers
+                            theme="light"
+                            selectedKeys={[selectedKey]}
+                            className='flex-auto'
+                            style={{ minWidth: 0, flex: "auto" }}
+                     />
+                     <Menu
+                            mode="horizontal"
+                            items={[headerItems[headerItems.length - 2], headerItems[headerItems.length - 1]]} // Les deux derniers éléments
+                            selectedKeys={[selectedKey]}
+                            className="flex flex-row justify-end"
+                            style={{ minWidth: 0, flex: "auto" }}
+                            theme="light"
+                     />
               </AntdHeader>
-       )
+       );
 }
