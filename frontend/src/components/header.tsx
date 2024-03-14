@@ -1,5 +1,5 @@
 import { Layout, Menu, Avatar, Spin } from "antd"
-import { FileDoneOutlined, FolderOpenOutlined, StarOutlined, PlusCircleOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons';
+import { FileDoneOutlined, FolderOpenOutlined, StarOutlined, PlusCircleOutlined, UserOutlined, LogoutOutlined, DashboardOutlined } from '@ant-design/icons';
 import { useUser } from "@/providers/userProvider";
 import { useState, useEffect } from "react";
 import useLogout from "@/utils/logout";
@@ -26,29 +26,36 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
        const headerItems = [
               {
                      icon: <FolderOpenOutlined />,
-                     label: `Catégories`,
+                     label: <Link href={"/categories"}>{`Catégories`}</Link>,
                      style: { marginLeft: '30px' }, // TODO: When the menu is collapsed, we shouldnt have this margin
                      key: 'categories',
                      // children: [],
               },
               {
                      icon: <PlusCircleOutlined />,
-                     label: `Créer une ressource`,
+                     label: <Link href={"/creer-ressource"}>{`Créer une ressource`}</Link>,
                      key: 'create-resource',
                      // children: [],
               },
               {
                      icon: <FileDoneOutlined />,
-                     label: `Mes ressources`,
+                     label: <Link href={"/mes-ressources"}>{`Mes ressources`}</Link>,
                      key: 'my-resources',
                      // children: [],
               },
               {
-                     label: `Mes favoris`,
+                     label: <Link href={"/mes-favoris"}>{`Mes favoris`}</Link>,
                      icon: <StarOutlined />,
                      key: 'my-favorites',
                      // children: [],
               },
+              {
+                     label: <Link href={"/dashboard"}>{`Dashboard`}</Link>,
+                     icon: <DashboardOutlined />,
+                     key: "dashboard",
+                     style: { marginLeft: '15px'},
+              },
+              
               {
                      label: (<>
                             {avatarSrc ? (
@@ -70,21 +77,26 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                                    />
                             )}
                      </>),
+
                      key: 'User',
                      children: [
                             {
+
                                    label: <Link href={"/profil"}>{`Mon profil`}</Link>,
                                    key: 'profil',
                             },
                             {
+
                                    icon: (isLoading ? <Spin size="small" /> : <LogoutOutlined />),
                                    disabled: isLoading,
                                    danger: true,
+
                                    label: <span onClick={() => { if (!isLoading) logout() }}>Se déconnecter</span>,
                                    key: 'logout',
                             }
                      ]
               }
+              
        ];
 
        return (
