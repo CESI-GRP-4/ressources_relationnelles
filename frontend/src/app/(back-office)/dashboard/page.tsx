@@ -1,5 +1,5 @@
 "use client"
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, Avatar, Typography, Button } from "antd";
 const { Meta } = Card;
 import { useUser } from "@/providers/userProvider";
@@ -7,12 +7,11 @@ const { Text } = Typography;
 import Link from "next/link";
 import ConnectionsChart from "@/components/back-office/statistics/connections/connectionChart";
 import { PlusCircleOutlined, UserOutlined } from "@ant-design/icons";
-
 import History from "@/components/back-office/user-management/history";
 
 export default function AdminDashboard() {
        const { user } = useUser();
-       console.log("🚀 ~ AdminDashboard ~ user:", user);
+       
        const [avatarError, setAvatarError] = useState(false); // État pour gérer l'erreur de chargement de l'avatar
 
        return (

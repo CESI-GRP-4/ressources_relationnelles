@@ -21,7 +21,6 @@ export const fetchCountries = async () => {
               });
 
               if (response.status === 200) {
-                     console.log("response", response.data);
                      globalCountries = response.data.countries; // Store fetched countries in the global array
               }
        } catch (error) {

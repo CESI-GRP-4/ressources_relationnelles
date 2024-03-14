@@ -9,7 +9,6 @@ import { useUser } from '@/providers/userProvider';
 import { Icon as Iconify } from '@iconify/react';
 import { FilterDropdownProps } from 'antd/es/table/interface';
 import { RefObject } from 'react';
-import CreateUserForm from '@/components/createUserForm';
 import BanUserButton from '@/components/back-office/user-management/banUserButton';
 import DeleteUserButton from "@/components/back-office/user-management/deleteUserButton";
 import Country from '@/types/country';
@@ -189,7 +188,6 @@ const EditableTable: React.FC = () => {
        });
 
        const handleTableChange = (pagination: any, filters: any, sorter: any) => {
-              console.log("table settings changed", tableParams)
               fetchData({ ...tableParams, perPage: pagination.pageSize, page: pagination.current, sortBy: sorter.order ? sorter.field : undefined, sortDirection: sorter.order ? (sorter.order === 'ascend' ? 'asc' : 'desc') : undefined });
        }
 
@@ -205,8 +203,6 @@ const EditableTable: React.FC = () => {
                             responseType: 'json',
                             timeout: 10000, // * Increased value because we had some timeout errors
                      });
-
-                     console.log("response", response.data);
                      const userData: User[] = response.data.users;
                      setTableData(userData);
                      setTableParams({ ...tableParams, total: response.data.totalUsers, lastPage: response.data.lastPage, perPage: tableParams.perPage, page: tableParams.page });

@@ -4,21 +4,23 @@ import User from '@/types/user';
 import { ColumnType } from 'antd/es/table';
 import { ReloadOutlined, RightCircleOutlined } from '@ant-design/icons';
 import axios, { AxiosError } from 'axios';
-import { Table, Typography, Select, Button, message, Tooltip, Avatar, Checkbox, Tag } from 'antd';
+import { Table, Typography, Select, Button, message, Tooltip, Avatar, Tag, Popover } from 'antd';
 import { useUser } from '@/providers/userProvider';
+const { Text } = Typography;
+
 import { getUserAttributeLabelsInFrench } from '@/types/userAttributesToFrench';
 
 interface userHistory {
        userModified: User;
        modifyBy: User;
-       action: 'Modify' | 'Delete' | 'Ban' | 'Unban';
+       action: 'Modify' | 'Delete' | 'Ban' | 'Unban' | 'Created';
        time: string;
        colName: string;
        newValue: string;
        oldValue: string;
 };
 
-const getTagColor = (action: 'Modify' | 'Delete' | 'Ban' | 'Unban') => {
+const getTagColor = (action: 'Modify' | 'Delete' | 'Ban' | 'Unban' | 'Created') => {
        switch (action) {
               case 'Modify':
                      return 'blue';
@@ -28,6 +30,8 @@ const getTagColor = (action: 'Modify' | 'Delete' | 'Ban' | 'Unban') => {
                      return 'red';
               case 'Unban':
                      return 'green'; // Assuming you want a color for 'Unban' action as well
+              case 'Created':
+                     return 'geekblue';
               default:
                      return 'default';
        }
@@ -51,7 +55,6 @@ const UserManagementHistoryTable: React.FC = () => {
               'modifyBy',
               // 'time',
        ]); // array of strings representing the columns to display
-       const [isFixed, setIsFixed] = useState(true); // New state for tracking checkbox
        const userLabelsInFrench = getUserAttributeLabelsInFrench();
 
        useEffect(() => {
@@ -101,7 +104,6 @@ const UserManagementHistoryTable: React.FC = () => {
               };
 
        const handleTableChange = (pagination: any, filters: any, sorter: any) => {
-              console.log("table settings changed", tableParams)
               fetchData({ ...tableParams, perPage: pagination.pageSize, page: pagination.current });
        }
 
@@ -117,8 +119,6 @@ const UserManagementHistoryTable: React.FC = () => {
                             responseType: 'json',
                             timeout: 10000, // * Increased value because we had some timeout errors
                      });
-
-                     console.log("response", response.data);
                      const userData: userHistory[] = response.data.userHistory;
                      setTableData(userData);
                      setTableParams({ ...tableParams, total: response.data.totalUsers, lastPage: response.data.lastPage, perPage: tableParams.perPage, page: tableParams.page });
@@ -153,25 +153,90 @@ const UserManagementHistoryTable: React.FC = () => {
                      title: 'Utilisateur modifié',
                      dataIndex: 'userModified',
                      key: 'userModified',
-                     render: (_: any, record: userHistory) => (
-                            <div className='flex flex-row justify-start items-center'>
-                                   <Avatar
-                                          src={record.userModified.imgURL}
-                                          alt={`${record.userModified.firstName} ${record.userModified.lastName}`}
-                                   />
-                                   <div style={{ marginLeft: 8 }}>
-                                          {`${record.userModified.firstName} ${record.userModified.lastName}`}
+                     render: (_: undefined, record: userHistory) => {
+                            const userInfo = record.userModified;
+                            const popoverContent = (
+                                   <div>
+                                          <div className="mt-5 space-y-1 pr-7">
+                                                 <div className="flex flex-row gap-2">
+                                                        <Text type="secondary" className="whitespace-nowrap">Email</Text>
+                                                        <Typography.Link ellipsis copyable>{userInfo.email}</Typography.Link>
+                                                 </div>
+                                                 <div className="flex flex-row gap-2">
+                                                        <Text type="secondary" className="whitespace-nowrap">ID</Text>
+                                                        <Text ellipsis copyable>{userInfo.id}</Text>
+                                                 </div>
+                                                 {/* Display all the other information */}
+                                                 <div className="flex flex-row gap-2">
+                                                        <Text type="secondary" className="whitespace-nowrap">Prénom</Text>
+                                                        <Text ellipsis>{userInfo.firstName}</Text>
+                                                 </div>
+                                                 <div className="flex flex-row gap-2">
+                                                        <Text type="secondary" className="whitespace-nowrap">Nom</Text>
+                                                        <Text ellipsis>{userInfo.lastName}</Text>
+                                                 </div>
+                                                 <div className="flex flex-row gap-2">
+                                                        <Text type="secondary" className="whitespace-nowrap">Rôle</Text>
+                                                        <Text ellipsis>{userInfo.role}</Text>
+                                                 </div>
+                                                 <div className="flex flex-row gap-2">
+                                                        <Text type="secondary" className="whitespace-nowrap">Pays</Text>
+                                                        <Text ellipsis>{userInfo.country}</Text>
+                                                 </div>
+                                                 <div className="flex flex-row gap-2">
+                                                        <Text type="secondary" className="whitespace-nowrap">Adresse</Text>
+                                                        <Text ellipsis>{userInfo.city}</Text>
+                                                 </div>
+                                                 <div className="flex flex-row gap-2">
+                                                        <Text type="secondary" className="whitespace-nowrap">Code postal</Text>
+                                                        <Text ellipsis>{userInfo.postalCode}</Text>
+                                                 </div>
+                                          </div>
                                    </div>
-                            </div>
-                     ),
+                            );
+
+                            return (
+                                   <Popover content={popoverContent} title="Informations de l'utilisateur" trigger="hover">
+                                          <div className='flex flex-row justify-start items-center' style={{ cursor: 'pointer' }}>
+                                                 <Avatar
+                                                        src={userInfo.imgURL}
+                                                        alt={`${userInfo.firstName} ${userInfo.lastName}`}
+                                                 />
+                                                 <div style={{ marginLeft: 8 }}>
+                                                        {`${userInfo.firstName} ${userInfo.lastName}`}
+                                                 </div>
+                                          </div>
+                                   </Popover>
+                            );
+                     },
               },
               {
                      title: 'Action',
                      dataIndex: 'action',
                      key: 'action',
-                     render: (action: 'Modify' | 'Delete' | 'Ban' | 'Unban') => (
-                            <Tag color={getTagColor(action)}>{action}</Tag>
-                     ),
+                     render: (action: 'Modify' | 'Delete' | 'Ban' | 'Unban' | 'Created') => {
+                            let actionText;
+                            switch (action) {
+                                   case 'Delete':
+                                          actionText = 'Utilisateur supprimé';
+                                          break;
+                                   case 'Ban':
+                                          actionText = 'Utilisateur banni';
+                                          break;
+                                   case 'Unban':
+                                          actionText = 'Utilisateur débanni';
+                                          break;
+                                   case 'Modify':
+                                          actionText = 'Utilisateur modifié';
+                                          break;
+                                   case 'Created':
+                                          actionText = 'Utilisateur créé';
+                                          break;
+                                   default:
+                                          break;
+                            }
+                            return <Tag color={getTagColor(action)}>{actionText}</Tag>;
+                     },
               },
               {
                      title: 'Changement',
@@ -187,11 +252,10 @@ const UserManagementHistoryTable: React.FC = () => {
                                                  <span style={{ backgroundColor: '#ffebee', color: '#d32f2f' }} className='ml-1'>{record.oldValue}</span>
                                                  <RightCircleOutlined style={{ color: 'blue' }} className='mx-1' />
                                                  <span style={{ backgroundColor: '#e8f5e9', color: '#2e7d32' }}>{record.newValue}</span>
-                                          </span> // Use the translated column name
+                                          </span>
                                           : null
                             );
                      },
-
               }
               ,
               {

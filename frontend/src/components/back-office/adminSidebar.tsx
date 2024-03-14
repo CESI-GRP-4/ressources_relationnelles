@@ -21,7 +21,6 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
        const { user } = useUser();
        const pathname = usePathname();
        const selectedKey = pathname.split('/').filter(Boolean).join('/');
-       console.log("🚀 ~ AdminSidebar ~ selectedKey:", selectedKey);
 
        const ConditionalTooltip = ({ title, children }: { title: string, children: React.ReactNode }) => {
               const [isOverflowing, setIsOverflowing] = useState(false);
