@@ -93,7 +93,7 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
                      });
                      const userData: userHistory[] = response.data.userHistory;
                      setTableData(userData);
-                     setTableParams({ ...tableParams, total: response.data.totalUsers, lastPage: response.data.lastPage, perPage: tableParams.perPage, page: tableParams.page });
+                     setTableParams({ ...tableParams, total: response.data.total, lastPage: response.data.lastPage, perPage: tableParams.perPage, page: tableParams.page });
               } catch (error) {
                      const axiosError = error as AxiosError;
                      if (axiosError.response) {
@@ -237,7 +237,7 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
                      key: 'change',
                      dataIndex: 'change',
                      render: (_: unknown, record: userHistory) => {
-                            if (record.action === 'Unban') {
+                            if (record.action === 'Unban' || record.action === 'Delete') {
                                    return null; // or return ""; to explicitly render nothing
                             }
 
@@ -282,7 +282,7 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
 
                                    oldValueDisplay = <span style={{ backgroundColor: '#ffebee', color: '#d32f2f' }}>{oldValueDisplay}</span>;
                                    newValueDisplay = <span style={{ backgroundColor: '#e8f5e9', color: '#2e7d32' }}>{newValueDisplay}</span>;
-                            } else if (record.colName === 'is_verified') {
+                            } else if (record.colName === 'isEmailVerified') {
                                    // Specific logic for isEmailVerified attribute
                                    oldValueDisplay = record.oldValue === '1' ? (
                                           <Tooltip title="L'email était vérifié">
