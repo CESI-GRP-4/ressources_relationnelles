@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : jeu. 14 mars 2024 à 23:13
+-- Généré le : lun. 18 mars 2024 à 22:22
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -560,7 +560,6 @@ INSERT INTO `login_logs` (`id`, `id_user`, `login_datetime`) VALUES
 (24, 31, '2024-01-02 11:00:00'),
 (25, 32, '2024-01-03 08:30:00'),
 (26, 33, '2024-01-03 09:30:00'),
-(27, 36, '2024-01-03 10:45:00'),
 (28, 26, '2024-01-04 08:00:00'),
 (29, 27, '2024-01-04 09:15:00'),
 (30, 28, '2024-01-05 10:30:00'),
@@ -569,7 +568,6 @@ INSERT INTO `login_logs` (`id`, `id_user`, `login_datetime`) VALUES
 (33, 31, '2024-01-06 11:00:00'),
 (34, 32, '2024-01-07 08:30:00'),
 (35, 29, '2024-01-07 09:30:00'),
-(36, 36, '2024-01-07 10:45:00'),
 (37, 1, '2024-03-05 18:48:39'),
 (38, 1, '2024-03-05 19:01:22'),
 (39, 1, '2024-03-06 08:53:58'),
@@ -603,7 +601,10 @@ INSERT INTO `login_logs` (`id`, `id_user`, `login_datetime`) VALUES
 (67, 1, '2024-03-06 12:56:07'),
 (68, 1, '2024-03-06 14:23:11'),
 (69, 1, '2024-03-11 21:25:37'),
-(70, 1, '2024-03-14 16:32:03');
+(70, 1, '2024-03-14 16:32:03'),
+(71, 37, '2024-03-18 21:25:54'),
+(72, 38, '2024-03-18 21:26:48'),
+(73, 1, '2024-03-18 21:27:29');
 
 -- --------------------------------------------------------
 
@@ -780,16 +781,17 @@ INSERT INTO `users` (`id_user`, `email`, `first_name`, `last_name`, `password`, 
 (22, 'jordan.davis53@example.com', 'Jordan', 'Davis', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, NULL, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Socks', 3, 3, 1, 3, '2024-02-13 18:05:16', '2024-03-14 19:43:49', NULL, NULL, '2024-03-06 15:19:53'),
 (23, 'dakota.wilson74@sample.com', 'Dakota', 'Wilsoaze', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 1742071249, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Angel', 2, 2, 3, 3, '2024-02-13 18:05:16', '2024-03-14 20:42:24', NULL, NULL, NULL),
 (24, 'jordan.smith21@sample.com', 'Jordan', 'Smith', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, NULL, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Kiki', 3, 1, 1, 3, '2024-02-13 18:05:16', '2024-03-14 19:43:49', NULL, NULL, NULL),
-(25, 'morgan.davis85@sample.com', 'Morgan', 'Davis', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, NULL, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Toby', 2, 7, 18, 3, '2024-02-13 18:05:16', '2024-03-14 19:43:49', NULL, NULL, NULL),
+(25, 'morgan.davis85@sample.com', 'Morgan', 'Davis', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, NULL, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Toby', 1, 7, 18, 4, '2024-02-13 18:05:16', '2024-03-18 20:18:31', NULL, NULL, NULL),
 (26, 'robin.wilson93@example.com', 'Robin', 'Wilson', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, NULL, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Toby', 1, 2, 1, 3, '2024-02-13 18:05:16', '2024-03-14 19:43:49', NULL, NULL, NULL),
 (27, 'casey.brown77@sample.com', 'Casey', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, NULL, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Angel', 2, 3, 3, 2, '2024-02-13 18:05:16', '2024-03-14 19:43:49', NULL, NULL, NULL),
 (28, 'robin.johnson19@example.com', 'Robin', 'Johnson', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, NULL, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Angel', 2, 2, 1, 1, '2024-02-13 18:05:16', '2024-03-14 19:43:49', NULL, NULL, NULL),
 (29, 'riley.moore47@sample.com', 'Riley', 'Moore', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, NULL, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Kiki', 2, 2, 1, 3, '2024-02-13 18:05:16', '2024-03-14 19:43:49', NULL, NULL, NULL),
 (30, 'riley.williams18@sample.com', 'Riley', 'Williams', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, NULL, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Toby', 7, 1, 3, 4, '2024-02-13 18:05:16', '2024-03-14 19:43:49', NULL, NULL, NULL),
 (31, 'dakota.brown54@demo.com', 'Dakota', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, NULL, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Socks', 7, 3, 3, 4, '2024-02-13 18:05:16', '2024-03-14 19:43:49', NULL, NULL, NULL),
-(32, 'azeaze.brown54@demo.com', 'Dakota', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, NULL, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Angel', 7, 3, 3, 4, '2024-02-13 18:05:16', '2024-03-14 19:43:49', NULL, NULL, NULL),
-(33, 'aze.brown54@demo.com', 'Dakota', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, NULL, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Kiki', 7, 3, 3, 4, '2024-02-13 18:05:16', '2024-03-14 19:43:49', NULL, NULL, NULL),
-(36, 'nicolas.chwiej@viacesi.fr', 'Nicolas', 'CHWIEJ', '$2y$12$z3TTUPvA6a0lH5ShBVAUaOqORGu6sndLbG.Cji6/ceB430eKQUXHi', 0, NULL, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Toby', NULL, NULL, NULL, 2, '2024-02-29 18:17:50', '2024-03-14 18:53:16', 'EnkYq05kxT9njZmzbpG8BngNEuWLz3Zi7gOfjYq4HUpoDMGgXxGv4jw6cYzutAhJ2Jtb1IFT0L6eoqzSQYj5IhWDmk91cBWA6eXF', NULL, '2024-03-14 18:53:16');
+(32, 'azeaze.brown54@demo.com', 'Charlie', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, NULL, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Angel', 7, 3, 3, 4, '2024-02-13 18:05:16', '2024-03-18 19:35:42', NULL, NULL, NULL),
+(33, 'aze.brown54@demo.com', 'Zoulou', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, NULL, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Kiki', 1, 3, 3, 4, '2024-02-13 18:05:16', '2024-03-18 20:17:39', NULL, NULL, NULL),
+(37, 'azeazeAZEAZE123132@gmail.com', 'azeaze', 'AZEAZE', '$2y$12$l8mw5o/wM9MNYP0xUto7zeNtPwQ88Dxow/pCv./28J3XpHqu3X98W', 0, NULL, NULL, NULL, NULL, NULL, 4, '2024-03-18 19:25:52', '2024-03-18 21:17:05', NULL, NULL, '2024-03-18 19:29:06'),
+(38, 'azeazeAZEAZE123132@gmail.comze', 'azeaze', 'AZEAZE', '$2y$12$fdlI3ydiRmFw/Y9vI/8WtOZBfRHLMKnk1.73OidlaXwfD8YjQhEOK', 0, NULL, NULL, NULL, NULL, NULL, 4, '2024-03-18 19:26:46', '2024-03-18 21:17:05', NULL, NULL, '2024-03-18 19:27:45');
 
 -- --------------------------------------------------------
 
@@ -813,31 +815,22 @@ CREATE TABLE `user_history` (
 --
 
 INSERT INTO `user_history` (`id`, `user_id`, `affected_user_id`, `action`, `modified_column`, `old_value`, `new_value`, `created_at`) VALUES
-(2, 1, 22, 'Modify', 'firstName', 'Dakotaaa', 'Dakota', '2024-03-06 15:31:11'),
-(35, 1, 30, 'Modify', 'first_name', 'Rileyyqsdsqd', 'Rileyy', '2024-03-14 15:35:05'),
-(36, 1, 30, 'Modify', 'first_name', 'Rileyy', 'Rileyyeaazeaze', '2024-03-14 15:35:21'),
-(37, 1, 30, 'Modify', 'is_verified', '0', '0', '2024-03-14 15:35:21'),
-(38, 1, 30, 'Modify', 'is_verified', '0', '1', '2024-03-14 15:35:31'),
-(39, 1, 30, 'Modify', 'first_name', 'Rileyyeaazeaze', 'Riley', '2024-03-14 15:35:48'),
-(40, 1, 30, 'Modify', 'is_verified', '1', '1', '2024-03-14 15:35:48'),
-(41, 1, 30, 'Modify', 'city', 'Parisssss', 'Paris', '2024-03-14 15:35:48'),
-(42, 1, 30, 'Modify', 'is_verified', '1', '0', '2024-03-14 15:36:18'),
-(43, 1, 30, 'Modify', 'is_verified', '0', '0', '2024-03-14 15:36:27'),
-(44, 1, 30, 'Modify', 'is_verified', '0', '0', '2024-03-14 15:36:29'),
-(45, 1, 30, 'Modify', 'is_verified', '0', '0', '2024-03-14 15:38:11'),
-(46, 1, 30, 'Modify', 'is_verified', '0', '0', '2024-03-14 15:38:15'),
-(47, 1, 30, 'Modify', 'is_verified', '0', '0', '2024-03-14 15:38:19'),
-(48, 1, 30, 'Modify', 'is_verified', '0', '1', '2024-03-14 15:38:26'),
-(49, 1, 30, 'Modify', 'is_verified', '1', '1', '2024-03-14 15:38:26'),
-(50, 1, 30, 'Modify', 'is_verified', '1', '1', '2024-03-14 15:38:28'),
-(51, 1, 30, 'Modify', 'is_verified', '1', '1', '2024-03-14 15:39:36'),
-(52, 1, 30, 'Modify', 'is_verified', '1', '0', '2024-03-14 15:42:57'),
-(53, 1, 30, 'Ban', 'is_banned', '0', '1', '2024-03-14 16:11:39'),
-(54, 1, 30, 'Unban', 'is_banned', '1', '0', '2024-03-14 16:12:32'),
-(55, 1, 30, 'Modify', 'city', 'Paris', 'Pariss', '2024-03-14 16:14:14'),
-(56, 1, 36, 'Delete', 'deleted_at', NULL, '2024-03-14 19:53:16', '2024-03-14 19:53:16'),
-(57, 1, 23, 'Ban', 'ban_until', NULL, '33267360729', '2024-03-14 21:32:09'),
-(58, 1, 23, 'Ban', 'ban_until', '33267360729', '1742071249', '2024-03-14 21:42:24');
+(59, 1, 38, 'Delete', 'deleted_at', NULL, '2024-03-18 20:27:45', '2024-03-18 20:27:45'),
+(60, 1, 37, 'Delete', 'deleted_at', NULL, '2024-03-18 20:29:06', '2024-03-18 20:29:06'),
+(62, 1, 32, 'Modify', 'first_name', 'Dakota', 'Charlie', '2024-03-18 20:35:42'),
+(63, 1, 33, 'Modify', 'first_name', 'Dakota', 'Zoulou', '2024-03-18 20:36:00'),
+(67, 1, 33, 'Ban', 'ban_until', NULL, '1710796080', '2024-03-18 21:07:14'),
+(68, 1, 33, 'Unban', 'ban_until', '1710796080', NULL, '2024-03-18 21:08:16'),
+(69, 1, 33, 'Ban', 'ban_until', NULL, '1710796180', '2024-03-18 21:08:30'),
+(70, 1, 33, 'Ban', 'ban_until', '1710796180', '253402297199', '2024-03-18 21:09:49'),
+(71, 1, 33, 'Unban', 'ban_until', '253402297199', NULL, '2024-03-18 21:12:35'),
+(72, 1, 33, 'Modify', 'city', 'Pariss', 'Paris', '2024-03-18 21:17:39'),
+(73, 1, 25, 'Modify', 'city', 'New York', 'Paris', '2024-03-18 21:17:59'),
+(74, 1, 25, 'Modify', 'first_name', 'Morgan', 'Morgans', '2024-03-18 21:18:22'),
+(75, 1, 25, 'Modify', 'last_name', 'Davis', 'Daviss', '2024-03-18 21:18:22'),
+(76, 1, 25, 'Modify', 'role', 'Moderateur', 'Utilisateur', '2024-03-18 21:18:22'),
+(77, 1, 25, 'Modify', 'first_name', 'Morgans', 'Morgan', '2024-03-18 21:18:31'),
+(78, 1, 25, 'Modify', 'last_name', 'Daviss', 'Davis', '2024-03-18 21:18:31');
 
 --
 -- Index pour les tables déchargées
@@ -1065,7 +1058,7 @@ ALTER TABLE `invitations`
 -- AUTO_INCREMENT pour la table `login_logs`
 --
 ALTER TABLE `login_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
 
 --
 -- AUTO_INCREMENT pour la table `migrations`
@@ -1113,13 +1106,13 @@ ALTER TABLE `status_resources`
 -- AUTO_INCREMENT pour la table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT pour la table `user_history`
 --
 ALTER TABLE `user_history`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
 
 --
 -- Contraintes pour les tables déchargées
