@@ -24,7 +24,7 @@ export default function Footer() {
                                                  draggable={false}
                                                  className='m-2 rounded-lg'
                                                  src="https://upload.wikimedia.org/wikipedia/fr/thumb/e/ef/Logo_cesi_2022.png/240px-Logo_cesi_2022.png"
-                                                 alt="Logo du ministère des solidarités et de la santé"
+                                                 alt="Logo du CESI"
                                                  width={60}
                                                  height={60}
                                           />
