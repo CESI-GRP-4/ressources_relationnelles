@@ -13,18 +13,10 @@ import BanUserButton from '@/components/back-office/user-management/banUserButto
 import DeleteUserButton from "@/components/back-office/user-management/deleteUserButton";
 import Country from '@/types/country';
 import SelectCountry, { fetchCountries } from '../../selectCountry';
+import { tableSettings } from '@/utils/tableParams';
 
 const EditableTable: React.FC = () => {
-       interface tableSettings {
-              perPage: number;
-              page: number;
-              total?: number;
-              lastPage?: number;
-              sortBy?: string;
-              sortDirection?: "asc" | "desc";
-              searchColumn?: string;
-              searchValue?: string;
-       }
+       
        const currentUser = useUser();
        const [editUserForm] = Form.useForm();
        const [tableData, setTableData] = useState([] as User[]);

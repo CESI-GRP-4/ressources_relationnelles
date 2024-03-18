@@ -20,7 +20,5 @@ export const getUserAttributeLabelsInFrench = (): FrenchUserAttributeLabels => {
               updatedAt: "Mis à jour le",
               isBanned: "Est banni",
               newUser: "Nouvel utilisateur",
-              // For roles, you might need to handle them separately depending on the context
-              // because it's an enumeration value rather than a direct translation.
        };
 };

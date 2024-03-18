@@ -2,14 +2,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import User from '@/types/user';
 import { ColumnType } from 'antd/es/table';
-import { ReloadOutlined, RightCircleOutlined } from '@ant-design/icons';
+import { ReloadOutlined, RightCircleOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import axios, { AxiosError } from 'axios';
 import { Table, Typography, Select, Button, message, Tooltip, Avatar, Tag, Popover } from 'antd';
 import { useUser } from '@/providers/userProvider';
 const { Text } = Typography;
-
-import { getUserAttributeLabelsInFrench } from '@/types/userAttributesToFrench';
-
+import { getUserAttributeLabelsInFrench } from '@/utils/userAttributesToFrench';
+import { tableSettings } from '@/utils/tableParams';
 interface userHistory {
        userModified: User;
        modifyBy: User;
@@ -38,12 +37,7 @@ const getTagColor = (action: 'Modify' | 'Delete' | 'Ban' | 'Unban' | 'Created') 
 };
 
 const UserManagementHistoryTable: React.FC = () => {
-       interface tableSettings {
-              perPage: number;
-              page: number;
-              total?: number;
-              lastPage?: number;
-       }
+
        const currentUser = useUser();
        const [tableData, setTableData] = useState<userHistory[] | null>(null);
        const [tableParams, setTableParams] = useState({ perPage: 10, page: 1 } as tableSettings);
@@ -243,17 +237,75 @@ const UserManagementHistoryTable: React.FC = () => {
                      key: 'change',
                      dataIndex: 'change',
                      render: (_: unknown, record: userHistory) => {
-                            const translatedColName = userLabelsInFrench[record.colName]; // Assume this is correctly translating
+                            if (record.action === 'Unban') {
+                                   return null; // or return ""; to explicitly render nothing
+                            }
 
+                            const translatedColName = userLabelsInFrench[record.colName]; // Assume this correctly translates attribute names
+
+                            let oldValueDisplay;
+                            let newValueDisplay;
+
+                            const options: Intl.DateTimeFormatOptions = {
+                                   year: 'numeric',
+                                   month: 'long',
+                                   day: 'numeric',
+                                   hour: '2-digit',
+                                   minute: '2-digit',
+                            };
+                            // Convert timestamp to readable date in French format for "Ban" action
+                            if (record.action === 'Ban') {
+                                   if (record.oldValue) {
+                                          const oldDate = new Date(parseInt(record.oldValue) * 1000);
+                                          oldValueDisplay = new Intl.DateTimeFormat('fr-FR', options).format(oldDate);
+                                   } else {
+                                          oldValueDisplay = "N/A";
+                                   }
+
+                                   if (record.newValue) {
+                                          const newDate = new Date(parseInt(record.newValue) * 1000);
+                                          newValueDisplay = new Intl.DateTimeFormat('fr-FR', options).format(newDate);
+                                   } else {
+                                          newValueDisplay = "N/A";
+                                   }
+
+                                   oldValueDisplay = <span style={{ backgroundColor: '#ffebee', color: '#d32f2f' }}>{oldValueDisplay}</span>;
+                                   newValueDisplay = <span style={{ backgroundColor: '#e8f5e9', color: '#2e7d32' }}>{newValueDisplay}</span>;
+                            } else if (record.colName === 'is_verified') {
+                                   // Specific logic for isEmailVerified attribute
+                                   oldValueDisplay = record.oldValue === '1' ? (
+                                          <Tooltip title="L'email était vérifié">
+                                                 <CheckCircleOutlined style={{ color: 'green' }} />
+                                          </Tooltip>
+                                   ) : (
+                                          <Tooltip title="L'email n'était pas vérifié">
+                                                 <CloseCircleOutlined style={{ color: 'red' }} />
+                                          </Tooltip>
+                                   );
+
+                                   newValueDisplay = record.newValue === '1' ? (
+                                          <Tooltip title="L'email est désormais vérifié">
+                                                 <CheckCircleOutlined style={{ color: 'green' }} />
+                                          </Tooltip>
+                                   ) : (
+                                          <Tooltip title="L'email est désormais non vérifié">
+                                                 <CloseCircleOutlined style={{ color: 'red' }} />
+                                          </Tooltip>
+                                   );
+                            } else {
+                                   // Default display for other attributes
+                                   oldValueDisplay = <span style={{ backgroundColor: '#ffebee', color: '#d32f2f' }}>{record.oldValue}</span>;
+                                   newValueDisplay = <span style={{ backgroundColor: '#e8f5e9', color: '#2e7d32' }}>{record.newValue}</span>;
+                            }
+
+                            // Combine old value, arrow icon, and new value for display
                             return (
-                                   record.action === 'Modify' && record.colName && record.oldValue !== undefined && record.newValue !== undefined
-                                          ? <span>
-                                                 {translatedColName}:
-                                                 <span style={{ backgroundColor: '#ffebee', color: '#d32f2f' }} className='ml-1'>{record.oldValue}</span>
-                                                 <RightCircleOutlined style={{ color: 'blue' }} className='mx-1' />
-                                                 <span style={{ backgroundColor: '#e8f5e9', color: '#2e7d32' }}>{record.newValue}</span>
-                                          </span>
-                                          : null
+                                   <span>
+                                          {record.action === 'Modify' && (translatedColName || record.colName)}{record.action === 'Modify' && ":"}
+                                          <span className='ml-1'>{oldValueDisplay}</span>
+                                          <RightCircleOutlined style={{ color: 'blue' }} className='mx-1' />
+                                          {newValueDisplay}
+                                   </span>
                             );
                      },
               }
