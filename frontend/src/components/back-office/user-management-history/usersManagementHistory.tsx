@@ -139,7 +139,7 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
                                                         <div style={{ margin: '0 8px', display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
                                                                <div>
                                                                       {`${item.userModified.firstName} ${item.userModified.lastName} a été `}
-                                                                      <Tag color={getTagColor(item.action)}>{getActionText(item.action)}</Tag>                                                                      
+                                                                      <Tag color={getTagColor(item.action)}>{getActionText(item.action)}</Tag>
                                                                       {` par `}
                                                                       <Typography.Link href={`mailto:${item.modifyBy.email}`}>
                                                                              {item.modifyBy.email}
@@ -256,17 +256,28 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
                             // Convert timestamp to readable date in French format for "Ban" action
                             if (record.action === 'Ban') {
                                    if (record.oldValue) {
-                                          const oldDate = new Date(parseInt(record.oldValue) * 1000);
-                                          oldValueDisplay = new Intl.DateTimeFormat('fr-FR', options).format(oldDate);
-                                   } else {
-                                          oldValueDisplay = "N/A";
+                                          if (record.oldValue.toLowerCase() === "permanent") {
+                                                 oldValueDisplay = "Permanent";
+                                          } else {
+                                                 const oldDate = new Date(parseInt(record.oldValue) * 1000);
+                                                 oldValueDisplay = new Intl.DateTimeFormat('fr-FR', options).format(oldDate);
+                                          }
+                                   }
+                                   else{
+                                          oldValueDisplay = 'N/A'
                                    }
 
+                                   // Handling newValue
                                    if (record.newValue) {
-                                          const newDate = new Date(parseInt(record.newValue) * 1000);
-                                          newValueDisplay = new Intl.DateTimeFormat('fr-FR', options).format(newDate);
-                                   } else {
-                                          newValueDisplay = "N/A";
+                                          if (record.newValue.toLowerCase() === "permanent") {
+                                                 newValueDisplay = "Permanent";
+                                          } else {
+                                                 const newDate = new Date(parseInt(record.newValue) * 1000);
+                                                 newValueDisplay = new Intl.DateTimeFormat('fr-FR', options).format(newDate);
+                                          }
+                                   }
+                                   else{
+                                          newValueDisplay = 'N/A'
                                    }
 
                                    oldValueDisplay = <span style={{ backgroundColor: '#ffebee', color: '#d32f2f' }}>{oldValueDisplay}</span>;
