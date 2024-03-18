@@ -7,11 +7,11 @@ const { Text } = Typography;
 import Link from "next/link";
 import ConnectionsChart from "@/components/back-office/statistics/connections/connectionChart";
 import { PlusCircleOutlined, UserOutlined } from "@ant-design/icons";
-import History from "@/components/back-office/user-management/history";
+import UserManagementHistory from '@/components/back-office/user-management-history/usersManagementHistory';
 
 export default function AdminDashboard() {
        const { user } = useUser();
-       
+
        const [avatarError, setAvatarError] = useState(false); // État pour gérer l'erreur de chargement de l'avatar
 
        return (
@@ -66,7 +66,7 @@ export default function AdminDashboard() {
                                    </Card>
                             </div>
                             <div>
-                                   <History></History>
+                                   <UserManagementHistory isPreview />
                             </div>
                             <Card
                                    title="Statistiques de connexions (semaine actuelle)"

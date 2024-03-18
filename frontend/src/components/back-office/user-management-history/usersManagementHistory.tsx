@@ -2,13 +2,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import User from '@/types/user';
 import { ColumnType } from 'antd/es/table';
-import { ReloadOutlined, RightCircleOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { ReloadOutlined, RightCircleOutlined, CheckCircleOutlined, CloseCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import axios, { AxiosError } from 'axios';
-import { Table, Typography, Select, Button, message, Tooltip, Avatar, Tag, Popover } from 'antd';
+import { Table, Typography, Select, Button, message, Tooltip, Avatar, Tag, Popover, Card, List } from 'antd';
 import { useUser } from '@/providers/userProvider';
 const { Text } = Typography;
 import { getUserAttributeLabelsInFrench } from '@/utils/userAttributesToFrench';
 import { tableSettings } from '@/utils/tableParams';
+import Link from 'next/link';
 interface userHistory {
        userModified: User;
        modifyBy: User;
@@ -36,11 +37,34 @@ const getTagColor = (action: 'Modify' | 'Delete' | 'Ban' | 'Unban' | 'Created') 
        }
 };
 
-const UserManagementHistoryTable: React.FC = () => {
-
+const getActionText = (action: 'Modify' | 'Delete' | 'Ban' | 'Unban' | 'Created') => {
+       let actionText: string;
+       switch (action) {
+              case 'Delete':
+                     actionText = 'supprimé';
+                     break;
+              case 'Ban':
+                     actionText = 'banni';
+                     break;
+              case 'Unban':
+                     actionText = 'débanni';
+                     break;
+              case 'Modify':
+                     actionText = 'modifié';
+                     break;
+              case 'Created':
+                     actionText = 'créé';
+                     break;
+              default:
+                     actionText = ''; // Consider providing a default action text
+                     break;
+       }
+       return actionText;
+};
+export default function UserManagementHistory({ isPreview = false }: { isPreview?: boolean }) {
        const currentUser = useUser();
        const [tableData, setTableData] = useState<userHistory[] | null>(null);
-       const [tableParams, setTableParams] = useState({ perPage: 10, page: 1 } as tableSettings);
+       const [tableParams, setTableParams] = useState(isPreview ? { perPage: 5, page: 1 } as tableSettings : { perPage: 10, page: 1 } as tableSettings);
        const [isTableLoading, setIsTableLoading] = useState(false);
        const [selectedColumns, setSelectedColumns] = useState<string[]>([
               'userModified',
@@ -48,58 +72,12 @@ const UserManagementHistoryTable: React.FC = () => {
               'change',
               'modifyBy',
               // 'time',
-       ]); // array of strings representing the columns to display
+       ]); // array of strings representing the columns to display by default in the table 
        const userLabelsInFrench = getUserAttributeLabelsInFrench();
 
        useEffect(() => {
               fetchData(tableParams)
        }, []);
-
-       const EditableCell: React.FC<{
-              editing: boolean;
-              dataIndex: keyof User;
-              title: string;
-              inputType: 'text' | 'number' | 'select' | 'boolean';
-              record: User;
-              index: number;
-              children: React.ReactNode;
-       }> = ({
-              editing,
-              dataIndex,
-              title,
-              inputType,
-              record,
-              index,
-              children,
-              ...restProps
-       }) => {
-                     return (
-                            <td {...restProps}>
-                                   {dataIndex ? (
-                                          <Tooltip
-                                                 title={
-                                                        dataIndex === 'isEmailVerified'
-                                                               ? record.isEmailVerified
-                                                                      ? "L'adresse email est vérifiée"
-                                                                      : "L'adresse email n'est pas vérifiée"
-                                                               : dataIndex === 'isBanned'
-                                                                      ? record.isBanned
-                                                                             ? "L'utilisateur est banni"
-                                                                             : "L'utilisateur n'est pas banni"
-                                                                      : children
-                                                 }
-                                          >
-                                                 {dataIndex === 'email' ? <Typography.Link>{children}</Typography.Link> : children}
-                                          </Tooltip>
-                                   ) : children
-                                   }
-                            </td>
-                     );
-              };
-
-       const handleTableChange = (pagination: any, filters: any, sorter: any) => {
-              fetchData({ ...tableParams, perPage: pagination.pageSize, page: pagination.current });
-       }
 
        const fetchData = async (tableParams: tableSettings) => {
               setIsTableLoading(true);
@@ -141,6 +119,44 @@ const UserManagementHistoryTable: React.FC = () => {
                      setIsTableLoading(false);
               }
        };
+
+       if (isPreview) {
+              return (
+                     <Card
+                            title="Actions récentes sur les utilisateurs"
+                            extra={<Link href="/gestion-utilisateurs-historique"><Button type="text" shape="circle" icon={<PlusCircleOutlined style={{ color: "blue" }} />} /></Link>}
+                     >
+                            <List
+                                   itemLayout="horizontal"
+                                   dataSource={tableData ?? []} // Directly use list.userHistory since list is now a DataType object
+                                   renderItem={(item) => (
+                                          <List.Item>
+                                                 <div className='flex flex-row justify-start items-center'>
+                                                        <Avatar
+                                                               src={item.userModified.imgURL}
+                                                               alt={`${item.userModified.firstName} ${item.userModified.lastName}`}
+                                                        />
+                                                        <div style={{ margin: '0 8px', display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
+                                                               <div>
+                                                                      {`${item.userModified.firstName} ${item.userModified.lastName} a été `}
+                                                                      <Tag color={getTagColor(item.action)}>{getActionText(item.action)}</Tag>                                                                      
+                                                                      {` par `}
+                                                                      <Typography.Link href={`mailto:${item.modifyBy.email}`}>
+                                                                             {item.modifyBy.email}
+                                                                      </Typography.Link>
+                                                               </div>
+                                                        </div>
+                                                 </div>
+                                          </List.Item>
+                                   )}
+                            />
+                     </Card>
+              );
+       }
+
+       const handleTableChange = (pagination: any, filters: any, sorter: any) => {
+              fetchData({ ...tableParams, perPage: pagination.pageSize, page: pagination.current });
+       }
 
        const columns = [
               {
@@ -209,27 +225,11 @@ const UserManagementHistoryTable: React.FC = () => {
                      dataIndex: 'action',
                      key: 'action',
                      render: (action: 'Modify' | 'Delete' | 'Ban' | 'Unban' | 'Created') => {
-                            let actionText;
-                            switch (action) {
-                                   case 'Delete':
-                                          actionText = 'Utilisateur supprimé';
-                                          break;
-                                   case 'Ban':
-                                          actionText = 'Utilisateur banni';
-                                          break;
-                                   case 'Unban':
-                                          actionText = 'Utilisateur débanni';
-                                          break;
-                                   case 'Modify':
-                                          actionText = 'Utilisateur modifié';
-                                          break;
-                                   case 'Created':
-                                          actionText = 'Utilisateur créé';
-                                          break;
-                                   default:
-                                          break;
-                            }
-                            return <Tag color={getTagColor(action)}>{actionText}</Tag>;
+                            return (
+                                   <Tag color={getTagColor(action)}>
+                                          {getActionText(action).charAt(0).toUpperCase() + getActionText(action).slice(1)}
+                                   </Tag>
+                            );
                      },
               },
               {
@@ -331,15 +331,6 @@ const UserManagementHistoryTable: React.FC = () => {
                      ),
               },
        ];
-       // .map(col => ({
-       //        ...col,
-       //        onCell: (record: userHistory) => ({ // Update the type of the 'record' parameter to 'userHistory'
-       //               record,
-       //               inputType: col.dataIndex === 'isEmailVerified' ? 'boolean' : col.dataIndex === 'role' || col.dataIndex === 'country' ? 'select' : 'text',
-       //               dataIndex: col.dataIndex,
-       //               title: col.title as string,
-       //        }),
-       // }));
 
        const handleColumnChange = (value: string[]) => {
               setSelectedColumns(value);
@@ -384,7 +375,6 @@ const UserManagementHistoryTable: React.FC = () => {
                             style={{ overflow: 'auto' }}
                             sticky
                             loading={isTableLoading}
-                            components={{ body: { cell: EditableCell } }}
                             bordered
                             dataSource={tableData ?? []} // * Added nullish coalescing operator to prevent error
                             columns={getVisibleColumns()}
@@ -395,4 +385,3 @@ const UserManagementHistoryTable: React.FC = () => {
               </div>
        );
 };
-export default UserManagementHistoryTable;
