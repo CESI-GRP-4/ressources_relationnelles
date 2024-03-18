@@ -134,7 +134,7 @@ class UserController extends Controller
                      break;
 
                  case 'isBanned':
-                     $query->where('ban_until', '!=', null);
+                    $query->where('ban_until', $searchValue ? '!=' : '=', null);
                      break;
 
                  case 'country':
@@ -442,6 +442,8 @@ class UserController extends Controller
             return response()->json(['message' => 'Utilisateur non trouvé.'], 404);
         }
 
+        $user->verification_token = null;
+        $user->password_reset_token = null;
         $user->deleted_at = now();
         $user->save();
         $authUserId = auth()->user()->id_user;
@@ -556,7 +558,6 @@ class UserController extends Controller
         } else {
             return response()->json(['message' => 'Veuillez spécifier une date de fin de bannissement ou rendre le bannissement permanent.'], 400);
         }
-
         $user->save();
 
         $authUserId = auth()->user()->id_user;
@@ -610,13 +611,13 @@ class UserController extends Controller
         if (!$user->ban_until) {
             return response()->json(['message' => 'L\'utilisateur n\'est pas banni'], 404);
         }
-
+        $oldBanUntil = $user->ban_until;
         $user->ban_until = null;
         $user->save();
 
         $authUserId = auth()->user()->id_user;
         Utils::addUserHistoryEntry(
-            $authUserId, $user->id_user, 'Unban', 'ban_until', $user->ban_until, null
+            $authUserId, $user->id_user, 'Unban', 'ban_until', $oldBanUntil, null
         );
 
         return response()->json(['message' => 'L\'utilisateur a été débanni']);

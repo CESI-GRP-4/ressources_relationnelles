@@ -55,6 +55,9 @@ class Utils{
     public static function getAllUserData($user){
         // set false if not set
         $isNewUser = session('isNewUser', false);
+
+        $isBanned = $user->ban_until ? (strtotime($user->ban_until) > time()) : false;
+
         $userData = [
             'id' => $user->id_user,
             'email' => $user->email,
@@ -65,7 +68,7 @@ class Utils{
             'role' => $user->role->name,
             'createdAt' => $user->created_at,
             'updatedAt' => $user->updated_at,
-            'isBanned' => $user->ban_until ? true : false,
+            'isBanned' => $isBanned,
             'newUser' => $isNewUser,
         ];
 

@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\UserHistory;
+use App\Traits\FieldMappingTrait;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class UserHistoryController extends Controller {
+    use FieldMappingTrait;
 
     /**
      * @OA\Get(
@@ -65,11 +67,11 @@ class UserHistoryController extends Controller {
      */
 
     public function getUsersHistory(Request $request){
+
         $validator = Validator::make($request->all(), [
             'perPage' => 'integer|min:1',
             'page' => 'integer|min:1',
         ]);
-
         if ($validator->fails()) { return response()->json($validator->errors(), 400); }
 
         $perPage = $request->input('perPage', 10);
@@ -87,18 +89,20 @@ class UserHistoryController extends Controller {
                 'action' => $history->action,
                 'time' => $history->created_at,
             ];
+            $fieldMapping = $this->getReverseFieldMapping();
+
 
             if ($history->action === 'Modify' ) {
-                $item['colName'] = $history->modified_column;
+                $item['colName'] = $fieldMapping[$history->modified_column] ?? $history->modified_column;
                 $item['newValue'] = $history->new_value;
                 $item['oldValue'] = $history->old_value;
             }
 
             if ($history->action === 'Ban' ) {
-                $item['colName'] = $history->modified_column;
+                $item['colName'] = $fieldMapping[$history->modified_column] ?? $history->modified_column;
                 $item['newValue'] = $history->new_value;
-                if($history->new_value === 253402297199){
-                    $item['newValue'] = 'Permanent';
+                if($history->new_value == 253402297199){
+                    $item['newValue'] = 'permanent';
                 }
                 $item['oldValue'] = $history->old_value;
             }
@@ -118,6 +122,5 @@ class UserHistoryController extends Controller {
 
         return response()->json($response);
     }
-
 
 }

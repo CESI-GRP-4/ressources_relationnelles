@@ -128,7 +128,7 @@ class AuthController extends Controller{
         'email' => 'required|email',
         'firstName' => 'required',
         'lastName' => 'required',
-        'password' => 'required|min:8',
+        'password' => 'required|string|min:8|max:150|regex:/[A-Z]/|regex:/[a-z]/|regex:/[0-9]/|regex:/[\W_]/',
     ]);
 
     $userExiste = User::where('email', $data['email'])->first();
