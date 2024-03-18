@@ -12,6 +12,7 @@ import {
 } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from "next/link";
+import logo from "/public/logo.png"
 import React, { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 const { Sider } = Layout;
@@ -205,7 +206,7 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                                    <Image
                                           draggable={false}
                                           className='m-2 rounded-none'
-                                          src="/logo.png"
+                                          src={logo}
                                           alt="Logo du ministère des solidarités et de la santé"
                                           width={130}
                                           height={150}
