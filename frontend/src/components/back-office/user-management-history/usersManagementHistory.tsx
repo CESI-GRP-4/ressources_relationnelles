@@ -176,15 +176,6 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
                                                         <Text type="secondary" className="whitespace-nowrap">ID</Text>
                                                         <Text ellipsis copyable>{userInfo.id}</Text>
                                                  </div>
-                                                 {/* Display all the other information */}
-                                                 <div className="flex flex-row gap-2">
-                                                        <Text type="secondary" className="whitespace-nowrap">Prénom</Text>
-                                                        <Text ellipsis>{userInfo.firstName}</Text>
-                                                 </div>
-                                                 <div className="flex flex-row gap-2">
-                                                        <Text type="secondary" className="whitespace-nowrap">Nom</Text>
-                                                        <Text ellipsis>{userInfo.lastName}</Text>
-                                                 </div>
                                                  <div className="flex flex-row gap-2">
                                                         <Text type="secondary" className="whitespace-nowrap">Rôle</Text>
                                                         <Text ellipsis>{userInfo.role}</Text>
@@ -263,7 +254,7 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
                                                  oldValueDisplay = new Intl.DateTimeFormat('fr-FR', options).format(oldDate);
                                           }
                                    }
-                                   else{
+                                   else {
                                           oldValueDisplay = 'N/A'
                                    }
 
@@ -276,7 +267,7 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
                                                  newValueDisplay = new Intl.DateTimeFormat('fr-FR', options).format(newDate);
                                           }
                                    }
-                                   else{
+                                   else {
                                           newValueDisplay = 'N/A'
                                    }
 
@@ -325,11 +316,45 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
                      title: 'Par',
                      dataIndex: 'modifyBy',
                      key: 'modifyBy',
-                     render: (modifyBy: User) => (
-                            <Typography.Link href={`mailto:${modifyBy.email}`}>
-                                   {modifyBy.email}
-                            </Typography.Link>
-                     ),
+                     render: (modifyBy: User) => {
+                            const popoverContent = (
+                                   <div>
+                                          <div className="mt-5 space-y-1 pr-7">
+                                                 <div className="flex flex-row gap-2 items-center mb-5">
+                                                        <Avatar src={modifyBy.imgURL} size={'large'}></Avatar>
+                                                        <Text ellipsis code>{`${modifyBy.firstName} ${modifyBy.lastName}`}</Text>
+                                                 </div>
+                                                 <div className="flex flex-row gap-2">
+                                                        <Text type="secondary" className="whitespace-nowrap">ID</Text>
+                                                        <Text ellipsis copyable>{modifyBy.id}</Text>
+                                                 </div>
+                                                 <div className="flex flex-row gap-2">
+                                                        <Text type="secondary" className="whitespace-nowrap">Rôle</Text>
+                                                        <Text ellipsis>{modifyBy.role}</Text>
+                                                 </div>
+                                                 <div className="flex flex-row gap-2">
+                                                        <Text type="secondary" className="whitespace-nowrap">Pays</Text>
+                                                        <Text ellipsis>{modifyBy.country}</Text>
+                                                 </div>
+                                                 <div className="flex flex-row gap-2">
+                                                        <Text type="secondary" className="whitespace-nowrap">Adresse</Text>
+                                                        <Text ellipsis>{modifyBy.city}</Text>
+                                                 </div>
+                                                 <div className="flex flex-row gap-2">
+                                                        <Text type="secondary" className="whitespace-nowrap">Code postal</Text>
+                                                        <Text ellipsis>{modifyBy.postalCode}</Text>
+                                                 </div>
+                                          </div>
+                                   </div>
+                            );
+
+                            return (<Popover content={popoverContent} title="Information du gestionnaire">
+                                   <Typography.Link href={`mailto:${modifyBy.email}`}>
+                                          {modifyBy.email}
+                                   </Typography.Link>
+                            </Popover>)
+                     }
+                     ,
               },
               {
                      title: 'Date',
@@ -375,11 +400,7 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
                             >
                                    Tout afficher
                             </Button>
-
-
                             <Button type="primary" icon={<ReloadOutlined />} onClick={() => fetchData(tableParams)}>Rafraîchir</Button>
-
-
                      </div>
                      <Table
                             onChange={handleTableChange}
