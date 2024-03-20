@@ -348,7 +348,7 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
                                    </div>
                             );
 
-                            return (<Popover content={popoverContent} title="Information du gestionnaire">
+                            return (<Popover content={popoverContent} title="Informations du gestionnaire">
                                    <Typography.Link href={`mailto:${modifyBy.email}`}>
                                           {modifyBy.email}
                                    </Typography.Link>
