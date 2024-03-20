@@ -14,6 +14,7 @@ import DeleteUserButton from "@/components/back-office/user-management/deleteUse
 import Country from '@/types/country';
 import SelectCountry, { fetchCountries } from '../../selectCountry';
 import { tableSettings } from '@/utils/tableParams';
+import CreateUserForm from "@/components/createUserForm";
 
 const EditableTable: React.FC = () => {
        
@@ -500,11 +501,11 @@ const EditableTable: React.FC = () => {
                                    >
                                           {`Rendre les colonnes "Email et Actions" fixes`}
                                    </Checkbox>
+
                             </div>
-                     </div>
-                     <div>
-                            {/* ajouter un utilisateur */}
-                            {/* <CreateUserForm></CreateUserForm> */}
+                            <div>
+                                   {currentUser.user?.role === 'SuperAdministrateur' && <CreateUserForm />}
+                            </div>
                      </div>
                      <Form form={editUserForm} component={false}>
                             <Table

@@ -14,7 +14,7 @@ class IsSuperAdminMiddleware
        {
               $user = JWTAuth::parseToken()->authenticate();
 
-              // s'il est SuperAdministrateur ou Administrateur
+              // s'il est SuperAdministrateur
               if ($user->id_role == 1) {
                      return $next($request);
               }

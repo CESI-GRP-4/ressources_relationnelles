@@ -323,8 +323,8 @@ class UserController extends Controller
         *     )
         * )
         */
-       public function createUser(Request $request)
-       {
+       public function createUser(Request $request) {
+
               $validator = Validator::make($request->all(), [
                      'firstName' => 'required|string|max:255',
                      'lastName' => 'required|string|max:255',
@@ -337,9 +337,7 @@ class UserController extends Controller
               if ($mailTaken) {
                      return response()->json([
                             'message' => 'Cet email est déjà utilisé.',
-                            'errors' => [
-                                   'email' => ['Email already taken']
-                            ]
+                            'errors' => [ 'email' => ['Email already taken']]
                      ], 422);
               }
 
