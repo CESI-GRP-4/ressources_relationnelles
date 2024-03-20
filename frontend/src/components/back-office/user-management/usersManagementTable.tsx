@@ -17,7 +17,7 @@ import { tableSettings } from '@/utils/tableParams';
 import CreateUserForm from "@/components/createUserForm";
 
 const EditableTable: React.FC = () => {
-       
+
        const currentUser = useUser();
        const [editUserForm] = Form.useForm();
        const [tableData, setTableData] = useState([] as User[]);
@@ -469,42 +469,50 @@ const EditableTable: React.FC = () => {
               fetchData(tableParams);
        };
 
+       const handleUserAdded = () => {
+              fetchData(tableParams);
+       };
+
        return (
               <div className='space-y-10'>
-                     <div className="flex flex-col items-start lg:flex-row lg:items-center gap-5">
-                            <Select
-                                   maxTagCount={5}
-                                   mode="multiple"
-                                   allowClear
-                                   className='w-72'
-                                   placeholder="Sélectionner les colonnes à afficher"
-                                   value={selectedColumns}
-                                   onChange={handleColumnChange}
-                            >
-                                   {columns.map(col => (
-                                          <Select.Option key={col.dataIndex as string} value={col.dataIndex as string}>
-                                                 {col.title as string}
-                                          </Select.Option>
-                                   ))}
-                            </Select>
-                            <div>
-                                   <Button type="primary" onClick={() => setSelectedColumns(columns.map(col => col.dataIndex as string))}>Tout afficher</Button>
-                            </div>
-                            <div>
-                                   <Button type="primary" icon={<ReloadOutlined />} onClick={() => fetchData(tableParams)}>Rafraîchir</Button>
-                            </div>
-
-                            <div>
-                                   <Checkbox
-                                          checked={isFixed}
-                                          onChange={(e) => setIsFixed(e.target.checked)}
+                     <div className="flex flex-col lg:flex-row justify-start lg:justify-between lg:items-center items-start space-y-5 lg:space-y-0">
+                            <div className="flex flex-col items-start lg:flex-row lg:items-center gap-5">
+                                   <Select
+                                          maxTagCount={5}
+                                          mode="multiple"
+                                          allowClear
+                                          className='w-72'
+                                          placeholder="Sélectionner les colonnes à afficher"
+                                          value={selectedColumns}
+                                          onChange={handleColumnChange}
                                    >
-                                          {`Rendre les colonnes "Email et Actions" fixes`}
-                                   </Checkbox>
+                                          {columns.map(col => (
+                                                 <Select.Option key={col.dataIndex as string} value={col.dataIndex as string}>
+                                                        {col.title as string}
+                                                 </Select.Option>
+                                          ))}
+                                   </Select>
+                                   <div>
+                                          <Button type="primary" onClick={() => setSelectedColumns(columns.map(col => col.dataIndex as string))}>Tout afficher</Button>
+                                   </div>
+                                   <div>
+                                          <Button type="primary" icon={<ReloadOutlined />} onClick={() => fetchData(tableParams)}>Rafraîchir</Button>
+                                   </div>
+
+                                   <div>
+                                          <Checkbox
+                                                 checked={isFixed}
+                                                 onChange={(e) => setIsFixed(e.target.checked)}
+                                          >
+                                                 {`Rendre les colonnes "Email et Actions" fixes`}
+                                          </Checkbox>
+
+                                   </div>
 
                             </div>
+
                             <div>
-                                   {currentUser.user?.role === 'SuperAdministrateur' && <CreateUserForm />}
+                                   {currentUser.user?.role === 'SuperAdministrateur' && <CreateUserForm refreshUsers={handleUserAdded} />}
                             </div>
                      </div>
                      <Form form={editUserForm} component={false}>
