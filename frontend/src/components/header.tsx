@@ -54,6 +54,7 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                      icon: <DashboardOutlined />,
                      key: "dashboard",
                      style: { marginLeft: '15px' },
+                     ...(user && (user.role === "Moderateur" || user.role === "Administrateur" || user.role === "SuperAdministrateur") ? {} : { style : {display: "none" } }),
               },
               {
                      label: (<>
