@@ -409,7 +409,7 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
                             bordered
                             dataSource={tableData ?? []} // * Added nullish coalescing operator to prevent error
                             columns={getVisibleColumns()}
-                            rowKey={record => `${record.userModified.id}-${record.modifyBy.id}-${record.time}`}
+                            rowKey="id"
                             pagination={{ showQuickJumper: true, total: tableParams.total, pageSize: tableParams.perPage, current: tableParams.page, showSizeChanger: true, pageSizeOptions: ['10', '20', '50', '100'], showTotal: (total, range) => `${range[0]}-${range[1]} sur ${total}` }}
                             scroll={{ x: 'max-content', y: 610 }}
                      />
