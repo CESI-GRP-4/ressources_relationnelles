@@ -364,6 +364,7 @@ class UserController extends Controller
               ]);
 
               $user->notify(new VerifyEmail());
+              Utils::addUserHistoryEntry(auth()->user()->id_user, $user->id_user, 'Create', null, null, null);
               return response()->json(['message' => 'Utilisateur créé avec succès', 'user' => Utils::getAllUserData($user)], 201);
        }
 
