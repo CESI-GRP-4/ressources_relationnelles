@@ -1087,7 +1087,7 @@
                 ]
             }
         },
-        "banUser/{id}": {
+        "/banUser/{id}": {
             "post": {
                 "tags": [
                     "Users"
@@ -1147,7 +1147,7 @@
                             }
                         }
                     },
-                    "400": {
+                    "422": {
                         "description": "Validation error or ban date in the past",
                         "content": {
                             "application/json": {

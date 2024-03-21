@@ -646,7 +646,7 @@ class UserController extends Controller
      *         )
      *     ),
      *     @OA\Response(
-     *         response=400,
+     *         response=422,
      *         description="Validation error or ban date in the past",
      *         @OA\JsonContent(
      *             @OA\Property(property="message", type="string")
@@ -677,7 +677,7 @@ class UserController extends Controller
 
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
+            return response()->json($validator->errors(), 422);
         }
 
         $user = User::find($id);
@@ -699,12 +699,12 @@ class UserController extends Controller
 
             // unix timestamp milliseconds
             if ($request->banTimestamp < Carbon::now()->getTimestamp()*1000) {
-                return response()->json(['message' => 'La date de fin de bannissement doit être dans le futur.'], 400);
+                return response()->json(['message' => 'La date de fin de bannissement doit être dans le futur.'], 422);
             } else {
                 $user->ban_until = $request->banTimestamp;
             }
         } else {
-            return response()->json(['message' => 'Veuillez spécifier une date de fin de bannissement ou rendre le bannissement permanent.'], 400);
+            return response()->json(['message' => 'Veuillez spécifier une date de fin de bannissement ou rendre le bannissement permanent.'], 422);
         }
         $user->save();
 
