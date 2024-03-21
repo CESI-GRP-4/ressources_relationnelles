@@ -13,14 +13,14 @@ import Link from 'next/link';
 interface userHistory {
        userModified: User;
        modifyBy: User;
-       action: 'Modify' | 'Delete' | 'Ban' | 'Unban' | 'Created';
+       action: 'Modify' | 'Delete' | 'Ban' | 'Unban' | 'Create';
        time: string;
        colName: string;
        newValue: string;
        oldValue: string;
 };
 
-const getTagColor = (action: 'Modify' | 'Delete' | 'Ban' | 'Unban' | 'Created') => {
+const getTagColor = (action: 'Modify' | 'Delete' | 'Ban' | 'Unban' | 'Create') => {
        switch (action) {
               case 'Modify':
                      return 'blue';
@@ -30,14 +30,14 @@ const getTagColor = (action: 'Modify' | 'Delete' | 'Ban' | 'Unban' | 'Created') 
                      return 'red';
               case 'Unban':
                      return 'green'; // Assuming you want a color for 'Unban' action as well
-              case 'Created':
+              case 'Create':
                      return 'geekblue';
               default:
                      return 'default';
        }
 };
 
-const getActionText = (action: 'Modify' | 'Delete' | 'Ban' | 'Unban' | 'Created') => {
+const getActionText = (action: 'Modify' | 'Delete' | 'Ban' | 'Unban' | 'Create') => {
        let actionText: string;
        switch (action) {
               case 'Delete':
@@ -52,7 +52,7 @@ const getActionText = (action: 'Modify' | 'Delete' | 'Ban' | 'Unban' | 'Created'
               case 'Modify':
                      actionText = 'modifié';
                      break;
-              case 'Created':
+              case 'Create':
                      actionText = 'créé';
                      break;
               default:
@@ -62,7 +62,6 @@ const getActionText = (action: 'Modify' | 'Delete' | 'Ban' | 'Unban' | 'Created'
        return actionText;
 };
 export default function UserManagementHistory({ isPreview = false }: { isPreview?: boolean }) {
-       const currentUser = useUser();
        const [tableData, setTableData] = useState<userHistory[] | null>(null);
        const [tableParams, setTableParams] = useState(isPreview ? { perPage: 5, page: 1 } as tableSettings : { perPage: 10, page: 1 } as tableSettings);
        const [isTableLoading, setIsTableLoading] = useState(false);
@@ -215,7 +214,7 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
                      title: 'Action',
                      dataIndex: 'action',
                      key: 'action',
-                     render: (action: 'Modify' | 'Delete' | 'Ban' | 'Unban' | 'Created') => {
+                     render: (action: 'Modify' | 'Delete' | 'Ban' | 'Unban' | 'Create') => {
                             return (
                                    <Tag color={getTagColor(action)}>
                                           {getActionText(action).charAt(0).toUpperCase() + getActionText(action).slice(1)}
@@ -228,7 +227,7 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
                      key: 'change',
                      dataIndex: 'change',
                      render: (_: unknown, record: userHistory) => {
-                            if (record.action === 'Unban' || record.action === 'Delete') {
+                            if (record.action === 'Unban' || record.action === 'Delete' || record.action === 'Create') {
                                    return null; // or return ""; to explicitly render nothing
                             }
 
