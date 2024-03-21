@@ -3,6 +3,7 @@
 namespace App\Utils;
 
 use App\Models\UserHistory;
+use Carbon\Carbon;
 
 class Utils{
 
@@ -56,7 +57,7 @@ class Utils{
         // set false if not set
         $isNewUser = session('isNewUser', false);
 
-        $isBanned = $user->ban_until ? (strtotime($user->ban_until) > time()) : false;
+        $isBanned = $user->ban_until ? (floor($user->ban_until / 1000) > time()) : false;
 
         $userData = [
             'id' => $user->id_user,

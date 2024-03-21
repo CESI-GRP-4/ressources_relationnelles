@@ -101,7 +101,7 @@ class UserHistoryController extends Controller {
             if ($history->action === 'Ban' ) {
                 $item['colName'] = $fieldMapping[$history->modified_column] ?? $history->modified_column;
                 $item['newValue'] = $history->new_value;
-                if($history->new_value == 253402297199){
+                if($history->new_value == 253402297199000){
                     $item['newValue'] = 'permanent';
                 }
                 $item['oldValue'] = $history->old_value;

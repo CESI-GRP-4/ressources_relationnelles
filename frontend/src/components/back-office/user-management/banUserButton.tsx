@@ -185,7 +185,7 @@ export default function BanUserButton({ user, isDisabled, onBanChange }: { user:
                                           title={"Êtes-vous sûr de vouloir révoquer le bannissement de cet utilisateur ?"}
                                           onConfirm={handleBanSubmit}
                                    >
-                                          <Button type='text' aria-label="Révoquer bannissement" disabled={isDisabled} icon={<Iconify style={{ fontSize: '26px', color: isDisabled ? "rgba(0, 0, 0, 0.25)" : "orange" }} icon="basil:user-block-solid" />}></Button>
+                                          <Button type='text' aria-label="Révoquer bannissement" disabled={isDisabled} icon={<Iconify style={{ fontSize: '26px', color: isDisabled ? "rgba(0, 0, 0, 0.25)" : "green" }} icon="basil:user-block-solid" />}></Button>
                                    </Popconfirm>
                                    :
                                    <Button type='text' aria-label="Bannir l'utilisateur" onClick={showBanModal} disabled={isDisabled} icon={<Iconify style={{ fontSize: '26px', color: isDisabled ? "rgba(0, 0, 0, 0.25)" : "orange" }} icon="basil:user-block-solid" />}></Button>

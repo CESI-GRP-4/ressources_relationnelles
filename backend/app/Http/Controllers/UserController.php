@@ -668,8 +668,7 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function banUser(Request $request, $id)
-    {
+    public function banUser(Request $request, $id) {
 
         $rules = [
             'isPermanent' => 'boolean',
@@ -694,11 +693,12 @@ class UserController extends Controller
 
         // Ban the user
         if ($request->isPermanent) {
-            $user->ban_until = 253402297199; // 9999-12-31 23:59:59
+            $user->ban_until = 253402297199000; // 9999-12-31 23:59:59 000
 
         } else if ($request->filled('banTimestamp')) {
 
-            if ($request->banTimestamp < Carbon::now()->getTimestamp()) {
+            // unix timestamp milliseconds
+            if ($request->banTimestamp < Carbon::now()->getTimestamp()*1000) {
                 return response()->json(['message' => 'La date de fin de bannissement doit être dans le futur.'], 400);
             } else {
                 $user->ban_until = $request->banTimestamp;
