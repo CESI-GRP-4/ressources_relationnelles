@@ -1,12 +1,11 @@
 "use client"
 import React, { useState, useEffect } from 'react';
 import User from "@/types/user";
-import { Popconfirm, Tooltip, Button, message, Modal, Input, Divider, Form, Checkbox, DatePickerProps, TimePickerProps, CheckboxProps } from "antd";
+import { Popconfirm, Tooltip, Button, message, Modal, Divider, Form, Checkbox, DatePickerProps, CheckboxProps } from "antd";
 import { Icon as Iconify } from '@iconify/react';
 import axios, { AxiosError } from "axios";
 import { useUser } from '@/providers/userProvider';
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { DatePicker, Space, notification } from 'antd';
+import { DatePicker, notification } from 'antd';
 import dayjs from 'dayjs';
 import 'dayjs/locale/fr'; // Importez le locale français
 dayjs.locale('fr'); // Utilisez le locale français
@@ -41,7 +40,8 @@ export default function BanUserButton({ user, isDisabled, onBanChange }: { user:
        }
 
        const handleBan = async () => {
-              if (banTimestamp === 0) {
+              console.log(banTimestamp)
+              if (banTimestamp === 0 && !isPermanent) {
                      notification.error({
                             message: 'Erreur de validation des données. Champs manquants ou invalides.',
                             description: `Veuillez sélectionner une date et une heure de fin de ban ou cocher la case "Bannir définitivement"`,
@@ -68,7 +68,6 @@ export default function BanUserButton({ user, isDisabled, onBanChange }: { user:
                             timeout: 10000, // * Increased value because we had some timeout errors
                      });
                      if (response.status === 200) {
-                            message.success("Utilisateur banni");
                             setisBanned(true); // Update state to trigger re-render
                             onBanChange(user.id ?? '', true); // Invoke callback function with default value
                             setIsModalVisible(false);
@@ -186,7 +185,7 @@ export default function BanUserButton({ user, isDisabled, onBanChange }: { user:
                                           title={"Êtes-vous sûr de vouloir révoquer le bannissement de cet utilisateur ?"}
                                           onConfirm={handleBanSubmit}
                                    >
-                                          <Button type='text' aria-label="Révoquer bannissement" disabled={isDisabled} icon={<Iconify style={{ fontSize: '26px', color: isDisabled ? "rgba(0, 0, 0, 0.25)" : "green" }} icon="basil:user-block-solid" />}></Button>
+                                          <Button type='text' aria-label="Révoquer bannissement" disabled={isDisabled} icon={<Iconify style={{ fontSize: '26px', color: isDisabled ? "rgba(0, 0, 0, 0.25)" : "orange" }} icon="basil:user-block-solid" />}></Button>
                                    </Popconfirm>
                                    :
                                    <Button type='text' aria-label="Bannir l'utilisateur" onClick={showBanModal} disabled={isDisabled} icon={<Iconify style={{ fontSize: '26px', color: isDisabled ? "rgba(0, 0, 0, 0.25)" : "orange" }} icon="basil:user-block-solid" />}></Button>

@@ -249,7 +249,7 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
                                           if (record.oldValue.toLowerCase() === "permanent") {
                                                  oldValueDisplay = "Permanent";
                                           } else {
-                                                 const oldDate = new Date(parseInt(record.oldValue) * 1000);
+                                                 const oldDate = new Date(parseInt(record.oldValue));
                                                  oldValueDisplay = new Intl.DateTimeFormat('fr-FR', options).format(oldDate);
                                           }
                                    }
@@ -262,7 +262,7 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
                                           if (record.newValue.toLowerCase() === "permanent") {
                                                  newValueDisplay = "Permanent";
                                           } else {
-                                                 const newDate = new Date(parseInt(record.newValue) * 1000);
+                                                 const newDate = new Date(parseInt(record.newValue));
                                                  newValueDisplay = new Intl.DateTimeFormat('fr-FR', options).format(newDate);
                                           }
                                    }
