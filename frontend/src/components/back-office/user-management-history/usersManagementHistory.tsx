@@ -128,8 +128,8 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
                             <List
                                    itemLayout="horizontal"
                                    dataSource={tableData ?? []} // Directly use list.userHistory since list is now a DataType object
-                                   renderItem={(item) => (
-                                          <List.Item>
+                                   renderItem={(item, index) => (
+                                          <List.Item key={index}>
                                                  <div className='flex flex-row justify-start items-center'>
                                                         <Avatar
                                                                src={item.userModified.imgURL}
