@@ -70,7 +70,7 @@ class AuthController extends Controller
               }
 
               $user = User::where('email', $request->email)->first();
-              if ($user->ban_until && $user->ban_until > now()) {
+              if ($user->ban_until && floor($user->ban_until / 1000) > time()) {
                      return response()->json(['message' => 'Votre compte est banni.'], 403);
               }
               if ($user->deleted_at) {
