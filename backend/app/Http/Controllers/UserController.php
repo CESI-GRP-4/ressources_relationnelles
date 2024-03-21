@@ -332,14 +332,6 @@ class UserController extends Controller
                      'role' => 'required|string|exists:roles,name'
               ]);
 
-              // We handle the most common error by hand to provide a more user-friendly message, but we let the rest be handled by the default error response
-              $mailTaken = User::where('email', $request['email'])->first();
-              if ($mailTaken) {
-                     return response()->json([
-                            'message' => 'Cet email est déjà utilisé.',
-                            'errors' => [ 'email' => ['Email already taken']]
-                     ], 422);
-              }
 
               // Will check all of the rules of the validator and return the errors if any
               if ($validator->fails()) {

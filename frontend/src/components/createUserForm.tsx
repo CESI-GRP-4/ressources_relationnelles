@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Form, Input, message, Modal, Select, Space } from "antd";
+import {Button, Form, Input, message, Modal, Select, Space, notification} from "antd";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { emailRegex, firstNameRegex, lastNameRegex } from "@/utils/regex";
 import { UserAddOutlined } from "@ant-design/icons";
@@ -15,6 +15,11 @@ export default function CreateUserForm({ refreshUsers }: { refreshUsers: () => v
               lastName: string;
               role: string;
        };
+
+        interface ApiResponse {
+            message: string;
+            errors: Record<string, string[]>;
+        }
 
        const emailValidationRule = {
               pattern: new RegExp(emailRegex),
@@ -71,9 +76,22 @@ export default function CreateUserForm({ refreshUsers }: { refreshUsers: () => v
                                    case 403:
                                           message.error(`Vous n'êtes pas autorisé à effectuer cette action`);
                                           break;
+
                                    case 422:
-                                          message.error('Champs manquants ou invalides');
+                                       const responseData = axiosError.response.data as ApiResponse;
+                                       const errors = responseData.errors;
+                                       const errorMessages = Object.keys(errors)
+                                             .map(key => `- ${errors[key].join(', ')}`)
+                                             .join('\n');
+
+                                          notification.error({
+                                              message: 'Champs manquants ou invalides',
+                                              description: `\n${errorMessages}`,
+                                              placement: 'top',
+                                              duration: 3,
+                                          });
                                           break;
+
                                    default:
                                           message.error(`Erreur inconnue`);
                                           break;
