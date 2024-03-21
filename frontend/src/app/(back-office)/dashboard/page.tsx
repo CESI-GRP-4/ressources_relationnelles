@@ -11,7 +11,6 @@ import UserManagementHistory from '@/components/back-office/user-management-hist
 
 export default function AdminDashboard() {
        const { user } = useUser();
-
        const [avatarError, setAvatarError] = useState(false); // État pour gérer l'erreur de chargement de l'avatar
 
        return (
@@ -65,19 +64,18 @@ export default function AdminDashboard() {
                                           </div>
                                    </Card>
                             </div>
-                            <div>
-                                   <UserManagementHistory isPreview />
-                            </div>
-                            <Card
-                                   title="Statistiques de connexions (semaine actuelle)"
-                                   extra={<Link href="/statistiques/connexions"><Button type="text" shape="circle" icon={<PlusCircleOutlined style={{ color: "blue" }} />} /></Link>}
-                                   className="w-1/2 min-w-96 max-w-[600px] h-auto">
+                            {(user?.role === 'Administrateur' || user?.role === 'SuperAdministrateur') && <div><UserManagementHistory isPreview /></div>}
+                            {(user?.role === 'Administrateur' || user?.role === 'SuperAdministrateur') &&
+                                   <Card
+                                          title="Statistiques de connexions (semaine actuelle)"
+                                          extra={<Link href="/statistiques/connexions"><Button type="text" shape="circle" icon={<PlusCircleOutlined style={{ color: "blue" }} />} /></Link>}
+                                          className="w-1/2 min-w-96 max-w-[600px] h-auto">
 
-                                   <div style={{ width: '100%', aspectRatio: '16 / 9' }}>
-                                          <ConnectionsChart isPreview></ConnectionsChart>
-                                   </div>
-                            </Card>
-
+                                          <div style={{ width: '100%', aspectRatio: '16 / 9' }}>
+                                                 <ConnectionsChart isPreview></ConnectionsChart>
+                                          </div>
+                                   </Card>
+                            }
                      </div>
               </div>
        );
