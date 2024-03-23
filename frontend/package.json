@@ -6,7 +6,8 @@
               "dev": "next dev",
               "build": "next build",
               "start": "next start",
-              "lint": "next lint"
+              "lint": "next lint",
+              "devHTTPS": "next dev --experimental-https -p 4000"
        },
        "dependencies": {
               "@ant-design/nextjs-registry": "^1.0.0",
