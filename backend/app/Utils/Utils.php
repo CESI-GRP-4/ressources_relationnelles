@@ -2,6 +2,9 @@
 
 namespace App\Utils;
 
+use App\Models\UserHistory;
+use Carbon\Carbon;
+
 class Utils{
 
     /**
@@ -19,9 +22,6 @@ class Utils{
      * )
      */
     public static function getUserData($user){
-        // Default value for isNewUser is false
-        $isNewUser = session('isNewUser', false);
-
         return [
             'firstName' => $user->first_name,
             'lastName' => $user->last_name,
@@ -29,8 +29,6 @@ class Utils{
             'imgURL' => $user->path_picture,
             'id' => $user->id_user,
             'role' => $user->role->name,
-            'isEmailVerified' => $user->is_verified,
-            'newUser' => $isNewUser,
         ];
     }
 
@@ -58,6 +56,9 @@ class Utils{
     public static function getAllUserData($user){
         // set false if not set
         $isNewUser = session('isNewUser', false);
+
+        $isBanned = $user->ban_until ? (floor($user->ban_until / 1000) > time()) : false;
+
         $userData = [
             'id' => $user->id_user,
             'email' => $user->email,
@@ -68,7 +69,7 @@ class Utils{
             'role' => $user->role->name,
             'createdAt' => $user->created_at,
             'updatedAt' => $user->updated_at,
-            'isBanned' => $user->is_banned,
+            'isBanned' => $isBanned,
             'newUser' => $isNewUser,
         ];
 
@@ -88,4 +89,15 @@ class Utils{
         return $userData;
     }
 
+
+    public static function addUserHistoryEntry($authUserId, $affectedUserId, $action, $columnName=null, $oldValue=null, $newValue=null) {
+        UserHistory::create([
+            'user_id' => $authUserId,
+            'affected_user_id' => $affectedUserId,
+            'action' => $action,
+            'modified_column' => $columnName,
+            'old_value' => $oldValue,
+            'new_value' => $newValue,
+        ]);
+    }
 }

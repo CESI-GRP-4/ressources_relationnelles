@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : mer. 06 mars 2024 à 12:51
+-- Généré le : lun. 18 mars 2024 à 22:22
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -188,7 +188,8 @@ INSERT INTO `cities` (`id_city`, `name`) VALUES
 (1, 'Paris'),
 (2, 'New York'),
 (3, 'Tokyo'),
-(7, 'Pariss');
+(7, 'Pariss'),
+(8, 'Parisssss');
 
 -- --------------------------------------------------------
 
@@ -559,7 +560,6 @@ INSERT INTO `login_logs` (`id`, `id_user`, `login_datetime`) VALUES
 (24, 31, '2024-01-02 11:00:00'),
 (25, 32, '2024-01-03 08:30:00'),
 (26, 33, '2024-01-03 09:30:00'),
-(27, 36, '2024-01-03 10:45:00'),
 (28, 26, '2024-01-04 08:00:00'),
 (29, 27, '2024-01-04 09:15:00'),
 (30, 28, '2024-01-05 10:30:00'),
@@ -568,7 +568,6 @@ INSERT INTO `login_logs` (`id`, `id_user`, `login_datetime`) VALUES
 (33, 31, '2024-01-06 11:00:00'),
 (34, 32, '2024-01-07 08:30:00'),
 (35, 29, '2024-01-07 09:30:00'),
-(36, 36, '2024-01-07 10:45:00'),
 (37, 1, '2024-03-05 18:48:39'),
 (38, 1, '2024-03-05 19:01:22'),
 (39, 1, '2024-03-06 08:53:58'),
@@ -598,7 +597,14 @@ INSERT INTO `login_logs` (`id`, `id_user`, `login_datetime`) VALUES
 (63, 33, '2024-03-06 08:53:58'),
 (64, 29, '2024-03-06 08:53:58'),
 (65, 1, '2024-03-06 08:53:58'),
-(66, 1, '2024-03-06 08:53:58');
+(66, 1, '2024-03-06 08:53:58'),
+(67, 1, '2024-03-06 12:56:07'),
+(68, 1, '2024-03-06 14:23:11'),
+(69, 1, '2024-03-11 21:25:37'),
+(70, 1, '2024-03-14 16:32:03'),
+(71, 37, '2024-03-18 21:25:54'),
+(72, 38, '2024-03-18 21:26:48'),
+(73, 1, '2024-03-18 21:27:29');
 
 -- --------------------------------------------------------
 
@@ -753,7 +759,7 @@ CREATE TABLE `users` (
   `last_name` varchar(100) DEFAULT NULL,
   `password` varchar(65) NOT NULL,
   `is_verified` tinyint(1) DEFAULT 0,
-  `is_banned` tinyint(1) DEFAULT 0,
+  `ban_until` bigint(20) DEFAULT NULL,
   `path_picture` varchar(255) DEFAULT NULL,
   `id_city` int(11) DEFAULT NULL,
   `id_postal_code` int(11) DEFAULT NULL,
@@ -762,28 +768,69 @@ CREATE TABLE `users` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `verification_token` varchar(150) DEFAULT NULL,
-  `password_reset_token` varchar(100) DEFAULT NULL
+  `password_reset_token` varchar(100) DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `users`
 --
 
-INSERT INTO `users` (`id_user`, `email`, `first_name`, `last_name`, `password`, `is_verified`, `is_banned`, `path_picture`, `id_city`, `id_postal_code`, `id_country`, `id_role`, `created_at`, `updated_at`, `verification_token`, `password_reset_token`) VALUES
-(1, 'john.doe@example.com', 'John', 'Doe', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Toby', 1, 1, 1, 1, '2024-01-23 21:58:57', '2024-03-06 10:15:04', NULL, NULL),
-(22, 'jordan.davis53@example.com', 'Jordan', 'Davis', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, 0, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Socks', 3, 3, 1, 3, '2024-02-13 18:05:16', '2024-03-06 10:15:04', NULL, NULL),
-(23, 'dakota.wilson74@sample.com', 'Dakota', 'Wilsoaze', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Angel', 2, 2, 3, 3, '2024-02-13 18:05:16', '2024-03-06 10:15:04', NULL, NULL),
-(24, 'jordan.smith21@sample.com', 'Jordan', 'Smith', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Kiki', 3, 1, 1, 3, '2024-02-13 18:05:16', '2024-03-06 10:15:04', NULL, NULL),
-(25, 'morgan.davis85@sample.com', 'Morgan', 'Davis', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, 0, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Toby', 2, 7, 18, 3, '2024-02-13 18:05:16', '2024-03-06 10:15:04', NULL, NULL),
-(26, 'robin.wilson93@example.com', 'Robin', 'Wilson', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Toby', 1, 2, 1, 3, '2024-02-13 18:05:16', '2024-03-06 10:15:04', NULL, NULL),
-(27, 'casey.brown77@sample.com', 'Casey', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Angel', 2, 3, 3, 2, '2024-02-13 18:05:16', '2024-03-06 10:15:04', NULL, NULL),
-(28, 'robin.johnson19@example.com', 'Robin', 'Johnson', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, 0, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Angel', 2, 2, 1, 1, '2024-02-13 18:05:16', '2024-03-06 10:15:04', NULL, NULL),
-(29, 'riley.moore47@sample.com', 'Riley', 'Moore', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Kiki', 2, 2, 1, 3, '2024-02-13 18:05:16', '2024-03-06 10:15:04', NULL, NULL),
-(30, 'riley.williams18@sample.com', 'Rileyy', 'Williams', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Toby', 1, 1, 3, 4, '2024-02-13 18:05:16', '2024-03-06 10:15:04', NULL, NULL),
-(31, 'dakota.brown54@demo.com', 'Dakota', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Socks', 7, 3, 3, 4, '2024-02-13 18:05:16', '2024-03-06 10:15:04', NULL, NULL),
-(32, 'azeaze.brown54@demo.com', 'Dakota', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Angel', 7, 3, 3, 4, '2024-02-13 18:05:16', '2024-03-06 10:15:04', NULL, NULL),
-(33, 'aze.brown54@demo.com', 'Dakota', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 0, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Kiki', 7, 3, 3, 4, '2024-02-13 18:05:16', '2024-03-06 10:15:04', NULL, NULL),
-(36, 'nicolas.chwiej@viacesi.fr', 'Nicolas', 'CHWIEJ', '$2y$12$z3TTUPvA6a0lH5ShBVAUaOqORGu6sndLbG.Cji6/ceB430eKQUXHi', 0, 0, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Toby', NULL, NULL, NULL, 2, '2024-02-29 18:17:50', '2024-03-06 10:15:04', 'EnkYq05kxT9njZmzbpG8BngNEuWLz3Zi7gOfjYq4HUpoDMGgXxGv4jw6cYzutAhJ2Jtb1IFT0L6eoqzSQYj5IhWDmk91cBWA6eXF', NULL);
+INSERT INTO `users` (`id_user`, `email`, `first_name`, `last_name`, `password`, `is_verified`, `ban_until`, `path_picture`, `id_city`, `id_postal_code`, `id_country`, `id_role`, `created_at`, `updated_at`, `verification_token`, `password_reset_token`, `deleted_at`) VALUES
+(1, 'john.doe@example.com', 'John', 'Doe', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, NULL, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Toby', 1, 1, 1, 1, '2024-01-23 21:58:57', '2024-03-14 19:43:49', NULL, NULL, NULL),
+(22, 'jordan.davis53@example.com', 'Jordan', 'Davis', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, NULL, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Socks', 3, 3, 1, 3, '2024-02-13 18:05:16', '2024-03-14 19:43:49', NULL, NULL, '2024-03-06 15:19:53'),
+(23, 'dakota.wilson74@sample.com', 'Dakota', 'Wilsoaze', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 1742071249, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Angel', 2, 2, 3, 3, '2024-02-13 18:05:16', '2024-03-14 20:42:24', NULL, NULL, NULL),
+(24, 'jordan.smith21@sample.com', 'Jordan', 'Smith', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, NULL, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Kiki', 3, 1, 1, 3, '2024-02-13 18:05:16', '2024-03-14 19:43:49', NULL, NULL, NULL),
+(25, 'morgan.davis85@sample.com', 'Morgan', 'Davis', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, NULL, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Toby', 1, 7, 18, 4, '2024-02-13 18:05:16', '2024-03-18 20:18:31', NULL, NULL, NULL),
+(26, 'robin.wilson93@example.com', 'Robin', 'Wilson', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, NULL, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Toby', 1, 2, 1, 3, '2024-02-13 18:05:16', '2024-03-14 19:43:49', NULL, NULL, NULL),
+(27, 'casey.brown77@sample.com', 'Casey', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, NULL, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Angel', 2, 3, 3, 2, '2024-02-13 18:05:16', '2024-03-14 19:43:49', NULL, NULL, NULL),
+(28, 'robin.johnson19@example.com', 'Robin', 'Johnson', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, NULL, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Angel', 2, 2, 1, 1, '2024-02-13 18:05:16', '2024-03-14 19:43:49', NULL, NULL, NULL),
+(29, 'riley.moore47@sample.com', 'Riley', 'Moore', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, NULL, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Kiki', 2, 2, 1, 3, '2024-02-13 18:05:16', '2024-03-14 19:43:49', NULL, NULL, NULL),
+(30, 'riley.williams18@sample.com', 'Riley', 'Williams', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, NULL, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Toby', 7, 1, 3, 4, '2024-02-13 18:05:16', '2024-03-14 19:43:49', NULL, NULL, NULL),
+(31, 'dakota.brown54@demo.com', 'Dakota', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, NULL, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Socks', 7, 3, 3, 4, '2024-02-13 18:05:16', '2024-03-14 19:43:49', NULL, NULL, NULL),
+(32, 'azeaze.brown54@demo.com', 'Charlie', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, NULL, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Angel', 7, 3, 3, 4, '2024-02-13 18:05:16', '2024-03-18 19:35:42', NULL, NULL, NULL),
+(33, 'aze.brown54@demo.com', 'Zoulou', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, NULL, 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Kiki', 1, 3, 3, 4, '2024-02-13 18:05:16', '2024-03-18 20:17:39', NULL, NULL, NULL),
+(37, 'azeazeAZEAZE123132@gmail.com', 'azeaze', 'AZEAZE', '$2y$12$l8mw5o/wM9MNYP0xUto7zeNtPwQ88Dxow/pCv./28J3XpHqu3X98W', 0, NULL, NULL, NULL, NULL, NULL, 4, '2024-03-18 19:25:52', '2024-03-18 21:17:05', NULL, NULL, '2024-03-18 19:29:06'),
+(38, 'azeazeAZEAZE123132@gmail.comze', 'azeaze', 'AZEAZE', '$2y$12$fdlI3ydiRmFw/Y9vI/8WtOZBfRHLMKnk1.73OidlaXwfD8YjQhEOK', 0, NULL, NULL, NULL, NULL, NULL, 4, '2024-03-18 19:26:46', '2024-03-18 21:17:05', NULL, NULL, '2024-03-18 19:27:45');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `user_history`
+--
+
+CREATE TABLE `user_history` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `affected_user_id` int(11) NOT NULL,
+  `action` enum('Modify','Delete','Ban','Unban','Create') NOT NULL,
+  `modified_column` varchar(255) DEFAULT NULL,
+  `old_value` text DEFAULT NULL,
+  `new_value` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `user_history`
+--
+
+INSERT INTO `user_history` (`id`, `user_id`, `affected_user_id`, `action`, `modified_column`, `old_value`, `new_value`, `created_at`) VALUES
+(59, 1, 38, 'Delete', 'deleted_at', NULL, '2024-03-18 20:27:45', '2024-03-18 20:27:45'),
+(60, 1, 37, 'Delete', 'deleted_at', NULL, '2024-03-18 20:29:06', '2024-03-18 20:29:06'),
+(62, 1, 32, 'Modify', 'first_name', 'Dakota', 'Charlie', '2024-03-18 20:35:42'),
+(63, 1, 33, 'Modify', 'first_name', 'Dakota', 'Zoulou', '2024-03-18 20:36:00'),
+(67, 1, 33, 'Ban', 'ban_until', NULL, '1710796080', '2024-03-18 21:07:14'),
+(68, 1, 33, 'Unban', 'ban_until', '1710796080', NULL, '2024-03-18 21:08:16'),
+(69, 1, 33, 'Ban', 'ban_until', NULL, '1710796180', '2024-03-18 21:08:30'),
+(70, 1, 33, 'Ban', 'ban_until', '1710796180', '253402297199', '2024-03-18 21:09:49'),
+(71, 1, 33, 'Unban', 'ban_until', '253402297199', NULL, '2024-03-18 21:12:35'),
+(72, 1, 33, 'Modify', 'city', 'Pariss', 'Paris', '2024-03-18 21:17:39'),
+(73, 1, 25, 'Modify', 'city', 'New York', 'Paris', '2024-03-18 21:17:59'),
+(74, 1, 25, 'Modify', 'first_name', 'Morgan', 'Morgans', '2024-03-18 21:18:22'),
+(75, 1, 25, 'Modify', 'last_name', 'Davis', 'Daviss', '2024-03-18 21:18:22'),
+(76, 1, 25, 'Modify', 'role', 'Moderateur', 'Utilisateur', '2024-03-18 21:18:22'),
+(77, 1, 25, 'Modify', 'first_name', 'Morgans', 'Morgan', '2024-03-18 21:18:31'),
+(78, 1, 25, 'Modify', 'last_name', 'Daviss', 'Davis', '2024-03-18 21:18:31');
 
 --
 -- Index pour les tables déchargées
@@ -948,6 +995,14 @@ ALTER TABLE `users`
   ADD KEY `id_role` (`id_role`);
 
 --
+-- Index pour la table `user_history`
+--
+ALTER TABLE `user_history`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `affected_user_id` (`affected_user_id`);
+
+--
 -- AUTO_INCREMENT pour les tables déchargées
 --
 
@@ -967,7 +1022,7 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT pour la table `cities`
 --
 ALTER TABLE `cities`
-  MODIFY `id_city` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id_city` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT pour la table `comments`
@@ -1003,7 +1058,7 @@ ALTER TABLE `invitations`
 -- AUTO_INCREMENT pour la table `login_logs`
 --
 ALTER TABLE `login_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
 
 --
 -- AUTO_INCREMENT pour la table `migrations`
@@ -1051,7 +1106,13 @@ ALTER TABLE `status_resources`
 -- AUTO_INCREMENT pour la table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+
+--
+-- AUTO_INCREMENT pour la table `user_history`
+--
+ALTER TABLE `user_history`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
 
 --
 -- Contraintes pour les tables déchargées
@@ -1147,6 +1208,13 @@ ALTER TABLE `users`
   ADD CONSTRAINT `users_ibfk_2` FOREIGN KEY (`id_postal_code`) REFERENCES `postal_codes` (`id_postal_code`),
   ADD CONSTRAINT `users_ibfk_3` FOREIGN KEY (`id_country`) REFERENCES `countries` (`id_country`),
   ADD CONSTRAINT `users_ibfk_4` FOREIGN KEY (`id_role`) REFERENCES `roles` (`id_role`);
+
+--
+-- Contraintes pour la table `user_history`
+--
+ALTER TABLE `user_history`
+  ADD CONSTRAINT `user_history_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id_user`),
+  ADD CONSTRAINT `user_history_ibfk_2` FOREIGN KEY (`affected_user_id`) REFERENCES `users` (`id_user`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

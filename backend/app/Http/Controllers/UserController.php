@@ -8,12 +8,19 @@ use App\Models\PostalCode;
 use App\Models\Role;
 use App\Traits\FieldMappingTrait;
 use App\Utils\Utils;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use App\Notifications\VerifyEmail;
 
 class UserController extends Controller
 {
+    const EMAIL_NOT_VERIFIED = 0;
+    const IS_NOT_BANNED = null;
     use FieldMappingTrait;
 
     /**
@@ -90,121 +97,132 @@ class UserController extends Controller
      *     )
      * )
      */
-     public function getUsers(Request $request){
+    public function getUsers(Request $request)
+    {
 
-         $validator = Validator::make($request->all(), [
-             'perPage' => 'integer|min:1',
-             'page' => 'integer|min:1',
-             'search' => 'string|nullable',
-             'searchColumn' => 'string|nullable',
-             'searchValue' => 'string|nullable',
-             'sortBy' => 'string|nullable',
-             'sortDirection' => 'in:asc,desc|nullable'
-         ]);
+        $validator = Validator::make($request->all(), [
+            'perPage' => 'integer|min:1',
+            'page' => 'integer|min:1',
+            'search' => 'string|nullable',
+            'searchColumn' => 'string|nullable',
+            'searchValue' => 'string|nullable',
+            'sortBy' => 'string|nullable',
+            'sortDirection' => 'in:asc,desc|nullable'
+        ]);
 
-         if ($validator->fails()) { return response()->json($validator->errors(), 400); }
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
 
-         $query = User::query();
-         $fieldMapping = $this->getFieldMapping();
+        $query = User::query();
+        $query->whereNull('deleted_at');
+        $fieldMapping = $this->getFieldMapping();
 
-         // Filters
-         // Search on multiple columns
-         if ($request->filled('search')) {
-             $search = $request->search;
-             $query->where(function ($q) use ($search, $fieldMapping) {
-                 $q->where($fieldMapping['firstName'] ?? 'first_name', 'like', "%{$search}%")
-                     ->orWhere($fieldMapping['lastName'] ?? 'last_name', 'like', "%{$search}%")
-                     ->orWhere($fieldMapping['email'] ?? 'email', 'like', "%{$search}%");
-             });
-         }
+        // Filters
+        // Search on multiple columns
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search, $fieldMapping) {
+                $q->where($fieldMapping['firstName'] ?? 'first_name', 'like', "%{$search}%")
+                    ->orWhere($fieldMapping['lastName'] ?? 'last_name', 'like', "%{$search}%")
+                    ->orWhere($fieldMapping['email'] ?? 'email', 'like', "%{$search}%");
+            });
+        }
 
-         // Search on a specific column
-         if ($request->filled('searchColumn') && $request->filled('searchValue')) {
-             $searchColumn = $request->searchColumn; // Pas besoin de mappage ici, sauf si vos champs front-end ont des noms différents
-             $searchValue = $request->searchValue;
+        // Search on a specific column
+        if ($request->filled('searchColumn') && $request->filled('searchValue')) {
+            $searchColumn = $request->searchColumn;
+            $searchValue = $request->searchValue;
 
-             switch ($searchColumn) {
-                 case 'role':
-                     $query->whereHas('role', function ($q) use ($searchValue) {
-                         $q->where('name', 'like', "%{$searchValue}%");
-                     });
-                     break;
+            switch ($searchColumn) {
+                case 'role':
+                    $query->whereHas('role', function ($q) use ($searchValue) {
+                        $q->where('name', 'like', "%{$searchValue}%");
+                    });
+                    break;
 
-                 case 'country':
-                     $query->whereHas('country', function ($q) use ($searchValue) {
-                         $q->where('name', 'like', "%{$searchValue}%");
-                     });
-                     break;
+                case 'isBanned':
+                    $query->where('ban_until', $searchValue ? '!=' : '=', null);
+                    break;
 
-                 case 'countryCode':
-                     $query->whereHas('country', function ($q) use ($searchValue) {
-                         $q->where('country_code', 'like', "%{$searchValue}%");
-                     });
-                     break;
+                case 'country':
+                    $query->whereHas('country', function ($q) use ($searchValue) {
+                        $q->where('name', 'like', "%{$searchValue}%");
+                    });
+                    break;
 
-                 case 'city':
-                     $query->whereHas('city', function ($q) use ($searchValue) {
-                         $q->where('name', 'like', "%{$searchValue}%");
-                     });
-                     break;
+                case 'countryCode':
+                    $query->whereHas('country', function ($q) use ($searchValue) {
+                        $q->where('country_code', 'like', "%{$searchValue}%");
+                    });
+                    break;
 
-                 case 'postalCode':
-                     $query->whereHas('postalCode', function ($q) use ($searchValue) {
-                         $q->where('postal_code', 'like', "%{$searchValue}%");
-                     });
-                     break;
+                case 'city':
+                    $query->whereHas('city', function ($q) use ($searchValue) {
+                        $q->where('name', 'like', "%{$searchValue}%");
+                    });
+                    break;
 
-                 default:
-                     if (array_key_exists($searchColumn, $fieldMapping)) {
-                         $dbColumn = $fieldMapping[$searchColumn];
-                         $query->where($dbColumn, 'like', "%{$searchValue}%");
-                     }
-                     break;
-             }
-         }
+                case 'postalCode':
+                    $query->whereHas('postalCode', function ($q) use ($searchValue) {
+                        $q->where('postal_code', 'like', "%{$searchValue}%");
+                    });
+                    break;
 
-         // Sorts
-         $sortBy = $request->input('sortBy');
-         $sortDirection = $request->input('sortDirection', 'asc');
+                default:
+                    if (array_key_exists($searchColumn, $fieldMapping)) {
+                        $dbColumn = $fieldMapping[$searchColumn];
+                        $query->where($dbColumn, 'like', "%{$searchValue}%");
+                    }
+                    break;
+            }
+        }
 
-         if (!empty($sortBy)) {
-             $mappedSortBy = $fieldMapping[$sortBy] ?? $sortBy;
-             if (in_array($mappedSortBy, ['first_name', 'last_name', 'email', 'id_user', 'is_verified', 'is_banned', 'path_picture', 'created_at', 'updated_at'])) {
-                 $query->orderBy($mappedSortBy, $sortDirection);
-             } else {
-                 switch ($sortBy) {
+        // Sorts
+        $sortBy = $request->input('sortBy');
+        $sortDirection = $request->input('sortDirection', 'asc');
 
-                     case 'role':
-                         $query->select('users.*')
-                             ->join('roles', 'users.id_role', '=', 'roles.id_role')
-                             ->orderBy('roles.name', $sortDirection);
-                         break;
+        if (!empty($sortBy)) {
+            $mappedSortBy = $fieldMapping[$sortBy] ?? $sortBy;
+            if (in_array($mappedSortBy, ['first_name', 'last_name', 'email', 'id_user', 'is_verified', 'path_picture', 'created_at', 'updated_at'])) {
+                $query->orderBy($mappedSortBy, $sortDirection);
+            } else {
+                switch ($sortBy) {
 
-                     case 'country':
-                         $query->select('users.*')
-                             ->join('countries', 'users.id_country', '=', 'countries.id_country')
-                             ->orderBy('countries.name', $sortDirection);
-                         break;
+                    case 'role':
+                        $query->select('users.*')
+                            ->join('roles', 'users.id_role', '=', 'roles.id_role')
+                            ->orderBy('roles.name', $sortDirection);
+                        break;
 
-                     case 'countryCode':
-                         $query->select('users.*')
-                             ->join('countries', 'users.id_country', '=', 'countries.id_country')
-                             ->orderBy('countries.country_code', $sortDirection);
-                         break;
+                    case 'country':
+                        $query->select('users.*')
+                            ->join('countries', 'users.id_country', '=', 'countries.id_country')
+                            ->orderBy('countries.name', $sortDirection);
+                        break;
 
-                     case 'city':
-                         $query->select('users.*')
-                             ->join('cities', 'users.id_city', '=', 'cities.id_city')
-                             ->orderBy('cities.name', $sortDirection);
-                         break;
+                    case 'countryCode':
+                        $query->select('users.*')
+                            ->join('countries', 'users.id_country', '=', 'countries.id_country')
+                            ->orderBy('countries.country_code', $sortDirection);
+                        break;
 
-                     case 'postalCode':
-                         $query->select('users.*')
-                             ->join('postal_codes', 'users.id_postal_code', '=', 'postal_codes.id_postal_code')
-                             ->orderBy('postal_codes.postal_code', $sortDirection);
-                         break;
+                    case 'city':
+                        $query->select('users.*')
+                            ->join('cities', 'users.id_city', '=', 'cities.id_city')
+                            ->orderBy('cities.name', $sortDirection);
+                        break;
 
-                 }
+                    case 'postalCode':
+                        $query->select('users.*')
+                            ->join('postal_codes', 'users.id_postal_code', '=', 'postal_codes.id_postal_code')
+                            ->orderBy('postal_codes.postal_code', $sortDirection);
+                        break;
+
+                    case 'isBanned':
+                        $query->orderByRaw('ban_until IS NOT NULL ' . $sortDirection);
+                        break;
+                }
             }
         }
 
@@ -226,6 +244,122 @@ class UserController extends Controller
         return response()->json($response);
     }
 
+
+    /**
+     * @OA\Post(
+     *     path="/createUser",
+     *     tags={"Users"},
+     *     summary="Create a new user",
+     *     description="Registers a new user into the system with provided user details. Validates input data and checks for email uniqueness. On success, sends a verification email.",
+     *     operationId="createUser",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="User data needed to register a new account",
+     *         @OA\JsonContent(
+     *             required={"firstName", "lastName", "email", "password", "role"},
+     *             @OA\Property(property="firstName", type="string", example="John"),
+     *             @OA\Property(property="lastName", type="string", example="Doe"),
+     *             @OA\Property(property="email", type="string", format="email", example="john.doe@example.com"),
+     *             @OA\Property(property="role", type="string", example="User", description="The role name must exist in the roles table.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="User created successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="User created successfully"),
+     *             @OA\Property(property="user", type="object", ref="#/components/schemas/UserDetail")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Champ(s) incorects"
+     *             ),
+     *             @OA\Property(
+     *                 property="errors",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="firstName",
+     *                     type="array",
+     *                     @OA\Items(type="string", example="The first name field is required.")
+     *                 ),
+     *                 @OA\Property(
+     *                     property="lastName",
+     *                     type="array",
+     *                     @OA\Items(type="string", example="The last name field is required.")
+     *                 ),
+     *                 @OA\Property(
+     *                     property="role",
+     *                     type="array",
+     *                     @OA\Items(type="string", example="The selected role is invalid.")
+     *                 ),
+     *                 @OA\Property(
+     *                     property="email",
+     *                     type="array",
+     *                     @OA\Items(type="string", example="Email already take")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden - Super Admin role required",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Forbidden - Super Admin role required."
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function createUser(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'firstName' => 'required|string|max:255',
+            'lastName' => 'required|string|max:255',
+            'email' => 'required|email|unique:users',
+            'role' => 'required|string|exists:roles,name'
+        ]);
+
+
+        // Will check all of the rules of the validator and return the errors if any
+        if ($validator->fails()) {
+            return response()->json(['message' => 'Champ(s) incorects', 'errors' => $validator->errors()], 422);
+        }
+
+        $role = Role::where('name', $request->role)->firstOrFail();
+
+        $password = Str::random(55);
+        $verificationToken = Str::random(100);
+
+        $user = User::create([
+            'first_name' => $request->firstName,
+            'last_name' => $request->lastName,
+            'email' => $request->email,
+            'id_role' => $role->id_role,
+            'password' => Hash::make($password),
+            'is_verified' => self::EMAIL_NOT_VERIFIED,
+            'ban_until' => self::IS_NOT_BANNED,
+            'verification_token' => $verificationToken,
+            'path_picture' => 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Angel',
+        ]);
+
+        $user->notify(new VerifyEmail());
+        Utils::addUserHistoryEntry(auth()->user()->id_user, $user->id_user, 'Create', null, null, null);
+        return response()->json(['message' => 'Utilisateur créé avec succès', 'user' => Utils::getAllUserData($user)], 201);
+    }
 
     /**
      * @OA\Post(
@@ -294,62 +428,111 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function editUser(Request $request, $id){
+    public function editUser(Request $request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            $user = User::findOrFail($id);
+            $isSuperAdmin = auth()->user()->role->name === 'SuperAdministrateur';
+            $authUserId = auth()->user()->id_user;
 
-        $user = User::findOrFail($id);
+            $rules = [
+                'firstName' => 'string|nullable',
+                'lastName' => 'string|nullable',
+                'email' => 'string|email|nullable',
+                'isEmailVerified' => 'boolean|nullable',
+                'country' => 'string|nullable',
+                'city' => 'string|nullable',
+                'postalCode' => 'string|nullable',
+            ];
 
-        $isSuperAdmin = auth()->user()->role->name === 'SuperAdministrateur';
-
-        $rules = [
-            'firstName' => 'string|nullable',
-            'lastName' => 'string|nullable',
-            'email' => 'string|email|nullable',
-            'isEmailVerified' => 'boolean|nullable',
-            'country' => 'string|nullable',
-            'city' => 'string|nullable',
-            'postalCode' => 'string|nullable',
-        ];
-
-        if ($isSuperAdmin) {
-            $rules['role'] = 'string|nullable';
-        }
-
-        $validator = Validator::make($request->all(), $rules);
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
-        }
-
-
-        // Mise à jour des champs directs
-        $fieldMapping = $this->getFieldMapping(); // Utilisez votre trait pour obtenir les mappages
-        foreach ($validator->validated() as $key => $value) {
-            if (in_array($key, ['firstName', 'lastName', 'email', 'isEmailVerified']) && $value !== null) {
-                $dbKey = $fieldMapping[$key] ?? $key;
-                $user->$dbKey = $value;
+            if ($isSuperAdmin) {
+                $rules['role'] = 'string|nullable';
             }
-        }
 
-        if ($request->filled('country')) {
-            $country = Country::where('name', $request->country)->firstOrFail();
-            $user->id_country = $country->id_country;
-        }
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), 400);
+            }
 
-        if ($request->filled('city')) {
-            $city = City::firstOrCreate(['name' => $request->city]);
-            $user->id_city = $city->id_city;
-        }
-        if ($request->filled('postalCode')) {
-            $postalCode = PostalCode::firstOrCreate(['postal_code' => $request->postalCode]);
-            $user->id_postal_code = $postalCode->id_postal_code;
-        }
-        if ($isSuperAdmin && $request->filled('role')) {
-            $role = Role::where('name', $request->role)->firstOrFail();
-            $user->id_role = $role->id_role;
-        }
 
-        $user->save();
+            $fieldMapping = $this->getFieldMapping();
+            foreach ($validator->validated() as $key => $value) {
+                $dbKey = $fieldMapping[$key] ?? $key;
+                if (isset($user->$dbKey) && $user->$dbKey != $value) {
+                    Utils::addUserHistoryEntry($authUserId, $user->id_user, 'Modify', $dbKey, $user->$dbKey, $value);
+                    $user->$dbKey = $value !== null ? $value : $user->$dbKey;
+                }
+            }
 
-        return response()->json(['message' => 'Utilisateur mis à jour avec succés', 'user' => Utils::getAllUserData($user)], 200);
+            if ($request->filled('country')) {
+                $country = Country::where('name', $request->country)->firstOrFail();
+                if ($user->id_country !== $country->id_country) {
+                    Utils::addUserHistoryEntry(
+                        $authUserId,
+                        $user->id_user,
+                        'Modify',
+                        'country',
+                        $user->country ? $user->country->name : null,
+                        $country->name
+                    );
+                    $user->id_country = $country->id_country;
+                }
+            }
+
+            if ($request->filled('city')) {
+                $city = City::where('name', $request->city)->firstOrFail();
+                if ($user->id_city !== $city->id_city) {
+                    Utils::addUserHistoryEntry(
+                        $authUserId,
+                        $user->id_user,
+                        'Modify',
+                        'city',
+                        $user->city ? $user->city->name : null,
+                        $city->name
+                    );
+                    $user->id_city = $city->id_city;
+                }
+            }
+
+            if ($request->filled('postalCode')) {
+                $postalCode = PostalCode::where('postal_code', $request->postalCode)->firstOrFail();
+                if ($user->id_postal_code !== $postalCode->id_postal_code) {
+                    Utils::addUserHistoryEntry(
+                        $authUserId,
+                        $user->id_user,
+                        'Modify',
+                        'postal_code',
+                        $user->postalCode ? $user->postalCode->postal_code : null,
+                        $postalCode->postal_code
+                    );
+                    $user->id_postal_code = $postalCode->id_postal_code;
+                }
+            }
+
+            if ($isSuperAdmin && $request->filled('role')) {
+                $role = Role::where('name', $request->role)->firstOrFail();
+                if ($user->id_role !== $role->id_role) {
+                    Utils::addUserHistoryEntry(
+                        $authUserId,
+                        $user->id_user,
+                        'Modify',
+                        'role',
+                        $user->role->name,
+                        $role->name
+                    );
+                    $user->id_role = $role->id_role;
+                }
+            }
+
+            $user->save();
+            DB::commit();
+
+            return response()->json(['message' => 'Utilisateur mis à jour avec succès', 'user' => Utils::getAllUserData($user)], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Une erreur est survenue lors de la mise à jour de l\'utilisateur.'], 500);
+        }
     }
 
     /**
@@ -392,7 +575,8 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function deleteUser($id){
+    public function deleteUser($id)
+    {
         if (auth()->user()->role->name != 'SuperAdministrateur') {
             return response()->json(['message' => 'Unauthorized: Seul un superAdministrateur peut supprimer un utilisateur.'], 403);
         }
@@ -401,16 +585,31 @@ class UserController extends Controller
         if (!$user) {
             return response()->json(['message' => 'Utilisateur non trouvé.'], 404);
         }
-        $user->delete();
+
+        $user->verification_token = null;
+        $user->password_reset_token = null;
+        $user->deleted_at = now();
+        $user->save();
+        $authUserId = auth()->user()->id_user;
+        Utils::addUserHistoryEntry(
+            $authUserId,
+            $user->id_user,
+            'Delete',
+            'deleted_at',
+            null,
+            now()
+        );
+
+
         return response()->json(['message' => 'Utilisateur supprimé avec succés.']);
     }
 
     /**
-     * @OA\Patch(
+     * @OA\Post(
      *     path="/banUser/{id}",
      *     tags={"Users"},
      *     summary="Ban a user",
-     *     description="Ban a user . Administrators and Super Administrators cannot be ban.",
+     *     description="Bans a user either permanently or until a specified timestamp. Super Administrators and Administrators cannot be banned.",
      *     operationId="banUser",
      *     security={{ "BearerAuth": {} }},
      *     @OA\Parameter(
@@ -422,16 +621,40 @@ class UserController extends Controller
      *             type="integer"
      *         )
      *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Ban details",
+     *         @OA\JsonContent(
+     *             required={"isPermanent"},
+     *             @OA\Property(
+     *                 property="isPermanent",
+     *                 type="boolean",
+     *                 description="Whether the ban is permanent"
+     *             ),
+     *             @OA\Property(
+     *                 property="banTimestamp",
+     *                 type="integer",
+     *                 description="The UNIX timestamp until which the user is banned. Required if `isPermanent` is false."
+     *             )
+     *         )
+     *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="User has been banned.",
+     *         description="User has been banned",
      *         @OA\JsonContent(
      *             @OA\Property(property="message", type="string", example="L'utilisateur a été banni.")
      *         )
      *     ),
      *     @OA\Response(
+     *         response=422,
+     *         description="Validation error or ban date in the past",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string")
+     *         )
+     *     ),
+     *     @OA\Response(
      *         response=403,
-     *         description="Unauthorized",
+     *         description="Unauthorized attempt to ban an Administrator or Super Administrator",
      *         @OA\JsonContent(
      *             @OA\Property(property="message", type="string", example="Non autorisé")
      *         )
@@ -445,20 +668,55 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function banUser($id) {
+    public function banUser(Request $request, $id) {
 
-        $user = User::find($id);
+        $rules = [
+            'isPermanent' => 'boolean',
+            'banTimestamp' => 'int|nullable'
+        ];
 
-        if($user->role->name == 'SuperAdministrateur' || $user->role->name == 'Administrateur') {
-            return response()->json(['message' => 'Non autorisé'], 403);
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
         }
 
+        $user = User::find($id);
         if (!$user) {
             return response()->json(['message' => 'Utilisateur non trouvé'], 404);
         }
 
-        $user->is_banned = true;
+        if ($user->role->name == 'SuperAdministrateur' || $user->role->name == 'Administrateur') {
+            return response()->json(['message' => 'Non autorisé'], 403);
+        }
+
+        $oldBanUntil = $user->ban_until;
+
+        // Ban the user
+        if ($request->isPermanent) {
+            $user->ban_until = 253402297199000; // 9999-12-31 23:59:59 000
+
+        } else if ($request->filled('banTimestamp')) {
+
+            // unix timestamp milliseconds
+            if ($request->banTimestamp < Carbon::now()->getTimestamp()*1000) {
+                return response()->json(['message' => 'La date de fin de bannissement doit être dans le futur.'], 422);
+            } else {
+                $user->ban_until = $request->banTimestamp;
+            }
+        } else {
+            return response()->json(['message' => 'Veuillez spécifier une date de fin de bannissement ou rendre le bannissement permanent.'], 422);
+        }
         $user->save();
+
+        $authUserId = auth()->user()->id_user;
+        Utils::addUserHistoryEntry(
+            $authUserId,
+            $user->id_user,
+            'Ban',
+            'ban_until',
+            $oldBanUntil,
+            $user->ban_until
+        );
 
         return response()->json(['message' => 'L\'utilisateur a été banni.']);
     }
@@ -496,19 +754,30 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function unbanUser($id) {
+    public function unbanUser($id)
+    {
         $user = User::find($id);
         if (!$user) {
             return response()->json(['message' => 'Utilisateur non trouvé'], 404);
         }
 
 
-        if (!$user->is_banned) {
+        if (!$user->ban_until) {
             return response()->json(['message' => 'L\'utilisateur n\'est pas banni'], 404);
         }
-
-        $user->is_banned = false;
+        $oldBanUntil = $user->ban_until;
+        $user->ban_until = null;
         $user->save();
+
+        $authUserId = auth()->user()->id_user;
+        Utils::addUserHistoryEntry(
+            $authUserId,
+            $user->id_user,
+            'Unban',
+            'ban_until',
+            $oldBanUntil,
+            null
+        );
 
         return response()->json(['message' => 'L\'utilisateur a été débanni']);
     }
