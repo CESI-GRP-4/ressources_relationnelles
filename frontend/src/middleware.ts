@@ -13,6 +13,7 @@ const routeWithoutAuth = [
 // Routes accessible to authenticated users (Utilisateur)
 const routeWithUserAuth = [
        ...routeForEveryone,
+       '/categories'
 ];
 
 // Routes accessible to Moderators (Moderateur)

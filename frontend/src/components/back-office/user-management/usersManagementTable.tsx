@@ -17,7 +17,6 @@ import { tableSettings } from '@/utils/tableParams';
 import CreateUserForm from "@/components/createUserForm";
 
 const EditableTable: React.FC = () => {
-
        const currentUser = useUser();
        const [editUserForm] = Form.useForm();
        const [tableData, setTableData] = useState([] as User[]);
