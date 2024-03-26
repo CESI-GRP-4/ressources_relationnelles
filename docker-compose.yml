@@ -1,0 +1,125 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: my-laravel-app
+    container_name: laravel_app
+    restart: unless-stopped
+    tty: true
+    environment:
+      APP_NAME: Laravel
+      APP_ENV: local
+      APP_KEY:base64: aQzD1HkKfEhJEQ1XPvC0Mlt56TdbnJ/0Vm3EjFC7Ivg=
+      APP_DEBUG: true
+      APP_URL: http://localhost
+
+      LOG_CHANNEL: stack
+      LOG_DEPRECATIONS_CHANNEL: null
+      LOG_LEVEL: debug
+
+      DB_CONNECTION: mysql
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_DATABASE: ressources_relationnelles
+      DB_USERNAME: root
+      DB_PASSWORD: test123
+
+      BROADCAST_DRIVER: log
+      CACHE_DRIVER: file
+      FILESYSTEM_DISK: local
+      QUEUE_CONNECTION: sync
+      SESSION_DRIVER: file
+      SESSION_LIFETIME: 120
+
+      MEMCACHED_HOST: 127.0.0.1
+
+      REDIS_HOST: 127.0.0.1
+      REDIS_PASSWORD: null
+      REDIS_PORT: 6379
+
+      MAIL_MAILER: smtp
+      MAIL_HOST: smtp.ethereal.email
+      MAIL_PORT: 587
+      MAIL_USERNAME: green84@ethereal.email
+      MAIL_PASSWORD: AKrcnERfRDEJeZAyea
+      MAIL_ENCRYPTION: tls
+      MAIL_FROM_ADDRESS: "green84@ethereal.email"
+      MAIL_FROM_NAME: Laravel
+
+      AWS_ACCESS_KEY_ID:
+      AWS_SECRET_ACCESS_KEY:
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_BUCKET:
+      AWS_USE_PATH_STYLE_ENDPOINT: false
+
+      PUSHER_APP_ID:
+      PUSHER_APP_KEY:
+      PUSHER_APP_SECRET:
+      PUSHER_HOST:
+      PUSHER_PORT: 443
+      PUSHER_SCHEME: https
+      PUSHER_APP_CLUSTER: mt1
+
+      VITE_APP_NAME: Laravel
+      VITE_PUSHER_APP_KEY:
+      VITE_PUSHER_HOST:
+      VITE_PUSHER_PORT: 443
+      VITE_PUSHER_SCHEME: https
+      VITE_PUSHER_APP_CLUSTER: mt1
+
+      JWT_SECRET: 3F6VOXxUrJ9ntZFIQBn8eglaoIkqqsoGG6JAFzIsE5DSMXEv0Py3QOKxbMEQf7Ho
+
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - app-network
+
+  db:
+    image: mariadb:10.5
+    container_name: mariadb
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      MYSQL_DATABASE: ressources_relationnelles 
+    volumes:
+      - dbdata:/var/lib/mysql
+      - ./DB/ressources_relationnelles.sql:/docker-entrypoint-initdb.d/ressources_relationnelles.sql
+    networks:
+      - app-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    environment:
+      PMA_HOST: mariadb
+      MYSQL_ROOT_PASSWORD: test123
+    restart: unless-stopped
+    ports:
+      - '8081:80'
+    networks:
+      - app-network
+
+  frontend:
+      build:
+        context: ./frontend
+        dockerfile: Dockerfile # Assuming this Dockerfile is for your frontend and is located in the frontend directory
+      image: my-nextjs-app
+      container_name: nextjs_frontend
+      restart: unless-stopped
+      tty: true
+      ports:
+        - "3000:3000" # Expose the frontend on port 3000
+      networks:
+        - app-network
+volumes:
+  dbdata:
+
+networks:
+  app-network:
+    driver: bridge
