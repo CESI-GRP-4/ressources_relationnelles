@@ -1,12 +1,16 @@
 import { Category } from "@/types/category";
-import { Modal, Button, Form, Input, Checkbox, message } from "antd";
-import { useState } from "react";
+import {Modal, Button, Form, Input, message, Switch} from "antd";
+import React, { useState } from "react";
 import { DeleteOutlined } from "@ant-design/icons";
 import axios, { AxiosError } from "axios";
 import DeleteCategory from "@/components/back-office/categories-management/deleteCategory";
 
 export default function ModifyCategoryModal({ category, visible, setVisible, refreshCategories }: { category: Category, visible: boolean, setVisible: Function, refreshCategories: Function}) {
        const [isModifyingCategoryLoading, setIsModifyingCategoryLoading] = useState<boolean>(false);
+
+       const onSwitch = (checked: boolean) => {
+              category.isActive = checked;
+       }
 
        const onSubmit = async (values: any) => {
               console.log(values.title, values.description, values.color, values.isActive);
@@ -117,10 +121,11 @@ export default function ModifyCategoryModal({ category, visible, setVisible, ref
                                                  <Input type="color" allowClear placeholder="Couleur de la catégorie" />
                                           </Form.Item>
 
+                                          {/* isActive */}
                                           <Form.Item<FormValues>
-                                                 name={"isActive"}
-                                                 label="Catégorie active">
-                                                 <Checkbox checked={category.isActive} defaultChecked={category.isActive}></Checkbox>
+                                              label="Catégorie active"
+                                              name={"isActive"}>
+                                                 <Switch checkedChildren="Oui" unCheckedChildren="Non" defaultChecked={category.isActive} onChange={onSwitch}/>
                                           </Form.Item>
 
                                           <div className="flex flex-row justify-between items-center mt-4">
