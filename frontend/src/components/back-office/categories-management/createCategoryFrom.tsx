@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import {Button, Form, Input, message, Modal, notification, Select, Space, Switch} from "antd";
-import {UserAddOutlined} from "@ant-design/icons";
+import {AppstoreAddOutlined} from "@ant-design/icons";
 import axios, { AxiosError } from "axios";
 
 
@@ -101,7 +101,7 @@ export default function CreateCategoryForm( {refreshCategories}: {refreshCategor
 
     return (
         <>
-            <Button type="primary" onClick={showModal} icon={<UserAddOutlined />}>
+            <Button type="primary" onClick={showModal} icon={<AppstoreAddOutlined />}>
                 Créer une nouvelle catégorie
             </Button>
             <Modal title="Créer une nouvelle catégorie"

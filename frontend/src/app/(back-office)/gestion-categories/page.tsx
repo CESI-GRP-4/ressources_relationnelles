@@ -63,8 +63,8 @@ export default function CategoryManagement() {
        }
 
        return (
-              <div>
-                     <div className={"w-full flex justify-center mb-4"}>
+              <div className="flex flex-col gap-10">
+                     <div className={"w-full flex flex-row justify-end mb-4"}>
                             {currentUser.user?.role === 'SuperAdministrateur' && <CreateCategoryForm refreshCategories={refreshCategories}/>}
                      </div>
                      {isLoading ? (
