@@ -1,11 +1,11 @@
 import { Category } from "@/types/category";
-import {Modal, Button, Form, Input, message, Switch} from "antd";
+import { Modal, Button, Form, Input, message, Switch } from "antd";
 import React, { useState } from "react";
 import { DeleteOutlined } from "@ant-design/icons";
 import axios, { AxiosError } from "axios";
 import DeleteCategory from "@/components/back-office/categories-management/deleteCategory";
 
-export default function ModifyCategoryModal({ category, visible, setVisible, refreshCategories }: { category: Category, visible: boolean, setVisible: Function, refreshCategories: Function}) {
+export default function ModifyCategoryModal({ category, visible, setVisible, refreshCategories }: { category: Category, visible: boolean, setVisible: Function, refreshCategories: Function }) {
        const [isModifyingCategoryLoading, setIsModifyingCategoryLoading] = useState<boolean>(false);
 
        const onSwitch = (checked: boolean) => {
@@ -28,7 +28,7 @@ export default function ModifyCategoryModal({ category, visible, setVisible, ref
                                    title: values.title,
                                    description: values.description,
                                    color: values.color,
-                                   icon: category.icon,
+                                   icon: values.icon,
                                    isActive: values.isActive
                             }
                      });
@@ -92,6 +92,7 @@ export default function ModifyCategoryModal({ category, visible, setVisible, ref
                                                  title: category.title,
                                                  description: category.description,
                                                  color: category.color,
+                                                 icon: category.icon,
                                           } as FormValues
                                           }
                                    >
@@ -121,16 +122,27 @@ export default function ModifyCategoryModal({ category, visible, setVisible, ref
                                                  <Input type="color" allowClear placeholder="Couleur de la catégorie" />
                                           </Form.Item>
 
+                                          <Form.Item<FormValues>
+                                                 rules={[
+                                                        { required: true, message: 'Veuillez séléctionner un icon' }]}
+                                                 name={"icon"}
+                                                 label="Icon de la catégorie"
+                                                 tooltip={{
+                                                        title: <>{`Vous pouvez choisir un icon sur le site`} <a href="https://icon-sets.iconify.design/" target="_blank" rel="noopener noreferrer">{`Iconify`}</a>{` en copiant le nom de l'icone dans ce champ. Exemple : ph:airplane`}</>
+                                                 }}                                                 >
+                                                 <Input allowClear placeholder="Icon de la catégorie" />
+                                          </Form.Item>
+
                                           {/* isActive */}
                                           <Form.Item<FormValues>
-                                              label="Catégorie active"
-                                              name={"isActive"}>
-                                                 <Switch checkedChildren="Oui" unCheckedChildren="Non" defaultChecked={category.isActive} onChange={onSwitch}/>
+                                                 label="Catégorie active"
+                                                 name={"isActive"}>
+                                                 <Switch checkedChildren="Oui" unCheckedChildren="Non" defaultChecked={category.isActive} onChange={onSwitch} />
                                           </Form.Item>
 
                                           <div className="flex flex-row justify-between items-center mt-4">
                                                  <Form.Item >
-                                                 <DeleteCategory category={category} refreshCategories={refreshCategories}/>
+                                                        <DeleteCategory category={category} refreshCategories={refreshCategories} />
                                                  </Form.Item>
 
                                                  <Form.Item >
