@@ -101,7 +101,9 @@ export default function CategoriesPage() {
                      <h1>Liste des Catégories</h1>
                      <div className="grid grid-cols-3 gap-4">
                             {categories.map((category) => (
-                                   <CategoryCard key={category.id} category={category} />
+                                   <CategoryCard key={category.id} category={category} refreshCategories={()=>{
+
+                                   }} />
                             ))}
                      </div>
               </div>

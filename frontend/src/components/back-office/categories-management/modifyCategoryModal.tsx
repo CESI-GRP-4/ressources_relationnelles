@@ -3,6 +3,8 @@ import { Modal, Button, Form, Input, Checkbox, message } from "antd";
 import { useState } from "react";
 import { DeleteOutlined } from "@ant-design/icons";
 import axios, { AxiosError } from "axios";
+import DeleteCategory from "@/components/back-office/categories-management/deleteCategory";
+
 export default function ModifyCategoryModal({ category, visible, setVisible, refreshCategories }: { category: Category, visible: boolean, setVisible: Function, refreshCategories: Function}) {
        const [isModifyingCategoryLoading, setIsModifyingCategoryLoading] = useState<boolean>(false);
 
@@ -123,11 +125,7 @@ export default function ModifyCategoryModal({ category, visible, setVisible, ref
 
                                           <div className="flex flex-row justify-between items-center mt-4">
                                                  <Form.Item >
-                                                        <div>
-                                                               <Button icon={<DeleteOutlined />} type="primary" danger>
-                                                                      Supprimer
-                                                               </Button>
-                                                        </div>
+                                                 <DeleteCategory category={category} refreshCategories={refreshCategories}/>
                                                  </Form.Item>
 
                                                  <Form.Item >
