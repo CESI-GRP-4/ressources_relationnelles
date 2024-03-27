@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {Button, Form, Input, message, Modal, Select, Space, notification} from "antd";
+import {Button, Form, Input, message, Modal, Select, Space, notification, Popover} from "antd";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { emailRegex, firstNameRegex, lastNameRegex } from "@/utils/regex";
 import { UserAddOutlined } from "@ant-design/icons";
@@ -108,7 +108,6 @@ export default function CreateUserForm({ refreshUsers }: { refreshUsers: () => v
        }
 
 
-       // TODO: @Capryc0rne - Mettre les instructions à donner à l'utilisateur créé.
        return (
               <>
                      <Button type="primary" onClick={showModal} icon={<UserAddOutlined />}
@@ -181,7 +180,19 @@ export default function CreateUserForm({ refreshUsers }: { refreshUsers: () => v
                                           </Select>
                                    </Form.Item>
 
-                                   <div className="flex justify-end mt-5">
+                                   <div className="flex justify-between mt-5">
+                                          <Popover
+                                                 placement="bottomLeft"
+                                                 title={"Instructions à fournir à l'utilisateur que vous venez de créer :"}
+                                                 content={
+                                                        <ul>
+                                                               <li>- Lors de la première connexion, il devra réinitialiser son mot de passe.</li>
+                                                               <li>- Il doit valider son adresse email.</li>
+                                                               <li>- Personnaliser ses informations via la page profil.</li>
+                                                        </ul>
+                                                 }>
+                                                 <Button type="dashed">Instructions</Button>
+                                          </Popover>
                                           <Form.Item>
                                                  <Space>
                                                         <Button type="default" onClick={handleCancel}>Annuler</Button>
