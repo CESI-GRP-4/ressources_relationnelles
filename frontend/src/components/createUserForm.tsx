@@ -108,6 +108,7 @@ export default function CreateUserForm({ refreshUsers }: { refreshUsers: () => v
        }
 
 
+       // TODO: @Capryc0rne - Mettre les instructions à donner à l'utilisateur créé.
        return (
               <>
                      <Button type="primary" onClick={showModal} icon={<UserAddOutlined />}

@@ -13,7 +13,7 @@ class UserHistoryController extends Controller {
 
     /**
      * @OA\Get(
-     *     path="/usershistory",
+     *     path="/usersHistory",
      *     tags={"Users"},
      *     summary="Fetch users' history",
      *     description="Retrieves a paginated history of actions performed on users, including detailed information about the user modified and the user who performed the modification.",

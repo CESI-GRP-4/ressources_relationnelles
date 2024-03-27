@@ -2,8 +2,8 @@
 
 namespace App\Utils;
 
+use App\Models\User;
 use App\Models\UserHistory;
-use Carbon\Carbon;
 
 class Utils{
 
@@ -89,7 +89,6 @@ class Utils{
         return $userData;
     }
 
-
     public static function addUserHistoryEntry($authUserId, $affectedUserId, $action, $columnName=null, $oldValue=null, $newValue=null) {
         UserHistory::create([
             'user_id' => $authUserId,
@@ -100,4 +99,8 @@ class Utils{
             'new_value' => $newValue,
         ]);
     }
+
+
+
+
 }

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : lun. 18 mars 2024 à 22:22
+-- Généré le : mer. 27 mars 2024 à 01:23
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -32,13 +32,6 @@ CREATE TABLE `asso_resource_game` (
   `id_game` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Déchargement des données de la table `asso_resource_game`
---
-
-INSERT INTO `asso_resource_game` (`id_resource`, `id_game`) VALUES
-(1, 1);
-
 -- --------------------------------------------------------
 
 --
@@ -49,13 +42,6 @@ CREATE TABLE `asso_resource_statistic` (
   `id_resource` int(11) NOT NULL,
   `id_statistic_archive` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Déchargement des données de la table `asso_resource_statistic`
---
-
-INSERT INTO `asso_resource_statistic` (`id_resource`, `id_statistic_archive`) VALUES
-(1, 1);
 
 -- --------------------------------------------------------
 
@@ -68,13 +54,6 @@ CREATE TABLE `asso_role_right` (
   `id_right` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Déchargement des données de la table `asso_role_right`
---
-
-INSERT INTO `asso_role_right` (`id_role`, `id_right`) VALUES
-(1, 1);
-
 -- --------------------------------------------------------
 
 --
@@ -85,13 +64,6 @@ CREATE TABLE `asso_user_bookmark` (
   `id_user` int(11) NOT NULL,
   `id_resource` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Déchargement des données de la table `asso_user_bookmark`
---
-
-INSERT INTO `asso_user_bookmark` (`id_user`, `id_resource`) VALUES
-(1, 1);
 
 -- --------------------------------------------------------
 
@@ -104,13 +76,6 @@ CREATE TABLE `asso_user_note` (
   `id_resource` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Déchargement des données de la table `asso_user_note`
---
-
-INSERT INTO `asso_user_note` (`id_user`, `id_resource`) VALUES
-(1, 1);
-
 -- --------------------------------------------------------
 
 --
@@ -121,13 +86,6 @@ CREATE TABLE `asso_user_resource` (
   `id_user` int(11) NOT NULL,
   `id_resource` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Déchargement des données de la table `asso_user_resource`
---
-
-INSERT INTO `asso_user_resource` (`id_user`, `id_resource`) VALUES
-(1, 1);
 
 -- --------------------------------------------------------
 
@@ -158,16 +116,30 @@ INSERT INTO `blocked_users` (`id_blocked`, `start_date`, `end_date`, `id_user`) 
 
 CREATE TABLE `categories` (
   `id_category` int(11) NOT NULL,
-  `name` varchar(255) DEFAULT NULL
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `icon` varchar(255) DEFAULT NULL,
+  `color` varchar(7) DEFAULT NULL,
+  `is_active` tinyint(1) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `categories`
 --
 
-INSERT INTO `categories` (`id_category`, `name`) VALUES
-(1, 'Education'),
-(2, 'Entertainment');
+INSERT INTO `categories` (`id_category`, `title`, `description`, `icon`, `color`, `is_active`, `created_by`, `created_at`, `updated_at`) VALUES
+(3, 'Voyages', 'Tout sur les voyages, des destinations aux conseils.', 'ph:airplane', '#1E90FF', 1, 1, '2024-03-26 19:55:26', '2024-03-26 19:55:26'),
+(4, 'Technologie', 'Dernières nouvelles et revues de technologie.', 'ph:device-mobile-camera', '#32CD32', 1, 1, '2024-03-26 19:55:26', '2024-03-26 19:55:26'),
+(5, 'Cuisine', 'Recettes, astuces et plus sur la cuisine.', 'ph:fork-knife', '#FFA07A', 0, 1, '2024-03-26 19:55:26', '2024-03-26 21:42:01'),
+(6, 'Title de ma catégorie', 'C\'est une catégorie de fou', 'ouai', '#555555', 1, 1, '2024-03-26 22:46:55', '2024-03-26 22:46:55'),
+(7, 'Title de ma catégorie 2', 'C\'est une catégorie de fou', 'ouai', '#555555', 1, 1, '2024-03-26 22:49:00', '2024-03-26 23:13:56'),
+(8, 'Title de ma catégorie 3', 'C\'est une catégorie de fou', 'ouai', '#555555', 0, 1, '2024-03-26 22:53:09', '2024-03-26 23:55:28'),
+(9, 'Title de ma catégorie 4', 'C\'est une catégorie de fou', 'ouai', '#666abc', 1, 1, '2024-03-26 22:54:55', '2024-03-26 22:54:55'),
+(10, 'Title de ma catégorie 5', 'C\'est une catégorie de fou', 'ouai', '#ffefef', 1, 1, '2024-03-26 22:55:12', '2024-03-26 22:55:12'),
+(13, 'Title de ma catégorie 6', 'C\'est une catégorie de fou', 'ouai', '#ffefef', 0, 1, '2024-03-26 22:57:40', '2024-03-26 22:57:40');
 
 -- --------------------------------------------------------
 
@@ -205,13 +177,6 @@ CREATE TABLE `comments` (
   `id_resource` int(11) NOT NULL,
   `id_user` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Déchargement des données de la table `comments`
---
-
-INSERT INTO `comments` (`id_comment`, `content`, `posting_date`, `id_parent_comment`, `id_resource`, `id_user`) VALUES
-(1, 'Great Resource!', '2024-01-18 22:38:55', NULL, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -486,13 +451,6 @@ CREATE TABLE `files` (
   `id_resource` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Déchargement des données de la table `files`
---
-
-INSERT INTO `files` (`id_file`, `path`, `is_verified`, `download_count`, `id_resource`) VALUES
-(1, '/path/to/file', 1, 50, 1);
-
 -- --------------------------------------------------------
 
 --
@@ -527,13 +485,6 @@ CREATE TABLE `invitations` (
   `expiration_date` datetime NOT NULL,
   `id_resource` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Déchargement des données de la table `invitations`
---
-
-INSERT INTO `invitations` (`id_invitation`, `link`, `status`, `creation_date`, `expiration_date`, `id_resource`) VALUES
-(1, 'http://example.com/invite', 'Sent', '2024-01-18 22:38:55', '2024-01-19 22:38:55', 1);
 
 -- --------------------------------------------------------
 
@@ -604,7 +555,8 @@ INSERT INTO `login_logs` (`id`, `id_user`, `login_datetime`) VALUES
 (70, 1, '2024-03-14 16:32:03'),
 (71, 37, '2024-03-18 21:25:54'),
 (72, 38, '2024-03-18 21:26:48'),
-(73, 1, '2024-03-18 21:27:29');
+(73, 1, '2024-03-18 21:27:29'),
+(74, 1, '2024-03-26 22:30:47');
 
 -- --------------------------------------------------------
 
@@ -656,13 +608,6 @@ CREATE TABLE `resources` (
   `id_category` int(11) NOT NULL,
   `id_status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Déchargement des données de la table `resources`
---
-
-INSERT INTO `resources` (`id_resource`, `label`, `description`, `content`, `is_public`, `view_count`, `id_user`, `id_category`, `id_status`) VALUES
-(1, 'Resource 1', 'Description of Resource 1', 'Content of Resource 1', 1, 100, 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -889,7 +834,9 @@ ALTER TABLE `blocked_users`
 -- Index pour la table `categories`
 --
 ALTER TABLE `categories`
-  ADD PRIMARY KEY (`id_category`);
+  ADD PRIMARY KEY (`id_category`),
+  ADD UNIQUE KEY `title` (`title`),
+  ADD KEY `fk_categories_created_by` (`created_by`);
 
 --
 -- Index pour la table `cities`
@@ -1016,7 +963,7 @@ ALTER TABLE `blocked_users`
 -- AUTO_INCREMENT pour la table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id_category` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_category` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT pour la table `cities`
@@ -1058,7 +1005,7 @@ ALTER TABLE `invitations`
 -- AUTO_INCREMENT pour la table `login_logs`
 --
 ALTER TABLE `login_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
 
 --
 -- AUTO_INCREMENT pour la table `migrations`
@@ -1165,6 +1112,12 @@ ALTER TABLE `asso_user_resource`
 --
 ALTER TABLE `blocked_users`
   ADD CONSTRAINT `blocked_users_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`);
+
+--
+-- Contraintes pour la table `categories`
+--
+ALTER TABLE `categories`
+  ADD CONSTRAINT `fk_categories_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id_user`);
 
 --
 -- Contraintes pour la table `comments`

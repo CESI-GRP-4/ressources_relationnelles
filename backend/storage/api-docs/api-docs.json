@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "title": "(Re)Sources Relationnelles",
-        "version": "0.24"
+        "version": "0.25"
     },
     "servers": [
         {
@@ -461,6 +461,386 @@
                         }
                     }
                 }
+            }
+        },
+        "/allCategories": {
+            "get": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Fetch all categories",
+                "description": "Fetches all categories including inactive ones. This endpoint is restricted to admin users.",
+                "operationId": "getAllCategories",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "categories": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/CategoryDetail"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/categories": {
+            "get": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Fetch active categories",
+                "description": "Fetches only active categories. This endpoint is available to all users.",
+                "operationId": "getActiveCategories",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "categories": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Category"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/category/{id}": {
+            "get": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Fetch a category",
+                "description": "Fetches a category by its ID. This endpoint is available to all users.",
+                "operationId": "getCategory",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the category to fetch",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "category": {
+                                            "$ref": "#/components/schemas/Category"
+                                        },
+                                        "ressources": {
+                                            "description": "List of ressources associated with the category",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Category not found"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/createCategory": {
+            "post": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Create a category",
+                "description": "Creates a new category. This endpoint is restricted to admin users.",
+                "operationId": "createCategory",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "description",
+                                    "icon",
+                                    "color"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "description": "Title of the category",
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "description": "Description of the category",
+                                        "type": "string"
+                                    },
+                                    "icon": {
+                                        "description": "Icon representing the category",
+                                        "type": "string"
+                                    },
+                                    "color": {
+                                        "description": "Color associated with the category. Hexadecimal format with or without '#': #000000",
+                                        "type": "string"
+                                    },
+                                    "isActive": {
+                                        "description": "Whether the category is active. Visible to admins only.",
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Category created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "category": {
+                                            "$ref": "#/components/schemas/CategoryDetail"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "array",
+                                                "items": [
+                                                    "string"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/editCategory/{id}": {
+            "post": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Edit a category",
+                "description": "Edit an existing category. This endpoint is restricted to admin users.",
+                "operationId": "editCategory",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the category to edit",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "description": "Title of the category",
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "description": "Description of the category",
+                                        "type": "string"
+                                    },
+                                    "icon": {
+                                        "description": "Icon representing the category",
+                                        "type": "string"
+                                    },
+                                    "color": {
+                                        "description": "Color associated with the category. Hexadecimal format with or without '#': #000000",
+                                        "type": "string"
+                                    },
+                                    "isActive": {
+                                        "description": "Whether the category is active. Visible to admins only.",
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Category edited successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "category": {
+                                            "$ref": "#/components/schemas/CategoryDetail"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "array",
+                                                "items": [
+                                                    "string"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Category not found"
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/deleteCategory/{id}": {
+            "delete": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Delete a category",
+                "description": "Deletes a category by its ID. This endpoint is restricted to admin users.",
+                "operationId": "deleteCategory",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the category to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Category deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Category not found"
+                    },
+                    "500": {
+                        "description": "Error while deleting the category"
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
             }
         },
         "/countries": {
@@ -1262,7 +1642,7 @@
                 ]
             }
         },
-        "/usershistory": {
+        "/usersHistory": {
             "get": {
                 "tags": [
                     "Users"
@@ -1340,6 +1720,85 @@
     },
     "components": {
         "schemas": {
+            "Category": {
+                "description": "Detailed information about a category",
+                "properties": {
+                    "id": {
+                        "description": "Category ID",
+                        "type": "integer"
+                    },
+                    "title": {
+                        "description": "Title of the category",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "Description of the category",
+                        "type": "string"
+                    },
+                    "icon": {
+                        "description": "Icon representing the category",
+                        "type": "string"
+                    },
+                    "color": {
+                        "description": "Color associated with the category. Hexadecimal format with '#': #000000",
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "description": "Creation date of the category",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "description": "Last update date of the category",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "CategoryDetail": {
+                "description": "Detailed information about a category",
+                "properties": {
+                    "id": {
+                        "description": "Category ID",
+                        "type": "integer"
+                    },
+                    "title": {
+                        "description": "Title of the category",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "Description of the category",
+                        "type": "string"
+                    },
+                    "icon": {
+                        "description": "Icon representing the category",
+                        "type": "string"
+                    },
+                    "color": {
+                        "description": "Color associated with the category. Hexadecimal format with '#': #000000",
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "description": "Creation date of the category",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "description": "Last update date of the category",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "isActive": {
+                        "description": "Whether the category is active. Visible to admins only.",
+                        "type": "boolean"
+                    },
+                    "createdBy": {
+                        "$ref": "#/components/schemas/UserDetail"
+                    }
+                },
+                "type": "object"
+            },
             "Country": {
                 "properties": {
                     "id": {

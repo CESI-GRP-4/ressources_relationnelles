@@ -97,8 +97,7 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function getUsers(Request $request)
-    {
+    public function getUsers(Request $request) {
 
         $validator = Validator::make($request->all(), [
             'perPage' => 'integer|min:1',
@@ -336,7 +335,7 @@ class UserController extends Controller
 
         // Will check all of the rules of the validator and return the errors if any
         if ($validator->fails()) {
-            return response()->json(['message' => 'Champ(s) incorects', 'errors' => $validator->errors()], 422);
+            return response()->json(['message' => 'Champ(s) incorrect(s)', 'errors' => $validator->errors()], 422);
         }
 
         $role = Role::where('name', $request->role)->firstOrFail();

@@ -19,6 +19,10 @@ trait FieldMappingTrait {
             'city' => 'city.name',
             'postalCode' => 'postalCode.postal_code',
             'isBanned' => 'ban_until',
+
+            // Category mappings
+            'isActive' => 'is_active',
+            'createdBy' => 'created_by',
         ];
     }
 
@@ -38,6 +42,11 @@ trait FieldMappingTrait {
             'city.name' => 'city',
             'postalCode.postal_code' => 'postalCode',
             'ban_until' => 'isBanned',
+
+            // Category mappings
+            'is_active' => 'isActive',
+            'created_by' => 'createdBy',
+
         ];
     }
 }
