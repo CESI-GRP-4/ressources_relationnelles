@@ -3,10 +3,13 @@
 import { useEffect, useState } from "react"
 import { Category } from "@/types/category"
 import axios from "axios"
+import { useUser } from '@/providers/userProvider';
 import CategoryCard from "@/components/back-office/categories-management/categoryCard"
 import { Skeleton, message } from "antd"
 import { AxiosError } from "axios"
 import ModifyCategoryModal from "@/components/back-office/categories-management/modifyCategoryModal"
+import CreateUserForm from "@/components/back-office/user-management/createUserForm";
+import CreateCategoryForm from "@/components/back-office/categories-management/createCategoryFrom";
 
 export default function CategoryManagement() {
        const [categories, setCategories] = useState<Category[]>([])
@@ -20,6 +23,7 @@ export default function CategoryManagement() {
        useEffect(() => {
               fetchCategories();
        }, [triggerRefresh]);
+       const currentUser = useUser();
 
        useEffect(() => {
               fetchCategories()
@@ -60,6 +64,9 @@ export default function CategoryManagement() {
 
        return (
               <div>
+                     <div className={"w-full flex justify-center mb-4"}>
+                            {currentUser.user?.role === 'SuperAdministrateur' && <CreateCategoryForm refreshCategories={refreshCategories}/>}
+                     </div>
                      {isLoading ? (
                             <Skeleton active />
                      ) : (
