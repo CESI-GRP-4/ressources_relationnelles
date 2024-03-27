@@ -4,6 +4,7 @@ import ConnectionsChart from "@/components/back-office/statistics/connections/co
 import DateRangePicker from '@/components/dateRangePicker';
 import dayjs from 'dayjs';
 import { Typography } from 'antd';
+import PageSummary from '@/components/back-office/pageSummary';
 
 export default function ConnectionStats() {
        const defaultStartDate = dayjs().subtract(30, 'days').format('DD/MM/YYYY');
@@ -25,9 +26,10 @@ export default function ConnectionStats() {
        return (
               <>
                      <div className="flex flex-col gap-5">
-                            <Typography.Title level={2}>Statistiques de connexion</Typography.Title>
-                            <Typography.Paragraph>Visualiser le nombre de connexions par jour sur un lapse de temps souhaité.</Typography.Paragraph>
-
+                            <PageSummary
+                                   title="Statistiques de connexion"
+                                   description="Visualiser le nombre de connexions par jour sur un lapse de temps souhaité." />
+                                   
                             <div className="w-full flex flex-row justify-center">
                                    <div className='xl:w-4/5 w-full space-y-5'>
                                           <DateRangePicker

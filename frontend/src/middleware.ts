@@ -28,6 +28,7 @@ const routeForAdmin = [
        '/gestion-utilisateurs',
        '/gestion-utilisateurs-historique',
        '/statistiques/connexions',
+       '/gestion-categories',
 ];
 
 // Routes accessible to Super SuperAdmins (SuperAdministrateur)

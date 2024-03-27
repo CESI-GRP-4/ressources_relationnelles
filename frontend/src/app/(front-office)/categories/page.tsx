@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { List, Card, Button } from 'antd';
 import axios from 'axios';
 import { Category } from '@/types/category';
-import CategoryCard from '@/components/categoryCard';
+import CategoryCard from '@/components/back-office/categories-management/categoryCard';
 
 const DefaultCategories: Category[] = [
        {
@@ -99,16 +99,11 @@ export default function CategoriesPage() {
        return (
               <div>
                      <h1>Liste des Catégories</h1>
-                     <List
-                            grid={{ gutter: 10, column: 6 }}
-                            style={{ paddingTop: "2%", paddingLeft: "1%" }}
-                            dataSource={categories}
-                            renderItem={(categorie: any) => (
-                                   <List.Item>
-                                          <CategoryCard category={categorie} />
-                                   </List.Item>
-                            )}
-                     />
+                     <div className="grid grid-cols-3 gap-4">
+                            {categories.map((category) => (
+                                   <CategoryCard key={category.id} category={category} />
+                            ))}
+                     </div>
               </div>
        );
 }

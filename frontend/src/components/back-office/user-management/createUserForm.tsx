@@ -69,7 +69,6 @@ export default function CreateUserForm({ refreshUsers }: { refreshUsers: () => v
                             throw new Error('Error');
                      } else {
                             handleOk();
-
                      }
               } catch (error) {
                      const axiosError = error as AxiosError;
