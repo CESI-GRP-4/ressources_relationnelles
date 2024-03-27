@@ -16,7 +16,7 @@ export default function CategoryCard({ category, refreshCategories }: { category
                             hoverable
                             style={{ borderColor: category.isActive ? category.color : undefined, minWidth: '300px', maxWidth: '300px' }}
 
-                            className="m-2 !cursor-default"
+                            className="m-2 !cursor-default h-fit"
                             actions={[
                                    <Button key={"Modify"} type="link" onClick={showModal}>Modifier</Button> // This is the trigger
                             ]}
