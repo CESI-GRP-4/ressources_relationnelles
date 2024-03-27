@@ -8,6 +8,7 @@ use App\Traits\FieldMappingTrait;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class CategoryController extends Controller {
 
@@ -289,7 +290,10 @@ class CategoryController extends Controller {
         }
 
         $validator = Validator::make($request->all(), [
-            'title' => 'string|unique:categories',
+            'title' => [
+                'string',
+                Rule::unique('categories')->ignore($category->id_category, 'id_category')
+            ],
             'description' => 'string',
             'icon' => 'string',
             'color' => ['string', 'regex:/^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/'],
