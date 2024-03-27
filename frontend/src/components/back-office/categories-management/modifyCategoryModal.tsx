@@ -3,7 +3,7 @@ import { Modal, Button, Form, Input, Checkbox, message } from "antd";
 import { useState } from "react";
 import { DeleteOutlined } from "@ant-design/icons";
 import axios, { AxiosError } from "axios";
-export default function ModifyCategoryModal({ category, visible, setVisible }: { category: Category, visible: boolean, setVisible: Function }) {
+export default function ModifyCategoryModal({ category, visible, setVisible, refreshCategories }: { category: Category, visible: boolean, setVisible: Function, refreshCategories: Function}) {
        const [isModifyingCategoryLoading, setIsModifyingCategoryLoading] = useState<boolean>(false);
 
        const onSubmit = async (values: any) => {
@@ -29,7 +29,7 @@ export default function ModifyCategoryModal({ category, visible, setVisible }: {
                      if (response.status === 200) {
                             message.success("Catégorie modifiée avec succès")
                             console.log(response.data)
-
+                            refreshCategories();
                      }
               } catch (error) {
                      console.error(error);
@@ -39,7 +39,13 @@ export default function ModifyCategoryModal({ category, visible, setVisible }: {
                             switch (axiosError.response.status) {
                                    case 403:
                                           message.error("Vous n'êtes pas autorisé à modifier cette catégorie")
-                                          break
+                                          break;
+                                   case 404:
+                                          message.error("Catégorie introuvable")
+                                          break;
+                                   case 422:
+                                          message.error("Erreur avec les données saisies")
+                                          break;
                                    default:
                                           message.error("Erreur lors de la modification de la catégorie")
                             }
@@ -58,6 +64,7 @@ export default function ModifyCategoryModal({ category, visible, setVisible }: {
               icon: string,
               isActive: boolean
        }
+
        return (
               <div>
                      <Modal
@@ -115,19 +122,24 @@ export default function ModifyCategoryModal({ category, visible, setVisible }: {
                                           </Form.Item>
 
                                           <div className="flex flex-row justify-between items-center mt-4">
-                                                 <div>
-                                                        <Button icon={<DeleteOutlined />} type="primary" danger>
-                                                               Supprimer
-                                                        </Button>
-                                                 </div>
-                                                 <div className="flex flex-row gap-2">
-                                                        <Button key="back" onClick={() => setVisible(false)}>
-                                                               Annuler
-                                                        </Button>
-                                                        <Button key="submit" htmlType="submit" type="primary">
-                                                               Enregistrer
-                                                        </Button>
-                                                 </div>
+                                                 <Form.Item >
+                                                        <div>
+                                                               <Button icon={<DeleteOutlined />} type="primary" danger>
+                                                                      Supprimer
+                                                               </Button>
+                                                        </div>
+                                                 </Form.Item>
+
+                                                 <Form.Item >
+                                                        <div className="flex flex-row gap-2">
+                                                               <Button key="back" onClick={() => setVisible(false)}>
+                                                                      Annuler
+                                                               </Button>
+                                                               <Button key="submit" htmlType="submit" type="primary">
+                                                                      Enregistrer
+                                                               </Button>
+                                                        </div>
+                                                 </Form.Item>
                                           </div>
                                    </Form>
                             </div>

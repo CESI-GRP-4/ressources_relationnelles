@@ -7,7 +7,7 @@ import ModifyCategoryModal from "@/components/back-office/categories-management/
 
 const { Text, Paragraph, Title } = Typography;
 
-export default function CategoryCard({ category }: { category: Category }) {
+export default function CategoryCard({ category, refreshCategories }: { category: Category, refreshCategories: Function }) {
        const [isModalVisible, setIsModalVisible] = useState(false);
        const showModal = () => setIsModalVisible(true);
        return (
@@ -43,7 +43,8 @@ export default function CategoryCard({ category }: { category: Category }) {
                                    }
                             />
                      </Card >
-                     <ModifyCategoryModal category={category} visible={isModalVisible} setVisible={setIsModalVisible} /></>
+                     <ModifyCategoryModal category={category} visible={isModalVisible} setVisible={setIsModalVisible} refreshCategories={refreshCategories} />
+              </>
 
        );
 }

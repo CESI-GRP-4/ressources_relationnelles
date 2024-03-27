@@ -11,6 +11,15 @@ import ModifyCategoryModal from "@/components/back-office/categories-management/
 export default function CategoryManagement() {
        const [categories, setCategories] = useState<Category[]>([])
        const [isLoading, setIsLoading] = useState<boolean>(true)
+       const [triggerRefresh, setTriggerRefresh] = useState(false);
+
+       const refreshCategories = () => {
+              setTriggerRefresh((prev) => !prev);
+       };
+       // we change the state of the trigger, which is a boolean, then we listen to the changes of this trigger to call the fetchCategories method
+       useEffect(() => {
+              fetchCategories();
+       }, [triggerRefresh]);
 
        useEffect(() => {
               fetchCategories()
@@ -32,15 +41,15 @@ export default function CategoryManagement() {
                      console.error(error);
                      const axiosError = error as AxiosError
 
-                     if(axiosError.response){
-                            switch(axiosError.response.status){
+                     if (axiosError.response) {
+                            switch (axiosError.response.status) {
                                    case 403:
                                           message.error("Vous n'êtes pas autorisé à accéder à cette page")
                                           break
                                    default:
                                           message.error("Erreur lors de la récupération des catégories")
                             }
-                     } else{
+                     } else {
                             message.error("Erreur lors de la récupération des catégories")
                      }
               }
@@ -56,7 +65,7 @@ export default function CategoryManagement() {
                      ) : (
                             <div className="flex flex-wrap gap-10 justify-center">
                                    {categories.map((category) => (
-                                          <CategoryCard key={category.id} category={category} />
+                                          <CategoryCard key={category.id} category={category} refreshCategories={refreshCategories} />
                                    ))}
                             </div>
                      )}
