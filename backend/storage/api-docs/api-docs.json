@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "title": "(Re)Sources Relationnelles",
-        "version": "0.23"
+        "version": "0.24"
     },
     "servers": [
         {
@@ -712,6 +712,145 @@
                 ]
             }
         },
+        "/createUser": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Create a new user",
+                "description": "Registers a new user into the system with provided user details. Validates input data and checks for email uniqueness. On success, sends a verification email.",
+                "operationId": "createUser",
+                "requestBody": {
+                    "description": "User data needed to register a new account",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "firstName",
+                                    "lastName",
+                                    "email",
+                                    "password",
+                                    "role"
+                                ],
+                                "properties": {
+                                    "firstName": {
+                                        "type": "string",
+                                        "example": "John"
+                                    },
+                                    "lastName": {
+                                        "type": "string",
+                                        "example": "Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john.doe@example.com"
+                                    },
+                                    "role": {
+                                        "description": "The role name must exist in the roles table.",
+                                        "type": "string",
+                                        "example": "User"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User created successfully"
+                                        },
+                                        "user": {
+                                            "$ref": "#/components/schemas/UserDetail"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Champ(s) incorects"
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "firstName": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The first name field is required."
+                                                    }
+                                                },
+                                                "lastName": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The last name field is required."
+                                                    }
+                                                },
+                                                "role": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The selected role is invalid."
+                                                    }
+                                                },
+                                                "email": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "Email already take"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Super Admin role required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Forbidden - Super Admin role required."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
         "/editUser/{id}": {
             "post": {
                 "tags": [
@@ -949,12 +1088,12 @@
             }
         },
         "/banUser/{id}": {
-            "patch": {
+            "post": {
                 "tags": [
                     "Users"
                 ],
                 "summary": "Ban a user",
-                "description": "Ban a user . Administrators and Super Administrators cannot be ban.",
+                "description": "Bans a user either permanently or until a specified timestamp. Super Administrators and Administrators cannot be banned.",
                 "operationId": "banUser",
                 "parameters": [
                     {
@@ -967,9 +1106,33 @@
                         }
                     }
                 ],
+                "requestBody": {
+                    "description": "Ban details",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "isPermanent"
+                                ],
+                                "properties": {
+                                    "isPermanent": {
+                                        "description": "Whether the ban is permanent",
+                                        "type": "boolean"
+                                    },
+                                    "banTimestamp": {
+                                        "description": "The UNIX timestamp until which the user is banned. Required if `isPermanent` is false.",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
-                        "description": "User has been banned.",
+                        "description": "User has been banned",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -984,8 +1147,23 @@
                             }
                         }
                     },
+                    "422": {
+                        "description": "Validation error or ban date in the past",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
                     "403": {
-                        "description": "Unauthorized",
+                        "description": "Unauthorized attempt to ban an Administrator or Super Administrator",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1083,6 +1261,81 @@
                     }
                 ]
             }
+        },
+        "/usershistory": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Fetch users' history",
+                "description": "Retrieves a paginated history of actions performed on users, including detailed information about the user modified and the user who performed the modification.",
+                "operationId": "getUsersHistory",
+                "parameters": [
+                    {
+                        "name": "perPage",
+                        "in": "query",
+                        "description": "Number of history records per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number to retrieve",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "userHistory": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/UserHistoryRecord"
+                                            }
+                                        },
+                                        "total": {
+                                            "type": "integer"
+                                        },
+                                        "perPage": {
+                                            "type": "integer"
+                                        },
+                                        "currentPage": {
+                                            "type": "integer"
+                                        },
+                                        "lastPage": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation Error"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -1099,6 +1352,39 @@
                     },
                     "code": {
                         "description": "Country code",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "UserHistoryRecord": {
+                "description": "A record of an action performed on a user",
+                "properties": {
+                    "userModified": {
+                        "$ref": "#/components/schemas/UserDetail"
+                    },
+                    "modifyBy": {
+                        "$ref": "#/components/schemas/UserDetail"
+                    },
+                    "action": {
+                        "description": "The type of action performed",
+                        "type": "string"
+                    },
+                    "time": {
+                        "description": "The timestamp when the action was performed",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "colName": {
+                        "description": "The column name that was modified, applicable for 'Modify' actions",
+                        "type": "string"
+                    },
+                    "newValue": {
+                        "description": "The new value for the modified column, applicable for 'Modify' actions",
+                        "type": "string"
+                    },
+                    "oldValue": {
+                        "description": "The old value for the modified column, applicable for 'Modify' actions",
                         "type": "string"
                     }
                 },

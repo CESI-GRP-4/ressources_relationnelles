@@ -14,9 +14,10 @@ import { useEffect, useState } from 'react';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { message } from 'antd';
 import dayjs from 'dayjs';
-import { Card, Typography } from "antd";
+import { Card, Typography, Spin } from "antd";
 const { Paragraph } = Typography;
-
+import AverageDisplay from './average';
+import AverageConnection from '@/types/averageConnection';
 ChartJS.register(
        CategoryScale,
        LinearScale,
@@ -50,7 +51,7 @@ export default function ConnectionsChart({ dateRange, isPreview = false }: { dat
        });
 
        const [isGraphLoading, setIsGraphLoading] = useState(true);
-       const [average, setAverage] = useState<{ day: string, value: number } | null>(null);
+       const [average, setAverage] = useState<AverageConnection | null>(null);
 
        useEffect(() => {
               let startDate = '';
@@ -96,12 +97,12 @@ export default function ConnectionsChart({ dateRange, isPreview = false }: { dat
                                    datasets: [{
                                           label: 'Nombre de connexions',
                                           data: datasetData,
-                                          backgroundColor: 'rgb(75, 192, 192)',
+                                          backgroundColor: 'rgb(97, 121, 195)',
                                           borderColor: 'rgba(75, 192, 192, 0.2)',
                                           // borderRadius: Number.MAX_VALUE,
                                    }],
                             });
-                            setAverage(response.data.average);
+                            setAverage(response.data.average as AverageConnection);
                      } else {
                             throw new Error('Invalid status code')
                      }
@@ -140,14 +141,15 @@ export default function ConnectionsChart({ dateRange, isPreview = false }: { dat
        return (
               <>
                      {(average && !isPreview) && (
-                            <Card title="Statistique moyenne" bordered={false} className='w-fit'>
-                                   <Paragraph>
-                                          Le jour avec le plus de connexions en moyenne est le <strong>{average.day}</strong> avec <strong>{average.value}</strong> connexion(s).
-                                   </Paragraph>
-                            </Card>
+                            <AverageDisplay average={average}></AverageDisplay>
                      )}
-                     <Bar className='w-full' data={data} options={options} />
+                     {isGraphLoading ? (
+                            <div className='w-full flex flex-row justify-center mt-10'>
+                                   <Spin></Spin>
+                            </div>
+                     ) : (
+                            <Bar className='w-full' data={data} options={options} />
+                     )}
               </>
-
        );
 }

@@ -25,7 +25,6 @@ export default function VerificationMail() {
                                           responseType: 'json',
                                           timeout: 10000,
                                    });
-                                   console.log(logInResponse)
                                    setIsVerified(logInResponse.status === 200)
                             } catch (error) {
                                    console.error('Error: ', error);

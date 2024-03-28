@@ -9,23 +9,15 @@ import { useUser } from '@/providers/userProvider';
 import { Icon as Iconify } from '@iconify/react';
 import { FilterDropdownProps } from 'antd/es/table/interface';
 import { RefObject } from 'react';
-import CreateUserForm from '@/components/createUserForm';
 import BanUserButton from '@/components/back-office/user-management/banUserButton';
 import DeleteUserButton from "@/components/back-office/user-management/deleteUserButton";
 import Country from '@/types/country';
 import SelectCountry, { fetchCountries } from '../../selectCountry';
+import { tableSettings } from '@/utils/tableParams';
+import CreateUserForm from "@/components/createUserForm";
 
 const EditableTable: React.FC = () => {
-       interface tableSettings {
-              perPage: number;
-              page: number;
-              total?: number;
-              lastPage?: number;
-              sortBy?: string;
-              sortDirection?: "asc" | "desc";
-              searchColumn?: string;
-              searchValue?: string;
-       }
+
        const currentUser = useUser();
        const [editUserForm] = Form.useForm();
        const [tableData, setTableData] = useState([] as User[]);
@@ -189,7 +181,6 @@ const EditableTable: React.FC = () => {
        });
 
        const handleTableChange = (pagination: any, filters: any, sorter: any) => {
-              console.log("table settings changed", tableParams)
               fetchData({ ...tableParams, perPage: pagination.pageSize, page: pagination.current, sortBy: sorter.order ? sorter.field : undefined, sortDirection: sorter.order ? (sorter.order === 'ascend' ? 'asc' : 'desc') : undefined });
        }
 
@@ -205,8 +196,6 @@ const EditableTable: React.FC = () => {
                             responseType: 'json',
                             timeout: 10000, // * Increased value because we had some timeout errors
                      });
-
-                     console.log("response", response.data);
                      const userData: User[] = response.data.users;
                      setTableData(userData);
                      setTableParams({ ...tableParams, total: response.data.totalUsers, lastPage: response.data.lastPage, perPage: tableParams.perPage, page: tableParams.page });
@@ -480,43 +469,51 @@ const EditableTable: React.FC = () => {
               fetchData(tableParams);
        };
 
+       const handleUserAdded = () => {
+              fetchData(tableParams);
+       };
+
        return (
               <div className='space-y-10'>
-                     <div className="flex flex-col items-start lg:flex-row lg:items-center gap-5">
-                            <Select
-                                   maxTagCount={5}
-                                   mode="multiple"
-                                   allowClear
-                                   className='w-72'
-                                   placeholder="Sélectionner les colonnes à afficher"
-                                   value={selectedColumns}
-                                   onChange={handleColumnChange}
-                            >
-                                   {columns.map(col => (
-                                          <Select.Option key={col.dataIndex as string} value={col.dataIndex as string}>
-                                                 {col.title as string}
-                                          </Select.Option>
-                                   ))}
-                            </Select>
-                            <div>
-                                   <Button type="primary" onClick={() => setSelectedColumns(columns.map(col => col.dataIndex as string))}>Tout afficher</Button>
-                            </div>
-                            <div>
-                                   <Button type="primary" icon={<ReloadOutlined />} onClick={() => fetchData(tableParams)}>Rafraîchir</Button>
+                     <div className="flex flex-col lg:flex-row justify-start lg:justify-between lg:items-center items-start space-y-5 lg:space-y-0">
+                            <div className="flex flex-col items-start lg:flex-row lg:items-center gap-5">
+                                   <Select
+                                          maxTagCount={5}
+                                          mode="multiple"
+                                          allowClear
+                                          className='w-72'
+                                          placeholder="Sélectionner les colonnes à afficher"
+                                          value={selectedColumns}
+                                          onChange={handleColumnChange}
+                                   >
+                                          {columns.map(col => (
+                                                 <Select.Option key={col.dataIndex as string} value={col.dataIndex as string}>
+                                                        {col.title as string}
+                                                 </Select.Option>
+                                          ))}
+                                   </Select>
+                                   <div>
+                                          <Button type="primary" onClick={() => setSelectedColumns(columns.map(col => col.dataIndex as string))}>Tout afficher</Button>
+                                   </div>
+                                   <div>
+                                          <Button type="primary" icon={<ReloadOutlined />} onClick={() => fetchData(tableParams)}>Rafraîchir</Button>
+                                   </div>
+
+                                   <div>
+                                          <Checkbox
+                                                 checked={isFixed}
+                                                 onChange={(e) => setIsFixed(e.target.checked)}
+                                          >
+                                                 {`Rendre les colonnes "Email et Actions" fixes`}
+                                          </Checkbox>
+
+                                   </div>
+
                             </div>
 
                             <div>
-                                   <Checkbox
-                                          checked={isFixed}
-                                          onChange={(e) => setIsFixed(e.target.checked)}
-                                   >
-                                          {`Rendre les colonnes "Email et Actions" fixes`}
-                                   </Checkbox>
+                                   {currentUser.user?.role === 'SuperAdministrateur' && <CreateUserForm refreshUsers={handleUserAdded} />}
                             </div>
-                     </div>
-                     <div>
-                            {/* ajouter un utilisateur */}
-                            {/* <CreateUserForm></CreateUserForm> */}
                      </div>
                      <Form form={editUserForm} component={false}>
                             <Table
