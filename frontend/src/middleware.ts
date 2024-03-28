@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const routeForEveryone = ['/'];
+const routeForEveryone = ['/','/ressources','/creer-ressource','/^\/une-ressource(?:\/\d+)?$/'];
 
 // Routes accessible without authentication
 const routeWithoutAuth = [
@@ -98,9 +98,24 @@ export function middleware(request: NextRequest) {
                      break;
        }
 
-       if (allowedPaths.some(allowedPath => allowedPath.includes(path))) {
+       if (allowedPaths.some(route => {
+              if (typeof route === 'string') {
+                  // Gestion des routes sous forme de chaînes de caractères
+                  if (route.endsWith('/')) {
+                      return path.startsWith(route);
+                  } else {
+                      return route === path;
+                  }
+              } else if ((route as any) instanceof RegExp) {
+                  // Gestion des routes sous forme d'expressions régulières
+                  return (route as RegExp).test(path);
+              } else {
+                  // Autre type non pris en charge
+                  return false;
+              }
+          })) {
               return NextResponse.next();
-       }
+          }
 
        // Redirect users not allowed to access the path
        return NextResponse.redirect(new URL('/connexion', request.url));
