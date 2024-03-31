@@ -1,13 +1,16 @@
 // /creer-ressource/page.tsx
 "use client"
 import { useState, useEffect } from "react";
-import { Form, Input, Select, Button, Upload, message } from "antd";
+import { Form, Input, Select, Button, Upload, message, Typography, Checkbox } from "antd";
 import { InboxOutlined, SaveOutlined } from "@ant-design/icons";
 import axios, { AxiosResponse } from "axios";
 import type Resource from "@/types/resource";
+import type User from '@/types/user';
+import { useUser } from '@/providers/userProvider';
 
 const { Option } = Select;
 const { Dragger } = Upload;
+const { Title } = Typography;
 
 
 
@@ -16,7 +19,7 @@ export default function CreateResourceForm() {
        const [isSubmitting, setSubmitting] = useState(false);
        const [categories, setCategories] = useState([]);
        const [categoriesLoaded, setCategoriesLoaded] = useState(false);
-
+       const { user } = useUser();
        // Utilisez useEffect pour récupérer les catégories et les statuts lors du chargement du composant
        useEffect(() => {
               const fetchCategories = async () => {
@@ -44,7 +47,9 @@ export default function CreateResourceForm() {
        ];
 
        const onFinish = async (ressourceForm: Resource) => {
-              console.log("Données du formulaire:", ressourceForm); // Afficher les données dans la console
+              const ressourceFormWithUserId = { ...ressourceForm, userId: user?.id };
+
+              console.log("Données du formulaire:", ressourceFormWithUserId); // Afficher les données dans la console
 
               setSubmitting(true);
 
@@ -54,7 +59,7 @@ export default function CreateResourceForm() {
                             method: 'post',
                             baseURL: 'http://localhost/api',
                             url: '/createResources',
-                            data: ressourceForm,
+                            data: ressourceFormWithUserId,
                             responseType: 'json',
                             timeout: 10000,
                      });
@@ -74,7 +79,7 @@ export default function CreateResourceForm() {
 
        return (
               <div>
-                     <h1 className="text-center mt-4 mb-4">Création de ressource</h1>
+                     <Title style={{ textAlign: 'center', marginTop: '2%', marginBottom: '2%' }}>Créer une ressource</Title>
                      <div className="row justify-content-center">
                             <div className="col-md-6">
                                    <Form
@@ -118,6 +123,16 @@ export default function CreateResourceForm() {
                                                  </Select>
                                           </Form.Item>
 
+                                          <Form.Item
+                                                 label="Ressource publique"
+                                                 name="isPublic"
+                                                 valuePropName="checked" // Pour gérer la valeur cochée
+                                                 initialValue={true} // Valeur par défaut cochée
+                                                 rules={[{ required: true}]}
+                                          >
+                                                 <Checkbox />
+                                          </Form.Item>
+
 
                                           <Form.Item label="Fichiers" name="files" valuePropName="fileList" getValueFromEvent={(e) => e.fileList} >
                                                  <Dragger style={{ width: "50%" }}>
@@ -127,6 +142,7 @@ export default function CreateResourceForm() {
                                                         <p className="ant-upload-text">Cliquez ou faites glisser des fichiers ici</p>
                                                  </Dragger>
                                           </Form.Item>
+
 
                                           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                                                  <Button icon={<SaveOutlined />} type="primary" htmlType="submit" loading={isSubmitting}>

@@ -1,7 +1,7 @@
 // /ressources/page.tsx
 "use client"
 import React, { useEffect, useState } from 'react';
-import { List, Card, Button, Input, Select, Pagination, Typography, PaginationProps } from 'antd';
+import { List, Card, Button, Input, Select, Pagination, Typography } from 'antd';
 
 import axios from 'axios';
 import type Resource from "@/types/resource";
@@ -15,9 +15,9 @@ const DefaultRessources = [
   { id: 0, label: 'Ressource 0', description: 'Description 0', content: 'Contenu 0', view_count: BigInt(20), id_category: 0, id_user: 0, creation_date: new Date() },
   { id: 1, label: 'Ressource 1', description: 'Description 1', content: 'Contenu 1', view_count: BigInt(30), id_category: 1, id_user: 1, creation_date: new Date('2024-03-09') },
   { id: 2, label: 'Ressource 2', description: 'Description 2', content: 'Contenu 2', view_count: BigInt(20), id_category: 0, id_user: 0, creation_date: new Date() },
-  { id: 3, label: 'Ressource 3', description: 'Description 3', content: 'Contenu 3', view_count: BigInt(20), id_category: 0, id_user: 0, creation_date: new Date() },
-  { id: 4, label: 'Ressource 4', description: 'Description 4', content: 'Contenu 4', view_count: BigInt(20), id_category: 0, id_user: 0, creation_date: new Date() },
-  { id: 5, label: 'Ressource 5', description: 'Description 5', content: 'Contenu 5', view_count: BigInt(20), id_category: 0, id_user: 0, creation_date: new Date() },
+  { id: 3, label: 'Ressource 3', description: 'Description 3', content: 'Contenu 3', view_count: BigInt(20), id_category: 0, id_user: 0, creation_date: new Date('2024-12-10') },
+  { id: 4, label: 'Ressource 4', description: 'Description 4', content: 'Contenu 4', view_count: BigInt(20), id_category: 0, id_user: 0, creation_date: new Date('2024-02-10') },
+  { id: 5, label: 'Ressource 5', description: 'Description 5', content: 'Contenu 5', view_count: BigInt(20), id_category: 0, id_user: 0, creation_date: new Date('2024-02-10') },
   { id: 6, label: 'Ressource 6', description: 'Description 6', content: 'Contenu 6', view_count: BigInt(20), id_category: 0, id_user: 0, creation_date: new Date() },
   { id: 7, label: 'Ressource 7', description: 'Description 0', content: 'Contenu 0', view_count: BigInt(20), id_category: 0, id_user: 0, creation_date: new Date() },
   { id: 8, label: 'Ressource 8', description: 'Description 1', content: 'Contenu 1', view_count: BigInt(30), id_category: 1, id_user: 1, creation_date: new Date('2024-03-09') },
@@ -183,7 +183,7 @@ export default function RessourcesPage() {
   /*Filtres à corriger (Nom du créateur et Date de création*/
   return (
     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginTop: '2%' }}>
-      <Title>Liste des Ressources</Title>
+      <Title>Liste des ressources</Title>
       <div style={{ marginBottom: '16px', marginTop: '1%' }}> {/* Modification de style */}
         <Search placeholder="Rechercher une ressource" onSearch={handleSearch} style={{ width: 450, marginRight: '8px' }} /> {/* Augmentation de la largeur */}
       </div>
