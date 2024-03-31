@@ -185,7 +185,7 @@ export default function RessourcesPage() {
     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginTop: '2%' }}>
       <Title>Liste des Ressources</Title>
       <div style={{ marginBottom: '16px', marginTop: '1%' }}> {/* Modification de style */}
-        <Search placeholder="Rechercher par libellé" onSearch={handleSearch} style={{ width: 450, marginRight: '8px' }} /> {/* Augmentation de la largeur */}
+        <Search placeholder="Rechercher une ressource" onSearch={handleSearch} style={{ width: 450, marginRight: '8px' }} /> {/* Augmentation de la largeur */}
       </div>
       <div style={{ display: 'flex', flexDirection: 'row', marginBottom: '16px' }}> {/* Ajout de marginBottom */}
         <Select placeholder="Trier par" style={{ width: 200 }} onChange={handleSortChange}>
