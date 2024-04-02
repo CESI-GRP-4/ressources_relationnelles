@@ -52,11 +52,14 @@ export default function CreateResourceForm() {
                      // Envoi des données au backend avec axios
                      const response: AxiosResponse = await axios({
                             method: 'post',
-                            baseURL: 'http://localhost/api',
-                            url: '/createResources',
+                            baseURL: 'http://localhost:3000',
+                            url: '/creer-ressource',
                             data: ressourceForm,
                             responseType: 'json',
                             timeout: 10000,
+                            headers: {
+                                   'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+                            }
                      });
 
                      // Traitement de la réponse (éventuellement)
