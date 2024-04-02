@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { Form, Input, Select, Button, Upload, message } from "antd";
 import { InboxOutlined, SaveOutlined } from "@ant-design/icons";
 import axios, { AxiosResponse } from "axios";
+
+// ! Can't work !!! Type doesnt exist
 import type Resource from "@/types/resource";
 
 const { Option } = Select;
