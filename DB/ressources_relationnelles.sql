@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : lun. 18 mars 2024 à 22:22
+-- Généré le : mar. 02 avr. 2024 à 21:26
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -654,15 +654,18 @@ CREATE TABLE `resources` (
   `view_count` bigint(20) NOT NULL,
   `id_user` int(11) NOT NULL,
   `id_category` int(11) NOT NULL,
-  `id_status` int(11) NOT NULL
+  `id_status` int(11) NOT NULL,
+  `file` varchar(200) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `resources`
 --
 
-INSERT INTO `resources` (`id_resource`, `label`, `description`, `content`, `is_public`, `view_count`, `id_user`, `id_category`, `id_status`) VALUES
-(1, 'Resource 1', 'Description of Resource 1', 'Content of Resource 1', 1, 100, 1, 1, 1);
+INSERT INTO `resources` (`id_resource`, `label`, `description`, `content`, `is_public`, `view_count`, `id_user`, `id_category`, `id_status`, `file`, `created_at`, `updated_at`) VALUES
+(1, 'Resource 1', 'Description of Resource 1', 'Content of Resource 1', 1, 100, 1, 1, 1, NULL, '2024-04-02 19:25:44', '2024-04-02 19:25:44');
 
 -- --------------------------------------------------------
 
