@@ -52,7 +52,10 @@ export default function CreateResourceForm() {
                      // Envoi des données au backend avec axios
                      const response: AxiosResponse = await axios({
                             method: 'post',
-                            baseURL: 'http://localhost:3000',
+
+                            // ! Not possible !!!!!
+                            // TODO: Look at it later
+                            baseURL: 'http://localhost:3000', 
                             url: '/creer-ressource',
                             data: ressourceForm,
                             responseType: 'json',

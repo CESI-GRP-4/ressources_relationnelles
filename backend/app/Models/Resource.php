@@ -44,6 +44,8 @@ class Resource extends Model
 
     public function category()
     {
+       // ! Weird, Category model doesnt exist
+       // TODO: Look at it later
         return $this->belongsTo(Category::class, 'id_category');
     }
 }

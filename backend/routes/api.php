@@ -27,7 +27,7 @@ Route::get('countries', [CountryController::class, 'getCountries']);
 Route::group(['middleware' => ['jwt.auth']], function () {
        Route::post('logout', [AuthController::class, 'logout']);
        Route::post('verifyUser', [AuthController::class, 'verifyUser']);
-    Route::post('creer-ressource', [ResController::class, 'store']);
+       Route::post('creer-ressource', [ResController::class, 'store']);
 
        Route::group(['middleware' => 'isSuperAdmin'], function () {
               Route::post('createUser', [UserController::class, 'createUser']);
