@@ -32,10 +32,9 @@ export default function ReinitialisationMotDePasse() {
               }
 
               try {
-                     console.log("reset password TOKEN: ", token)
                      const response: AxiosResponse = await axios({
                             method: 'post',
-                            baseURL: 'http://localhost/api',
+                            baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
                             url: '/forgot-password/reset',
                             data: {
                                    password: form.password,

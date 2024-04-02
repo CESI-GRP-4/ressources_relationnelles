@@ -18,14 +18,13 @@ export default function VerificationMail() {
                             try {
                                    const logInResponse: AxiosResponse = await axios({
                                           method: 'post',
-                                          baseURL: 'http://localhost/api',
+                                          baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
                                           url: "/email/verify",
                                           data: { token: token },
                                           withCredentials: true,
                                           responseType: 'json',
                                           timeout: 10000,
                                    });
-                                   console.log(logInResponse)
                                    setIsVerified(logInResponse.status === 200)
                             } catch (error) {
                                    console.error('Error: ', error);

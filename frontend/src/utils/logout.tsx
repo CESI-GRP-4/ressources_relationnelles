@@ -1,18 +1,21 @@
-// logout.js
+import { useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import { message } from 'antd';
-import { useUser } from "@/providers/userProvider"; // Assuming useUserContext is a hook to access setUser
+import { useUser } from "@/providers/userProvider"; // Supposons que useUser est un hook pour accéder à setUser
 import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 const useLogout = () => {
        const { setUser } = useUser();
        const router = useRouter();
+       const [isLoading, setIsLoading] = useState(false); // Ajout de l'état isLoading
 
        const logout = async () => {
+              setIsLoading(true); // Commence le chargement
               try {
                      const logOutResponse = await axios({
                             method: 'post',
-                            baseURL: 'http://localhost/api',
+                            baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
                             url: "/logout",
                             withCredentials: true,
                             responseType: 'json',
@@ -21,8 +24,6 @@ const useLogout = () => {
 
                      if (logOutResponse.status === 200) {
                             message.success('Déconnexion réussie');
-                            setUser(null); // Remove user from context/state
-                            router.replace('/connexion'); // Redirect to home page
                      }
               } catch (error) {
                      console.error('Logout request failed:', error);
@@ -46,9 +47,15 @@ const useLogout = () => {
                      } else {
                             message.error('Erreur réseau ou serveur indisponible');
                      }
+              } finally {
+                     setUser(null); // Met à jour le contexte utilisateur
+                     Cookies.remove('user'); // Supprime le cookie utilisateur
+                     sessionStorage.removeItem('user'); // Supprime les données utilisateur de la session
+                     setIsLoading(false); // Arrête le chargement quelle que soit l'issue
+                     router.replace('/connexion'); // Redirect to login page
               }
        };
-       return logout;
+       return { logout, isLoading }; // Retourne à la fois la fonction logout et l'état isLoading
 };
 
 export default useLogout;

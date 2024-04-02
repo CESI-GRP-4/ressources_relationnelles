@@ -21,7 +21,6 @@ export const fetchCountries = async () => {
               });
 
               if (response.status === 200) {
-                     console.log("response", response.data);
                      globalCountries = response.data.countries; // Store fetched countries in the global array
               }
        } catch (error) {
@@ -96,7 +95,9 @@ function SelectCountry({ value, onChange, ...rest }: { value: any, onChange: any
                      {countries.map(country => (
                             <Select.Option key={country.code} value={country.name}>
                                    <Space>
-                                          <Avatar src={`https://flagcdn.com/h240/${country.code.toLowerCase()}.png`} />
+                                          <Avatar src={`https://flagcdn.com/h240/${country.code.toLowerCase()}.png`}
+                                                 alt={`Drapeau de ${country.name}`}
+                                          />
                                           <span>{country.name}</span>
                                    </Space>
                             </Select.Option>
