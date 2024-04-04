@@ -19,27 +19,22 @@ export default function ARessourcePage ({ params }: { params: { id: string } }){
   useEffect(() => {
     const fetchARessource = async () => {
       try {
-        const responseRessource: any = await axios({
-          method: 'post',
-          baseURL: 'http://localhost/api', // * Might be changed depending on the backend implementation
-          url: "/getAResource",
-          data: { idRessource: id },
-          withCredentials: true,
+        const response = await axios({
+          method: 'GET',
+          baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
+          url: `/ressource/${id}`,
           responseType: 'json',
-          timeout: 10000, // * Increased value because we had some timeout errors
+          timeout: 10000,
+          withCredentials: true,
         });
-        setResource(responseRessource.data);
+        setResource(response.data.ressource);
       } catch (error) {
         console.error("Erreur lors de la récupération de la ressource:", error);
-        // En cas d'erreur, utilisez la ressource par défaut
-        const defaultResource = DefaultResource.find(item => item.id === Number(id));
-        if (defaultResource) {
-          console.log("resource found")
-          setResource(defaultResource);
-        }
+        // Afficher un message d'erreur à l'utilisateur
+        // Utilisez la ressource par défaut uniquement en cas d'échec de la récupération de la ressource
+        setResource(null);
       }
     };
-
     if (id) {
       fetchARessource();
     } else {

@@ -27,12 +27,15 @@ Route::get('countries', [CountryController::class, 'getCountries']);
 Route::get('categories', [CategoryController::class, 'getActiveCategories']);
 Route::get('category/{id}', [CategoryController::class, 'getCategory']);
 
+// Ressources
+Route::get('ressource/{id}', [RessourceController::class, 'getRessource']);
+
 // Route::group(['middleware' => ['jwt.auth','jwt.refresh']], function() { // for refresh token. Commented for now as we got errors
 
 Route::group(['middleware' => ['jwt.auth']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('verifyUser', [AuthController::class, 'verifyUser']);
-       Route::post('creer-ressource', [RessourceController::class, 'createRessource']);
+    Route::post('creer-ressource', [RessourceController::class, 'createRessource']);
 
     Route::group(['middleware' => 'isSuperAdmin'], function () {
         Route::post('createUser', [UserController::class, 'createUser']);
@@ -61,4 +64,5 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::group(['middleware' => 'isModerator'], function () {
         // Routes for moderators (admins & superadmins can also access these routes)
     });
+    
 });
