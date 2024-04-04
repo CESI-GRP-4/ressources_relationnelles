@@ -6,6 +6,7 @@ use App\Http\Controllers\CountryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Statistics\ConnectionController;
 use App\Http\Controllers\UserHistoryController;
+use App\Http\Controllers\RessourceController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,6 +32,7 @@ Route::get('category/{id}', [CategoryController::class, 'getCategory']);
 Route::group(['middleware' => ['jwt.auth']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('verifyUser', [AuthController::class, 'verifyUser']);
+       Route::post('creer-ressource', [RessourceController::class, 'createRessource']);
 
     Route::group(['middleware' => 'isSuperAdmin'], function () {
         Route::post('createUser', [UserController::class, 'createUser']);
