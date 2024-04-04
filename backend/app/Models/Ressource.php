@@ -37,6 +37,7 @@ class Ressource extends Model {
         'view_count',
         'id_user',
         'id_status',
+        'id_type',
         'file',
         'updated_at',
         'created_at',
