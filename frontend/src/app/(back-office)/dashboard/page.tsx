@@ -9,6 +9,7 @@ import ConnectionsChart from "@/components/back-office/statistics/connections/co
 import { PlusCircleOutlined, UserOutlined } from "@ant-design/icons";
 import UserManagementHistory from '@/components/back-office/user-management-history/usersManagementHistory';
 import PageSummary from '@/components/back-office/pageSummary';
+import CategoriesPreview from '@/components/back-office/categories-management/categoriesPreview';
 
 export default function AdminDashboard() {
        const { user } = useUser();
@@ -29,7 +30,7 @@ export default function AdminDashboard() {
                             <PlusCircleOutlined style={{ color: "blue" }} />
                             {" dans chaque carte."}
                      </>} />
-                     
+
                      <div className="flex-wrap flex mt-5 gap-5">
                             <div>
                                    <Card
@@ -84,7 +85,9 @@ export default function AdminDashboard() {
                                                  <ConnectionsChart isPreview></ConnectionsChart>
                                           </div>
                                    </Card>
+
                             }
+                            <CategoriesPreview></CategoriesPreview>
                      </div>
               </div>
        );

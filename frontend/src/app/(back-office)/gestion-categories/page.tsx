@@ -27,7 +27,7 @@ export default function CategoryManagement() {
 
        useEffect(() => {
               fetchCategories()
-       }, [])
+       }, []);
 
        const fetchCategories = async () => {
               setIsLoading(true)
