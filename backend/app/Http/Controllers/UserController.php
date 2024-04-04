@@ -780,4 +780,76 @@ class UserController extends Controller
 
         return response()->json(['message' => 'L\'utilisateur a été débanni']);
     }
+
+    /**
+     * @OA\Get(
+     *     path="/stats/users",
+     *     tags={"Statistics"},
+     *     summary="Get users statistics",
+     *     description="Returns statistics about users, including total users, distribution by roles, banned users count, and unverified emails count.",
+     *     operationId="getUsersInformation",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="totalUsers", type="integer", example=15),
+     *             @OA\Property(
+     *                 property="usersByRole",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="name", type="string", description="The name of the role"),
+     *                     @OA\Property(property="userCount", type="integer", description="The count of users with this role")
+     *                 ),
+     *                 example={
+     *                     {"name": "Administrateur", "userCount": 1},
+     *                     {"name": "Moderateur", "userCount": 5},
+     *                     {"name": "SuperAdministrateur", "userCount": 2},
+     *                     {"name": "Utilisateur", "userCount": 7}
+     *                 }
+     *             ),
+     *             @OA\Property(property="bannedUsersCount", type="integer", example=1),
+     *             @OA\Property(property="unverifiedEmailsCount", type="integer", example=6)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden - Admin access required"
+     *     )
+     * )
+     */
+    public function getUsersInformation(){
+        $totalUsers = $this->getTotalUsers();
+        $usersByRole = $this->getUsersByRole();
+        $bannedUsersCount = $this->getBannedUsersCount();
+        $unverifiedEmailsCount = $this->getUnverifiedEmailsCount();
+
+        return response()->json([
+            'totalUsers' => $totalUsers,
+            'usersByRole' => $usersByRole,
+            'bannedUsersCount' => $bannedUsersCount,
+            'unverifiedEmailsCount' => $unverifiedEmailsCount,
+        ]);
+    }
+
+    protected function getTotalUsers() {
+        return User::count();
+    }
+
+    protected function getUsersByRole() {
+        return User::select('roles.name', DB::raw('count(users.id_user) as userCount'))
+            ->join('roles', 'users.id_role', '=', 'roles.id_role')
+            ->groupBy('roles.name')
+            ->get();
+    }
+
+    protected function getBannedUsersCount() {
+        return User::where('ban_until', '>', now())->count();
+    }
+
+    protected function getUnverifiedEmailsCount() {
+        return User::where('is_verified', false)->count();
+    }
 }

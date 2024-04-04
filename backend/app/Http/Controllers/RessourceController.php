@@ -130,53 +130,14 @@ class RessourceController extends Controller
 
     }
 
-    /**
-     * @OA\Get(
-     *     path="ressource/{id}",
-     *     tags={"Ressource"},
-     *     summary="Get a resource",
-     *     description="Allows to get a resource",
-     *     operationId="getRessource",
-     *     security={{ "BearerAuth": {} }},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="Resource ID",
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
-     *     ),
-     *    
-     *     @OA\Response(
-     *         response=200,
-     *         description="Successful operation",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Ressource retrieved successfully"),
-     *             @OA\Property(
-     *                 property="ressource",
-     *                 type="object",
-     *                 ref="#/components/schemas/Ressource" // Assurez-vous de remplacer cela par la référence correcte à votre modèle de ressource
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Ressource not found",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Ressource not found")
-     *         )
-     *     )
-     * )
-     */
-    public function getRessource($id)
-    {
+
+    public function getRessource($id) {
         $ressource = Ressource::find($id);
-    
+
         if (!$ressource) {
             return response()->json(['message' => 'Ressource non trouvée'], 404);
         }
-        
+
         // TODO : Faire le format
         return response()->json(['message' => 'Ressource retrieved successfully', 'ressource' => $ressource], 200);
     }

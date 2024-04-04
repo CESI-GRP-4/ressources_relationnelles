@@ -992,7 +992,7 @@
         "/stats/connections": {
             "get": {
                 "tags": [
-                    "Stats"
+                    "Statistics"
                 ],
                 "summary": "Get connection statistics",
                 "description": "Fetches connection counts for a given date range along with the day having the highest average connections.",
@@ -1752,6 +1752,84 @@
                 ]
             }
         },
+        "/stats/users": {
+            "get": {
+                "tags": [
+                    "Statistics"
+                ],
+                "summary": "Get users statistics",
+                "description": "Returns statistics about users, including total users, distribution by roles, banned users count, and unverified emails count.",
+                "operationId": "getUsersInformation",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "totalUsers": {
+                                            "type": "integer",
+                                            "example": 15
+                                        },
+                                        "usersByRole": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "name": {
+                                                        "description": "The name of the role",
+                                                        "type": "string"
+                                                    },
+                                                    "userCount": {
+                                                        "description": "The count of users with this role",
+                                                        "type": "integer"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "example": [
+                                                {
+                                                    "name": "Administrateur",
+                                                    "userCount": 1
+                                                },
+                                                {
+                                                    "name": "Moderateur",
+                                                    "userCount": 5
+                                                },
+                                                {
+                                                    "name": "SuperAdministrateur",
+                                                    "userCount": 2
+                                                },
+                                                {
+                                                    "name": "Utilisateur",
+                                                    "userCount": 7
+                                                }
+                                            ]
+                                        },
+                                        "bannedUsersCount": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "unverifiedEmailsCount": {
+                                            "type": "integer",
+                                            "example": 6
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
         "/usersHistory": {
             "get": {
                 "tags": [
@@ -1922,6 +2000,34 @@
                     "code": {
                         "description": "Country code",
                         "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "RessourceDetail": {
+                "description": "Detailed information about a resource",
+                "properties": {
+                    "id": {
+                        "description": "The ID of the resource",
+                        "type": "integer"
+                    },
+                    "title": {
+                        "description": "The title of the resource",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "The description of the resource",
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "description": "The creation date of the resource",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "description": "The last update date of the resource",
+                        "type": "string",
+                        "format": "date-time"
                     }
                 },
                 "type": "object"

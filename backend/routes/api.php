@@ -37,10 +37,12 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::post('verifyUser', [AuthController::class, 'verifyUser']);
     Route::post('creer-ressource', [RessourceController::class, 'createRessource']);
 
+    // SuperAdmin routes
     Route::group(['middleware' => 'isSuperAdmin'], function () {
         Route::post('createUser', [UserController::class, 'createUser']);
     });
 
+    // Admin & SuperAdmin routes
     Route::group(['middleware' => 'isAdmin'], function () {
         Route::get('users', [UserController::class, 'getUsers']);
         Route::get('usersHistory', [UserHistoryController::class, 'getUsersHistory']);
@@ -58,11 +60,12 @@ Route::group(['middleware' => ['jwt.auth']], function () {
 
         Route::group(['prefix' => 'stats'], function () {
             Route::get('connections', [ConnectionController::class, 'getConnections']);
+            Route::get('users', [UserController::class, 'getUsersInformation']);
         });
     });
 
+    // Moderator, Admin & SuperAdmin routes
     Route::group(['middleware' => 'isModerator'], function () {
         // Routes for moderators (admins & superadmins can also access these routes)
     });
-    
 });
