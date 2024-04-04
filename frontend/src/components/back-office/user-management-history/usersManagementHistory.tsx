@@ -84,7 +84,7 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
                      const response = await axios({
                             method: 'get',
                             baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL, // * Might be changed depending on the backend implementation
-                            url: "/usershistory",
+                            url: "/usersHistory",
                             withCredentials: true,
                             params: tableParams,
                             responseType: 'json',
