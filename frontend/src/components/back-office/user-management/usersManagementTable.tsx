@@ -14,10 +14,9 @@ import DeleteUserButton from "@/components/back-office/user-management/deleteUse
 import Country from '@/types/country';
 import SelectCountry, { fetchCountries } from '../../selectCountry';
 import { tableSettings } from '@/utils/tableParams';
-import CreateUserForm from "@/components/createUserForm";
+import CreateUserForm from "@/components/back-office/user-management/createUserForm";
 
 const EditableTable: React.FC = () => {
-
        const currentUser = useUser();
        const [editUserForm] = Form.useForm();
        const [tableData, setTableData] = useState([] as User[]);

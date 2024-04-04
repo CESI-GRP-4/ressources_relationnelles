@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import {Button, Form, Input, message, Modal, Select, Space, notification} from "antd";
+import { Button, Form, Input, message, Modal, Select, Space, notification, Popover, Typography } from "antd";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { emailRegex, firstNameRegex, lastNameRegex } from "@/utils/regex";
-import { UserAddOutlined } from "@ant-design/icons";
+import { UserAddOutlined, CopyOutlined } from "@ant-design/icons";
+import Link from "next/link";
+const { Text } = Typography;
 
 export default function CreateUserForm({ refreshUsers }: { refreshUsers: () => void }) {
        const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,10 +18,10 @@ export default function CreateUserForm({ refreshUsers }: { refreshUsers: () => v
               role: string;
        };
 
-        interface ApiResponse {
-            message: string;
-            errors: Record<string, string[]>;
-        }
+       interface ApiResponse {
+              message: string;
+              errors: Record<string, string[]>;
+       }
 
        const emailValidationRule = {
               pattern: new RegExp(emailRegex),
@@ -67,7 +69,6 @@ export default function CreateUserForm({ refreshUsers }: { refreshUsers: () => v
                             throw new Error('Error');
                      } else {
                             handleOk();
-
                      }
               } catch (error) {
                      const axiosError = error as AxiosError;
@@ -78,17 +79,17 @@ export default function CreateUserForm({ refreshUsers }: { refreshUsers: () => v
                                           break;
 
                                    case 422:
-                                       const responseData = axiosError.response.data as ApiResponse;
-                                       const errors = responseData.errors;
-                                       const errorMessages = Object.keys(errors)
-                                             .map(key => `- ${errors[key].join(', ')}`)
-                                             .join('\n');
+                                          const responseData = axiosError.response.data as ApiResponse;
+                                          const errors = responseData.errors;
+                                          const errorMessages = Object.keys(errors)
+                                                 .map(key => `- ${errors[key].join(', ')}`)
+                                                 .join('\n');
 
                                           notification.error({
-                                              message: 'Champs manquants ou invalides',
-                                              description: `\n${errorMessages}`,
-                                              placement: 'top',
-                                              duration: 3,
+                                                 message: 'Champs manquants ou invalides',
+                                                 description: `\n${errorMessages}`,
+                                                 placement: 'top',
+                                                 duration: 3,
                                           });
                                           break;
 
@@ -180,7 +181,21 @@ export default function CreateUserForm({ refreshUsers }: { refreshUsers: () => v
                                           </Select>
                                    </Form.Item>
 
-                                   <div className="flex justify-end mt-5">
+                                   <div className="flex justify-between mt-5">
+                                          <Popover
+                                                 placement="bottomLeft"
+                                                 title={"Instructions à fournir à l'utilisateur que vous venez de créer :"}
+                                                 content={
+                                                        <Text copyable={{ text: `Consultez vos mails puis vérifiez votre adresse, ensuite réinitialisez votre mot de passe via la page de connexion ("j'ai oublié mon mot de passe"). Pour finir, connectez-vous et complétez vos informations via la page de profil`, tooltips: "", icon: <Button size="large" icon={<CopyOutlined />}>Copier les instructions</Button> }}>
+                                                               <ul>
+                                                                      <li>Consultez vos mails, Vous devez vérifier votre adresse.</li>
+                                                                      <li>{`Réinitialisez votre mot de passe. (`}<Link href="/mot-de-passe-oublie">{"mot de passe oublié"}</Link>{` dans la `}<Link href="/connexion">{"page de connexion"}</Link>{`)`}</li>
+                                                                      <li><Link href="/connexion">Connectez-vous</Link> et personnalisez vos informations via la <Link href="/profil">page profil</Link>.</li>
+                                                               </ul>
+                                                        </Text>
+                                                 }>
+                                                 <Button type="dashed">Instructions</Button>
+                                          </Popover>
                                           <Form.Item>
                                                  <Space>
                                                         <Button type="default" onClick={handleCancel}>Annuler</Button>

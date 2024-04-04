@@ -117,6 +117,16 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                                           },
                                    ]
                             },
+                            {
+                                   key:"gestion-categories",
+                                   icon: <FileDoneOutlined />,
+                                   label: (
+                                          <ConditionalTooltip title="Gestion des catégories">
+                                                 <Link href={'/gestion-categories'}>Catégories</Link>
+                                          </ConditionalTooltip>
+                                   ),
+                                   title: 'gestion-categories',
+                            }
                      ]
                      break;
               case "SuperAdministrateur":
@@ -178,6 +188,16 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                                           },
                                    ]
                             },
+                            {
+                                   key:"gestion-categories",
+                                   icon: <FileDoneOutlined />,
+                                   label: (
+                                          <ConditionalTooltip title="Gestion des catégories">
+                                                 <Link href={'/gestion-categories'}>Catégories</Link>
+                                          </ConditionalTooltip>
+                                   ),
+                                   title: 'gestion-categories',
+                            }
                      ]
                      break;
               default:

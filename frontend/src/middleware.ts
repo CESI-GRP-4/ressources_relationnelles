@@ -13,6 +13,7 @@ const routeWithoutAuth = [
 // Routes accessible to authenticated users (Utilisateur)
 const routeWithUserAuth = [
        ...routeForEveryone,
+       '/categories'
 ];
 
 // Routes accessible to Moderators (Moderateur)
@@ -27,6 +28,7 @@ const routeForAdmin = [
        '/gestion-utilisateurs',
        '/gestion-utilisateurs-historique',
        '/statistiques/connexions',
+       '/gestion-categories',
 ];
 
 // Routes accessible to Super SuperAdmins (SuperAdministrateur)

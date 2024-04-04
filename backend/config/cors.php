@@ -4,7 +4,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Cross-Origin Resource Sharing (CORS) Configuration
+    | Cross-Origin Ressource Sharing (CORS) Configuration
     |--------------------------------------------------------------------------
     */
 
