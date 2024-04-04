@@ -207,41 +207,44 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
        }
 
        return (
-              <Sider
-                     trigger={collapsed ? <RightOutlined /> : <LeftOutlined />}
-                     collapsible
-                     breakpoint="lg"
-                     collapsedWidth="0"
-                     width="200"
-                     onBreakpoint={(broken) => {
-                     }}
-                     theme="light"
-                     onCollapse={(collapsed, type) => {
-                            setCollapsed(collapsed);
-                     }}
-                     style={{ height: '100vh', position: 'fixed', left: 0, top: 0 }}
-              >
-                     <div className="flex justify-center">
-                            <Tooltip title="(Re)Sources Relationnelles - Ministère des solidarités et de la santé ">
-                                   <Image
-                                          draggable={false}
-                                          className='m-2 rounded-none'
-                                          src={logo}
-                                          alt="Logo du ministère des solidarités et de la santé"
-                                          width={130}
-                                          height={150}
+              user?.role === "Moderateur" ||
+              user?.role === "Administrateur" ||
+              user?.role === "SuperAdministrateur" ? (
+                     <Sider
+                            trigger={collapsed ? <RightOutlined /> : <LeftOutlined />}
+                            collapsible
+                            breakpoint="lg"
+                            collapsedWidth="0"
+                            width="200"
+                            onBreakpoint={(broken) => {}}
+                            theme="light"
+                            onCollapse={(collapsed, type) => {
+                                   setCollapsed(collapsed);
+                            }}
+                            style={{ height: '100vh', position: 'fixed', left: 0, top: 0 }}
+                     >
+                            <div className="flex justify-center">
+                                   <Tooltip title="(Re)Sources Relationnelles - Ministère des solidarités et de la santé ">
+                                          <Image
+                                                 draggable={false}
+                                                 className='m-2 rounded-none'
+                                                 src={logo}
+                                                 alt="Logo du ministère des solidarités et de la santé"
+                                                 width={130}
+                                                 height={150}
+                                          />
+                                   </Tooltip>
+                            </div>
+                            <div className="">
+                                   <Menu
+                                          mode="inline"
+                                          style={{ height: '100vh' }}
+                                          theme="light"
+                                          items={adminSidebarItems}
+                                          selectedKeys={[selectedKey]}
                                    />
-                            </Tooltip>
-                     </div>
-                     <div className="">
-                            <Menu
-                                   mode="inline"
-                                   style={{ height: '100vh' }}
-                                   theme="light"
-                                   items={adminSidebarItems}
-                                   selectedKeys={[selectedKey]}
-                            />
-                     </div>
-              </Sider>
-       )
+                            </div>
+                     </Sider>
+              ) : null
+       );
 }

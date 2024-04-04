@@ -121,35 +121,37 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
 
        if (isPreview) {
               return (
-                     <Card
-                            title="Actions récentes sur les utilisateurs"
-                            extra={<Link href="/gestion-utilisateurs-historique"><Button type="text" shape="circle" icon={<PlusCircleOutlined style={{ color: "blue" }} />} /></Link>}
-                     >
-                            <List
-                                   itemLayout="horizontal"
-                                   dataSource={tableData ?? []} // Directly use list.userHistory since list is now a DataType object
-                                   renderItem={(item, index) => (
-                                          <List.Item key={index}>
-                                                 <div className='flex flex-row justify-start items-center'>
-                                                        <Avatar
-                                                               src={item.userModified.imgURL}
-                                                               alt={`${item.userModified.firstName} ${item.userModified.lastName}`}
-                                                        />
-                                                        <div style={{ margin: '0 8px', display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
-                                                               <div>
-                                                                      {`${item.userModified.firstName} ${item.userModified.lastName} a été `}
-                                                                      <Tag color={getTagColor(item.action)}>{getActionText(item.action)}</Tag>
-                                                                      {` par `}
-                                                                      <Typography.Link href={`mailto:${item.modifyBy.email}`}>
-                                                                             {item.modifyBy.email}
-                                                                      </Typography.Link>
+                     <div>
+                            <Card
+                                   title="Actions récentes sur les utilisateurs"
+                                   extra={<Link href="/gestion-utilisateurs-historique"><Button type="text" shape="circle" icon={<PlusCircleOutlined style={{ color: "blue" }} />} /></Link>}
+                            >
+                                   <List
+                                          itemLayout="horizontal"
+                                          dataSource={tableData ?? []} // Directly use list.userHistory since list is now a DataType object
+                                          renderItem={(item, index) => (
+                                                 <List.Item key={index}>
+                                                        <div className='flex flex-row justify-start items-center'>
+                                                               <Avatar
+                                                                      src={item.userModified.imgURL}
+                                                                      alt={`${item.userModified.firstName} ${item.userModified.lastName}`}
+                                                               />
+                                                               <div style={{ margin: '0 8px', display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
+                                                                      <div>
+                                                                             {`${item.userModified.firstName} ${item.userModified.lastName} a été `}
+                                                                             <Tag color={getTagColor(item.action)}>{getActionText(item.action)}</Tag>
+                                                                             {` par `}
+                                                                             <Typography.Link href={`mailto:${item.modifyBy.email}`}>
+                                                                                    {item.modifyBy.email}
+                                                                             </Typography.Link>
+                                                                      </div>
                                                                </div>
                                                         </div>
-                                                 </div>
-                                          </List.Item>
-                                   )}
-                            />
-                     </Card>
+                                                 </List.Item>
+                                          )}
+                                   />
+                            </Card>
+                     </div>
               );
        }
 

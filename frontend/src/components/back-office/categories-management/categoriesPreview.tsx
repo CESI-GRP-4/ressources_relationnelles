@@ -1,4 +1,4 @@
-import { Avatar, Badge, Button, Card, List, Tag, message } from "antd";
+import { Badge, Button, Card, List, Tag, message } from "antd";
 import Link from "next/link";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import axios, { AxiosError } from "axios";
