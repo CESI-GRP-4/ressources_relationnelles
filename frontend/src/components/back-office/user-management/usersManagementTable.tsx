@@ -280,7 +280,7 @@ const EditableTable: React.FC = () => {
               }
        };
 
-       const columns: ColumnType<User>[] = [
+       const columns: any[] = [
               {
                      title: 'Email',
                      dataIndex: 'email',
@@ -402,7 +402,7 @@ const EditableTable: React.FC = () => {
               dataIndex: 'operation',
               width: 250,
               fixed: isFixed ? 'right' as const : undefined,
-              render: (_, record: User) => {
+              render: (_: undefined, record: User) => {
                      const editable = isEditingUser(record);
                      return editable ? (
                             <div>

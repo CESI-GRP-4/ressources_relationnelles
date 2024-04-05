@@ -78,6 +78,11 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
               fetchData(tableParams)
        }, []);
 
+       type DataIndexType = keyof userHistory
+       interface CustomColumnType extends ColumnType<userHistory> {
+              dataIndex?: DataIndexType;
+       }
+
        const fetchData = async (tableParams: tableSettings) => {
               setIsTableLoading(true);
               try {
@@ -159,7 +164,7 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
               fetchData({ ...tableParams, perPage: pagination.pageSize, page: pagination.current });
        }
 
-       const columns = [
+       const columns: CustomColumnType[] = [
               {
                      title: 'Utilisateur modifié',
                      dataIndex: 'userModified',
@@ -227,7 +232,7 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
               {
                      title: 'Changement',
                      key: 'change',
-                     dataIndex: 'change',
+                     dataIndex: 'change' as keyof userHistory,
                      render: (_: unknown, record: userHistory) => {
                             if (record.action === 'Unban' || record.action === 'Delete' || record.action === 'Create') {
                                    return null; // or return ""; to explicitly render nothing
@@ -397,7 +402,7 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
                             </Select>
                             <Button
                                    type="primary"
-                                   onClick={() => setSelectedColumns(columns.map(col => col.dataIndex || col.key))}
+                                   onClick={() => setSelectedColumns(columns.map(col => col.dataIndex || col.key).filter(Boolean) as string[])}
                             >
                                    Tout afficher
                             </Button>
@@ -411,7 +416,7 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
                             bordered
                             dataSource={tableData ?? []} // * Added nullish coalescing operator to prevent error
                             columns={getVisibleColumns()}
-                            rowKey="id"
+                            rowKey="time"
                             pagination={{ showQuickJumper: true, total: tableParams.total, pageSize: tableParams.perPage, current: tableParams.page, showSizeChanger: true, pageSizeOptions: ['10', '20', '50', '100'], showTotal: (total, range) => `${range[0]}-${range[1]} sur ${total}` }}
                             scroll={{ x: 'max-content', y: 610 }}
                      />
