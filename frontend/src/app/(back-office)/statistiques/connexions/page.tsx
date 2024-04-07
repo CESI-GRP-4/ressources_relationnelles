@@ -1,8 +1,10 @@
 "use client"
 import React, { useState, useEffect } from 'react';
-import TestChart from "@/components/back-office/statistics/connectionChart"; // Assuming TestChart is your ConnectionsChart
+import ConnectionsChart from "@/components/back-office/statistics/connections/connectionChart";
 import DateRangePicker from '@/components/dateRangePicker';
 import dayjs from 'dayjs';
+import { Typography } from 'antd';
+import PageSummary from '@/components/back-office/pageSummary';
 
 export default function ConnectionStats() {
        const defaultStartDate = dayjs().subtract(30, 'days').format('DD/MM/YYYY');
@@ -23,14 +25,20 @@ export default function ConnectionStats() {
 
        return (
               <>
-                     <div className="w-full flex flex-row justify-center">
-                            <div className='xl:w-4/5 w-full space-y-5'>
-                                   <DateRangePicker
-                                          onChange={handleDateChange}
-                                          disableAfterToday
-                                          defaultValue={defaultDateRange}
-                                   />
-                                   <TestChart dateRange={dateRange}></TestChart>
+                     <div className="flex flex-col gap-5">
+                            <PageSummary
+                                   title="Statistiques de connexion"
+                                   description="Visualiser le nombre de connexions par jour sur un lapse de temps souhaité." />
+                                   
+                            <div className="w-full flex flex-row justify-center">
+                                   <div className='xl:w-4/5 w-full space-y-5'>
+                                          <DateRangePicker
+                                                 onChange={handleDateChange}
+                                                 disableAfterToday
+                                                 defaultValue={defaultDateRange}
+                                          />
+                                          <ConnectionsChart dateRange={dateRange}></ConnectionsChart>
+                                   </div>
                             </div>
                      </div>
               </>

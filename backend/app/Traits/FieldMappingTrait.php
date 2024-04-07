@@ -18,7 +18,35 @@ trait FieldMappingTrait {
             'countryCode' => 'country.country_code',
             'city' => 'city.name',
             'postalCode' => 'postalCode.postal_code',
-            'isBanned' => 'is_banned',
+            'isBanned' => 'ban_until',
+
+            // Category mappings
+            'isActive' => 'is_active',
+            'createdBy' => 'created_by',
+        ];
+    }
+
+    protected function getReverseFieldMapping() {
+        return [
+            'first_name' => 'firstName',
+            'last_name' => 'lastName',
+            'email' => 'email',
+            'id_user' => 'id',
+            'is_verified' => 'isEmailVerified',
+            'path_picture' => 'imgURL',
+            'created_at' => 'createdAt',
+            'updated_at' => 'updatedAt',
+            'role.name' => 'role',
+            'country.name' => 'country',
+            'country.country_code' => 'countryCode',
+            'city.name' => 'city',
+            'postalCode.postal_code' => 'postalCode',
+            'ban_until' => 'isBanned',
+
+            // Category mappings
+            'is_active' => 'isActive',
+            'created_by' => 'createdBy',
+
         ];
     }
 }

@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "title": "(Re)Sources Relationnelles",
-        "version": "0.23"
+        "version": "0.25"
     },
     "servers": [
         {
@@ -463,6 +463,386 @@
                 }
             }
         },
+        "/allCategories": {
+            "get": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Fetch all categories",
+                "description": "Fetches all categories including inactive ones. This endpoint is restricted to admin users.",
+                "operationId": "getAllCategories",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "categories": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/CategoryDetail"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/categories": {
+            "get": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Fetch active categories",
+                "description": "Fetches only active categories. This endpoint is available to all users.",
+                "operationId": "getActiveCategories",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "categories": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Category"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/category/{id}": {
+            "get": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Fetch a category",
+                "description": "Fetches a category by its ID. This endpoint is available to all users.",
+                "operationId": "getCategory",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the category to fetch",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "category": {
+                                            "$ref": "#/components/schemas/Category"
+                                        },
+                                        "ressources": {
+                                            "description": "List of ressources associated with the category",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Category not found"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/createCategory": {
+            "post": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Create a category",
+                "description": "Creates a new category. This endpoint is restricted to admin users.",
+                "operationId": "createCategory",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "description",
+                                    "icon",
+                                    "color"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "description": "Title of the category",
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "description": "Description of the category",
+                                        "type": "string"
+                                    },
+                                    "icon": {
+                                        "description": "Icon representing the category",
+                                        "type": "string"
+                                    },
+                                    "color": {
+                                        "description": "Color associated with the category. Hexadecimal format with or without '#': #000000",
+                                        "type": "string"
+                                    },
+                                    "isActive": {
+                                        "description": "Whether the category is active. Visible to admins only.",
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Category created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "category": {
+                                            "$ref": "#/components/schemas/CategoryDetail"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "array",
+                                                "items": [
+                                                    "string"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/editCategory/{id}": {
+            "post": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Edit a category",
+                "description": "Edit an existing category. This endpoint is restricted to admin users.",
+                "operationId": "editCategory",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the category to edit",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "description": "Title of the category",
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "description": "Description of the category",
+                                        "type": "string"
+                                    },
+                                    "icon": {
+                                        "description": "Icon representing the category",
+                                        "type": "string"
+                                    },
+                                    "color": {
+                                        "description": "Color associated with the category. Hexadecimal format with or without '#': #000000",
+                                        "type": "string"
+                                    },
+                                    "isActive": {
+                                        "description": "Whether the category is active. Visible to admins only.",
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Category edited successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "category": {
+                                            "$ref": "#/components/schemas/CategoryDetail"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "array",
+                                                "items": [
+                                                    "string"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Category not found"
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/deleteCategory/{id}": {
+            "delete": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Delete a category",
+                "description": "Deletes a category by its ID. This endpoint is restricted to admin users.",
+                "operationId": "deleteCategory",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the category to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Category deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Category not found"
+                    },
+                    "500": {
+                        "description": "Error while deleting the category"
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
         "/countries": {
             "get": {
                 "tags": [
@@ -497,6 +877,116 @@
                         "description": "Not Found"
                     }
                 }
+            }
+        },
+        "/creer-ressource": {
+            "post": {
+                "tags": [
+                    "Ressources"
+                ],
+                "summary": "Create a new ressource",
+                "description": "Creates a new ressource with the given data. File upload is supported.",
+                "operationId": "createRessource",
+                "requestBody": {
+                    "description": "Ressource data and optional file upload",
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "label",
+                                    "description",
+                                    "content"
+                                ],
+                                "properties": {
+                                    "label": {
+                                        "description": "The label of the ressource",
+                                        "type": "string",
+                                        "example": "A New Ressource"
+                                    },
+                                    "description": {
+                                        "description": "Detailed description of the ressource",
+                                        "type": "string",
+                                        "example": "This is a detailed description of the ressource."
+                                    },
+                                    "content": {
+                                        "description": "The content of the ressource",
+                                        "type": "string",
+                                        "example": "Here goes the content of the ressource."
+                                    },
+                                    "id_category": {
+                                        "description": "The ID of the category this ressource belongs to",
+                                        "type": "integer"
+                                    },
+                                    "is_public": {
+                                        "description": "Whether the ressource is public or not",
+                                        "type": "boolean"
+                                    },
+                                    "file": {
+                                        "description": "Optional file to upload",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "view_count": {
+                                        "description": "Optional initial view count",
+                                        "type": "integer"
+                                    },
+                                    "id_user": {
+                                        "description": "Optional ID of the user creating the ressource",
+                                        "type": "integer"
+                                    },
+                                    "id_status": {
+                                        "description": "Optional status ID of the ressource",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Ressource created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource créée avec succès"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Champ(s) incorrects"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
             }
         },
         "/stats/connections": {
@@ -703,6 +1193,145 @@
                     },
                     "403": {
                         "description": "Forbidden - Admin or Super Admin role required"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/createUser": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Create a new user",
+                "description": "Registers a new user into the system with provided user details. Validates input data and checks for email uniqueness. On success, sends a verification email.",
+                "operationId": "createUser",
+                "requestBody": {
+                    "description": "User data needed to register a new account",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "firstName",
+                                    "lastName",
+                                    "email",
+                                    "password",
+                                    "role"
+                                ],
+                                "properties": {
+                                    "firstName": {
+                                        "type": "string",
+                                        "example": "John"
+                                    },
+                                    "lastName": {
+                                        "type": "string",
+                                        "example": "Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john.doe@example.com"
+                                    },
+                                    "role": {
+                                        "description": "The role name must exist in the roles table.",
+                                        "type": "string",
+                                        "example": "User"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User created successfully"
+                                        },
+                                        "user": {
+                                            "$ref": "#/components/schemas/UserDetail"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Champ(s) incorects"
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "firstName": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The first name field is required."
+                                                    }
+                                                },
+                                                "lastName": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The last name field is required."
+                                                    }
+                                                },
+                                                "role": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The selected role is invalid."
+                                                    }
+                                                },
+                                                "email": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "Email already take"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Super Admin role required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Forbidden - Super Admin role required."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -949,12 +1578,12 @@
             }
         },
         "/banUser/{id}": {
-            "patch": {
+            "post": {
                 "tags": [
                     "Users"
                 ],
                 "summary": "Ban a user",
-                "description": "Ban a user . Administrators and Super Administrators cannot be ban.",
+                "description": "Bans a user either permanently or until a specified timestamp. Super Administrators and Administrators cannot be banned.",
                 "operationId": "banUser",
                 "parameters": [
                     {
@@ -967,9 +1596,33 @@
                         }
                     }
                 ],
+                "requestBody": {
+                    "description": "Ban details",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "isPermanent"
+                                ],
+                                "properties": {
+                                    "isPermanent": {
+                                        "description": "Whether the ban is permanent",
+                                        "type": "boolean"
+                                    },
+                                    "banTimestamp": {
+                                        "description": "The UNIX timestamp until which the user is banned. Required if `isPermanent` is false.",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
-                        "description": "User has been banned.",
+                        "description": "User has been banned",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -984,8 +1637,23 @@
                             }
                         }
                     },
+                    "422": {
+                        "description": "Validation error or ban date in the past",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
                     "403": {
-                        "description": "Unauthorized",
+                        "description": "Unauthorized attempt to ban an Administrator or Super Administrator",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1083,10 +1751,164 @@
                     }
                 ]
             }
+        },
+        "/usersHistory": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Fetch users' history",
+                "description": "Retrieves a paginated history of actions performed on users, including detailed information about the user modified and the user who performed the modification.",
+                "operationId": "getUsersHistory",
+                "parameters": [
+                    {
+                        "name": "perPage",
+                        "in": "query",
+                        "description": "Number of history records per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number to retrieve",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "userHistory": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/UserHistoryRecord"
+                                            }
+                                        },
+                                        "total": {
+                                            "type": "integer"
+                                        },
+                                        "perPage": {
+                                            "type": "integer"
+                                        },
+                                        "currentPage": {
+                                            "type": "integer"
+                                        },
+                                        "lastPage": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation Error"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
         "schemas": {
+            "Category": {
+                "description": "Detailed information about a category",
+                "properties": {
+                    "id": {
+                        "description": "Category ID",
+                        "type": "integer"
+                    },
+                    "title": {
+                        "description": "Title of the category",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "Description of the category",
+                        "type": "string"
+                    },
+                    "icon": {
+                        "description": "Icon representing the category",
+                        "type": "string"
+                    },
+                    "color": {
+                        "description": "Color associated with the category. Hexadecimal format with '#': #000000",
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "description": "Creation date of the category",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "description": "Last update date of the category",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "CategoryDetail": {
+                "description": "Detailed information about a category",
+                "properties": {
+                    "id": {
+                        "description": "Category ID",
+                        "type": "integer"
+                    },
+                    "title": {
+                        "description": "Title of the category",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "Description of the category",
+                        "type": "string"
+                    },
+                    "icon": {
+                        "description": "Icon representing the category",
+                        "type": "string"
+                    },
+                    "color": {
+                        "description": "Color associated with the category. Hexadecimal format with '#': #000000",
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "description": "Creation date of the category",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "description": "Last update date of the category",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "isActive": {
+                        "description": "Whether the category is active. Visible to admins only.",
+                        "type": "boolean"
+                    },
+                    "createdBy": {
+                        "$ref": "#/components/schemas/UserDetail"
+                    }
+                },
+                "type": "object"
+            },
             "Country": {
                 "properties": {
                     "id": {
@@ -1099,6 +1921,39 @@
                     },
                     "code": {
                         "description": "Country code",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "UserHistoryRecord": {
+                "description": "A record of an action performed on a user",
+                "properties": {
+                    "userModified": {
+                        "$ref": "#/components/schemas/UserDetail"
+                    },
+                    "modifyBy": {
+                        "$ref": "#/components/schemas/UserDetail"
+                    },
+                    "action": {
+                        "description": "The type of action performed",
+                        "type": "string"
+                    },
+                    "time": {
+                        "description": "The timestamp when the action was performed",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "colName": {
+                        "description": "The column name that was modified, applicable for 'Modify' actions",
+                        "type": "string"
+                    },
+                    "newValue": {
+                        "description": "The new value for the modified column, applicable for 'Modify' actions",
+                        "type": "string"
+                    },
+                    "oldValue": {
+                        "description": "The old value for the modified column, applicable for 'Modify' actions",
                         "type": "string"
                     }
                 },

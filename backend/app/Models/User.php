@@ -37,7 +37,7 @@ class User extends Authenticatable implements JWTSubject {
         'last_name',
         'password',
         'is_verified',
-        'is_banned',
+        'ban_until',
         'path_picture',
         'id_city',
         'id_postal_code',
@@ -45,6 +45,7 @@ class User extends Authenticatable implements JWTSubject {
         'id_role',
         'verification_token',
         'password_reset_token',
+        'deleted_at',
     ];
 
     /**

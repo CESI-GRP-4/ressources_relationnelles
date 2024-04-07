@@ -1,6 +1,5 @@
 
 import { Layout, Menu, Avatar, Spin } from "antd"
-
 import { FileDoneOutlined, FolderOpenOutlined, StarOutlined, PlusCircleOutlined, UserOutlined, LogoutOutlined, DashboardOutlined } from '@ant-design/icons';
 import { useUser } from "@/providers/userProvider";
 import { useState, useEffect } from "react";
@@ -25,32 +24,38 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
               return true; // Returning true tells the Avatar component not to retry loading the image
        };
 
+       // Définir les éléments du menu en fonction du rôle de l'utilisateur
        const headerItems = [
               {
                      icon: <FolderOpenOutlined />,
                      label: <Link href={"/categories"}>{`Catégories`}</Link>,
                      style: { marginLeft: '30px' }, // TODO: When the menu is collapsed, we shouldnt have this margin
                      key: 'categories',
-                     // children: [],
               },
               {
                      icon: <PlusCircleOutlined />,
                      label: <Link href={"/creer-ressource"}>{`Créer une ressource`}</Link>,
                      key: 'create-resource',
-                     // children: [],
               },
               {
                      icon: <FileDoneOutlined />,
                      label: <Link href={"/mes-ressources"}>{`Mes ressources`}</Link>,
                      key: 'my-resources',
-                     // children: [],
               },
               {
                      label: <Link href={"/mes-favoris"}>{`Mes favoris`}</Link>,
                      icon: <StarOutlined />,
                      key: 'my-favorites',
-                     // children: [],
               },
+              // Ajouter le tableau de bord uniquement si l'utilisateur est un modérateur ou plus
+              ...(user && (user.role === "Moderateur" || user.role === "Administrateur" || user.role === "SuperAdministrateur") ? [
+                     {
+                            label: <Link href={"/dashboard"}>{`Dashboard`}</Link>,
+                            icon: <DashboardOutlined />,
+                            key: "dashboard",
+                            style: { marginLeft: '15px' },
+                     }
+              ] : []),
               {
                      label: <Link href={"/dashboard"}>{`Dashboard`}</Link>,
                      icon: <DashboardOutlined />,
@@ -63,6 +68,7 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                             {avatarSrc ? (
                                    <Avatar
                                           draggable={false}
+                                          alt="Avatar de l'utilisateur"
                                           size={40}
                                           shape="square"
                                           src={avatarSrc}
@@ -71,6 +77,7 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                             ) : (
                                    <Avatar
                                           size={40}
+                                          alt="Avatar par défaut de l'utilisateur"
                                           shape="square"
                                           draggable={false}
                                           icon={<UserOutlined />}
@@ -96,8 +103,11 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                             }
                      ]
               }
-              
-       ];
+       ].filter(item => item.key !== "dashboard" || (user && (user.role === "Moderateur" || user.role === "Administrateur" || user.role === "SuperAdministrateur")));
+
+       const items = user && (user.role === "Moderateur" || user.role === "Administrateur" || user.role === "SuperAdministrateur") ?
+              [headerItems[headerItems.length - 2], headerItems[headerItems.length - 1]] :
+              [headerItems[headerItems.length - 0], headerItems[headerItems.length - 1]];
 
        return (
               <AntdHeader className="site-layout-background" style={{
@@ -109,22 +119,22 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                 justifyContent: 'space-between', // Utilisez cette propriété pour aligner les éléments à gauche et à droite
                 zIndex: 5,
               }}>
-                <Menu
-                  mode="horizontal"
-                  items={headerItems.slice(0, -2)} // Tous les éléments sauf les deux derniers
-                  theme="light"
-                  selectedKeys={[selectedKey]}
-                  className='flex-auto'
-                  style={{ minWidth: 0, flex: "auto" }}
-                />
-                <Menu
-                  mode="horizontal"
-                  items={[headerItems[headerItems.length - 2], headerItems[headerItems.length - 1]]} // Les deux derniers éléments
-                  selectedKeys={[selectedKey]}
-                  className="flex flex-row justify-end"
-                  style={{ minWidth: 0, flex: "auto" }}
-                  theme="light"
-                />
+                     <Menu
+                            mode="horizontal"
+                            items={headerItems.slice(0, -2)} // Tous les éléments sauf les deux derniers
+                            theme="light"
+                            selectedKeys={[selectedKey]}
+                            className='flex-auto'
+                            style={{ minWidth: 0, flex: "auto" }}
+                     />
+                     <Menu
+                            mode="horizontal"
+                            items={items} // Les deux derniers éléments
+                            selectedKeys={[selectedKey]}
+                            className="flex flex-row justify-end"
+                            style={{ minWidth: 0, flex: "auto" }}
+                            theme="light"
+                     />
               </AntdHeader>
-            );
+       );
 }
