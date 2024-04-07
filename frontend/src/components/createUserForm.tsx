@@ -55,7 +55,7 @@ export default function CreateUserForm() {
                                           </Select>
 
                                    </Form.Item>
-                                   <PasswordInputComponent label="Mot de passe" name="password" rules={[{ required: true, message: "Veuillez entrer un mot de passe" }]} />
+                                   <PasswordInputComponent useRegex={true} label="Mot de passe" name="password" rules={[{ required: true, message: "Veuillez entrer un mot de passe" }]} />
                             </Form>
 
                      </Modal>

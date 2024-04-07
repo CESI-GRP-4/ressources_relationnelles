@@ -227,19 +227,19 @@ const UserProfilePage = () => {
               </Form.Item>
             </Card>
             {editing ? <Card title="Modification de votre mot de passe" bordered={false} style={{ marginBottom: 16, width: '200%' }}>
-            <PasswordInputComponent
+            <PasswordInputComponent useRegex={false}
                   label="Ancien mot de passe"
                   name="old-password"
                   required={editing} // Specify whether the password is required based on the editing mode
                   style={{ width: '70%'}}
                 />
-                <PasswordInputComponent
+                <PasswordInputComponent useRegex={true}
                   label="Mot de passe"
                   name="password"
                   required={editing} // Specify whether the password is required based on the editing mode
                   style={{ width: '70%'}}
                 />
-                <PasswordInputComponent
+                <PasswordInputComponent useRegex={true}
                   label="Confirmer le mot de passe"
                   name="password-confirm"
                   required={editing} // Specify whether the password is required based on the editing mode
