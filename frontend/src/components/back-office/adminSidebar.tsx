@@ -80,7 +80,7 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                                    />,
                                    label: (
                                           <ConditionalTooltip title="Ressources acceptées">
-                                                 <Link href={'/ressources-acceptees'}>Acceptées</Link>
+                                                 <Link href={'/gestion-ressources/ressources-acceptees'}>Acceptées</Link>
                                           </ConditionalTooltip>
                                    ),
                                    key: 'ressources-acceptees',
@@ -93,7 +93,7 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                                    />,
                                    label: (
                                           <ConditionalTooltip title="Ressources en attente">
-                                                 <Link href={'/ressources-en-attente'}>En attente</Link>
+                                                 <Link href={'/gestion-ressources/ressources-en-attente'}>En attente</Link>
                                           </ConditionalTooltip>
                                    ),
                                    key: 'ressources-en-attente',
@@ -106,7 +106,7 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                                    />,
                                    label: (
                                           <ConditionalTooltip title={`Ressources refusées (en attente de modifications)`}>
-                                                 <Link href={'/ressources-refusees'}>{`Refusées`}</Link>
+                                                 <Link href={'/gestion-ressources/ressources-refusees'}>{`Refusées`}</Link>
                                           </ConditionalTooltip>
                                    ),
                                    key: 'ressources-refusees',
@@ -119,7 +119,7 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                                    />,
                                    label: (
                                           <ConditionalTooltip title={`Ressources Bloquées (par un administrateur)`}>
-                                                 <Link href={'/ressources-bloquees'}>{`Bloquées`}</Link>
+                                                 <Link href={'/gestion-ressources/ressources-bloquees'}>{`Bloquées`}</Link>
                                           </ConditionalTooltip>
                                    ),
                                    key: 'ressources-bloquees',
@@ -132,7 +132,7 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                                    />,
                                    label: (
                                           <ConditionalTooltip title={`Ressources désactivées (par l'auteur)`}>
-                                                 <Link href={'/ressources-desactivees'}>{`Désactivées`}</Link>
+                                                 <Link href={'/gestion-ressources/ressources-desactivees'}>{`Désactivées`}</Link>
                                           </ConditionalTooltip>
                                    ),
                                    key: 'ressources-desactivees',
@@ -145,11 +145,11 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                                    />,
                                    label: (
                                           <ConditionalTooltip title="Historique">
-                                                 <Link href={'/gestion-ressources-historique'}>Historique</Link>
+                                                 <Link href={'/gestion-ressources/historique'}>Historique</Link>
                                           </ConditionalTooltip>
                                    ),
-                                   key: 'gestion-ressources-historique',
-                                   title: 'gestion-ressources-historique',
+                                   key: 'historique',
+                                   title: 'historique',
                             },
                      ]
               }
