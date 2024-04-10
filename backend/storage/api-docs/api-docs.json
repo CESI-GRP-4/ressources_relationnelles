@@ -879,65 +879,42 @@
                 }
             }
         },
-        "/creer-ressource": {
+        "/createRessource": {
             "post": {
                 "tags": [
-                    "Ressources"
+                    "Ressource"
                 ],
                 "summary": "Create a new ressource",
-                "description": "Creates a new ressource with the given data. File upload is supported.",
+                "description": "Creates a new resource with the given details. Returns the ID of the newly created resource.",
                 "operationId": "createRessource",
                 "requestBody": {
-                    "description": "Ressource data and optional file upload",
+                    "description": "Data for the new resource",
                     "required": true,
                     "content": {
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "required": [
                                     "label",
                                     "description",
-                                    "content"
+                                    "idCategory"
                                 ],
                                 "properties": {
                                     "label": {
-                                        "description": "The label of the ressource",
-                                        "type": "string",
-                                        "example": "A New Ressource"
+                                        "description": "The label of the new resource",
+                                        "type": "string"
                                     },
                                     "description": {
-                                        "description": "Detailed description of the ressource",
-                                        "type": "string",
-                                        "example": "This is a detailed description of the ressource."
+                                        "description": "The description of the new resource",
+                                        "type": "string"
                                     },
-                                    "content": {
-                                        "description": "The content of the ressource",
-                                        "type": "string",
-                                        "example": "Here goes the content of the ressource."
-                                    },
-                                    "id_category": {
-                                        "description": "The ID of the category this ressource belongs to",
+                                    "idCategory": {
+                                        "description": "The category ID for the new resource",
                                         "type": "integer"
                                     },
-                                    "is_public": {
-                                        "description": "Whether the ressource is public or not",
-                                        "type": "boolean"
-                                    },
-                                    "file": {
-                                        "description": "Optional file to upload",
-                                        "type": "string",
-                                        "format": "binary"
-                                    },
-                                    "view_count": {
-                                        "description": "Optional initial view count",
-                                        "type": "integer"
-                                    },
-                                    "id_user": {
-                                        "description": "Optional ID of the user creating the ressource",
-                                        "type": "integer"
-                                    },
-                                    "id_status": {
-                                        "description": "Optional status ID of the ressource",
-                                        "type": "integer"
+                                    "isPublic": {
+                                        "description": "Whether the resource is public",
+                                        "type": "boolean",
+                                        "example": true
                                     }
                                 },
                                 "type": "object"
@@ -947,7 +924,7 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Ressource created successfully",
+                        "description": "Resource created successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -955,6 +932,10 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Ressource créée avec succès"
+                                        },
+                                        "idRessource": {
+                                            "description": "The ID of the newly created resource",
+                                            "type": "integer"
                                         }
                                     },
                                     "type": "object"
@@ -963,17 +944,27 @@
                         }
                     },
                     "422": {
-                        "description": "Validation Error",
+                        "description": "Validation error",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
-                                            "type": "string",
-                                            "example": "Champ(s) incorrects"
+                                            "description": "Validation message",
+                                            "type": "string"
                                         },
                                         "errors": {
-                                            "type": "object"
+                                            "description": "Detailed validation errors",
+                                            "type": "object",
+                                            "additionalProperties": [
+                                                {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "property": null
+                                                }
+                                            ]
                                         }
                                     },
                                     "type": "object"
@@ -981,12 +972,7 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ]
+                }
             }
         },
         "/stats/connections": {

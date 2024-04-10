@@ -7,120 +7,81 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 
-class RessourceController extends Controller
-{
+class RessourceController extends Controller {
+    const ID_PENDING_STATUS = 2;
+
     /**
      * @OA\Post(
-     *     path="/creer-ressource",
-     *     tags={"Ressources"},
+     *     path="/createRessource",
+     *     tags={"Ressource"},
      *     summary="Create a new ressource",
-     *     description="Creates a new ressource with the given data. File upload is supported.",
+     *     description="Creates a new resource with the given details. Returns the ID of the newly created resource.",
      *     operationId="createRessource",
-     *     security={{ "BearerAuth": {} }},
      *     @OA\RequestBody(
      *         required=true,
-     *         description="Ressource data and optional file upload",
-     *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
-     *             @OA\Schema(
-     *                 type="object",
-     *                 required={"label", "description", "content"},
-     *                 @OA\Property(
-     *                     property="label",
-     *                     type="string",
-     *                     description="The label of the ressource",
-     *                     example="A New Ressource"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="description",
-     *                     type="string",
-     *                     description="Detailed description of the ressource",
-     *                     example="This is a detailed description of the ressource."
-     *                 ),
-     *                 @OA\Property(
-     *                     property="content",
-     *                     type="string",
-     *                     description="The content of the ressource",
-     *                     example="Here goes the content of the ressource."
-     *                 ),
-     *                 @OA\Property(
-     *                     property="id_category",
-     *                     type="integer",
-     *                     description="The ID of the category this ressource belongs to",
-     *                 ),
-     *                 @OA\Property(
-     *                     property="is_public",
-     *                     type="boolean",
-     *                     description="Whether the ressource is public or not",
-     *                 ),
-     *                 @OA\Property(
-     *                     property="file",
-     *                     type="string",
-     *                     format="binary",
-     *                     description="Optional file to upload"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="view_count",
-     *                     type="integer",
-     *                     description="Optional initial view count",
-     *                 ),
-     *                 @OA\Property(
-     *                     property="id_user",
-     *                     type="integer",
-     *                     description="Optional ID of the user creating the ressource",
-     *                 ),
-     *                 @OA\Property(
-     *                     property="id_status",
-     *                     type="integer",
-     *                     description="Optional status ID of the ressource",
-     *                 )
-     *             )
+     *         description="Data for the new resource",
+     *         @OA\JsonContent(
+     *             required={"label", "description", "idCategory"},
+     *             @OA\Property(property="label", type="string", description="The label of the new resource"),
+     *             @OA\Property(property="description", type="string", description="The description of the new resource"),
+     *             @OA\Property(property="idCategory", type="integer", description="The category ID for the new resource"),
+     *             @OA\Property(property="isPublic", type="boolean", description="Whether the resource is public", example=true),
      *         )
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Ressource created successfully",
+     *         description="Resource created successfully",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="message", type="string", example="Ressource créée avec succès")
+     *             @OA\Property(property="message", type="string", example="Ressource créée avec succès"),
+     *             @OA\Property(property="idRessource", type="integer", description="The ID of the newly created resource")
      *         )
      *     ),
      *     @OA\Response(
      *         response=422,
-     *         description="Validation Error",
+     *         description="Validation error",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="message", type="string", example="Champ(s) incorrects"),
-     *             @OA\Property(property="errors", type="object")
+     *             @OA\Property(property="message", type="string", description="Validation message"),
+     *             @OA\Property(
+     *                 property="errors",
+     *                 type="object",
+     *                 additionalProperties={
+     *                     @OA\Property(type="array", @OA\Items(type="string"))
+     *                 },
+     *                 description="Detailed validation errors"
+     *             )
      *         )
      *     )
      * )
      */
-    public function createRessource(Request $request)
-    {
+    public function createRessource(Request $request) {
+        if ($request->has('isPublic')) {
+            $request->isPublic = filter_var($request->isPublic, FILTER_VALIDATE_BOOLEAN);
+        }
+
         $validatedData = Validator::make($request->all(), [
-            'label' => 'required|string|max:255',
+            'label' => 'required|unique:ressources|string|max:255',
             'description' => 'required|string',
-            'id_category' => 'required|integer',
-            'isPublic' => 'boolean',
+            'idCategory' => 'required|integer',
+            'isPublic' => 'sometimes|boolean',
         ]);
 
         if ($validatedData->fails()) {
             return response()->json(['message' => 'Champ(s) incorects', 'errors' => $validatedData->errors()], 422);
         }
 
-        if ($request->hasFile('files')) {
-            $file = $request->file('files');
-            // Stockez le fichier et obtenez le chemin
-            $path = $file->store('public/files');
-            // Ajoutez le chemin à vos données validées
-            $validatedData['file'] = $path;
-        }
+        $ressource = Ressource::create([
+            'label' => $request->label,
+            'description' => $request->description,
+            'id_category' => $request->idCategory,
+            'is_public' => $request->isPublic,
+            'id_user' => auth()->user()->id_user,
+            'id_status' => self::ID_PENDING_STATUS,
+            'id_type' => 1,
+        ]);
 
-        $ressource = Ressource::create($validatedData->valid());
-
-    return response()->json(['message' => 'Ressource créée avec succès', 'ressource' => $ressource], 201);
-
+        return response()->json(['message' => 'Ressource créée avec succès', 'idRessource' => $ressource->id_ressource], 201);
     }
 
 

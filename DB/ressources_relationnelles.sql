@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : jeu. 04 avr. 2024 à 21:28
+-- Généré le : mer. 10 avr. 2024 à 15:17
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -554,7 +554,9 @@ INSERT INTO `login_logs` (`id`, `id_user`, `login_datetime`) VALUES
 (70, 1, '2024-04-17 16:32:03'),
 (71, 37, '2024-04-18 21:25:54'),
 (72, 38, '2024-04-18 21:26:48'),
-(73, 1, '2024-04-18 21:27:29');
+(73, 1, '2024-04-18 21:27:29'),
+(75, 1, '2024-04-10 15:05:34'),
+(76, 1, '2024-04-10 15:05:50');
 
 -- --------------------------------------------------------
 
@@ -601,7 +603,7 @@ CREATE TABLE `ressources` (
   `description` varchar(1000) DEFAULT NULL,
   `content` varchar(8000) DEFAULT NULL,
   `is_public` tinyint(1) DEFAULT NULL,
-  `view_count` bigint(20) NOT NULL,
+  `view_count` bigint(20) DEFAULT 0,
   `id_user` int(11) NOT NULL,
   `id_category` int(11) NOT NULL,
   `id_status` int(11) NOT NULL,
@@ -610,6 +612,15 @@ CREATE TABLE `ressources` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `ressources`
+--
+
+INSERT INTO `ressources` (`id_ressource`, `label`, `description`, `content`, `is_public`, `view_count`, `id_user`, `id_category`, `id_status`, `id_type`, `file`, `created_at`, `updated_at`) VALUES
+(4, 'Wsh', 'Hello', NULL, 1, 0, 1, 3, 2, 1, NULL, '2024-04-10 11:10:06', '2024-04-10 11:10:06'),
+(5, 'Wsh', 'Hello', NULL, 1, 0, 1, 3, 2, 1, NULL, '2024-04-10 11:11:48', '2024-04-10 11:11:48'),
+(6, 'Wsheeee', 'Hello', NULL, 1, 0, 1, 3, 2, 1, NULL, '2024-04-10 11:13:44', '2024-04-10 11:13:44');
 
 -- --------------------------------------------------------
 
@@ -689,9 +700,11 @@ CREATE TABLE `status_ressources` (
 --
 
 INSERT INTO `status_ressources` (`id_status`, `label`) VALUES
-(1, 'Active'),
-(2, 'Inactive'),
-(3, 'Pending');
+(1, 'accepted'),
+(2, 'pending'),
+(3, 'rejected'),
+(4, 'blocked'),
+(5, 'disable');
 
 -- --------------------------------------------------------
 
@@ -703,6 +716,13 @@ CREATE TABLE `types` (
   `id_type` int(11) NOT NULL,
   `name` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `types`
+--
+
+INSERT INTO `types` (`id_type`, `name`) VALUES
+(1, 'je suis111111111111111');
 
 -- --------------------------------------------------------
 
@@ -1025,7 +1045,7 @@ ALTER TABLE `invitations`
 -- AUTO_INCREMENT pour la table `login_logs`
 --
 ALTER TABLE `login_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
 
 --
 -- AUTO_INCREMENT pour la table `migrations`
@@ -1043,7 +1063,7 @@ ALTER TABLE `postal_codes`
 -- AUTO_INCREMENT pour la table `ressources`
 --
 ALTER TABLE `ressources`
-  MODIFY `id_ressource` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_ressource` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT pour la table `rights`
@@ -1067,13 +1087,13 @@ ALTER TABLE `statistics_archive`
 -- AUTO_INCREMENT pour la table `status_ressources`
 --
 ALTER TABLE `status_ressources`
-  MODIFY `id_status` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_status` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT pour la table `types`
 --
 ALTER TABLE `types`
-  MODIFY `id_type` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_type` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT pour la table `users`
