@@ -136,7 +136,7 @@ class RessourceController extends Controller {
     public function pending() {
         $ressources = Ressource::where('id_status', self::ID_PENDING_STATUS)->get();
 
-        return response()->json(['ressources' => $ressources], 200);
+        return response()->json(['ressources' => Utils::mapRessourcesToDetails($ressources)], 200);
     }
 
     /**
@@ -170,7 +170,7 @@ class RessourceController extends Controller {
      */
     public function accepted(){
         $ressources = Ressource::where('id_status', self::ID_ACCEPTED_STATUS)->get();
-        return response()->json(['ressources' => $ressources], 200);
+        return response()->json(['ressources' => Utils::mapRessourcesToDetails($ressources)], 200);
     }
 
     /**
@@ -204,7 +204,7 @@ class RessourceController extends Controller {
      */
     public function rejected(){
         $ressources = Ressource::where('id_status', self::ID_REJECTED_STATUS)->get();
-        return response()->json(['ressources' => $ressources], 200);
+        return response()->json(['ressources' => Utils::mapRessourcesToDetails($ressources)], 200);
     }
 
     /**
@@ -238,7 +238,7 @@ class RessourceController extends Controller {
      */
     public function blocked(){
         $ressources = Ressource::where('id_status', 4)->get();
-        return response()->json(['ressources' => $ressources], 200);
+        return response()->json(['ressources' => Utils::mapRessourcesToDetails($ressources)], 200);
     }
 
 

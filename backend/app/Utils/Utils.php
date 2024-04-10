@@ -11,7 +11,6 @@ use App\Models\UserHistory;
 class Utils{
 
     // USERS
-
     /**
      * @OA\Schema(
      *     schema="UserData",
@@ -217,5 +216,11 @@ class Utils{
             'creationDate' => $ressource->created_at,
             'lastModificationDate' => $ressource->updated_at,
         ];
+    }
+
+    public static function mapRessourcesToDetails($ressources){
+        return $ressources->map(function ($ressource) {
+            return self::getRessourceDetail($ressource);
+        });
     }
 }
