@@ -20,6 +20,11 @@ const routeWithUserAuth = [
 const routeForModerator = [
        ...routeWithUserAuth,
        '/dashboard',
+       '/ressources-acceptees',
+       '/ressources-en-attente',
+       '/ressources-refusees',
+       '/ressources-bloquees',
+       '/ressources-desactivees',
 ];
 
 // Routes accessible to Admins (Administrateur)

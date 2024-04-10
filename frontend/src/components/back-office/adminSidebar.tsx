@@ -74,17 +74,17 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                      children: [
                             // Ressources accepted:
                             {
-                                   icon: <Icon icon={"line-md:list-3-twotone"}
+                                   icon: <Icon icon={"line-md:circle-to-confirm-circle-transition"}
                                           style={{ fontSize: '20px' }}
 
                                    />,
                                    label: (
-                                          <ConditionalTooltip title="Liste des ressources">
-                                                 <Link href={'/liste-ressources'}>Liste</Link>
+                                          <ConditionalTooltip title="Ressources acceptées">
+                                                 <Link href={'/ressources-acceptees'}>Acceptées</Link>
                                           </ConditionalTooltip>
                                    ),
-                                   key: 'liste-ressources',
-                                   title: 'liste-ressources',
+                                   key: 'ressources-acceptees',
+                                   title: 'ressources-acceptees',
                             },
                             // Ressources waiting for validation:
                             {
@@ -101,7 +101,7 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                             },
                             // Ressources refused (waiting for modifications from the user, it will be then re-submitted for validation):
                             {
-                                   icon: <Icon icon={"line-md:minus-circle"}
+                                   icon: <Icon icon={"line-md:close-circle"}
                                           style={{ fontSize: '20px' }}
                                    />,
                                    label: (
@@ -112,7 +112,33 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                                    key: 'ressources-refusees',
                                    title: 'ressources-refusees',
                             },
-
+                            // Ressources blocked (by an admin, it can be then re-activated by an admin):
+                            {
+                                   icon: <Icon icon={"line-md:minus-circle"}
+                                          style={{ fontSize: '20px' }}
+                                   />,
+                                   label: (
+                                          <ConditionalTooltip title={`Ressources Bloquées (par un administrateur)`}>
+                                                 <Link href={'/ressources-bloquees'}>{`Bloquées`}</Link>
+                                          </ConditionalTooltip>
+                                   ),
+                                   key: 'ressources-bloquees',
+                                   title: 'ressources-bloquees',
+                            },
+                            // Ressources disabled (by the user, it can be then re-activated by the user):
+                            {
+                                   icon: <Icon icon={"line-md:switch-off"}
+                                          style={{ fontSize: '20px' }}
+                                   />,
+                                   label: (
+                                          <ConditionalTooltip title={`Ressources désactivées (par l'auteur)`}>
+                                                 <Link href={'/ressources-desactivees'}>{`Désactivées`}</Link>
+                                          </ConditionalTooltip>
+                                   ),
+                                   key: 'ressources-desactivees',
+                                   title: 'ressources-desactivees',
+                            },
+                            // History of actions on resources:
                             {
                                    icon: <Icon icon={"line-md:backup-restore"}
                                           style={{ fontSize: '20px' }}
