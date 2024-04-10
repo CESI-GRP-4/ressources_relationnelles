@@ -12,7 +12,7 @@ const { Option } = Select;
 const { Dragger } = Upload;
 const { Title } = Typography;
 
-export default function CreateResourceForm() {
+export default function CreateRessourceForm() {
        const [form] = Form.useForm();
        const [isSubmitting, setSubmitting] = useState(false);
        const [categories, setCategories] = useState<Category[]>([]);
@@ -53,6 +53,7 @@ export default function CreateResourceForm() {
                             data: ressourceFormWithUserId,
                             responseType: 'json',
                             timeout: 10000,
+                            withCredentials: true,
                      });
 
                      // Traitement de la réponse (éventuellement)
@@ -75,7 +76,7 @@ export default function CreateResourceForm() {
                             <div className="col-md-6">
                                    <Form
                                           form={form}
-                                          name="createResourceForm"
+                                          name="createRessourceForm"
                                           onFinish={onFinish}
                                           autoComplete="off"
                                           labelCol={{ span: 8 }}
