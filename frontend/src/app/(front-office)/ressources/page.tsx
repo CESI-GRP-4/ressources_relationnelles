@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { List, Card, Button, Input, Select, Pagination, Typography } from 'antd';
 
 import axios from 'axios';
-import type Resource from "@/types/resource";
+import type Ressource from "@/types/ressource";
 import type { Category } from '@/types/category';
 
 const { Search } = Input;
