@@ -100,8 +100,7 @@ class RessourceController extends Controller {
         $ressource->view_count += 1;
         $ressource->save();
 
-        // TODO : Faire le format
-        return response()->json(['ressource' => Utils::getRessourceData($ressource)], 200);
+        return response()->json(['ressource' => Utils::getRessourceDetail($ressource)], 200);
     }
 
 
