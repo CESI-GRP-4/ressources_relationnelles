@@ -98,18 +98,11 @@ class RessourceController extends Controller
      */
     public function createRessource(Request $request)
     {
-
         $validatedData = Validator::make($request->all(), [
             'label' => 'required|string|max:255',
             'description' => 'required|string',
-            'content' => 'required|string',
-            // 'id_category' => 'required|integer',
-            'id_category' => 'nullable|integer',
-            'is_public' => 'nullable|boolean',
-            'file' => 'nullable|file',
-            'view_count' => 'nullable|integer',
-            'id_user' => 'nullable|integer',
-            'id_status' => 'nullable|integer'
+            'id_category' => 'required|integer',
+            'isPublic' => 'boolean',
         ]);
 
         if ($validatedData->fails()) {

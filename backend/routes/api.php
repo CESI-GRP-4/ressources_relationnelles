@@ -35,7 +35,7 @@ Route::get('ressource/{id}', [RessourceController::class, 'getRessource']);
 Route::group(['middleware' => ['jwt.auth']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('verifyUser', [AuthController::class, 'verifyUser']);
-    Route::post('creer-ressource', [RessourceController::class, 'createRessource']);
+    Route::post('createRessource', [RessourceController::class, 'createRessource']);
 
     // SuperAdmin routes
     Route::group(['middleware' => 'isSuperAdmin'], function () {
