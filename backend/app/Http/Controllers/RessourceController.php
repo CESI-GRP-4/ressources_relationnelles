@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ressource;
+use App\Utils\Utils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -64,7 +65,7 @@ class RessourceController extends Controller {
         }
 
         $validatedData = Validator::make($request->all(), [
-            'label' => 'required|unique:ressources|string|max:255',
+            'label' => 'required|string|max:255',
             'description' => 'required|string',
             'idCategory' => 'required|integer',
             'isPublic' => 'sometimes|boolean',
@@ -100,7 +101,7 @@ class RessourceController extends Controller {
         $ressource->save();
 
         // TODO : Faire le format
-        return response()->json(['ressource' => $ressource], 200);
+        return response()->json(['ressource' => Utils::getRessourceData($ressource)], 200);
     }
 
 

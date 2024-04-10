@@ -563,7 +563,7 @@
                                 "schema": {
                                     "properties": {
                                         "category": {
-                                            "$ref": "#/components/schemas/Category"
+                                            "$ref": "#/components/schemas/CategoryDetailWithRessources"
                                         },
                                         "ressources": {
                                             "description": "List of ressources associated with the category",
@@ -2394,49 +2394,6 @@
                 },
                 "type": "object"
             },
-            "CategoryDetail": {
-                "description": "Detailed information about a category",
-                "properties": {
-                    "id": {
-                        "description": "Category ID",
-                        "type": "integer"
-                    },
-                    "title": {
-                        "description": "Title of the category",
-                        "type": "string"
-                    },
-                    "description": {
-                        "description": "Description of the category",
-                        "type": "string"
-                    },
-                    "icon": {
-                        "description": "Icon representing the category",
-                        "type": "string"
-                    },
-                    "color": {
-                        "description": "Color associated with the category. Hexadecimal format with '#': #000000",
-                        "type": "string"
-                    },
-                    "createdAt": {
-                        "description": "Creation date of the category",
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "updatedAt": {
-                        "description": "Last update date of the category",
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "isActive": {
-                        "description": "Whether the category is active. Visible to admins only.",
-                        "type": "boolean"
-                    },
-                    "createdBy": {
-                        "$ref": "#/components/schemas/UserDetail"
-                    }
-                },
-                "type": "object"
-            },
             "Country": {
                 "properties": {
                     "id": {
@@ -2450,34 +2407,6 @@
                     "code": {
                         "description": "Country code",
                         "type": "string"
-                    }
-                },
-                "type": "object"
-            },
-            "RessourceDetail": {
-                "description": "Detailed information about a resource",
-                "properties": {
-                    "id": {
-                        "description": "The ID of the resource",
-                        "type": "integer"
-                    },
-                    "title": {
-                        "description": "The title of the resource",
-                        "type": "string"
-                    },
-                    "description": {
-                        "description": "The description of the resource",
-                        "type": "string"
-                    },
-                    "createdAt": {
-                        "description": "The creation date of the resource",
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "updatedAt": {
-                        "description": "The last update date of the resource",
-                        "type": "string",
-                        "format": "date-time"
                     }
                 },
                 "type": "object"
@@ -2601,6 +2530,116 @@
                     },
                     "newUser": {
                         "type": "boolean"
+                    }
+                },
+                "type": "object"
+            },
+            "CategoryDetail": {
+                "description": "Detailed information about a category",
+                "properties": {
+                    "id": {
+                        "description": "Category ID",
+                        "type": "integer"
+                    },
+                    "title": {
+                        "description": "Title of the category",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "Description of the category",
+                        "type": "string"
+                    },
+                    "icon": {
+                        "description": "Icon representing the category",
+                        "type": "string"
+                    },
+                    "color": {
+                        "description": "Color associated with the category. Hexadecimal format with '#': #000000",
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "description": "Creation date of the category",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "description": "Last update date of the category",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "isActive": {
+                        "description": "Whether the category is active. Visible to admins only.",
+                        "type": "boolean"
+                    },
+                    "createdBy": {
+                        "$ref": "#/components/schemas/UserDetail"
+                    }
+                },
+                "type": "object"
+            },
+            "CategoryDetailWithRessources": {
+                "description": "Detailed information about a category, including its associated resources",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/CategoryDetail"
+                    },
+                    {
+                        "properties": {
+                            "ressources": {
+                                "description": "An array of resources associated with the category",
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/RessourceDetail"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "RessourceDetail": {
+                "description": "Detailed information about a resource",
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier of the resource",
+                        "type": "integer"
+                    },
+                    "label": {
+                        "description": "The label or title of the resource",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "The detailed description of the resource",
+                        "type": "string"
+                    },
+                    "isPublic": {
+                        "description": "Indicates if the resource is public",
+                        "type": "boolean"
+                    },
+                    "status": {
+                        "description": "The status of the resource",
+                        "type": "string"
+                    },
+                    "category": {
+                        "$ref": "#/components/schemas/CategoryDetail"
+                    },
+                    "viewCount": {
+                        "description": "Number of views this resource has received",
+                        "type": "integer"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/UserDetail"
+                    },
+                    "creationDate": {
+                        "description": "The date and time when the resource was created",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "lastModificationDate": {
+                        "description": "The date and time when the resource was last updated",
+                        "type": "string",
+                        "format": "date-time"
                     }
                 },
                 "type": "object"

@@ -2,10 +2,15 @@
 
 namespace App\Utils;
 
+use App\Models\Category;
+use App\Models\Ressource;
+use App\Models\StatusRessource;
 use App\Models\User;
 use App\Models\UserHistory;
 
 class Utils{
+
+    // USERS
 
     /**
      * @OA\Schema(
@@ -100,7 +105,117 @@ class Utils{
         ]);
     }
 
+    // CATEGORIES
+    /**
+     * @OA\Schema(
+     *     schema="CategoryDetail",
+     *     type="object",
+     *     description="Detailed information about a category",
+     *     @OA\Property(property="id", type="integer", description="Category ID"),
+     *     @OA\Property(property="title", type="string", description="Title of the category"),
+     *     @OA\Property(property="description", type="string", description="Description of the category"),
+     *     @OA\Property(property="icon", type="string", description="Icon representing the category"),
+     *     @OA\Property(property="color", type="string", description="Color associated with the category. Hexadecimal format with '#': #000000"),
+     *     @OA\Property(property="createdAt", type="string", format="date-time", description="Creation date of the category"),
+     *     @OA\Property(property="updatedAt", type="string", format="date-time", description="Last update date of the category"),
+     *     @OA\Property(property="isActive", type="boolean", description="Whether the category is active. Visible to admins only."),
+     *     @OA\Property(
+     *          property="createdBy",
+     *          type="object",
+     *          description="User details of the creator. Visible to admins only.",
+     *          ref="#/components/schemas/UserDetail"
+     *      ),
+     * )
+     */
+    public static function getCategoryDetail($category,  $getDetails = false) {
+        $categoryData =  [
+            'id' => $category->id_category,
+            'title' => $category->title,
+            'description' => $category->description,
+            'icon' => $category->icon,
+            'color' => $category->color,
+            'createdAt' => $category->created_at->toDateTimeString(),
+            'updatedAt' => $category->updated_at->toDateTimeString(),
+        ];
 
+        if($getDetails){
+            $user = User::find($category->created_by);
+            $categoryData['isActive'] = $category->is_active;
+            $categoryData['createdBy'] = self::getAllUserData($user);
+        }
+        return $categoryData;
+    }
 
+    /**
+     * @OA\Schema(
+     *     schema="CategoryDetailWithRessources",
+     *     type="object",
+     *     description="Detailed information about a category, including its associated resources",
+     *     allOf={
+     *         @OA\Schema(ref="#/components/schemas/CategoryDetail"),
+     *         @OA\Schema(
+     *             @OA\Property(
+     *                 property="ressources",
+     *                 type="array",
+     *                 description="An array of resources associated with the category",
+     *                 @OA\Items(ref="#/components/schemas/RessourceDetail")
+     *             )
+     *         )
+     *     }
+     * )
+     */
+    public static function getCategoryDetailWithRessources($category) {
+        $categoryData = self::getCategoryDetail($category, false);
+        $ressources = Ressource::where('id_category', $category->id_category)->get();
+        $categoryData['ressources'] = $ressources->map(function ($ressource) {
+            return self::getRessourceDetail($ressource);
+        });
+        return $categoryData;
+    }
 
+    // RESOURCES
+    /**
+     * @OA\Schema(
+     *     schema="RessourceDetail",
+     *     type="object",
+     *     description="Detailed information about a resource",
+     *     @OA\Property(property="id", type="integer", description="The unique identifier of the resource"),
+     *     @OA\Property(property="label", type="string", description="The label or title of the resource"),
+     *     @OA\Property(property="description", type="string", description="The detailed description of the resource"),
+     *     @OA\Property(property="isPublic", type="boolean", description="Indicates if the resource is public"),
+     *     @OA\Property(property="status", type="string", description="The status of the resource"),
+     *     @OA\Property(
+     *         property="category",
+     *         type="object",
+     *         description="Details about the category this resource belongs to",
+     *         ref="#/components/schemas/CategoryDetail"
+     *     ),
+     *     @OA\Property(property="viewCount", type="integer", description="Number of views this resource has received"),
+     *     @OA\Property(
+     *         property="user",
+     *         type="object",
+     *         description="Details about the user who created this resource",
+     *         ref="#/components/schemas/UserDetail"
+     *     ),
+     *     @OA\Property(property="creationDate", type="string", format="date-time", description="The date and time when the resource was created"),
+     *     @OA\Property(property="lastModificationDate", type="string", format="date-time", description="The date and time when the resource was last updated")
+     * )
+     */
+    public static function getRessourceDetail($ressource){
+        $category = Category::find($ressource->id_category);
+        $user = User::find($ressource->id_user);
+        $status = StatusRessource::find($ressource->id_status);
+        return [
+            'id' => $ressource->id_ressource,
+            'label' => $ressource->label,
+            'description' => $ressource->description,
+            'isPublic' => $ressource->is_public,
+            'status' => $status->label,
+            'category' => self::getCategoryDetail($category,false),
+            'viewCount' => $ressource->view_count,
+            'user' => self::getUserData($user),
+            'creationDate' => $ressource->created_at,
+            'lastModificationDate' => $ressource->updated_at,
+        ];
+    }
 }
