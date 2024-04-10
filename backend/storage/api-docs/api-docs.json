@@ -975,7 +975,211 @@
                 }
             }
         },
-        "/acceptRessource/{id}": {
+        "/ressources/pending": {
+            "get": {
+                "tags": [
+                    "Ressource"
+                ],
+                "summary": "Get pending resources",
+                "description": "Retrieves a list of all resources that are currently pending. This endpoint is restricted to moderators.",
+                "operationId": "getPendingRessources",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "ressources": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/RessourceDetail"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Moderator access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Access restricted to moderators"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/ressources/accepted": {
+            "get": {
+                "tags": [
+                    "Ressource"
+                ],
+                "summary": "Get accepted resources",
+                "description": "Retrieves a list of all resources that have been accepted. This endpoint is restricted to moderators.",
+                "operationId": "getAcceptedRessources",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "ressources": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/RessourceDetail"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Moderator access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Access restricted to moderators"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/ressources/rejected": {
+            "get": {
+                "tags": [
+                    "Ressource"
+                ],
+                "summary": "Get rejected resources",
+                "description": "Retrieves a list of all resources that have been rejected. This endpoint is restricted to moderators.",
+                "operationId": "getRejectedRessources",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "ressources": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/RessourceDetail"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Moderator access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Access restricted to moderators"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/ressources/blocked": {
+            "get": {
+                "tags": [
+                    "Ressource"
+                ],
+                "summary": "Get blocked resources",
+                "description": "Retrieves a list of all resources that have been blocked. This endpoint is restricted to moderators.",
+                "operationId": "getBlockedRessources",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "ressources": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/RessourceDetail"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Moderator access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Access restricted to moderators"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/ressources/accept/{id}": {
             "patch": {
                 "tags": [
                     "Ressource"
@@ -1067,7 +1271,7 @@
                 ]
             }
         },
-        "/rejectRessource/{id}": {
+        "/ressources/reject/{id}": {
             "patch": {
                 "tags": [
                     "Ressource"
@@ -1112,6 +1316,82 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Ressource déjà traitée"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource non trouvée"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Moderator access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Access restricted to moderators"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/ressources/block/{id}": {
+            "patch": {
+                "tags": [
+                    "Ressource"
+                ],
+                "summary": "Block a specific resource",
+                "description": "Blocks a specific resource by setting its status to blocked. This endpoint is restricted to moderators.",
+                "operationId": "blockRessource",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the resource to block",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resource blocked successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource bloquée"
                                         }
                                     },
                                     "type": "object"

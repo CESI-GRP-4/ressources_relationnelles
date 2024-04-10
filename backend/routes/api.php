@@ -67,7 +67,15 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::group(['middleware' => 'isModerator'], function () {
         // Routes for moderators (admins & superadmins can also access these routes)
 
-        Route::patch('acceptRessource/{id}', [RessourceController::class, 'acceptRessource']);
-        Route::patch('rejectRessource/{id}', [RessourceController::class, 'rejectRessource']);
+        Route::group(['prefix' => 'ressources'], function () {
+            Route::get('pending', [RessourceController::class, 'pending']);
+            Route::patch('accept/{id}', [RessourceController::class, 'accept']);
+            Route::patch('reject/{id}', [RessourceController::class, 'reject']);
+            Route::patch('block/{id}', [RessourceController::class, 'block']);
+
+            Route::get('accepted', [RessourceController::class, 'accepted']);
+            Route::get('rejected', [RessourceController::class, 'rejected']);
+            Route::get('blocked', [RessourceController::class, 'blocked']);
+        });
     });
 });
