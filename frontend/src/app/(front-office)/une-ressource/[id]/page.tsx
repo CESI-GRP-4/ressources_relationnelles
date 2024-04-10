@@ -2,7 +2,7 @@
 "use client"
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import type Resource from '@/types/resource';
+import type Ressource from '@/types/ressource';
 import axios from 'axios';
 
 const DefaultResource = [
@@ -14,7 +14,7 @@ const DefaultResource = [
 export default function ARessourcePage ({ params }: { params: { id: string } }){
   const id = params.id;
   console.log("🚀 ~ ARessourcePage ~ id:", id);
-  const [resource, setResource] = useState<Resource | null>(null);
+  const [resource, setResource] = useState<Ressource | null>(null);
 
   useEffect(() => {
     const fetchARessource = async () => {
