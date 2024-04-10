@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Avatar, Collapse, Popover, Tag, Typography, Button, message, Skeleton } from 'antd';
+import { Avatar, Collapse, Popover, Tag, Typography, Button, message, Skeleton, Popconfirm } from 'antd';
 import Ressource from '@/types/ressource';
 import { Icon } from '@iconify/react';
 const { Title, Text, Paragraph } = Typography;
@@ -220,9 +220,38 @@ export default function PendingRessourcesAccordion({ ressources, refreshRessourc
               ,
               children: (
                      <div className='flex flex-col md:flex-row gap-3'>
-                            <Button loading={loading} className='w-fit' style={{ backgroundColor: '#10B981', color: 'white' }} onClick={() => acceptRessource(ressource.id)}>Accepter</Button>
-                            <Button loading={loading} className='w-fit' style={{ backgroundColor: '#EF4444', color: 'white' }} onClick={() => rejectRessource(ressource.id)}>Rejeter</Button>
-                            <Button loading={loading} className='w-fit' style={{ backgroundColor: '#F59E0B', color: 'white' }} onClick={() => blockRessource(ressource.id)}>Bloquer</Button>
+                            <Popconfirm
+                                   title="Êtes-vous sûr de vouloir accepter cette ressource ?"
+                                   onConfirm={() => acceptRessource(ressource.id)}
+                                   okText="Oui"
+                                   cancelText="Non"
+                            >
+                                   <Button loading={loading} style={{ backgroundColor: '#10B981', color: 'white' }}>
+                                          Accepter
+                                   </Button>
+                            </Popconfirm>
+
+                            <Popconfirm
+                                   title="Êtes-vous sûr de vouloir rejeter cette ressource ?"
+                                   onConfirm={() => rejectRessource(ressource.id)}
+                                   okText="Oui"
+                                   cancelText="Non"
+                            >
+                                   <Button loading={loading} style={{ backgroundColor: '#EF4444', color: 'white' }}>
+                                          Rejeter
+                                   </Button>
+                            </Popconfirm>
+
+                            <Popconfirm
+                                   title="Êtes-vous sûr de vouloir bloquer cette ressource ?"
+                                   onConfirm={() => blockRessource(ressource.id)}
+                                   okText="Oui"
+                                   cancelText="Non"
+                            >
+                                   <Button loading={loading} style={{ backgroundColor: '#F59E0B', color: 'white' }}>
+                                          Bloquer
+                                   </Button>
+                            </Popconfirm>
                      </div>
               ),
        }));
