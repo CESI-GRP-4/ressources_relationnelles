@@ -7,7 +7,7 @@ export default interface Ressource {
        category: Category;
        isPublic: boolean;
        
-       id?: number;
+       id: number;
        viewCount?: number;
        user?: User;
        creationDate?: Date;

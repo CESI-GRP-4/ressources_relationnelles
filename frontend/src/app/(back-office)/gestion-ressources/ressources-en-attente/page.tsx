@@ -75,7 +75,7 @@ export default function PendingRessources() {
               <div className="flex flex-col gap-10">
                      <PageSummary title={"Ressources en attente"} description={"Consulter les ressources soumises par les utilisateurs. Le contenu de la ressource est disponible en cliquant l'un des éléments. En dépliant un élément, vous pourrez accepter, refuser ou bloquer la ressource"}></PageSummary>
                      {loading && <Skeleton active />}
-                     <PendingRessourcesAccordion ressources={ressources} />
+                     <PendingRessourcesAccordion ressources={ressources} refreshRessources={fetchPendingRessources} />
               </div>
        );
 }

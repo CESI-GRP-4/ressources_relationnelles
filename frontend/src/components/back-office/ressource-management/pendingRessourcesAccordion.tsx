@@ -1,13 +1,161 @@
-import React from 'react';
-import { Avatar, Collapse, Popover, Tag } from 'antd';
+import React, { useState } from 'react';
+import { Avatar, Collapse, Popover, Tag, Typography, Button, message, Skeleton } from 'antd';
 import Ressource from '@/types/ressource';
 import { Icon } from '@iconify/react';
-import { Typography } from 'antd';
 const { Title, Text, Paragraph } = Typography;
+import axios, { AxiosError } from 'axios';
+export default function PendingRessourcesAccordion({ ressources, refreshRessources }: { ressources: Ressource[], refreshRessources: Function }) {
+       const [loading, setLoading] = useState(false); // Used for loading state of buttons, but the global loading of the list is handle throught the parent component from the refreshRessources function
 
-export default function PendingRessourcesAccordion({ ressources }: { ressources: Ressource[] }) {
-       console.log(ressources); // Log the creation date of the first ressource, or 'unknown' if it is not available
+       const acceptRessource = async (id: number) => {
+              try {
+                     setLoading(true);
+                     const response = await axios(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/ressources/accept/${id}`, {
+                            withCredentials: true,
+                            method: 'PATCH'
+                     })
 
+                     if (response.status === 200) {
+                            console.log(response.data);
+                            message.success("Ressource acceptée avec succès");
+                            refreshRessources();
+                     }
+                     else {
+                            throw new Error('Error');
+                     }
+              }
+              catch (error) {
+                     console.error(error);
+                     const axiosError = error as AxiosError
+
+                     if (axiosError.response) {
+                            switch (axiosError.response.status) {
+                                   case 400:
+                                          message.error("Requête invalide");
+                                          break;
+                                   case 401:
+                                          message.error("Vous n'êtes pas autorisé à éffectuer cette action")
+                                          break;
+                                   case 403:
+                                          message.error("Vous n'êtes pas autorisé à éffectuer cette action")
+                                          break;
+                                   case 404:
+                                          message.error("Ressource introuvable")
+                                          break;
+                                   case 422:
+                                          message.error("Erreur avec les données saisies")
+                                          break;
+                                   default:
+                                          message.error("Erreur lors de l'acceptation de la ressource")
+                            }
+                     } else {
+                            message.error("Erreur lors de l'acceptation de la ressource")
+                     }
+              }
+              finally {
+                     setLoading(false);
+              }
+       };
+
+       const rejectRessource = async (id: number) => {
+              try {
+                     setLoading(true);
+                     const response = await axios(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/ressources/reject/${id}`, {
+                            withCredentials: true,
+                            method: 'PATCH'
+                     })
+
+                     if (response.status === 200) {
+                            console.log(response.data);
+                            message.success("Ressource rejetée avec succès");
+                            refreshRessources();
+                     }
+                     else {
+                            throw new Error('Error');
+                     }
+              }
+              catch (error) {
+                     console.error(error);
+                     const axiosError = error as AxiosError
+
+                     if (axiosError.response) {
+                            switch (axiosError.response.status) {
+                                   case 400:
+                                          message.error("Requête invalide");
+                                          break;
+                                   case 401:
+                                          message.error("Vous n'êtes pas autorisé à éffectuer cette action")
+                                          break;
+                                   case 403:
+                                          message.error("Vous n'êtes pas autorisé à éffectuer cette action")
+                                          break;
+                                   case 404:
+                                          message.error("Ressource introuvable")
+                                          break;
+                                   case 422:
+                                          message.error("Erreur avec les données saisies")
+                                          break;
+                                   default:
+                                          message.error("Erreur lors du rejet de la ressource")
+                            }
+                     } else {
+                            message.error("Erreur lors du rejet de la ressource")
+                     }
+              }
+              finally {
+                     setLoading(false);
+              }
+       };
+
+       const blockRessource = async (id: number) => {
+              try {
+                     setLoading(true);
+                     const response = await axios(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/ressources/block/${id}`, {
+                            withCredentials: true,
+                            method: 'PATCH'
+                     })
+
+                     if (response.status === 200) {
+                            console.log(response.data);
+                            message.success("Ressource bloquée avec succès");
+                            refreshRessources();
+                     }
+                     else {
+                            throw new Error('Error');
+                     }
+              }
+              catch (error) {
+                     console.error(error);
+                     const axiosError = error as AxiosError
+
+                     if (axiosError.response) {
+                            switch (axiosError.response.status) {
+                                   case 400:
+                                          message.error("Requête invalide");
+                                          break;
+                                   case 401:
+                                          message.error("Vous n'êtes pas autorisé à éffectuer cette action")
+                                          break;
+                                   case 403:
+                                          message.error("Vous n'êtes pas autorisé à éffectuer cette action")
+                                          break;
+                                   case 404:
+                                          message.error("Ressource introuvable")
+                                          break;
+                                   case 422:
+                                          message.error("Erreur avec les données saisies")
+                                          break;
+                                   default:
+                                          message.error("Erreur lors du blocage de la ressource")
+                            }
+                     } else {
+                            message.error("Erreur lors du blocage de la ressource")
+                     }
+              }
+              finally {
+                     setLoading(false);
+              }
+       }
 
        // Prepare items for the Collapse component
        const collapseItems = ressources.map((ressource) => ({
@@ -60,18 +208,23 @@ export default function PendingRessourcesAccordion({ ressources }: { ressources:
                                    </div>
                             </Popover>
                             <div className="flex flex-row items-center gap-2">
-                            <Tag color={ressource.category?.color || "blue"}>
-                                   <div className="flex flex-row items-center gap-2">
-                                          <Icon icon={ressource.category?.icon} fontSize={"20px"} /> <span className='text-lg'>{ressource.category?.title}</span>
-                                   </div>
-                            </Tag>
-                            <Icon icon={ressource.isPublic ? 'fontisto:unlocked' : 'fontisto:locked'} style={{ color: ressource.isPublic ? 'green' : 'red' }} />
+                                   <Tag color={ressource.category?.color || "blue"}>
+                                          <div className="flex flex-row items-center gap-2">
+                                                 <Icon icon={ressource.category?.icon} fontSize={"20px"} /> <span className='text-lg'>{ressource.category?.title}</span>
+                                          </div>
+                                   </Tag>
+                                   <Icon icon={ressource.isPublic ? 'fontisto:unlocked' : 'fontisto:locked'} style={{ color: ressource.isPublic ? 'green' : 'red' }} />
                             </div>
                      </div>
               </div>
               ,
-              children: <p>{ressource.description}</p>, // The main content of the panel
-              // You can include more detailed structures here as needed
+              children: (
+                     <div className='flex flex-col md:flex-row gap-3'>
+                            <Button loading={loading} className='w-fit' style={{ backgroundColor: '#10B981', color: 'white' }} onClick={() => acceptRessource(ressource.id)}>Accepter</Button>
+                            <Button loading={loading} className='w-fit' style={{ backgroundColor: '#EF4444', color: 'white' }} onClick={() => rejectRessource(ressource.id)}>Rejeter</Button>
+                            <Button loading={loading} className='w-fit' style={{ backgroundColor: '#F59E0B', color: 'white' }} onClick={() => blockRessource(ressource.id)}>Bloquer</Button>
+                     </div>
+              ),
        }));
 
        return (
