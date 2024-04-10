@@ -1,9 +1,9 @@
 export default interface User {
+       id?: string;
        firstName?: string;
        lastName?: string;
        email?: string;
        imgURL?: string;
-       id?: string;
        role?: 'Utilisateur' | 'Moderateur' | 'Administrateur' | 'SuperAdministrateur';
        isEmailVerified?: boolean;
        city?: string;

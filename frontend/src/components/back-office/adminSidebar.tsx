@@ -17,12 +17,21 @@ import React, { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 const { Sider } = Layout;
 import { useUser } from "@/providers/userProvider";
+import { Icon } from '@iconify/react';
 
 export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: boolean, setCollapsed: (collapsed: boolean) => void }) {
        const { user } = useUser();
        const pathname = usePathname();
        const selectedKey = pathname.split('/').filter(Boolean).join('/');
 
+       interface SidebarItem {
+              key: string;
+              icon: React.ReactNode;
+              style?: React.CSSProperties;
+              label: React.ReactNode;
+              title: string;
+              children?: SidebarItem[];
+       }
        const ConditionalTooltip = ({ title, children }: { title: string, children: React.ReactNode }) => {
               const [isOverflowing, setIsOverflowing] = useState(false);
               const textRef = useRef<HTMLDivElement>(null);
@@ -48,175 +57,176 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                      </Tooltip>
               );
        }
-       let adminSidebarItems = undefined;
+       const moderatorSidebarItems: SidebarItem[] = [
+              {
+                     key: "ressources",
+                     icon: <Icon icon={"line-md:document-code-twotone"}
+                            style={{ fontSize: '20px' }}
+
+                     />,
+                     style: { marginTop: '30px' },
+                     label: (
+                            <ConditionalTooltip title="Ressources">
+                                   Ressources
+                            </ConditionalTooltip>
+                     ),
+                     title: 'Ressources',
+                     children: [
+                            // Ressources accepted:
+                            {
+                                   icon: <Icon icon={"line-md:list-3-twotone"}
+                                          style={{ fontSize: '20px' }}
+
+                                   />,
+                                   label: (
+                                          <ConditionalTooltip title="Liste des ressources">
+                                                 <Link href={'/liste-ressources'}>Liste</Link>
+                                          </ConditionalTooltip>
+                                   ),
+                                   key: 'liste-ressources',
+                                   title: 'liste-ressources',
+                            },
+                            // Ressources waiting for validation:
+                            {
+                                   icon: <Icon icon={"line-md:loading-twotone-loop"}
+                                          style={{ fontSize: '20px' }}
+                                   />,
+                                   label: (
+                                          <ConditionalTooltip title="Ressources en attente">
+                                                 <Link href={'/ressources-en-attente'}>En attente</Link>
+                                          </ConditionalTooltip>
+                                   ),
+                                   key: 'ressources-en-attente',
+                                   title: 'ressources-en-attente',
+                            },
+                            // Ressources refused (waiting for modifications from the user, it will be then re-submitted for validation):
+                            {
+                                   icon: <Icon icon={"line-md:minus-circle"}
+                                          style={{ fontSize: '20px' }}
+                                   />,
+                                   label: (
+                                          <ConditionalTooltip title={`Ressources refusées (en attente de modifications)`}>
+                                                 <Link href={'/ressources-refusees'}>{`Refusées`}</Link>
+                                          </ConditionalTooltip>
+                                   ),
+                                   key: 'ressources-refusees',
+                                   title: 'ressources-refusees',
+                            },
+
+                            {
+                                   icon: <Icon icon={"line-md:backup-restore"}
+                                          style={{ fontSize: '20px' }}
+                                   />,
+                                   label: (
+                                          <ConditionalTooltip title="Historique">
+                                                 <Link href={'/gestion-ressources-historique'}>Historique</Link>
+                                          </ConditionalTooltip>
+                                   ),
+                                   key: 'gestion-ressources-historique',
+                                   title: 'gestion-ressources-historique',
+                            },
+                     ]
+              }
+       ]
+
+       // Additional items for the "Administrateur" role
+       const adminAdditionalItems: SidebarItem[] = [
+              {
+                     key: "utilisateurs",
+                     icon: <UserOutlined />,
+                     label: (
+                            <ConditionalTooltip title="Utilisateurs">
+                                   Utilisateurs
+                            </ConditionalTooltip>
+                     ),
+                     title: 'Utilisateurs',
+                     children: [
+                            {
+                                   icon: <EditOutlined />,
+                                   label: (
+                                          <ConditionalTooltip title="Gestion des utilisateurs">
+                                                 <Link href={'/gestion-utilisateurs'}>Gérer</Link>
+                                          </ConditionalTooltip>
+                                   ),
+                                   key: 'gestion-utilisateurs',
+                                   title: 'gestion-utilisateurs',
+                            },
+                            {
+                                   icon: <HistoryOutlined />,
+                                   label: (
+                                          <ConditionalTooltip title="Historique">
+                                                 <Link href={'/gestion-utilisateurs-historique'}>Historique</Link>
+                                          </ConditionalTooltip>
+                                   ),
+                                   key: 'gestion-utilisateurs-historique',
+                                   title: 'gestion-utilisateurs-historique',
+                            },
+                     ]
+              },
+              {
+                     key: "statistiques",
+                     icon: <LineChartOutlined />,
+                     label: (
+                            <ConditionalTooltip title="Statistiques">
+                                   Statistiques
+                            </ConditionalTooltip>
+                     ),
+                     title: 'statistiques',
+                     children: [
+                            {
+                                   icon: <LoginOutlined />,
+                                   label: (
+                                          <ConditionalTooltip title="Connexions">
+                                                 <Link href={'/statistiques/connexions'}>Connexions</Link>
+                                          </ConditionalTooltip>
+                                   ),
+                                   key: 'statistiques/connexions',
+                                   title: 'connexions',
+                            },
+                     ]
+              },
+              {
+                     key: "gestion-categories",
+                     icon: <FileDoneOutlined />,
+                     label: (
+                            <ConditionalTooltip title="Gestion des catégories">
+                                   <Link href={'/gestion-categories'}>Catégories</Link>
+                            </ConditionalTooltip>
+                     ),
+                     title: 'gestion-categories',
+              }
+       ];
+
+       // Additional items for the "SuperAdministrateur" role
+       const superAdminAdditionalItems: SidebarItem[] = [];
+
+       let sidebarItems = undefined;
 
        switch (user?.role) {
-              case "Utilisateur":
-                     // Sidebar items for "Utilisateur" role
-                     // no sidebar items
-                     break;
               case "Moderateur":
-                     // Sidebar items for "Moderateur" role
+                     sidebarItems = [...moderatorSidebarItems];
                      break;
               case "Administrateur":
-                     // Sidebar items for "Administrateur" role
-                     adminSidebarItems = [
-                            // ! Keys must be unique and must have the same value as the route
-                            {
-                                   key: "utilisateurs",
-                                   icon: <UserOutlined />,
-                                   style: { marginTop: '30px' },
-                                   label: (
-                                          <ConditionalTooltip title="Utilisateurs">
-                                                 Utilisateurs
-                                          </ConditionalTooltip>
-                                   ),
-                                   title: 'Utilisateurs',
-                                   children: [
-                                          {
-                                                 icon: <EditOutlined />,
-                                                 label: (
-                                                        <ConditionalTooltip title="Gestion des utilisateurs">
-                                                               <Link href={'/gestion-utilisateurs'}>Gérer</Link>
-                                                        </ConditionalTooltip>
-                                                 ),
-                                                 key: 'gestion-utilisateurs',
-                                                 title: 'gestion-utilisateurs',
-                                          },
-                                          {
-                                                 icon: <HistoryOutlined />,
-                                                 label: (
-                                                        <ConditionalTooltip title="Historique">
-                                                               <Link href={'/gestion-utilisateurs-historique'}>Historique</Link>
-                                                        </ConditionalTooltip>
-                                                 ),
-                                                 key: 'gestion-utilisateurs-historique',
-                                                 title: 'gestion-utilisateurs-historique',
-                                          },
-                                   ]
-                            },
-                            {
-                                   key: "statistiques",
-                                   icon: <LineChartOutlined />,
-                                   label: (
-                                          <ConditionalTooltip title="Statistiques">
-                                                 Statistiques
-                                          </ConditionalTooltip>
-                                   ),
-                                   title: 'statistiques',
-                                   children: [
-                                          {
-                                                 icon: <LoginOutlined />,
-                                                 label: (
-                                                        <ConditionalTooltip title="Connexions">
-                                                               <Link href={'/statistiques/connexions'}>Connexions</Link>
-                                                        </ConditionalTooltip>
-                                                 ),
-                                                 key: 'statistiques/connexions',
-                                                 title: 'connexions',
-                                          },
-                                   ]
-                            },
-                            {
-                                   key:"gestion-categories",
-                                   icon: <FileDoneOutlined />,
-                                   label: (
-                                          <ConditionalTooltip title="Gestion des catégories">
-                                                 <Link href={'/gestion-categories'}>Catégories</Link>
-                                          </ConditionalTooltip>
-                                   ),
-                                   title: 'gestion-categories',
-                            }
-                     ]
+                     // Combine moderator items with admin-specific items
+                     sidebarItems = [...moderatorSidebarItems, ...adminAdditionalItems];
                      break;
               case "SuperAdministrateur":
-                     // Sidebar items for "SuperAdministrateur" role
-                     adminSidebarItems = [
-                            // ! Keys must be unique and must have the same value as the route
-                            {
-                                   key: "utilisateurs",
-                                   icon: <UserOutlined />,
-                                   style: { marginTop: '30px' },
-                                   label: (
-                                          <ConditionalTooltip title="Utilisateurs">
-                                                 Utilisateurs
-                                          </ConditionalTooltip>
-                                   ),
-                                   title: 'Utilisateurs',
-                                   children: [
-                                          {
-                                                 icon: <EditOutlined />,
-                                                 label: (
-                                                        <ConditionalTooltip title="Gestion des utilisateurs">
-                                                               <Link href={'/gestion-utilisateurs'}>Gérer</Link>
-                                                        </ConditionalTooltip>
-                                                 ),
-                                                 key: 'gestion-utilisateurs',
-                                                 title: 'gestion-utilisateurs',
-                                          },
-                                          {
-                                                 icon: <HistoryOutlined />,
-                                                 label: (
-                                                        <ConditionalTooltip title="Historique">
-                                                               <Link href={'/gestion-utilisateurs-historique'}>Historique</Link>
-                                                        </ConditionalTooltip>
-                                                 ),
-                                                 key: 'gestion-utilisateurs-historique',
-                                                 title: 'gestion-utilisateurs-historique',
-                                          },
-                                   ]
-                            },
-                            {
-                                   key: "statistiques",
-                                   icon: <LineChartOutlined />,
-                                   label: (
-                                          <ConditionalTooltip title="Statistiques">
-                                                 Statistiques
-                                          </ConditionalTooltip>
-                                   ),
-                                   title: 'statistiques',
-                                   children: [
-                                          {
-                                                 icon: <LoginOutlined />,
-                                                 label: (
-                                                        <ConditionalTooltip title="Connexions">
-                                                               <Link href={'/statistiques/connexions'}>Connexions</Link>
-                                                        </ConditionalTooltip>
-                                                 ),
-                                                 key: 'statistiques/connexions',
-                                                 title: 'connexions',
-                                          },
-                                   ]
-                            },
-                            {
-                                   key:"gestion-categories",
-                                   icon: <FileDoneOutlined />,
-                                   label: (
-                                          <ConditionalTooltip title="Gestion des catégories">
-                                                 <Link href={'/gestion-categories'}>Catégories</Link>
-                                          </ConditionalTooltip>
-                                   ),
-                                   title: 'gestion-categories',
-                            }
-                     ]
-                     break;
-              default:
-                     // Sidebar items for other roles or no user
-                     // no sidebar items
+                     // Combine admin items (which already includes moderator items) with super-admin-specific items
+                     sidebarItems = [...moderatorSidebarItems, ...adminAdditionalItems, ...superAdminAdditionalItems];
                      break;
        }
 
        return (
               user?.role === "Moderateur" ||
-              user?.role === "Administrateur" ||
-              user?.role === "SuperAdministrateur" ? (
+                     user?.role === "Administrateur" ||
+                     user?.role === "SuperAdministrateur" ? (
                      <Sider
                             trigger={collapsed ? <RightOutlined /> : <LeftOutlined />}
                             collapsible
                             breakpoint="lg"
                             collapsedWidth="0"
                             width="200"
-                            onBreakpoint={(broken) => {}}
+                            onBreakpoint={(broken) => { }}
                             theme="light"
                             onCollapse={(collapsed, type) => {
                                    setCollapsed(collapsed);
@@ -240,7 +250,7 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                                           mode="inline"
                                           style={{ height: '100vh' }}
                                           theme="light"
-                                          items={adminSidebarItems}
+                                          items={sidebarItems}
                                           selectedKeys={[selectedKey]}
                                    />
                             </div>
