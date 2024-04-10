@@ -8,7 +8,7 @@ export default interface Ressource {
        isPublic: boolean;
        
        id?: number;
-       viewCount?: bigint;
+       viewCount?: number;
        user?: User;
        creationDate?: Date;
        lastModificationDate?: Date;
