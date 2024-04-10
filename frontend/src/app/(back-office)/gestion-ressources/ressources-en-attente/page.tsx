@@ -21,35 +21,8 @@ export default function PendingRessources() {
                             method: "GET",
                             withCredentials: true
                      });
-                     console.table(response.data.ressources);
-
-                     const transformedRessources = response.data.ressources.map(ressource => ({
-                            id: ressource.id_ressource,
-                            label: ressource.label,
-                            description: ressource.description,
-                            isPublic: ressource.is_public === 1,
-                            creationDate: new Date(ressource.created_at),
-                            lastModificationDate: new Date(ressource.updated_at),
-                            category: {
-                                   id: 2,
-                                   title: "Category",
-                                   icon: "ph:airplane",
-                                   color: "#1E90FF"
-                            },
-                            user: {
-                                   id: 3,
-                                   email: "test.test@test.com",
-                                   role: "admin",
-                                   country: "France",
-                                   city: "Paris",
-                                   postalCode: "75000",
-                                   imgURL: "https://api.dicebear.com/8.x/bottts-neutral/svg",
-                                   firstName: "John",
-                                   lastName: "Doe"
-                            }
-                     }));
-
-                     setRessources(transformedRessources);
+                     setRessources(response.data.ressources);
+                     console.log("🚀 ~ fetchPendingRessources ~ response.data.ressources:", response.data.ressources);
               } catch (error) {
                      console.error(error);
                      const axiosError = error as AxiosError;
