@@ -138,8 +138,12 @@ class RessourceController extends Controller
             return response()->json(['message' => 'Ressource non trouvée'], 404);
         }
 
+        // Add one to the view count
+        $ressource->view_count += 1;
+        $ressource->save();
+
         // TODO : Faire le format
-        return response()->json(['message' => 'Ressource retrieved successfully', 'ressource' => $ressource], 200);
+        return response()->json(['ressource' => $ressource], 200);
     }
 
 }
