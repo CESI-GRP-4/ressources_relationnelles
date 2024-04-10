@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Validator;
 
 
 class RessourceController extends Controller {
+    const ID_ACCEPTED_STATUS = 1;
     const ID_PENDING_STATUS = 2;
+    const ID_REJECTED_STATUS = 3;
 
     /**
      * @OA\Post(
@@ -98,6 +100,142 @@ class RessourceController extends Controller {
 
         // TODO : Faire le format
         return response()->json(['ressource' => $ressource], 200);
+    }
+
+    /**
+     * @OA\Patch(
+     *     path="/acceptRessource/{id}",
+     *     tags={"Ressource"},
+     *     summary="Accept a resource",
+     *     description="Marks a pending resource as accepted. This endpoint is restricted to moderators.",
+     *     operationId="acceptRessource",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the resource to accept",
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Resource accepted successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Ressource acceptée")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Resource already processed",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Ressource déjà traitée")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Resource not found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Ressource non trouvée")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden - Moderator access required",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Access restricted to moderators")
+     *         )
+     *     )
+     * )
+     */
+    public function acceptRessource($id) {
+        $ressource = Ressource::find($id);
+
+        if (!$ressource) {
+            return response()->json(['message' => 'Ressource non trouvée'], 404);
+        }
+
+        if ($ressource->id_status != self::ID_PENDING_STATUS) {
+            return response()->json(['message' => 'Ressource déjà traitée'], 400);
+        }
+
+        $ressource->id_status = self::ID_ACCEPTED_STATUS;
+        $ressource->save();
+
+        return response()->json(['message' => 'Ressource acceptée'], 200);
+    }
+
+    /**
+     * @OA\Patch(
+     *     path="/rejectRessource/{id}",
+     *     tags={"Ressource"},
+     *     summary="Reject a resource",
+     *     description="Marks a pending resource as rejected. This endpoint is restricted to moderators.",
+     *     operationId="rejectRessource",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the resource to reject",
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Resource rejected successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Ressource refusée")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Resource already processed",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Ressource déjà traitée")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Resource not found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Ressource non trouvée")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden - Moderator access required",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Access restricted to moderators")
+     *         )
+     *     )
+     * )
+     */
+    public function rejectRessource($id) {
+        $ressource = Ressource::find($id);
+
+        if (!$ressource) {
+            return response()->json(['message' => 'Ressource non trouvée'], 404);
+        }
+
+        if ($ressource->id_status != self::ID_PENDING_STATUS) {
+            return response()->json(['message' => 'Ressource déjà traitée'], 400);
+        }
+
+        $ressource->id_status = self::ID_REJECTED_STATUS;
+        $ressource->save();
+
+        return response()->json(['message' => 'Ressource refusée'], 200);
     }
 
 }

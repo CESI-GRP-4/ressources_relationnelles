@@ -30,8 +30,7 @@ Route::get('category/{id}', [CategoryController::class, 'getCategory']);
 // Ressources
 Route::get('ressource/{id}', [RessourceController::class, 'getRessource']);
 
-// Route::group(['middleware' => ['jwt.auth','jwt.refresh']], function() { // for refresh token. Commented for now as we got errors
-
+// Connected access
 Route::group(['middleware' => ['jwt.auth']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('verifyUser', [AuthController::class, 'verifyUser']);
@@ -67,5 +66,8 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     // Moderator, Admin & SuperAdmin routes
     Route::group(['middleware' => 'isModerator'], function () {
         // Routes for moderators (admins & superadmins can also access these routes)
+
+        Route::patch('acceptRessource/{id}', [RessourceController::class, 'acceptRessource']);
+        Route::patch('rejectRessource/{id}', [RessourceController::class, 'rejectRessource']);
     });
 });
