@@ -150,7 +150,13 @@ const UserProfilePage = () => {
           onClick={editing ? handleCancel : handleEdit}
           key="edit"
         >
+          {/*
+          A remplacer lorsque la fonctionnalité sera développée
+          
           {editing ? 'Retour' : 'Modifier'}
+
+          */}
+          {'Modifier'}
         </Button>
       ]}
     >
