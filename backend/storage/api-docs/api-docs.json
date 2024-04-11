@@ -1191,7 +1191,7 @@
                     "Ressource"
                 ],
                 "summary": "Delete a specific resource",
-                "description": "Allows an authenticated user to delete their own resource. The operation ensures that the user owns the resource before deletion.",
+                "description": "Allows an authenticated user to delete their own resource, or allows staff members (moderators, administrators, super administrators) to delete any resource. The operation checks if the user owns the resource or if the user is a staff member before allowing deletion.",
                 "operationId": "deleteRessource",
                 "parameters": [
                     {

@@ -253,7 +253,7 @@ class RessourceController extends Controller {
      *     path="/ressource/delete/{id}",
      *     tags={"Ressource"},
      *     summary="Delete a specific resource",
-     *     description="Allows an authenticated user to delete their own resource. The operation ensures that the user owns the resource before deletion.",
+     *     description="Allows an authenticated user to delete their own resource, or allows staff members (moderators, administrators, super administrators) to delete any resource. The operation checks if the user owns the resource or if the user is a staff member before allowing deletion.",
      *     operationId="deleteRessource",
      *     security={{ "BearerAuth": {} }},
      *     @OA\Parameter(
@@ -302,7 +302,7 @@ class RessourceController extends Controller {
             return response()->json(['message' => 'Ressource non trouvée'], 404);
         }
 
-        if ($ressource->id_user != auth()->user()->id_user) {
+        if (auth()->user()->role->name == 'Utilisateur' && $ressource->id_user != auth()->user()->id_user) {
             return response()->json(['message' => 'Vous n\'avez pas les droits pour supprimer cette ressource'], 403);
         }
 
