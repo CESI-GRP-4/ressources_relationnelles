@@ -38,6 +38,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::group(['prefix' => 'ressource'], function () {
         Route::post('create', [RessourceController::class, 'create']);
         Route::post('edit/{id}', [RessourceController::class, 'edit']);
+        Route::delete('delete/{id}', [RessourceController::class, 'delete']);
     });
 
     Route::get('myRessources', [RessourceController::class, 'getMyRessources']);

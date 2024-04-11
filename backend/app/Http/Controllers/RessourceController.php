@@ -248,6 +248,68 @@ class RessourceController extends Controller {
         return response()->json(['message' => 'Ressource modifiée avec succès'], 200);
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/ressource/delete/{id}",
+     *     tags={"Ressource"},
+     *     summary="Delete a specific resource",
+     *     description="Allows an authenticated user to delete their own resource. The operation ensures that the user owns the resource before deletion.",
+     *     operationId="deleteRessource",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the resource to be deleted",
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Resource deleted successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Ressource supprimée avec succès")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden - User does not have rights to delete this resource",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Vous n'avez pas les droits pour supprimer cette ressource")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Resource not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Ressource non trouvée")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - User must be logged in",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthorized - User must be logged in")
+     *         )
+     *     )
+     * )
+     */
+    public function delete($id){
+        $ressource = Ressource::find($id);
+        if (!$ressource) {
+            return response()->json(['message' => 'Ressource non trouvée'], 404);
+        }
+
+        if ($ressource->id_user != auth()->user()->id_user) {
+            return response()->json(['message' => 'Vous n\'avez pas les droits pour supprimer cette ressource'], 403);
+        }
+
+        $ressource->delete();
+        return response()->json(['message' => 'Ressource supprimée avec succès'], 200);
+    }
+
 
     /**
      * @OA\Get(
