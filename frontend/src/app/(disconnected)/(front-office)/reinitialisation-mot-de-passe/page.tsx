@@ -105,12 +105,12 @@ export default function ReinitialisationMotDePasse() {
                                           style={{ marginBottom: 0 }}
                                           label="Mot de passe"
                                           hasFeedback
-                                          name="password" />
+                                          name="password" useRegex={true} />
 
                                    <PasswordInput
                                           label="Confirmer mot de passe"
                                           name="verifyPassword"
-                                          hasFeedback />
+                                          hasFeedback useRegex={true} />
 
                                    <Form.Item className="text-center">
                                           <Button icon={<SendOutlined />} type="primary" htmlType="submit">
