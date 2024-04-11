@@ -175,6 +175,58 @@ class RessourceController extends Controller {
 
     /**
      * @OA\Get(
+     *     path="/myRessources/stats",
+     *     tags={"Ressource"},
+     *     summary="Get statistics on the user's resources",
+     *     description="Retrieves statistics about the authenticated user's resources, including totals, views, and status counts.",
+     *     operationId="getMyRessourcesStats",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Response(
+     *         response=200,
+     *         description="User's resources statistics retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="ressources",
+     *                 type="object",
+     *                 @OA\Property(property="total", type="integer", description="Total number of the user's resources"),
+     *                 @OA\Property(property="totalView", type="integer", description="Total views across the user's resources"),
+     *                 @OA\Property(property="public", type="integer", description="Count of the user's public resources"),
+     *                 @OA\Property(property="private", type="integer", description="Count of the user's private resources"),
+     *                 @OA\Property(property="pending", type="integer", description="Count of the user's resources pending moderation"),
+     *                 @OA\Property(property="accepted", type="integer", description="Count of the user's resources accepted by moderators"),
+     *                 @OA\Property(property="rejected", type="integer", description="Count of the user's resources rejected by moderators"),
+     *                 @OA\Property(property="blocked", type="integer", description="Count of the user's resources blocked by moderators")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - User must be logged in",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthorized - User must be logged in")
+     *         )
+     *     )
+     * )
+     */
+    public function getMyRessourcesStats(){
+        $ressources = Ressource::where('id_user', auth()->user()->id_user)->get();
+        $ressourcesStats = [
+            'total' => $ressources->count(),
+            'totalView' => $ressources->sum('view_count'),
+            'public' => $ressources->where('is_public', true)->count(),
+            'private' => $ressources->where('is_public', false)->count(),
+            'pending' => $ressources->where('id_status', self::ID_PENDING_STATUS)->count(),
+            'accepted' => $ressources->where('id_status', self::ID_ACCEPTED_STATUS)->count(),
+            'rejected' => $ressources->where('id_status', self::ID_REJECTED_STATUS)->count(),
+            'blocked' => $ressources->where('id_status', self::ID_BLOCKED_STATUS)->count(),
+        ];
+
+        return response()->json(['ressources' => $ressourcesStats], 200);
+    }
+
+    /**
+     * @OA\Get(
      *     path="/ressources/pending",
      *     tags={"Ressource"},
      *     summary="Get pending ressources",
@@ -504,6 +556,47 @@ class RessourceController extends Controller {
     }
 
 
+    /**
+     * @OA\Get(
+     *     path="/stats/ressources",
+     *     tags={"Statistics"},
+     *     summary="Get statistics about resources",
+     *     description="Retrieves statistics about resources, including totals, views, and status counts.",
+     *     operationId="getRessourcesStats",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Statistics retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="ressources",
+     *                 type="object",
+     *                 @OA\Property(property="total", type="integer", description="Total number of resources"),
+     *                 @OA\Property(property="totalView", type="integer", description="Total views across all resources"),
+     *                 @OA\Property(property="public", type="integer", description="Count of public resources"),
+     *                 @OA\Property(property="private", type="integer", description="Count of private resources"),
+     *                 @OA\Property(property="pending", type="integer", description="Count of resources pending moderation"),
+     *                 @OA\Property(property="accepted", type="integer", description="Count of resources accepted by moderators"),
+     *                 @OA\Property(property="rejected", type="integer", description="Count of resources rejected by moderators"),
+     *                 @OA\Property(property="blocked", type="integer", description="Count of resources blocked by moderators")
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function getRessourcesStats(){
+        $ressources = Ressource::all();
+        $ressourcesStats = [
+            'total' => $ressources->count(),
+            'totalView' => $ressources->sum('view_count'),
+            'public' => $ressources->where('is_public', true)->count(),
+            'private' => $ressources->where('is_public', false)->count(),
+            'pending' => $ressources->where('id_status', self::ID_PENDING_STATUS)->count(),
+            'accepted' => $ressources->where('id_status', self::ID_ACCEPTED_STATUS)->count(),
+            'rejected' => $ressources->where('id_status', self::ID_REJECTED_STATUS)->count(),
+            'blocked' => $ressources->where('id_status', self::ID_BLOCKED_STATUS)->count(),
+        ];
 
-
+        return response()->json(['ressources' => $ressourcesStats], 200);
+    }
 }

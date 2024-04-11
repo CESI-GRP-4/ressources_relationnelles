@@ -1080,6 +1080,88 @@
                 ]
             }
         },
+        "/myRessources/stats": {
+            "get": {
+                "tags": [
+                    "Ressource"
+                ],
+                "summary": "Get statistics on the user's resources",
+                "description": "Retrieves statistics about the authenticated user's resources, including totals, views, and status counts.",
+                "operationId": "getMyRessourcesStats",
+                "responses": {
+                    "200": {
+                        "description": "User's resources statistics retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "ressources": {
+                                            "properties": {
+                                                "total": {
+                                                    "description": "Total number of the user's resources",
+                                                    "type": "integer"
+                                                },
+                                                "totalView": {
+                                                    "description": "Total views across the user's resources",
+                                                    "type": "integer"
+                                                },
+                                                "public": {
+                                                    "description": "Count of the user's public resources",
+                                                    "type": "integer"
+                                                },
+                                                "private": {
+                                                    "description": "Count of the user's private resources",
+                                                    "type": "integer"
+                                                },
+                                                "pending": {
+                                                    "description": "Count of the user's resources pending moderation",
+                                                    "type": "integer"
+                                                },
+                                                "accepted": {
+                                                    "description": "Count of the user's resources accepted by moderators",
+                                                    "type": "integer"
+                                                },
+                                                "rejected": {
+                                                    "description": "Count of the user's resources rejected by moderators",
+                                                    "type": "integer"
+                                                },
+                                                "blocked": {
+                                                    "description": "Count of the user's resources blocked by moderators",
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
         "/ressources/pending": {
             "get": {
                 "tags": [
@@ -1542,6 +1624,67 @@
                         "BearerAuth": []
                     }
                 ]
+            }
+        },
+        "/stats/ressources": {
+            "get": {
+                "tags": [
+                    "Statistics"
+                ],
+                "summary": "Get statistics about resources",
+                "description": "Retrieves statistics about resources, including totals, views, and status counts.",
+                "operationId": "getRessourcesStats",
+                "responses": {
+                    "200": {
+                        "description": "Statistics retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "ressources": {
+                                            "properties": {
+                                                "total": {
+                                                    "description": "Total number of resources",
+                                                    "type": "integer"
+                                                },
+                                                "totalView": {
+                                                    "description": "Total views across all resources",
+                                                    "type": "integer"
+                                                },
+                                                "public": {
+                                                    "description": "Count of public resources",
+                                                    "type": "integer"
+                                                },
+                                                "private": {
+                                                    "description": "Count of private resources",
+                                                    "type": "integer"
+                                                },
+                                                "pending": {
+                                                    "description": "Count of resources pending moderation",
+                                                    "type": "integer"
+                                                },
+                                                "accepted": {
+                                                    "description": "Count of resources accepted by moderators",
+                                                    "type": "integer"
+                                                },
+                                                "rejected": {
+                                                    "description": "Count of resources rejected by moderators",
+                                                    "type": "integer"
+                                                },
+                                                "blocked": {
+                                                    "description": "Count of resources blocked by moderators",
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/stats/connections": {

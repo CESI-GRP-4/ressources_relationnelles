@@ -37,6 +37,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::post('createRessource', [RessourceController::class, 'createRessource']);
 
     Route::get('myRessources', [RessourceController::class, 'getMyRessources']);
+    Route::get('myRessources/stats', [RessourceController::class, 'getMyRessourcesStats']);
 
 
 
@@ -64,7 +65,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
         Route::group(['prefix' => 'stats'], function () {
             Route::get('connections', [ConnectionController::class, 'getConnections']);
             Route::get('users', [UserController::class, 'getUsersInformation']);
-            // TODO : ressources stats
+            Route::get('ressources', [RessourceController::class, 'getRessourcesStats']);
         });
     });
 
