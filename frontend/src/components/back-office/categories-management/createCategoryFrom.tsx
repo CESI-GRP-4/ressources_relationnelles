@@ -48,7 +48,7 @@ export default function CreateCategoryForm({ refreshCategories }: { refreshCateg
                      const response = await axios({
                             method: 'post',
                             baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
-                            url: "/createCategory",
+                            url: "/category/create",
                             data: form,
                             withCredentials: true,
                             responseType: 'json',

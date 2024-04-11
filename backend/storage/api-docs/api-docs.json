@@ -589,7 +589,7 @@
                 ]
             }
         },
-        "/createCategory": {
+        "/category/create": {
             "post": {
                 "tags": [
                     "Categories"
@@ -686,7 +686,7 @@
                 ]
             }
         },
-        "/editCategory/{id}": {
+        "/category/edit/{id}": {
             "post": {
                 "tags": [
                     "Categories"
@@ -791,7 +791,7 @@
                 ]
             }
         },
-        "/deleteCategory/{id}": {
+        "/category/delete/{id}": {
             "delete": {
                 "tags": [
                     "Categories"
@@ -1650,22 +1650,6 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "ressource already processed",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Ressource déjà traitée"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
                     "404": {
                         "description": "ressource not found",
                         "content": {
@@ -1755,22 +1739,6 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Ressource refusée"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "ressource already processed or staff comment missing",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "description": "Specific error message",
-                                            "type": "string"
                                         }
                                     },
                                     "type": "object"
@@ -2204,7 +2172,7 @@
                 ]
             }
         },
-        "/createUser": {
+        "/user/create": {
             "post": {
                 "tags": [
                     "Users"
@@ -2343,7 +2311,7 @@
                 ]
             }
         },
-        "/editUser/{id}": {
+        "/user/edit/{id}": {
             "post": {
                 "tags": [
                     "Users"
@@ -2503,7 +2471,7 @@
                 ]
             }
         },
-        "/deleteUser/{id}": {
+        "/user/delete/{id}": {
             "delete": {
                 "tags": [
                     "Users"
@@ -2579,7 +2547,7 @@
                 ]
             }
         },
-        "/banUser/{id}": {
+        "/user/ban/{id}": {
             "post": {
                 "tags": [
                     "Users"
@@ -2694,7 +2662,7 @@
                 ]
             }
         },
-        "/unbanUser/{id}": {
+        "/user/unban/{id}": {
             "patch": {
                 "tags": [
                     "Users"
@@ -2832,7 +2800,7 @@
                 ]
             }
         },
-        "/usersHistory": {
+        "/users/history": {
             "get": {
                 "tags": [
                     "Users"

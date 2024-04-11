@@ -58,7 +58,7 @@ export default function CreateUserForm({ refreshUsers }: { refreshUsers: () => v
                      const response = await axios({
                             method: 'post',
                             baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
-                            url: "/createUser",
+                            url: "/user/create",
                             data: form,
                             withCredentials: true,
                             responseType: 'json',

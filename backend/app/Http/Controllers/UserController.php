@@ -246,7 +246,7 @@ class UserController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/createUser",
+     *     path="/user/create",
      *     tags={"Users"},
      *     summary="Create a new user",
      *     description="Registers a new user into the system with provided user details. Validates input data and checks for email uniqueness. On success, sends a verification email.",
@@ -322,8 +322,7 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function createUser(Request $request)
-    {
+    public function create(Request $request) {
 
         $validator = Validator::make($request->all(), [
             'firstName' => 'required|string|max:255',
@@ -362,7 +361,7 @@ class UserController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/editUser/{id}",
+     *     path="/user/edit/{id}",
      *     tags={"Users"},
      *     summary="Edit a user's details",
      *     description="Allows editing user details. Note: Only Super Administrators can change the user's role.",
@@ -427,8 +426,7 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function editUser(Request $request, $id)
-    {
+    public function editUser(Request $request, $id) {
         DB::beginTransaction();
         try {
             $user = User::findOrFail($id);
@@ -480,7 +478,7 @@ class UserController extends Controller
             }
 
             if ($request->filled('city')) {
-                $city = City::where('name', $request->city)->firstOrFail();
+                $city = City::firstOrCreate(['name' => $request->city]);
                 if ($user->id_city !== $city->id_city) {
                     Utils::addUserHistoryEntry(
                         $authUserId,
@@ -495,7 +493,7 @@ class UserController extends Controller
             }
 
             if ($request->filled('postalCode')) {
-                $postalCode = PostalCode::where('postal_code', $request->postalCode)->firstOrFail();
+                $postalCode = PostalCode::firstOrCreate(['postal_code' => $request->postalCode]);
                 if ($user->id_postal_code !== $postalCode->id_postal_code) {
                     Utils::addUserHistoryEntry(
                         $authUserId,
@@ -536,7 +534,7 @@ class UserController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/deleteUser/{id}",
+     *     path="/user/delete/{id}",
      *     tags={"Users"},
      *     summary="Delete a user",
      *     description="Deletes a user. This action is restricted to Super Administrators only.",
@@ -605,7 +603,7 @@ class UserController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/banUser/{id}",
+     *     path="/user/ban/{id}",
      *     tags={"Users"},
      *     summary="Ban a user",
      *     description="Bans a user either permanently or until a specified timestamp. Super Administrators and Administrators cannot be banned.",
@@ -722,7 +720,7 @@ class UserController extends Controller
 
     /**
      * @OA\Patch(
-     *     path="/unbanUser/{id}",
+     *     path="/user/unban/{id}",
      *     tags={"Users"},
      *     summary="Unban a user",
      *     description="Unban a previously unban user.",

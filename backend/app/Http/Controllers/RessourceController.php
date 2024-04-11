@@ -54,7 +54,7 @@ class RessourceController extends Controller {
     public function getRessource($id) {
         $ressource = Ressource::find($id);
 
-        if (!$ressource) {
+        if (!$ressource || $ressource->id_status != self::ID_ACCEPTED_STATUS) {
             return response()->json(['message' => 'Ressource non trouvée'], 404);
         }
 
@@ -560,14 +560,6 @@ class RessourceController extends Controller {
      *         )
      *     ),
      *     @OA\Response(
-     *         response=400,
-     *         description="ressource already processed",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="Ressource déjà traitée")
-     *         )
-     *     ),
-     *     @OA\Response(
      *         response=404,
      *         description="ressource not found",
      *         @OA\JsonContent(
@@ -591,12 +583,6 @@ class RessourceController extends Controller {
         if (!$ressource) {
             return response()->json(['message' => 'Ressource non trouvée'], 404);
         }
-
-        if ($ressource->id_status != self::ID_PENDING_STATUS) {
-            return response()->json(['message' => 'Ressource déjà traitée'], 400);
-        }
-
-
 
         $ressource->id_status = self::ID_ACCEPTED_STATUS;
         $ressource->save();
@@ -638,14 +624,6 @@ class RessourceController extends Controller {
      *         )
      *     ),
      *     @OA\Response(
-     *         response=400,
-     *         description="ressource already processed or staff comment missing",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", description="Specific error message")
-     *         )
-     *     ),
-     *     @OA\Response(
      *         response=404,
      *         description="ressource not found",
      *         @OA\JsonContent(
@@ -666,10 +644,6 @@ class RessourceController extends Controller {
         $ressource = Ressource::find($id);
         if (!$ressource) {
             return response()->json(['message' => 'Ressource non trouvée'], 404);
-        }
-
-        if ($ressource->id_status != self::ID_PENDING_STATUS) {
-            return response()->json(['message' => 'Ressource déjà traitée'], 400);
         }
 
         if (!$request->has('staffComment')) {

@@ -146,7 +146,7 @@ class CategoryController extends Controller {
 
     /**
      * @OA\Post(
-     *     path="/createCategory",
+     *     path="/category/create",
      *     tags={"Categories"},
      *     summary="Create a category",
      *     description="Creates a new category. This endpoint is restricted to admin users.",
@@ -225,7 +225,7 @@ class CategoryController extends Controller {
 
     /**
      * @OA\Post(
-     *     path="/editCategory/{id}",
+     *     path="/category/edit/{id}",
      *     tags={"Categories"},
      *     summary="Edit a category",
      *     description="Edit an existing category. This endpoint is restricted to admin users.",
@@ -318,7 +318,7 @@ class CategoryController extends Controller {
 
     /**
      * @OA\Delete(
-     *     path="/deleteCategory/{id}",
+     *     path="/category/delete/{id}",
      *     tags={"Categories"},
      *     summary="Delete a category",
      *     description="Deletes a category by its ID. This endpoint is restricted to admin users.",

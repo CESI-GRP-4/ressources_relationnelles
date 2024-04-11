@@ -15,12 +15,12 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
+// Public access
 Route::post('login', [AuthController::class, 'login']);
 Route::post('signup', [AuthController::class, 'signup']);
 Route::post('email/verify', [AuthController::class, 'verifyEmail'])->name('verify.email');
 Route::post('forgot-password/send-mail', [AuthController::class, 'forgotPassword'])->name('password.forgot');
 Route::post('forgot-password/reset', [AuthController::class, 'resetPassword']);
-
 Route::get('countries', [CountryController::class, 'getCountries']);
 
 // Categories
@@ -30,54 +30,32 @@ Route::get('category/{id}', [CategoryController::class, 'getCategory']);
 // Ressources
 Route::get('ressource/{id}', [RessourceController::class, 'getRessource']);
 
+
+
 // Connected access
 Route::group(['middleware' => ['jwt.auth']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('verifyUser', [AuthController::class, 'verifyUser']);
 
+    // Ressources
     Route::group(['prefix' => 'ressource'], function () {
         Route::post('create', [RessourceController::class, 'create']);
         Route::post('edit/{id}', [RessourceController::class, 'edit']);
         Route::delete('delete/{id}', [RessourceController::class, 'delete']);
     });
 
-    Route::get('myRessources', [RessourceController::class, 'getMyRessources']);
-    Route::get('myRessources/stats', [RessourceController::class, 'getMyRessourcesStats']);
-
-    // SuperAdmin routes
-    Route::group(['middleware' => 'isSuperAdmin'], function () {
-        Route::post('createUser', [UserController::class, 'createUser']);
+    // myRessources
+    Route::group(['prefix' => 'myRessources'], function () {
+        Route::get('/', [RessourceController::class, 'getMyRessources']);
+        Route::get('stats', [RessourceController::class, 'getMyRessourcesStats']);
     });
 
-    // Admin & SuperAdmin routes
-    Route::group(['middleware' => 'isAdmin'], function () {
-        Route::get('users', [UserController::class, 'getUsers']);
-        Route::get('usersHistory', [UserHistoryController::class, 'getUsersHistory']);
-
-        Route::post('editUser/{id}', [UserController::class, 'editUser']);
-        Route::delete('deleteUser/{id}', [UserController::class, 'deleteUser']);
-        Route::post('banUser/{id}', [UserController::class, 'banUser']);
-        Route::patch('unbanUser/{id}', [UserController::class, 'unbanUser']);
-
-        Route::get('allCategories', [CategoryController::class, 'getAllCategories']);
-        Route::post('createCategory', [CategoryController::class, 'createCategory']);
-        Route::post('editCategory/{id}', [CategoryController::class, 'editCategory']);
-        Route::delete('deleteCategory/{id}', [CategoryController::class, 'deleteCategory']);
 
 
-        Route::group(['prefix' => 'stats'], function () {
-            Route::get('connections', [ConnectionController::class, 'getConnections']);
-            Route::get('users', [UserController::class, 'getUsersInformation']);
-        });
-    });
-
-    // Moderator, Admin & SuperAdmin routes
+    // Moderator +
     Route::group(['middleware' => 'isModerator'], function () {
-        // Routes for moderators (admins & superadmins can also access these routes)
-        Route::group(['prefix' => 'stats'], function () {
-            Route::get('ressources', [RessourceController::class, 'getRessourcesStats']);
-        });
 
+        // Resources
         Route::group(['prefix' => 'ressources'], function () {
             Route::get('pending', [RessourceController::class, 'pending']);
             Route::patch('accept/{id}', [RessourceController::class, 'accept']);
@@ -88,5 +66,52 @@ Route::group(['middleware' => ['jwt.auth']], function () {
             Route::get('rejected', [RessourceController::class, 'rejected']);
             Route::get('blocked', [RessourceController::class, 'blocked']);
         });
+
+        // Statistics
+        Route::group(['prefix' => 'stats'], function () {
+            Route::get('ressources', [RessourceController::class, 'getRessourcesStats']);
+        });
     });
+
+
+
+    // Admin +
+    Route::group(['middleware' => 'isAdmin'], function () {
+
+        // Users
+        Route::group(['prefix' => 'users'], function () {
+            Route::get('/', [UserController::class, 'getUsers']);
+            Route::get('history', [UserHistoryController::class, 'getUsersHistory']);
+        });
+
+        // User
+        Route::group(['prefix' => 'user'], function () {
+            Route::post('edit/{id}', [UserController::class, 'editUser']);
+            Route::post('ban/{id}', [UserController::class, 'banUser']);
+            Route::patch('unban/{id}', [UserController::class, 'unbanUser']);
+            Route::delete('delete/{id}', [UserController::class, 'deleteUser']);
+        });
+
+        // Categories
+        Route::get('allCategories', [CategoryController::class, 'getAllCategories']);
+        Route::group(['prefix' => 'category'], function () {
+            Route::post('create', [CategoryController::class, 'createCategory']);
+            Route::post('edit/{id}', [CategoryController::class, 'editCategory']);
+            Route::delete('delete/{id}', [CategoryController::class, 'deleteCategory']);
+        });
+
+        // Statistics
+        Route::group(['prefix' => 'stats'], function () {
+            Route::get('connections', [ConnectionController::class, 'getConnections']);
+            Route::get('users', [UserController::class, 'getUsersInformation']);
+        });
+    });
+
+
+
+    // SuperAdmin +
+    Route::group(['middleware' => 'isSuperAdmin'], function () {
+        Route::post('user/create', [UserController::class, 'create']);
+    });
+
 });

@@ -234,7 +234,7 @@ const EditableTable: React.FC = () => {
                      const editUserResponse = await axios({
                             method: 'post',
                             baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
-                            url: `/editUser/${user.id}`,
+                            url: `/user/edit/${user.id}`,
                             withCredentials: true,
                             responseType: 'json',
                             data: editUserForm.getFieldsValue(),
