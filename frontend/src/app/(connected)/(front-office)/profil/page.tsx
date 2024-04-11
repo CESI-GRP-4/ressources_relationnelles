@@ -147,16 +147,12 @@ const UserProfilePage = () => {
       actions={[
         <Button
           icon={editing ? <LeftOutlined /> : <EditOutlined />}
-          onClick={editing ? handleCancel : handleEdit}
+          /* Enlever le commentaire lorsque la fonctionnalité sera développée
+            onClick={editing ? handleCancel : handleEdit}
+          */
           key="edit"
         >
-          {/*
-          A remplacer lorsque la fonctionnalité sera développée
-          
           {editing ? 'Retour' : 'Modifier'}
-
-          */}
-          {'Modifier'}
         </Button>
       ]}
     >
