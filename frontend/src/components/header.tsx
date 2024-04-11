@@ -60,14 +60,7 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                             key: "dashboard",
                             style: { marginLeft: '15px' },
                      }
-              ] : []),
-              {
-                     label: <Link href={"/dashboard"}>{`Dashboard`}</Link>,
-                     icon: <DashboardOutlined />,
-                     key: "dashboard",
-                     style: { marginLeft: '15px'},
-              },
-              
+              ] : []),              
               {
                      label: (<>
                             {avatarSrc ? (

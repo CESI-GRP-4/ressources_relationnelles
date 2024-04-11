@@ -41,8 +41,8 @@ export default function RootLayout({
                             <meta name="theme-color" content="#317EFB" />
                             <link rel="icon" href="/logo.png" />
                      </Head>
-                    <html lang="fr">
-                            <body className={inter.className}> 
+                     <html lang="fr">
+                            <body className={inter.className}>
                                    <Providers>
                                           <>
                                                  {children}
