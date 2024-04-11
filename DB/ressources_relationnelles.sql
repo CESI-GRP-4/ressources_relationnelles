@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : mer. 10 avr. 2024 à 15:17
+-- Généré le : jeu. 11 avr. 2024 à 10:57
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -138,7 +138,7 @@ INSERT INTO `categories` (`id_category`, `title`, `description`, `icon`, `color`
 (8, 'Title de ma catégorie 3', 'C\'est une catégorie de fou', ' ', '#555555', 0, 1, '2024-03-26 22:53:09', '2024-04-04 19:17:01'),
 (9, 'Title de ma catégorie 4', 'C\'est une catégorie de fou', ' ', '#666abc', 1, 1, '2024-03-26 22:54:55', '2024-04-04 19:17:01'),
 (10, 'Title de ma catégorie 5', 'C\'est une catégorie de fou', '  ', '#ffefef', 1, 1, '2024-03-26 22:55:12', '2024-04-04 19:17:01'),
-(13, 'Title de ma catégorie 6', 'C\'est une catégorie de fou', ' ', '#ffefef', 0, 1, '2024-03-26 22:57:40', '2024-04-04 19:17:01');
+(16, 'PERIPHHHH', 'MAIS YA LA CHAMBRE 140', 'ya pas d\'icon mon reuf', '#faeaaa', 1, 1, '2024-04-10 20:08:54', '2024-04-10 20:08:57');
 
 -- --------------------------------------------------------
 
@@ -556,7 +556,8 @@ INSERT INTO `login_logs` (`id`, `id_user`, `login_datetime`) VALUES
 (72, 38, '2024-04-18 21:26:48'),
 (73, 1, '2024-04-18 21:27:29'),
 (75, 1, '2024-04-10 15:05:34'),
-(76, 1, '2024-04-10 15:05:50');
+(76, 1, '2024-04-10 15:05:50'),
+(77, 1, '2024-04-11 00:27:20');
 
 -- --------------------------------------------------------
 
@@ -610,17 +611,22 @@ CREATE TABLE `ressources` (
   `id_type` int(11) DEFAULT NULL,
   `file` varchar(200) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `staff_comment` varchar(1000) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `ressources`
 --
 
-INSERT INTO `ressources` (`id_ressource`, `label`, `description`, `content`, `is_public`, `view_count`, `id_user`, `id_category`, `id_status`, `id_type`, `file`, `created_at`, `updated_at`) VALUES
-(4, 'Wsh', 'Hello', NULL, 1, 0, 1, 3, 2, 1, NULL, '2024-04-10 11:10:06', '2024-04-10 11:10:06'),
-(5, 'Wsh', 'Hello', NULL, 1, 0, 1, 3, 2, 1, NULL, '2024-04-10 11:11:48', '2024-04-10 11:11:48'),
-(6, 'Wsheeee', 'Hello', NULL, 1, 0, 1, 3, 2, 1, NULL, '2024-04-10 11:13:44', '2024-04-10 11:13:44');
+INSERT INTO `ressources` (`id_ressource`, `label`, `description`, `content`, `is_public`, `view_count`, `id_user`, `id_category`, `id_status`, `id_type`, `file`, `created_at`, `updated_at`, `staff_comment`) VALUES
+(4, 'A', 'Hello', NULL, 1, 7, 28, 3, 4, 1, NULL, '2024-04-10 11:10:06', '2024-04-11 08:29:57', NULL),
+(5, 'B', 'Hello', NULL, 1, 65, 1, 3, 3, 1, NULL, '2024-04-10 11:11:48', '2024-04-11 08:38:03', 'C\'est pas une ress'),
+(6, 'Wshee', 'Hello', NULL, 1, 150, 23, 3, 1, 1, NULL, '2024-04-10 11:13:44', '2024-04-11 08:29:57', NULL),
+(8, 'ON ARRIVE A 200', 'PLK ', NULL, 1, 2553, 1, 16, 1, 1, NULL, '2024-04-10 20:09:04', '2024-04-11 06:48:04', NULL),
+(9, 'TOUT ROULE POUR NOUS', 'PLK', NULL, 1, 17402, 30, 16, 1, 1, NULL, '2024-04-10 20:09:32', '2024-04-11 08:29:57', NULL),
+(10, 'IL PLEUT A PARIS', 'PLK', NULL, 1, 12245, 1, 16, 2, 1, NULL, '2024-04-10 20:29:27', '2024-04-11 08:29:57', NULL),
+(11, 'test', 'test', NULL, 1, 0, 1, 4, 3, 1, NULL, '2024-04-11 06:52:22', '2024-04-11 06:53:30', 'c\'est pas une ressource mon gars :(');
 
 -- --------------------------------------------------------
 
@@ -1003,7 +1009,7 @@ ALTER TABLE `blocked_users`
 -- AUTO_INCREMENT pour la table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id_category` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id_category` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT pour la table `cities`
@@ -1045,7 +1051,7 @@ ALTER TABLE `invitations`
 -- AUTO_INCREMENT pour la table `login_logs`
 --
 ALTER TABLE `login_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
 
 --
 -- AUTO_INCREMENT pour la table `migrations`
@@ -1063,7 +1069,7 @@ ALTER TABLE `postal_codes`
 -- AUTO_INCREMENT pour la table `ressources`
 --
 ALTER TABLE `ressources`
-  MODIFY `id_ressource` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_ressource` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT pour la table `rights`

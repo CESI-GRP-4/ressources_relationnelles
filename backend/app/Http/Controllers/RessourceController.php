@@ -433,25 +433,33 @@ class RessourceController extends Controller {
     }
 
     /**
-     * @OA\Patch(
+     * @OA\Post(
      *     path="/ressources/reject/{id}",
      *     tags={"Ressource"},
-     *     summary="Reject a ressource",
-     *     description="Marks a pending ressource as rejected. This endpoint is restricted to moderators.",
+     *     summary="Reject a specific resource",
+     *     description="Rejects a specific resource by changing its status to rejected and records a staff comment. This endpoint is restricted to moderators.",
      *     operationId="rejectRessource",
      *     security={{ "BearerAuth": {} }},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="ID of the ressource to reject",
+     *         description="ID of the resource to reject",
      *         @OA\Schema(
      *             type="integer"
      *         )
      *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Staff comment on why the resource is being rejected",
+     *         @OA\JsonContent(
+     *             required={"staffComment"},
+     *             @OA\Property(property="staffComment", type="string", description="Comment explaining the reason for rejection")
+     *         )
+     *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="ressource rejected successfully",
+     *         description="Resource rejected successfully",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="message", type="string", example="Ressource refusée")
@@ -459,15 +467,15 @@ class RessourceController extends Controller {
      *     ),
      *     @OA\Response(
      *         response=400,
-     *         description="ressource already processed",
+     *         description="Resource already processed or staff comment missing",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="message", type="string", example="Ressource déjà traitée")
+     *             @OA\Property(property="message", type="string", description="Specific error message")
      *         )
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="ressource not found",
+     *         description="Resource not found",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="message", type="string", example="Ressource non trouvée")
@@ -477,15 +485,13 @@ class RessourceController extends Controller {
      *         response=403,
      *         description="Forbidden - Moderator access required",
      *         @OA\JsonContent(
-     *             type="object",
      *             @OA\Property(property="message", type="string", example="Access restricted to moderators")
      *         )
      *     )
      * )
      */
-    public function reject($id) {
+    public function reject($id, Request $request) {
         $ressource = Ressource::find($id);
-
         if (!$ressource) {
             return response()->json(['message' => 'Ressource non trouvée'], 404);
         }
@@ -494,6 +500,11 @@ class RessourceController extends Controller {
             return response()->json(['message' => 'Ressource déjà traitée'], 400);
         }
 
+        if (!$request->has('staffComment')) {
+            return response()->json(['message' => 'Commentaire du staff manquant'], 400);
+        }
+
+        $ressource->staff_comment = $request->staffComment;
         $ressource->id_status = self::ID_REJECTED_STATUS;
         $ressource->save();
 

@@ -76,7 +76,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
         Route::group(['prefix' => 'ressources'], function () {
             Route::get('pending', [RessourceController::class, 'pending']);
             Route::patch('accept/{id}', [RessourceController::class, 'accept']);
-            Route::patch('reject/{id}', [RessourceController::class, 'reject']);
+            Route::post('reject/{id}', [RessourceController::class, 'reject']);
             Route::patch('block/{id}', [RessourceController::class, 'block']);
 
             Route::get('accepted', [RessourceController::class, 'accepted']);

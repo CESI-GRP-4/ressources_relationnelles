@@ -237,6 +237,7 @@ class Utils{
             'user' => self::getUserData($user),
             'creationDate' => $ressource->created_at,
             'lastModificationDate' => $ressource->updated_at,
+            'staffComment' => $ressource->staff_comment,
         ];
     }
 

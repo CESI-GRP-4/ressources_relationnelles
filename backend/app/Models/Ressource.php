@@ -42,5 +42,6 @@ class Ressource extends Model {
         'file',
         'updated_at',
         'created_at',
+        'staff_comment',
     ];
 }
