@@ -68,13 +68,15 @@ Route::group(['middleware' => ['jwt.auth']], function () {
         Route::group(['prefix' => 'stats'], function () {
             Route::get('connections', [ConnectionController::class, 'getConnections']);
             Route::get('users', [UserController::class, 'getUsersInformation']);
-            Route::get('ressources', [RessourceController::class, 'getRessourcesStats']);
         });
     });
 
     // Moderator, Admin & SuperAdmin routes
     Route::group(['middleware' => 'isModerator'], function () {
         // Routes for moderators (admins & superadmins can also access these routes)
+        Route::group(['prefix' => 'stats'], function () {
+            Route::get('ressources', [RessourceController::class, 'getRessourcesStats']);
+        });
 
         Route::group(['prefix' => 'ressources'], function () {
             Route::get('pending', [RessourceController::class, 'pending']);

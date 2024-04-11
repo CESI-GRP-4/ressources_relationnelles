@@ -764,7 +764,7 @@ class RessourceController extends Controller {
      * @OA\Get(
      *     path="/stats/ressources",
      *     tags={"Statistics"},
-     *     summary="Get statistics about ressources",
+     *     summary="Get statistics about ressources, Moderator and more",
      *     description="Retrieves statistics about ressources, including totals, views, and status counts.",
      *     operationId="getRessourcesStats",
      *     @OA\Response(
