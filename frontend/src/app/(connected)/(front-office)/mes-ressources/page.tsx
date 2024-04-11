@@ -105,7 +105,7 @@ export default function MyRessources() {
                      <PageSummary title={'Mes ressources'} description={undefined}></PageSummary>
 
                      <div className="flex flex-row justify-center">
-                            <Tabs className='w-fit' defaultActiveKey="1" items={items} />
+                            <Tabs className='w-full' defaultActiveKey="1" items={items} />
                      </div>
               </div>
        );
