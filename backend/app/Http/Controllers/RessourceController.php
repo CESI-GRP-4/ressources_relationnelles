@@ -67,7 +67,7 @@ class RessourceController extends Controller {
 
     /**
      * @OA\Post(
-     *     path="/createRessource",
+     *     path="/ressource/create",
      *     tags={"Ressource"},
      *     summary="Create a new ressource",
      *     description="Creates a new ressource with the given details. Returns the ID of the newly created ressource.",
@@ -110,7 +110,7 @@ class RessourceController extends Controller {
      *     )
      * )
      */
-    public function createRessource(Request $request) {
+    public function create(Request $request) {
         if ($request->has('isPublic')) {
             $request->isPublic = filter_var($request->isPublic, FILTER_VALIDATE_BOOLEAN);
         }
@@ -138,6 +138,98 @@ class RessourceController extends Controller {
 
         return response()->json(['message' => 'Ressource créée avec succès', 'idRessource' => $ressource->id_ressource], 201);
     }
+
+    /**
+     * @OA\Post(
+     *     path="/ressource/edit/{id}",
+     *     tags={"Ressource"},
+     *     summary="Edit a specific resource",
+     *     description="Updates a specific resource with new details. Required fields must be provided.",
+     *     operationId="editRessource",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the resource to be edited",
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Resource data that needs to be updated",
+     *         @OA\JsonContent(
+     *             required={"label", "description", "idCategory", "isPublic"},
+     *             @OA\Property(property="label", type="string", description="The label of the resource"),
+     *             @OA\Property(property="description", type="string", description="The description of the resource"),
+     *             @OA\Property(property="idCategory", type="integer", description="The ID of the category the resource belongs to"),
+     *             @OA\Property(property="isPublic", type="boolean", description="Whether the resource is public or private")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Resource edited successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Ressource modifiée avec succès")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Resource not found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Ressource non trouvée")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Champ(s) incorects"),
+     *             @OA\Property(
+     *                 property="errors",
+     *                 type="object",
+     *                 additionalProperties=@OA\Property(type="string"),
+     *                 description="Details of the validation errors"
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function edit($id,Request $request){
+        $ressource = Ressource::find($id);
+        if (!$ressource) {
+            return response()->json(['message' => 'Ressource non trouvée'], 404);
+        }
+
+        if ($request->has('isPublic')) {
+            $request->isPublic = filter_var($request->isPublic, FILTER_VALIDATE_BOOLEAN);
+        }
+        $validatedData = Validator::make($request->all(), [
+            'label' => 'required|string|max:255',
+            'description' => 'required|string',
+            'idCategory' => 'required|integer',
+            'isPublic' => 'required|boolean',
+        ]);
+
+        if ($validatedData->fails()) {
+            return response()->json(['message' => 'Champ(s) incorects', 'errors' => $validatedData->errors()], 422);
+        }
+
+        $ressource->label = $request->label;
+        $ressource->description = $request->description;
+        $ressource->id_category = $request->idCategory;
+        $ressource->is_public = $request->isPublic;
+        $ressource->id_status = self::ID_PENDING_STATUS;
+        $ressource->staff_comment = null;
+        $ressource->save();
+
+        return response()->json(['message' => 'Ressource modifiée avec succès'], 200);
+    }
+
 
     /**
      * @OA\Get(

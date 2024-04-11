@@ -34,7 +34,11 @@ Route::get('ressource/{id}', [RessourceController::class, 'getRessource']);
 Route::group(['middleware' => ['jwt.auth']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('verifyUser', [AuthController::class, 'verifyUser']);
-    Route::post('createRessource', [RessourceController::class, 'createRessource']);
+
+    Route::group(['prefix' => 'ressource'], function () {
+        Route::post('create', [RessourceController::class, 'create']);
+        Route::post('edit/{id}', [RessourceController::class, 'edit']);
+    });
 
     Route::get('myRessources', [RessourceController::class, 'getMyRessources']);
     Route::get('myRessources/stats', [RessourceController::class, 'getMyRessourcesStats']);

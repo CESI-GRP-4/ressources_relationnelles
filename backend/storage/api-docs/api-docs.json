@@ -884,14 +884,14 @@
                 "tags": [
                     "Ressource"
                 ],
-                "summary": "Get a specific resource",
-                "description": "Retrieves detailed information about a specific resource by ID and increments its view count.",
+                "summary": "Get a specific ressource",
+                "description": "Retrieves detailed information about a specific ressource by ID and increments its view count.",
                 "operationId": "getRessource",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "ID of the resource to retrieve",
+                        "description": "ID of the ressource to retrieve",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -900,7 +900,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Resource retrieved successfully",
+                        "description": "ressource retrieved successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -915,7 +915,7 @@
                         }
                     },
                     "404": {
-                        "description": "Resource not found",
+                        "description": "ressource not found",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -933,16 +933,16 @@
                 }
             }
         },
-        "/createRessource": {
+        "/ressource/create": {
             "post": {
                 "tags": [
                     "Ressource"
                 ],
                 "summary": "Create a new ressource",
-                "description": "Creates a new resource with the given details. Returns the ID of the newly created resource.",
+                "description": "Creates a new ressource with the given details. Returns the ID of the newly created ressource.",
                 "operationId": "createRessource",
                 "requestBody": {
-                    "description": "Data for the new resource",
+                    "description": "Data for the new ressource",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -954,19 +954,19 @@
                                 ],
                                 "properties": {
                                     "label": {
-                                        "description": "The label of the new resource",
+                                        "description": "The label of the new ressource",
                                         "type": "string"
                                     },
                                     "description": {
-                                        "description": "The description of the new resource",
+                                        "description": "The description of the new ressource",
                                         "type": "string"
                                     },
                                     "idCategory": {
-                                        "description": "The category ID for the new resource",
+                                        "description": "The category ID for the new ressource",
                                         "type": "integer"
                                     },
                                     "isPublic": {
-                                        "description": "Whether the resource is public",
+                                        "description": "Whether the ressource is public",
                                         "type": "boolean",
                                         "example": true
                                     }
@@ -978,7 +978,7 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Resource created successfully",
+                        "description": "ressource created successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -988,7 +988,7 @@
                                             "example": "Ressource créée avec succès"
                                         },
                                         "idRessource": {
-                                            "description": "The ID of the newly created resource",
+                                            "description": "The ID of the newly created ressource",
                                             "type": "integer"
                                         }
                                     },
@@ -1029,17 +1029,136 @@
                 }
             }
         },
+        "/ressource/edit/{id}": {
+            "post": {
+                "tags": [
+                    "Ressource"
+                ],
+                "summary": "Edit a specific resource",
+                "description": "Updates a specific resource with new details. Required fields must be provided.",
+                "operationId": "editRessource",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the resource to be edited",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Resource data that needs to be updated",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "label",
+                                    "description",
+                                    "idCategory",
+                                    "isPublic"
+                                ],
+                                "properties": {
+                                    "label": {
+                                        "description": "The label of the resource",
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "description": "The description of the resource",
+                                        "type": "string"
+                                    },
+                                    "idCategory": {
+                                        "description": "The ID of the category the resource belongs to",
+                                        "type": "integer"
+                                    },
+                                    "isPublic": {
+                                        "description": "Whether the resource is public or private",
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Resource edited successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource modifiée avec succès"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource non trouvée"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Champ(s) incorects"
+                                        },
+                                        "errors": {
+                                            "description": "Details of the validation errors",
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "string",
+                                                "property": null
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
         "/myRessources": {
             "get": {
                 "tags": [
                     "Ressource"
                 ],
-                "summary": "Get user's resources",
-                "description": "Retrieves a list of resources created by the authenticated user.",
+                "summary": "Get user's ressources",
+                "description": "Retrieves a list of ressources created by the authenticated user.",
                 "operationId": "getMyRessources",
                 "responses": {
                     "200": {
-                        "description": "Resources retrieved successfully",
+                        "description": "ressources retrieved successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1085,12 +1204,12 @@
                 "tags": [
                     "Ressource"
                 ],
-                "summary": "Get statistics on the user's resources",
-                "description": "Retrieves statistics about the authenticated user's resources, including totals, views, and status counts.",
+                "summary": "Get statistics on the user's ressources",
+                "description": "Retrieves statistics about the authenticated user's ressources, including totals, views, and status counts.",
                 "operationId": "getMyRessourcesStats",
                 "responses": {
                     "200": {
-                        "description": "User's resources statistics retrieved successfully",
+                        "description": "User's ressources statistics retrieved successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1098,35 +1217,35 @@
                                         "ressources": {
                                             "properties": {
                                                 "total": {
-                                                    "description": "Total number of the user's resources",
+                                                    "description": "Total number of the user's ressources",
                                                     "type": "integer"
                                                 },
                                                 "totalView": {
-                                                    "description": "Total views across the user's resources",
+                                                    "description": "Total views across the user's ressources",
                                                     "type": "integer"
                                                 },
                                                 "public": {
-                                                    "description": "Count of the user's public resources",
+                                                    "description": "Count of the user's public ressources",
                                                     "type": "integer"
                                                 },
                                                 "private": {
-                                                    "description": "Count of the user's private resources",
+                                                    "description": "Count of the user's private ressources",
                                                     "type": "integer"
                                                 },
                                                 "pending": {
-                                                    "description": "Count of the user's resources pending moderation",
+                                                    "description": "Count of the user's ressources pending moderation",
                                                     "type": "integer"
                                                 },
                                                 "accepted": {
-                                                    "description": "Count of the user's resources accepted by moderators",
+                                                    "description": "Count of the user's ressources accepted by moderators",
                                                     "type": "integer"
                                                 },
                                                 "rejected": {
-                                                    "description": "Count of the user's resources rejected by moderators",
+                                                    "description": "Count of the user's ressources rejected by moderators",
                                                     "type": "integer"
                                                 },
                                                 "blocked": {
-                                                    "description": "Count of the user's resources blocked by moderators",
+                                                    "description": "Count of the user's ressources blocked by moderators",
                                                     "type": "integer"
                                                 }
                                             },
@@ -1463,14 +1582,14 @@
                 "tags": [
                     "Ressource"
                 ],
-                "summary": "Reject a specific resource",
-                "description": "Rejects a specific resource by changing its status to rejected and records a staff comment. This endpoint is restricted to moderators.",
+                "summary": "Reject a specific ressource",
+                "description": "Rejects a specific ressource by changing its status to rejected and records a staff comment. This endpoint is restricted to moderators.",
                 "operationId": "rejectRessource",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "ID of the resource to reject",
+                        "description": "ID of the ressource to reject",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -1478,7 +1597,7 @@
                     }
                 ],
                 "requestBody": {
-                    "description": "Staff comment on why the resource is being rejected",
+                    "description": "Staff comment on why the ressource is being rejected",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -1499,7 +1618,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Resource rejected successfully",
+                        "description": "ressource rejected successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1515,7 +1634,7 @@
                         }
                     },
                     "400": {
-                        "description": "Resource already processed or staff comment missing",
+                        "description": "ressource already processed or staff comment missing",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1531,7 +1650,7 @@
                         }
                     },
                     "404": {
-                        "description": "Resource not found",
+                        "description": "ressource not found",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1575,14 +1694,14 @@
                 "tags": [
                     "Ressource"
                 ],
-                "summary": "Block a specific resource",
-                "description": "Blocks a specific resource by changing its status to blocked and records a staff comment. This endpoint is restricted to moderators.",
+                "summary": "Block a specific ressource",
+                "description": "Blocks a specific ressource by changing its status to blocked and records a staff comment. This endpoint is restricted to moderators.",
                 "operationId": "blockRessource",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "ID of the resource to block",
+                        "description": "ID of the ressource to block",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -1590,7 +1709,7 @@
                     }
                 ],
                 "requestBody": {
-                    "description": "Staff comment on why the resource is being blocked",
+                    "description": "Staff comment on why the ressource is being blocked",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -1611,7 +1730,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Resource blocked successfully",
+                        "description": "ressource blocked successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1643,7 +1762,7 @@
                         }
                     },
                     "404": {
-                        "description": "Resource not found",
+                        "description": "ressource not found",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1687,8 +1806,8 @@
                 "tags": [
                     "Statistics"
                 ],
-                "summary": "Get statistics about resources",
-                "description": "Retrieves statistics about resources, including totals, views, and status counts.",
+                "summary": "Get statistics about ressources",
+                "description": "Retrieves statistics about ressources, including totals, views, and status counts.",
                 "operationId": "getRessourcesStats",
                 "responses": {
                     "200": {
@@ -1700,35 +1819,35 @@
                                         "ressources": {
                                             "properties": {
                                                 "total": {
-                                                    "description": "Total number of resources",
+                                                    "description": "Total number of ressources",
                                                     "type": "integer"
                                                 },
                                                 "totalView": {
-                                                    "description": "Total views across all resources",
+                                                    "description": "Total views across all ressources",
                                                     "type": "integer"
                                                 },
                                                 "public": {
-                                                    "description": "Count of public resources",
+                                                    "description": "Count of public ressources",
                                                     "type": "integer"
                                                 },
                                                 "private": {
-                                                    "description": "Count of private resources",
+                                                    "description": "Count of private ressources",
                                                     "type": "integer"
                                                 },
                                                 "pending": {
-                                                    "description": "Count of resources pending moderation",
+                                                    "description": "Count of ressources pending moderation",
                                                     "type": "integer"
                                                 },
                                                 "accepted": {
-                                                    "description": "Count of resources accepted by moderators",
+                                                    "description": "Count of ressources accepted by moderators",
                                                     "type": "integer"
                                                 },
                                                 "rejected": {
-                                                    "description": "Count of resources rejected by moderators",
+                                                    "description": "Count of ressources rejected by moderators",
                                                     "type": "integer"
                                                 },
                                                 "blocked": {
-                                                    "description": "Count of resources blocked by moderators",
+                                                    "description": "Count of ressources blocked by moderators",
                                                     "type": "integer"
                                                 }
                                             },
