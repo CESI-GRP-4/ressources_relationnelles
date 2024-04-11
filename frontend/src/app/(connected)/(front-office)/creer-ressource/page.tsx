@@ -49,7 +49,7 @@ export default function CreateRessourceForm() {
                      const response: AxiosResponse = await axios({
                             method: 'post',
                             baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
-                            url: '/createRessource',
+                            url: '/ressource/create',
                             data: ressourceFormWithUserId,
                             responseType: 'json',
                             timeout: 10000,
