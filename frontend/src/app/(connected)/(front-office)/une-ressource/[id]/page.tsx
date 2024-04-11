@@ -52,8 +52,8 @@ export default function ARessourcePage ({ params }: { params: { id: string } }){
     <div>
     <h1>{resource.label}</h1>
       <p>{resource.description}</p>
-      <p>{resource.content}</p>
-      <p>{resource.id_category}</p>
+      {/* <p>{resource.content}</p>
+      <p>{resource.id_category}</p> */}
   
       {/* Affichez d'autres données de la ressource ici
       
