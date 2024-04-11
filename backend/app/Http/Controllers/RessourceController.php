@@ -144,7 +144,7 @@ class RessourceController extends Controller {
      *     path="/ressource/edit/{id}",
      *     tags={"Ressource"},
      *     summary="Edit a specific resource",
-     *     description="Updates a specific resource with new details. Required fields must be provided.",
+     *     description="Allows an authenticated user to edit their own resource. The resource's status is set to pending after the edit.",
      *     operationId="editRessource",
      *     security={{ "BearerAuth": {} }},
      *     @OA\Parameter(
@@ -158,28 +158,40 @@ class RessourceController extends Controller {
      *     ),
      *     @OA\RequestBody(
      *         required=true,
-     *         description="Resource data that needs to be updated",
+     *         description="Fields required to edit the resource",
      *         @OA\JsonContent(
      *             required={"label", "description", "idCategory", "isPublic"},
-     *             @OA\Property(property="label", type="string", description="The label of the resource"),
-     *             @OA\Property(property="description", type="string", description="The description of the resource"),
-     *             @OA\Property(property="idCategory", type="integer", description="The ID of the category the resource belongs to"),
-     *             @OA\Property(property="isPublic", type="boolean", description="Whether the resource is public or private")
+     *             @OA\Property(property="label", type="string", description="The new label of the resource"),
+     *             @OA\Property(property="description", type="string", description="The new description of the resource"),
+     *             @OA\Property(property="idCategory", type="integer", description="The category ID of the resource"),
+     *             @OA\Property(property="isPublic", type="boolean", description="Whether the resource should be public")
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Resource edited successfully",
      *         @OA\JsonContent(
-     *             type="object",
      *             @OA\Property(property="message", type="string", example="Ressource modifiée avec succès")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - User must be logged in",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthorized - User must be logged in")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden - User does not have rights to modify this resource",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Vous n'avez pas les droits pour modifier cette ressource")
      *         )
      *     ),
      *     @OA\Response(
      *         response=404,
      *         description="Resource not found",
      *         @OA\JsonContent(
-     *             type="object",
      *             @OA\Property(property="message", type="string", example="Ressource non trouvée")
      *         )
      *     ),
@@ -188,12 +200,14 @@ class RessourceController extends Controller {
      *         description="Validation error",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="message", type="string", example="Champ(s) incorects"),
+     *             @OA\Property(property="message", type="string", description="Validation message"),
      *             @OA\Property(
      *                 property="errors",
      *                 type="object",
-     *                 additionalProperties=@OA\Property(type="string"),
-     *                 description="Details of the validation errors"
+     *                 additionalProperties={
+     *                     @OA\Property(type="array", @OA\Items(type="string"))
+     *                 },
+     *                 description="Detailed validation errors"
      *             )
      *         )
      *     )
@@ -203,6 +217,10 @@ class RessourceController extends Controller {
         $ressource = Ressource::find($id);
         if (!$ressource) {
             return response()->json(['message' => 'Ressource non trouvée'], 404);
+        }
+
+        if ($ressource->id_user != auth()->user()->id_user) {
+            return response()->json(['message' => 'Vous n\'avez pas les droits pour modifier cette ressource'], 403);
         }
 
         if ($request->has('isPublic')) {
