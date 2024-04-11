@@ -39,7 +39,6 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
                                                         <Text className='w-4/5'>{ressource.staffComment}</Text>
                                                  </div>
                                           </Badge.Ribbon>
-
                                    )}
                                    <div className="flex flex-row justify-end">
                                           <Link href={`/editer-ressource/${ressource.id}`}>
@@ -47,7 +46,6 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
                                           </Link>
                                    </div>
                             </div>
-
                      </>
               ),
        }));
