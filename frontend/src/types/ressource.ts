@@ -13,6 +13,7 @@ export default interface Ressource {
        creationDate?: Date;
        lastModificationDate?: Date;
        status: "accepted" | "pending" | "rejected" | "blocked" | "disabled";
+       staffComment: string;
        // content: string;
        // comments: Comment[];
 }
