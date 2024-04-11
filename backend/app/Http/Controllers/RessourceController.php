@@ -18,21 +18,21 @@ class RessourceController extends Controller {
      * @OA\Get(
      *     path="/ressource/{id}",
      *     tags={"Ressource"},
-     *     summary="Get a specific resource",
-     *     description="Retrieves detailed information about a specific resource by ID and increments its view count.",
+     *     summary="Get a specific ressource",
+     *     description="Retrieves detailed information about a specific ressource by ID and increments its view count.",
      *     operationId="getRessource",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="ID of the resource to retrieve",
+     *         description="ID of the ressource to retrieve",
      *         @OA\Schema(
      *             type="integer"
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Resource retrieved successfully",
+     *         description="ressource retrieved successfully",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(
@@ -43,7 +43,7 @@ class RessourceController extends Controller {
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Resource not found",
+     *         description="ressource not found",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="message", type="string", example="Ressource non trouvée")
@@ -70,26 +70,26 @@ class RessourceController extends Controller {
      *     path="/createRessource",
      *     tags={"Ressource"},
      *     summary="Create a new ressource",
-     *     description="Creates a new resource with the given details. Returns the ID of the newly created resource.",
+     *     description="Creates a new ressource with the given details. Returns the ID of the newly created ressource.",
      *     operationId="createRessource",
      *     @OA\RequestBody(
      *         required=true,
-     *         description="Data for the new resource",
+     *         description="Data for the new ressource",
      *         @OA\JsonContent(
      *             required={"label", "description", "idCategory"},
-     *             @OA\Property(property="label", type="string", description="The label of the new resource"),
-     *             @OA\Property(property="description", type="string", description="The description of the new resource"),
-     *             @OA\Property(property="idCategory", type="integer", description="The category ID for the new resource"),
-     *             @OA\Property(property="isPublic", type="boolean", description="Whether the resource is public", example=true),
+     *             @OA\Property(property="label", type="string", description="The label of the new ressource"),
+     *             @OA\Property(property="description", type="string", description="The description of the new ressource"),
+     *             @OA\Property(property="idCategory", type="integer", description="The category ID for the new ressource"),
+     *             @OA\Property(property="isPublic", type="boolean", description="Whether the ressource is public", example=true),
      *         )
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Resource created successfully",
+     *         description="ressource created successfully",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="message", type="string", example="Ressource créée avec succès"),
-     *             @OA\Property(property="idRessource", type="integer", description="The ID of the newly created resource")
+     *             @OA\Property(property="idRessource", type="integer", description="The ID of the newly created ressource")
      *         )
      *     ),
      *     @OA\Response(
@@ -143,13 +143,13 @@ class RessourceController extends Controller {
      * @OA\Get(
      *     path="/myRessources",
      *     tags={"Ressource"},
-     *     summary="Get user's resources",
-     *     description="Retrieves a list of resources created by the authenticated user.",
+     *     summary="Get user's ressources",
+     *     description="Retrieves a list of ressources created by the authenticated user.",
      *     operationId="getMyRessources",
      *     security={{ "BearerAuth": {} }},
      *     @OA\Response(
      *         response=200,
-     *         description="Resources retrieved successfully",
+     *         description="ressources retrieved successfully",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(
@@ -177,26 +177,26 @@ class RessourceController extends Controller {
      * @OA\Get(
      *     path="/myRessources/stats",
      *     tags={"Ressource"},
-     *     summary="Get statistics on the user's resources",
-     *     description="Retrieves statistics about the authenticated user's resources, including totals, views, and status counts.",
+     *     summary="Get statistics on the user's ressources",
+     *     description="Retrieves statistics about the authenticated user's ressources, including totals, views, and status counts.",
      *     operationId="getMyRessourcesStats",
      *     security={{ "BearerAuth": {} }},
      *     @OA\Response(
      *         response=200,
-     *         description="User's resources statistics retrieved successfully",
+     *         description="User's ressources statistics retrieved successfully",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(
      *                 property="ressources",
      *                 type="object",
-     *                 @OA\Property(property="total", type="integer", description="Total number of the user's resources"),
-     *                 @OA\Property(property="totalView", type="integer", description="Total views across the user's resources"),
-     *                 @OA\Property(property="public", type="integer", description="Count of the user's public resources"),
-     *                 @OA\Property(property="private", type="integer", description="Count of the user's private resources"),
-     *                 @OA\Property(property="pending", type="integer", description="Count of the user's resources pending moderation"),
-     *                 @OA\Property(property="accepted", type="integer", description="Count of the user's resources accepted by moderators"),
-     *                 @OA\Property(property="rejected", type="integer", description="Count of the user's resources rejected by moderators"),
-     *                 @OA\Property(property="blocked", type="integer", description="Count of the user's resources blocked by moderators")
+     *                 @OA\Property(property="total", type="integer", description="Total number of the user's ressources"),
+     *                 @OA\Property(property="totalView", type="integer", description="Total views across the user's ressources"),
+     *                 @OA\Property(property="public", type="integer", description="Count of the user's public ressources"),
+     *                 @OA\Property(property="private", type="integer", description="Count of the user's private ressources"),
+     *                 @OA\Property(property="pending", type="integer", description="Count of the user's ressources pending moderation"),
+     *                 @OA\Property(property="accepted", type="integer", description="Count of the user's ressources accepted by moderators"),
+     *                 @OA\Property(property="rejected", type="integer", description="Count of the user's ressources rejected by moderators"),
+     *                 @OA\Property(property="blocked", type="integer", description="Count of the user's ressources blocked by moderators")
      *             )
      *         )
      *     ),
@@ -436,22 +436,22 @@ class RessourceController extends Controller {
      * @OA\Post(
      *     path="/ressources/reject/{id}",
      *     tags={"Ressource"},
-     *     summary="Reject a specific resource",
-     *     description="Rejects a specific resource by changing its status to rejected and records a staff comment. This endpoint is restricted to moderators.",
+     *     summary="Reject a specific ressource",
+     *     description="Rejects a specific ressource by changing its status to rejected and records a staff comment. This endpoint is restricted to moderators.",
      *     operationId="rejectRessource",
      *     security={{ "BearerAuth": {} }},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="ID of the resource to reject",
+     *         description="ID of the ressource to reject",
      *         @OA\Schema(
      *             type="integer"
      *         )
      *     ),
      *     @OA\RequestBody(
      *         required=true,
-     *         description="Staff comment on why the resource is being rejected",
+     *         description="Staff comment on why the ressource is being rejected",
      *         @OA\JsonContent(
      *             required={"staffComment"},
      *             @OA\Property(property="staffComment", type="string", description="Comment explaining the reason for rejection")
@@ -459,7 +459,7 @@ class RessourceController extends Controller {
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Resource rejected successfully",
+     *         description="ressource rejected successfully",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="message", type="string", example="Ressource refusée")
@@ -467,7 +467,7 @@ class RessourceController extends Controller {
      *     ),
      *     @OA\Response(
      *         response=400,
-     *         description="Resource already processed or staff comment missing",
+     *         description="ressource already processed or staff comment missing",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="message", type="string", description="Specific error message")
@@ -475,7 +475,7 @@ class RessourceController extends Controller {
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Resource not found",
+     *         description="ressource not found",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="message", type="string", example="Ressource non trouvée")
@@ -512,11 +512,11 @@ class RessourceController extends Controller {
     }
 
     /**
-     * @OA\Patch(
+     * @OA\Post(
      *     path="/ressources/block/{id}",
      *     tags={"Ressource"},
      *     summary="Block a specific ressource",
-     *     description="Blocks a specific ressource by setting its status to blocked. This endpoint is restricted to moderators.",
+     *     description="Blocks a specific ressource by changing its status to blocked and records a staff comment. This endpoint is restricted to moderators.",
      *     operationId="blockRessource",
      *     security={{ "BearerAuth": {} }},
      *     @OA\Parameter(
@@ -528,12 +528,28 @@ class RessourceController extends Controller {
      *             type="integer"
      *         )
      *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Staff comment on why the ressource is being blocked",
+     *         @OA\JsonContent(
+     *             required={"staffComment"},
+     *             @OA\Property(property="staffComment", type="string", description="Comment explaining the reason for blocking")
+     *         )
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="ressource blocked successfully",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="message", type="string", example="Ressource bloquée")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Staff comment missing",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", description="Commentaire du staff manquant")
      *         )
      *     ),
      *     @OA\Response(
@@ -553,13 +569,18 @@ class RessourceController extends Controller {
      *     )
      * )
      */
-    public function block($id) {
+    public function block($id, Request $request) {
         $ressource = Ressource::find($id);
 
         if (!$ressource) {
             return response()->json(['message' => 'Ressource non trouvée'], 404);
         }
 
+        if (!$request->has('staffComment')) {
+            return response()->json(['message' => 'Commentaire du staff manquant'], 400);
+        }
+
+        $ressource->staff_comment = $request->staffComment;
         $ressource->id_status = self::ID_BLOCKED_STATUS;
         $ressource->save();
 
@@ -571,8 +592,8 @@ class RessourceController extends Controller {
      * @OA\Get(
      *     path="/stats/ressources",
      *     tags={"Statistics"},
-     *     summary="Get statistics about resources",
-     *     description="Retrieves statistics about resources, including totals, views, and status counts.",
+     *     summary="Get statistics about ressources",
+     *     description="Retrieves statistics about ressources, including totals, views, and status counts.",
      *     operationId="getRessourcesStats",
      *     @OA\Response(
      *         response=200,
@@ -582,14 +603,14 @@ class RessourceController extends Controller {
      *             @OA\Property(
      *                 property="ressources",
      *                 type="object",
-     *                 @OA\Property(property="total", type="integer", description="Total number of resources"),
-     *                 @OA\Property(property="totalView", type="integer", description="Total views across all resources"),
-     *                 @OA\Property(property="public", type="integer", description="Count of public resources"),
-     *                 @OA\Property(property="private", type="integer", description="Count of private resources"),
-     *                 @OA\Property(property="pending", type="integer", description="Count of resources pending moderation"),
-     *                 @OA\Property(property="accepted", type="integer", description="Count of resources accepted by moderators"),
-     *                 @OA\Property(property="rejected", type="integer", description="Count of resources rejected by moderators"),
-     *                 @OA\Property(property="blocked", type="integer", description="Count of resources blocked by moderators")
+     *                 @OA\Property(property="total", type="integer", description="Total number of ressources"),
+     *                 @OA\Property(property="totalView", type="integer", description="Total views across all ressources"),
+     *                 @OA\Property(property="public", type="integer", description="Count of public ressources"),
+     *                 @OA\Property(property="private", type="integer", description="Count of private ressources"),
+     *                 @OA\Property(property="pending", type="integer", description="Count of ressources pending moderation"),
+     *                 @OA\Property(property="accepted", type="integer", description="Count of ressources accepted by moderators"),
+     *                 @OA\Property(property="rejected", type="integer", description="Count of ressources rejected by moderators"),
+     *                 @OA\Property(property="blocked", type="integer", description="Count of ressources blocked by moderators")
      *             )
      *         )
      *     )

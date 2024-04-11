@@ -39,8 +39,6 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::get('myRessources', [RessourceController::class, 'getMyRessources']);
     Route::get('myRessources/stats', [RessourceController::class, 'getMyRessourcesStats']);
 
-
-
     // SuperAdmin routes
     Route::group(['middleware' => 'isSuperAdmin'], function () {
         Route::post('createUser', [UserController::class, 'createUser']);
@@ -77,7 +75,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
             Route::get('pending', [RessourceController::class, 'pending']);
             Route::patch('accept/{id}', [RessourceController::class, 'accept']);
             Route::post('reject/{id}', [RessourceController::class, 'reject']);
-            Route::patch('block/{id}', [RessourceController::class, 'block']);
+            Route::post('block/{id}', [RessourceController::class, 'block']);
 
             Route::get('accepted', [RessourceController::class, 'accepted']);
             Route::get('rejected', [RessourceController::class, 'rejected']);

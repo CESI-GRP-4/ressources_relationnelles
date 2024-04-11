@@ -1571,27 +1571,47 @@
             }
         },
         "/ressources/block/{id}": {
-            "patch": {
+            "post": {
                 "tags": [
                     "Ressource"
                 ],
-                "summary": "Block a specific ressource",
-                "description": "Blocks a specific ressource by setting its status to blocked. This endpoint is restricted to moderators.",
+                "summary": "Block a specific resource",
+                "description": "Blocks a specific resource by changing its status to blocked and records a staff comment. This endpoint is restricted to moderators.",
                 "operationId": "blockRessource",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "ID of the ressource to block",
+                        "description": "ID of the resource to block",
                         "required": true,
                         "schema": {
                             "type": "integer"
                         }
                     }
                 ],
+                "requestBody": {
+                    "description": "Staff comment on why the resource is being blocked",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "staffComment"
+                                ],
+                                "properties": {
+                                    "staffComment": {
+                                        "description": "Comment explaining the reason for blocking",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
-                        "description": "ressource blocked successfully",
+                        "description": "Resource blocked successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1606,8 +1626,24 @@
                             }
                         }
                     },
+                    "400": {
+                        "description": "Staff comment missing",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "Commentaire du staff manquant",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
                     "404": {
-                        "description": "ressource not found",
+                        "description": "Resource not found",
                         "content": {
                             "application/json": {
                                 "schema": {
