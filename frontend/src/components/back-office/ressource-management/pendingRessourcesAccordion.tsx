@@ -129,19 +129,82 @@ export default function PendingRessourcesAccordion({ ressources, refreshRessourc
                      }
               } catch (error) {
                      console.error(error);
-                     const axiosError = error as AxiosError;
+                     const axiosError = error as AxiosError
 
-                     // Error handling remains the same...
+                     if (axiosError.response) {
+                            switch (axiosError.response.status) {
+                                   case 400:
+                                          message.error("Requête invalide");
+                                          break;
+                                   case 401:
+                                          message.error("Vous n'êtes pas autorisé à éffectuer cette action")
+                                          break;
+                                   case 403:
+                                          message.error("Vous n'êtes pas autorisé à éffectuer cette action")
+                                          break;
+                                   case 404:
+                                          message.error("Ressource introuvable")
+                                          break;
+                                   case 422:
+                                          message.error("Erreur avec les données saisies")
+                                          break;
+                                   default:
+                                          message.error("Erreur lors du blocage de la ressource")
+                            }
+                     } else {
+                            message.error("Erreur lors du blocage de la ressource")
+                     }
               } finally {
                      setLoading(false);
                      setVisiblePopoverId(null); // Close the popover upon submission
               }
        };
 
+       const deleteRessource = async (id: number) => {
+              try {
+                     setLoading(true);
+                     const response = await axios(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/ressource/delete/${id}`, {
+                            withCredentials: true,
+                            method: 'DELETE',
+                     });
 
-       const onReject = (id: number, staffComment: string) => {
-              rejectRessource(id, staffComment);
-       };
+                     if (response.status === 200) {
+                            message.success("Ressource supprimée avec succès");
+                            refreshRessources();
+                     } else {
+                            throw new Error('Error');
+                     }
+              } catch (error) {
+                     console.error(error);
+                     const axiosError = error as AxiosError
+
+                     if (axiosError.response) {
+                            switch (axiosError.response.status) {
+                                   case 400:
+                                          message.error("Requête invalide");
+                                          break;
+                                   case 401:
+                                          message.error("Vous n'êtes pas autorisé à éffectuer cette action")
+                                          break;
+                                   case 403:
+                                          message.error("Vous n'êtes pas autorisé à éffectuer cette action")
+                                          break;
+                                   case 404:
+                                          message.error("Ressource introuvable")
+                                          break;
+                                   case 422:
+                                          message.error("Erreur avec les données saisies")
+                                          break;
+                                   default:
+                                          message.error("Erreur lors de la suppression de la ressource")
+                            }
+                     } else {
+                            message.error("Erreur lors de la suppression de la ressource")
+                     }
+              } finally {
+                     setLoading(false);
+              }
+       }
 
        // Prepare items for the Collapse component
        const collapseItems = ressources.map((ressource) => ({
@@ -217,9 +280,20 @@ export default function PendingRessourcesAccordion({ ressources, refreshRessourc
                                    </Button>
                             </Popconfirm>
 
+                            <Popconfirm
+                                   title="Êtes-vous sûr de vouloir supprimer cette ressource ?"
+                                   onConfirm={() => deleteRessource(ressource.id)}
+                                   okText="Oui"
+                                   cancelText="Non"
+                            >
+                                   <Button loading={loading}  style={{ backgroundColor: '#EF4444', color: 'white' }}>
+                                          Supprimer
+                                   </Button>
+                            </Popconfirm>
+
                             <Popover
                                    content={
-                                          <Form onFinish={(values) => onReject(ressource.id, values.staffComment)}>
+                                          <Form onFinish={(values) => rejectRessource(ressource.id, values.staffComment)}>
                                                  <Form.Item name="staffComment" rules={[{ required: true, message: 'Veuillez entrer un commentaire!' }]}>
                                                         <Input.TextArea rows={4} placeholder="Ajouter un commentaire..." />
                                                  </Form.Item>

@@ -19,7 +19,7 @@ export default function BlockedResources() {
        const fetchRessources = async () => {
               try {
                      setLoading(true);
-                     const response = await axios(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/ressources/rejected`, {
+                     const response = await axios(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/ressources/blocked`, {
                             method: "GET",
                             withCredentials: true
                      });

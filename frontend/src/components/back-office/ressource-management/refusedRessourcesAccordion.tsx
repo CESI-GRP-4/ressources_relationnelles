@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Avatar, Collapse, Popover, Tag, Typography, Button, message, Skeleton, Popconfirm, Form, Input } from 'antd';
+import { Avatar, Collapse, Popover, Tag, Typography, Button, message, Skeleton, Popconfirm, Form, Input, Badge } from 'antd';
 import Ressource from '@/types/ressource';
 import { Icon } from '@iconify/react';
 const { Title, Text, Paragraph } = Typography;
@@ -77,14 +77,82 @@ export default function RefusedRessourcesAccordion({ ressources, refreshRessourc
                      }
               } catch (error) {
                      console.error(error);
-                     const axiosError = error as AxiosError;
+                     const axiosError = error as AxiosError
 
-                     // Error handling remains the same...
+                     if (axiosError.response) {
+                            switch (axiosError.response.status) {
+                                   case 400:
+                                          message.error("Requête invalide");
+                                          break;
+                                   case 401:
+                                          message.error("Vous n'êtes pas autorisé à éffectuer cette action")
+                                          break;
+                                   case 403:
+                                          message.error("Vous n'êtes pas autorisé à éffectuer cette action")
+                                          break;
+                                   case 404:
+                                          message.error("Ressource introuvable")
+                                          break;
+                                   case 422:
+                                          message.error("Erreur avec les données saisies")
+                                          break;
+                                   default:
+                                          message.error("Erreur lors du blocage de la ressource")
+                            }
+                     } else {
+                            message.error("Erreur lors du blocage de la ressource")
+                     }
               } finally {
                      setLoading(false);
                      setVisiblePopoverId(null); // Close the popover upon submission
               }
        };
+
+       const deleteRessource = async (id: number) => {
+              try {
+                     setLoading(true);
+                     const response = await axios(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/ressource/delete/${id}`, {
+                            withCredentials: true,
+                            method: 'DELETE',
+                     });
+
+                     if (response.status === 200) {
+                            message.success("Ressource supprimée avec succès");
+                            refreshRessources();
+                     } else {
+                            throw new Error('Error');
+                     }
+              } catch (error) {
+                     console.error(error);
+                     const axiosError = error as AxiosError
+
+                     if (axiosError.response) {
+                            switch (axiosError.response.status) {
+                                   case 400:
+                                          message.error("Requête invalide");
+                                          break;
+                                   case 401:
+                                          message.error("Vous n'êtes pas autorisé à éffectuer cette action")
+                                          break;
+                                   case 403:
+                                          message.error("Vous n'êtes pas autorisé à éffectuer cette action")
+                                          break;
+                                   case 404:
+                                          message.error("Ressource introuvable")
+                                          break;
+                                   case 422:
+                                          message.error("Erreur avec les données saisies")
+                                          break;
+                                   default:
+                                          message.error("Erreur lors de la suppression de la ressource")
+                            }
+                     } else {
+                            message.error("Erreur lors de la suppression de la ressource")
+                     }
+              } finally {
+                     setLoading(false);
+              }
+       }
 
        const collapseItems = ressources.map((ressource) => ({
               key: ressource.id?.toString() ?? 'unknown', // Ensure key is a string and unique; use a placeholder if id is not available
@@ -147,44 +215,65 @@ export default function RefusedRessourcesAccordion({ ressources, refreshRessourc
               </div>
               ,
               children: (
-                     <div className='flex flex-col md:flex-row gap-3'>
-                            <Popconfirm
-                                   title="Êtes-vous sûr de vouloir accepter cette ressource ?"
-                                   onConfirm={() => acceptRessource(ressource.id)}
+                     <div className='flex flex-col gap-5'>
+                            {(ressource.status === 'rejected' || ressource.status === 'blocked') && (
+                                   <Badge.Ribbon text={"commentaire modérateur"} color="red">
+                                          <div className="flex flex-row items-center border p-3 rounded-md">
+                                                 <Text className='w-4/5'>{ressource.staffComment}</Text>
+                                          </div>
+                                   </Badge.Ribbon>
+                            )}
+                            <div className='flex flex-col md:flex-row gap-3'>
+                                   <Popconfirm
+                                          title="Êtes-vous sûr de vouloir accepter cette ressource ?"
+                                          onConfirm={() => acceptRessource(ressource.id)}
+                                          okText="Oui"
+                                          cancelText="Non"
+                                   >
+                                          <Button loading={loading} style={{ backgroundColor: '#10B981', color: 'white' }}>
+                                                 Accepter
+                                          </Button>
+                                   </Popconfirm>
+
+                                   <Popconfirm
+                                   title="Êtes-vous sûr de vouloir supprimer cette ressource ?"
+                                   onConfirm={() => deleteRessource(ressource.id)}
                                    okText="Oui"
                                    cancelText="Non"
                             >
-                                   <Button loading={loading} style={{ backgroundColor: '#10B981', color: 'white' }}>
-                                          Accepter
+                                   <Button loading={loading}  style={{ backgroundColor: '#EF4444', color: 'white' }}>
+                                          Supprimer
                                    </Button>
                             </Popconfirm>
 
-                            <Popover
-                                   content={
-                                          <Form onFinish={(values) => blockRessource(ressource.id, values.staffComment)}>
-                                                 <Form.Item name="staffComment" rules={[{ required: false, message: 'Veuillez entrer un commentaire!' }]}>
-                                                        <Input.TextArea rows={4} placeholder="Ajouter un commentaire..." />
-                                                 </Form.Item>
-                                                 <Form.Item>
-                                                        <div className='flex flex-row justify-center'>
-                                                               <Button type="primary" htmlType="submit" loading={loading}>
-                                                                      Confirmer
-                                                               </Button>
-                                                        </div>
-                                                 </Form.Item>
-                                          </Form>
-                                   }
-                                   title="Commentaire à déstination de l'utilisateur"
-                                   trigger="click"
-                                   open={visiblePopoverId === `block-${ressource.id}`} // Ensure unique ID for block popover
-                                   onOpenChange={(visible) => setVisiblePopoverId(visible ? `block-${ressource.id}` : null)}
-                            >
-                                   <Button loading={loading} style={{ backgroundColor: '#F59E0B', color: 'white' }}>
-                                          Bloquer
-                                   </Button>
-                            </Popover>
+                                   <Popover
+                                          content={
+                                                 <Form onFinish={(values) => blockRessource(ressource.id, values.staffComment)}>
+                                                        <Form.Item name="staffComment" rules={[{ required: false, message: 'Veuillez entrer un commentaire!' }]}>
+                                                               <Input.TextArea rows={4} placeholder="Ajouter un commentaire..." />
+                                                        </Form.Item>
+                                                        <Form.Item>
+                                                               <div className='flex flex-row justify-center'>
+                                                                      <Button type="primary" htmlType="submit" loading={loading}>
+                                                                             Confirmer
+                                                                      </Button>
+                                                               </div>
+                                                        </Form.Item>
+                                                 </Form>
+                                          }
+                                          title="Commentaire à déstination de l'utilisateur"
+                                          trigger="click"
+                                          open={visiblePopoverId === `block-${ressource.id}`} // Ensure unique ID for block popover
+                                          onOpenChange={(visible) => setVisiblePopoverId(visible ? `block-${ressource.id}` : null)}
+                                   >
+                                          <Button loading={loading} style={{ backgroundColor: '#F59E0B', color: 'white' }}>
+                                                 Bloquer
+                                          </Button>
+                                   </Popover>
 
+                            </div>
                      </div>
+
               ),
        }));
 
