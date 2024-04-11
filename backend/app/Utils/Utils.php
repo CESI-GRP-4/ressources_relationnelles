@@ -107,6 +107,32 @@ class Utils{
     // CATEGORIES
     /**
      * @OA\Schema(
+     *     schema="CategoryData",
+     *     type="object",
+     *     description="Information about a category",
+     *     @OA\Property(property="id", type="integer", description="Category ID"),
+     *     @OA\Property(property="title", type="string", description="Title of the category"),
+     *     @OA\Property(property="description", type="string", description="Description of the category"),
+     *     @OA\Property(property="icon", type="string", description="Icon representing the category"),
+     *     @OA\Property(property="color", type="string", description="Color associated with the category. Hexadecimal format with '#': #000000"),
+     *     @OA\Property(property="createdAt", type="string", format="date-time", description="Creation date of the category"),
+     *     @OA\Property(property="updatedAt", type="string", format="date-time", description="Last update date of the category"),
+     * )
+     */
+    public static function getCategoryData($category) {
+        return [
+            'id' => $category->id_category,
+            'title' => $category->title,
+            'description' => $category->description,
+            'icon' => $category->icon,
+            'color' => $category->color,
+            'createdAt' => $category->created_at->toDateTimeString(),
+            'updatedAt' => $category->updated_at->toDateTimeString(),
+        ];
+    }
+
+    /**
+     * @OA\Schema(
      *     schema="CategoryDetail",
      *     type="object",
      *     description="Detailed information about a category",
@@ -126,8 +152,9 @@ class Utils{
      *      ),
      * )
      */
-    public static function getCategoryDetail($category,  $getDetails = false) {
-        $categoryData =  [
+    public static function getCategoryDetail($category) {
+        $user = User::find($category->created_by);
+        return [
             'id' => $category->id_category,
             'title' => $category->title,
             'description' => $category->description,
@@ -135,14 +162,9 @@ class Utils{
             'color' => $category->color,
             'createdAt' => $category->created_at->toDateTimeString(),
             'updatedAt' => $category->updated_at->toDateTimeString(),
+            'isActive' => $category->is_active,
+            'createdBy' => self::getAllUserData($user),
         ];
-
-        if($getDetails){
-            $user = User::find($category->created_by);
-            $categoryData['isActive'] = $category->is_active;
-            $categoryData['createdBy'] = self::getAllUserData($user);
-        }
-        return $categoryData;
     }
 
     /**
@@ -164,7 +186,7 @@ class Utils{
      * )
      */
     public static function getCategoryDetailWithRessources($category) {
-        $categoryData = self::getCategoryDetail($category, false);
+        $categoryData = self::getCategoryData($category);
         $ressources = Ressource::where('id_category', $category->id_category)->get();
         $categoryData['ressources'] = $ressources->map(function ($ressource) {
             return self::getRessourceDetail($ressource);
@@ -187,14 +209,14 @@ class Utils{
      *         property="category",
      *         type="object",
      *         description="Details about the category this resource belongs to",
-     *         ref="#/components/schemas/CategoryDetail"
+     *         ref="#/components/schemas/CategoryData"
      *     ),
      *     @OA\Property(property="viewCount", type="integer", description="Number of views this resource has received"),
      *     @OA\Property(
      *         property="user",
      *         type="object",
      *         description="Details about the user who created this resource",
-     *         ref="#/components/schemas/UserDetail"
+     *         ref="#/components/schemas/UserData"
      *     ),
      *     @OA\Property(property="creationDate", type="string", format="date-time", description="The date and time when the resource was created"),
      *     @OA\Property(property="lastModificationDate", type="string", format="date-time", description="The date and time when the resource was last updated")
@@ -210,7 +232,7 @@ class Utils{
             'description' => $ressource->description,
             'isPublic' => $ressource->is_public,
             'status' => $status->label,
-            'category' => self::getCategoryDetail($category,false),
+            'category' => self::getCategoryData($category),
             'viewCount' => $ressource->view_count,
             'user' => self::getUserData($user),
             'creationDate' => $ressource->created_at,

@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "title": "(Re)Sources Relationnelles",
-        "version": "0.26"
+        "version": "0.26.2"
     },
     "servers": [
         {
@@ -879,6 +879,60 @@
                 }
             }
         },
+        "/ressource/{id}": {
+            "get": {
+                "tags": [
+                    "Ressource"
+                ],
+                "summary": "Get a specific resource",
+                "description": "Retrieves detailed information about a specific resource by ID and increments its view count.",
+                "operationId": "getRessource",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the resource to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resource retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "ressource": {
+                                            "$ref": "#/components/schemas/RessourceDetail"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource non trouvée"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/createRessource": {
             "post": {
                 "tags": [
@@ -975,13 +1029,64 @@
                 }
             }
         },
+        "/myRessources": {
+            "get": {
+                "tags": [
+                    "Ressource"
+                ],
+                "summary": "Get user's resources",
+                "description": "Retrieves a list of resources created by the authenticated user.",
+                "operationId": "getMyRessources",
+                "responses": {
+                    "200": {
+                        "description": "Resources retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "ressources": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/RessourceDetail"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
         "/ressources/pending": {
             "get": {
                 "tags": [
                     "Ressource"
                 ],
-                "summary": "Get pending resources",
-                "description": "Retrieves a list of all resources that are currently pending. This endpoint is restricted to moderators.",
+                "summary": "Get pending ressources",
+                "description": "Retrieves a list of all ressources that are currently pending. This endpoint is restricted to moderators.",
                 "operationId": "getPendingRessources",
                 "responses": {
                     "200": {
@@ -1031,8 +1136,8 @@
                 "tags": [
                     "Ressource"
                 ],
-                "summary": "Get accepted resources",
-                "description": "Retrieves a list of all resources that have been accepted. This endpoint is restricted to moderators.",
+                "summary": "Get accepted ressources",
+                "description": "Retrieves a list of all ressources that have been accepted. This endpoint is restricted to moderators.",
                 "operationId": "getAcceptedRessources",
                 "responses": {
                     "200": {
@@ -1082,8 +1187,8 @@
                 "tags": [
                     "Ressource"
                 ],
-                "summary": "Get rejected resources",
-                "description": "Retrieves a list of all resources that have been rejected. This endpoint is restricted to moderators.",
+                "summary": "Get rejected ressources",
+                "description": "Retrieves a list of all ressources that have been rejected. This endpoint is restricted to moderators.",
                 "operationId": "getRejectedRessources",
                 "responses": {
                     "200": {
@@ -1133,8 +1238,8 @@
                 "tags": [
                     "Ressource"
                 ],
-                "summary": "Get blocked resources",
-                "description": "Retrieves a list of all resources that have been blocked. This endpoint is restricted to moderators.",
+                "summary": "Get blocked ressources",
+                "description": "Retrieves a list of all ressources that have been blocked. This endpoint is restricted to moderators.",
                 "operationId": "getBlockedRessources",
                 "responses": {
                     "200": {
@@ -1184,14 +1289,14 @@
                 "tags": [
                     "Ressource"
                 ],
-                "summary": "Accept a resource",
-                "description": "Marks a pending resource as accepted. This endpoint is restricted to moderators.",
+                "summary": "Accept a ressource",
+                "description": "Marks a pending ressource as accepted. This endpoint is restricted to moderators.",
                 "operationId": "acceptRessource",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "ID of the resource to accept",
+                        "description": "ID of the ressource to accept",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -1200,7 +1305,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Resource accepted successfully",
+                        "description": "ressource accepted successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1216,7 +1321,7 @@
                         }
                     },
                     "400": {
-                        "description": "Resource already processed",
+                        "description": "ressource already processed",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1232,7 +1337,7 @@
                         }
                     },
                     "404": {
-                        "description": "Resource not found",
+                        "description": "ressource not found",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1276,14 +1381,14 @@
                 "tags": [
                     "Ressource"
                 ],
-                "summary": "Reject a resource",
-                "description": "Marks a pending resource as rejected. This endpoint is restricted to moderators.",
+                "summary": "Reject a ressource",
+                "description": "Marks a pending ressource as rejected. This endpoint is restricted to moderators.",
                 "operationId": "rejectRessource",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "ID of the resource to reject",
+                        "description": "ID of the ressource to reject",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -1292,7 +1397,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Resource rejected successfully",
+                        "description": "ressource rejected successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1308,7 +1413,7 @@
                         }
                     },
                     "400": {
-                        "description": "Resource already processed",
+                        "description": "ressource already processed",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1324,7 +1429,7 @@
                         }
                     },
                     "404": {
-                        "description": "Resource not found",
+                        "description": "ressource not found",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1368,14 +1473,14 @@
                 "tags": [
                     "Ressource"
                 ],
-                "summary": "Block a specific resource",
-                "description": "Blocks a specific resource by setting its status to blocked. This endpoint is restricted to moderators.",
+                "summary": "Block a specific ressource",
+                "description": "Blocks a specific ressource by setting its status to blocked. This endpoint is restricted to moderators.",
                 "operationId": "blockRessource",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "ID of the resource to block",
+                        "description": "ID of the ressource to block",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -1384,7 +1489,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Resource blocked successfully",
+                        "description": "ressource blocked successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1400,7 +1505,7 @@
                         }
                     },
                     "404": {
-                        "description": "Resource not found",
+                        "description": "ressource not found",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2534,6 +2639,42 @@
                 },
                 "type": "object"
             },
+            "CategoryData": {
+                "description": "Information about a category",
+                "properties": {
+                    "id": {
+                        "description": "Category ID",
+                        "type": "integer"
+                    },
+                    "title": {
+                        "description": "Title of the category",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "Description of the category",
+                        "type": "string"
+                    },
+                    "icon": {
+                        "description": "Icon representing the category",
+                        "type": "string"
+                    },
+                    "color": {
+                        "description": "Color associated with the category. Hexadecimal format with '#': #000000",
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "description": "Creation date of the category",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "description": "Last update date of the category",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
             "CategoryDetail": {
                 "description": "Detailed information about a category",
                 "properties": {
@@ -2622,14 +2763,14 @@
                         "type": "string"
                     },
                     "category": {
-                        "$ref": "#/components/schemas/CategoryDetail"
+                        "$ref": "#/components/schemas/CategoryData"
                     },
                     "viewCount": {
                         "description": "Number of views this resource has received",
                         "type": "integer"
                     },
                     "user": {
-                        "$ref": "#/components/schemas/UserDetail"
+                        "$ref": "#/components/schemas/UserData"
                     },
                     "creationDate": {
                         "description": "The date and time when the resource was created",

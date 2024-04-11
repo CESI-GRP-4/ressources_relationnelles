@@ -36,6 +36,10 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::post('verifyUser', [AuthController::class, 'verifyUser']);
     Route::post('createRessource', [RessourceController::class, 'createRessource']);
 
+    Route::get('myRessources', [RessourceController::class, 'getMyRessources']);
+
+
+
     // SuperAdmin routes
     Route::group(['middleware' => 'isSuperAdmin'], function () {
         Route::post('createUser', [UserController::class, 'createUser']);
@@ -60,6 +64,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
         Route::group(['prefix' => 'stats'], function () {
             Route::get('connections', [ConnectionController::class, 'getConnections']);
             Route::get('users', [UserController::class, 'getUsersInformation']);
+            // TODO : ressources stats
         });
     });
 

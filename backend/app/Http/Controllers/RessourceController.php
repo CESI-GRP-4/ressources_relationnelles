@@ -15,6 +15,57 @@ class RessourceController extends Controller {
     const ID_BLOCKED_STATUS = 4;
 
     /**
+     * @OA\Get(
+     *     path="/ressource/{id}",
+     *     tags={"Ressource"},
+     *     summary="Get a specific resource",
+     *     description="Retrieves detailed information about a specific resource by ID and increments its view count.",
+     *     operationId="getRessource",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the resource to retrieve",
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Resource retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="ressource",
+     *                 ref="#/components/schemas/RessourceDetail"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Resource not found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Ressource non trouvée")
+     *         )
+     *     )
+     * )
+     */
+    public function getRessource($id) {
+        $ressource = Ressource::find($id);
+
+        if (!$ressource) {
+            return response()->json(['message' => 'Ressource non trouvée'], 404);
+        }
+
+        // Add one to the view count
+        $ressource->view_count += 1;
+        $ressource->save();
+
+        return response()->json(['ressource' => Utils::getRessourceDetail($ressource)], 200);
+    }
+
+    /**
      * @OA\Post(
      *     path="/createRessource",
      *     tags={"Ressource"},
@@ -88,28 +139,46 @@ class RessourceController extends Controller {
         return response()->json(['message' => 'Ressource créée avec succès', 'idRessource' => $ressource->id_ressource], 201);
     }
 
-
-    public function getRessource($id) {
-        $ressource = Ressource::find($id);
-
-        if (!$ressource) {
-            return response()->json(['message' => 'Ressource non trouvée'], 404);
-        }
-
-        // Add one to the view count
-        $ressource->view_count += 1;
-        $ressource->save();
-
-        return response()->json(['ressource' => Utils::getRessourceDetail($ressource)], 200);
+    /**
+     * @OA\Get(
+     *     path="/myRessources",
+     *     tags={"Ressource"},
+     *     summary="Get user's resources",
+     *     description="Retrieves a list of resources created by the authenticated user.",
+     *     operationId="getMyRessources",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Resources retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="ressources",
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/RessourceDetail")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - User must be logged in",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthorized - User must be logged in")
+     *         )
+     *     )
+     * )
+     */
+    public function getMyRessources() {
+        $ressources = Ressource::where('id_user', auth()->user()->id_user)->get();
+        return response()->json(['ressources' => Utils::mapRessourcesToDetails($ressources)], 200);
     }
-
 
     /**
      * @OA\Get(
      *     path="/ressources/pending",
      *     tags={"Ressource"},
-     *     summary="Get pending resources",
-     *     description="Retrieves a list of all resources that are currently pending. This endpoint is restricted to moderators.",
+     *     summary="Get pending ressources",
+     *     description="Retrieves a list of all ressources that are currently pending. This endpoint is restricted to moderators.",
      *     operationId="getPendingRessources",
      *     security={{ "BearerAuth": {} }},
      *     @OA\Response(
@@ -143,8 +212,8 @@ class RessourceController extends Controller {
      * @OA\Get(
      *     path="/ressources/accepted",
      *     tags={"Ressource"},
-     *     summary="Get accepted resources",
-     *     description="Retrieves a list of all resources that have been accepted. This endpoint is restricted to moderators.",
+     *     summary="Get accepted ressources",
+     *     description="Retrieves a list of all ressources that have been accepted. This endpoint is restricted to moderators.",
      *     operationId="getAcceptedRessources",
      *     security={{ "BearerAuth": {} }},
      *     @OA\Response(
@@ -177,8 +246,8 @@ class RessourceController extends Controller {
      * @OA\Get(
      *     path="/ressources/rejected",
      *     tags={"Ressource"},
-     *     summary="Get rejected resources",
-     *     description="Retrieves a list of all resources that have been rejected. This endpoint is restricted to moderators.",
+     *     summary="Get rejected ressources",
+     *     description="Retrieves a list of all ressources that have been rejected. This endpoint is restricted to moderators.",
      *     operationId="getRejectedRessources",
      *     security={{ "BearerAuth": {} }},
      *     @OA\Response(
@@ -211,8 +280,8 @@ class RessourceController extends Controller {
      * @OA\Get(
      *     path="/ressources/blocked",
      *     tags={"Ressource"},
-     *     summary="Get blocked resources",
-     *     description="Retrieves a list of all resources that have been blocked. This endpoint is restricted to moderators.",
+     *     summary="Get blocked ressources",
+     *     description="Retrieves a list of all ressources that have been blocked. This endpoint is restricted to moderators.",
      *     operationId="getBlockedRessources",
      *     security={{ "BearerAuth": {} }},
      *     @OA\Response(
@@ -241,27 +310,26 @@ class RessourceController extends Controller {
         return response()->json(['ressources' => Utils::mapRessourcesToDetails($ressources)], 200);
     }
 
-
     /**
      * @OA\Patch(
      *     path="/ressources/accept/{id}",
      *     tags={"Ressource"},
-     *     summary="Accept a resource",
-     *     description="Marks a pending resource as accepted. This endpoint is restricted to moderators.",
+     *     summary="Accept a ressource",
+     *     description="Marks a pending ressource as accepted. This endpoint is restricted to moderators.",
      *     operationId="acceptRessource",
      *     security={{ "BearerAuth": {} }},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="ID of the resource to accept",
+     *         description="ID of the ressource to accept",
      *         @OA\Schema(
      *             type="integer"
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Resource accepted successfully",
+     *         description="ressource accepted successfully",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="message", type="string", example="Ressource acceptée")
@@ -269,7 +337,7 @@ class RessourceController extends Controller {
      *     ),
      *     @OA\Response(
      *         response=400,
-     *         description="Resource already processed",
+     *         description="ressource already processed",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="message", type="string", example="Ressource déjà traitée")
@@ -277,7 +345,7 @@ class RessourceController extends Controller {
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Resource not found",
+     *         description="ressource not found",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="message", type="string", example="Ressource non trouvée")
@@ -316,22 +384,22 @@ class RessourceController extends Controller {
      * @OA\Patch(
      *     path="/ressources/reject/{id}",
      *     tags={"Ressource"},
-     *     summary="Reject a resource",
-     *     description="Marks a pending resource as rejected. This endpoint is restricted to moderators.",
+     *     summary="Reject a ressource",
+     *     description="Marks a pending ressource as rejected. This endpoint is restricted to moderators.",
      *     operationId="rejectRessource",
      *     security={{ "BearerAuth": {} }},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="ID of the resource to reject",
+     *         description="ID of the ressource to reject",
      *         @OA\Schema(
      *             type="integer"
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Resource rejected successfully",
+     *         description="ressource rejected successfully",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="message", type="string", example="Ressource refusée")
@@ -339,7 +407,7 @@ class RessourceController extends Controller {
      *     ),
      *     @OA\Response(
      *         response=400,
-     *         description="Resource already processed",
+     *         description="ressource already processed",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="message", type="string", example="Ressource déjà traitée")
@@ -347,7 +415,7 @@ class RessourceController extends Controller {
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Resource not found",
+     *         description="ressource not found",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="message", type="string", example="Ressource non trouvée")
@@ -384,22 +452,22 @@ class RessourceController extends Controller {
      * @OA\Patch(
      *     path="/ressources/block/{id}",
      *     tags={"Ressource"},
-     *     summary="Block a specific resource",
-     *     description="Blocks a specific resource by setting its status to blocked. This endpoint is restricted to moderators.",
+     *     summary="Block a specific ressource",
+     *     description="Blocks a specific ressource by setting its status to blocked. This endpoint is restricted to moderators.",
      *     operationId="blockRessource",
      *     security={{ "BearerAuth": {} }},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="ID of the resource to block",
+     *         description="ID of the ressource to block",
      *         @OA\Schema(
      *             type="integer"
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Resource blocked successfully",
+     *         description="ressource blocked successfully",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="message", type="string", example="Ressource bloquée")
@@ -407,7 +475,7 @@ class RessourceController extends Controller {
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Resource not found",
+     *         description="ressource not found",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="message", type="string", example="Ressource non trouvée")
