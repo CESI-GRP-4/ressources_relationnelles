@@ -126,18 +126,18 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                                    title: 'ressources-bloquees',
                             },
                             // Ressources disabled (by the user, it can be then re-activated by the user):
-                            {
-                                   icon: <Icon icon={"line-md:switch-off"}
-                                          style={{ fontSize: '20px' }}
-                                   />,
-                                   label: (
-                                          <ConditionalTooltip title={`Ressources désactivées (par l'auteur)`}>
-                                                 <Link href={'/gestion-ressources/ressources-desactivees'}>{`Désactivées`}</Link>
-                                          </ConditionalTooltip>
-                                   ),
-                                   key: 'ressources-desactivees',
-                                   title: 'ressources-desactivees',
-                            },
+                            // {
+                            //        icon: <Icon icon={"line-md:switch-off"}
+                            //               style={{ fontSize: '20px' }}
+                            //        />,
+                            //        label: (
+                            //               <ConditionalTooltip title={`Ressources désactivées (par l'auteur)`}>
+                            //                      <Link href={'/gestion-ressources/ressources-desactivees'}>{`Désactivées`}</Link>
+                            //               </ConditionalTooltip>
+                            //        ),
+                            //        key: 'ressources-desactivees',
+                            //        title: 'ressources-desactivees',
+                            // },
                             // History of actions on resources:
                             {
                                    icon: <Icon icon={"line-md:backup-restore"}
