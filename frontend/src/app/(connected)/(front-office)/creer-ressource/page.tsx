@@ -1,30 +1,29 @@
 // /creer-ressource/page.tsx
 "use client"
 import { useState, useEffect } from "react";
-import { Form, Input, Select, Button, Upload, message } from "antd";
+import { Form, Input, Select, Button, Upload, message, Typography, Checkbox } from "antd";
 import { InboxOutlined, SaveOutlined } from "@ant-design/icons";
 import axios, { AxiosResponse } from "axios";
-
-// ! Can't work !!! Type doesnt exist
-import type Resource from "@/types/resource";
-
+import type Ressource from "@/types/ressource";
+import type User from '@/types/user';
+import { useUser } from '@/providers/userProvider';
+import { Category } from "@/types/category";
 const { Option } = Select;
 const { Dragger } = Upload;
+const { Title } = Typography;
 
-
-
-export default function CreateResourceForm() {
+export default function CreateRessourceForm() {
        const [form] = Form.useForm();
        const [isSubmitting, setSubmitting] = useState(false);
-       const [categories, setCategories] = useState([]);
+       const [categories, setCategories] = useState<Category[]>([]);
        const [categoriesLoaded, setCategoriesLoaded] = useState(false);
-
+       const { user } = useUser();
        // Utilisez useEffect pour récupérer les catégories et les statuts lors du chargement du composant
        useEffect(() => {
               const fetchCategories = async () => {
                      try {
-                            const categoriesResponse = await axios.get("http://localhost/api/getCategories");
-                            setCategories(categoriesResponse.data);
+                            const categoriesResponse = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/categories`);
+                            setCategories(categoriesResponse.data.categories);
                             setCategoriesLoaded(true);
 
                      } catch (error) {
@@ -32,21 +31,16 @@ export default function CreateResourceForm() {
                      }
               };
 
-              // Charger les catégories et les statuts uniquement si elles n'ont pas déjà été chargées
               if (!categoriesLoaded) {
                      fetchCategories();
               }
        }, [categoriesLoaded]); // Charger les catégories et les statuts une seule fois au chargement du composant
 
-       // Catégories par défaut si aucune réponse du backend
-       const defaultCategories = [
-              { id: 1, name: "Catégorie par défaut 1" },
-              { id: 2, name: "Catégorie par défaut 2" },
-              { id: 3, name: "Catégorie par défaut 3" },
-       ];
 
-       const onFinish = async (ressourceForm: Resource) => {
-              console.log("Données du formulaire:", ressourceForm); // Afficher les données dans la console
+       const onFinish = async (ressourceForm: Ressource) => {
+              const ressourceFormWithUserId = { ...ressourceForm};
+
+              console.log("Données du formulaire:", ressourceFormWithUserId); // Afficher les données dans la console
 
               setSubmitting(true);
 
@@ -54,17 +48,12 @@ export default function CreateResourceForm() {
                      // Envoi des données au backend avec axios
                      const response: AxiosResponse = await axios({
                             method: 'post',
-
-                            // ! Not possible !!!!!
-                            // TODO: Look at it later
-                            baseURL: 'http://localhost:3000', 
-                            url: '/creer-ressource',
-                            data: ressourceForm,
+                            baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
+                            url: '/createRessource',
+                            data: ressourceFormWithUserId,
                             responseType: 'json',
                             timeout: 10000,
-                            headers: {
-                                   'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
-                            }
+                            withCredentials: true,
                      });
 
                      // Traitement de la réponse (éventuellement)
@@ -82,12 +71,12 @@ export default function CreateResourceForm() {
 
        return (
               <div>
-                     <h1 className="text-center mt-4 mb-4">Création de ressource</h1>
+                     <Title style={{ textAlign: 'center', marginTop: '2%', marginBottom: '2%' }}>Créer une ressource</Title>
                      <div className="row justify-content-center">
                             <div className="col-md-6">
                                    <Form
                                           form={form}
-                                          name="createResourceForm"
+                                          name="createRessourceForm"
                                           onFinish={onFinish}
                                           autoComplete="off"
                                           labelCol={{ span: 8 }}
@@ -101,13 +90,9 @@ export default function CreateResourceForm() {
                                                  <Input.TextArea style={{ width: "50%" }} />
                                           </Form.Item>
 
-                                          <Form.Item label="Contenu" name="content" rules={[{ required: true, message: "Saisissez un contenu" }]}>
-                                                 <Input.TextArea style={{ width: "50%" }} />
-                                          </Form.Item>
-
                                           <Form.Item
                                                  label="Catégorie"
-                                                 name="id_category"
+                                                 name="idCategory"
                                                  rules={[{ required: true, message: "Sélectionnez une catégorie" }]}
                                           >
                                                  <Select
@@ -118,23 +103,33 @@ export default function CreateResourceForm() {
                                                                (option?.label as string).toLowerCase().indexOf(input.toLowerCase()) >= 0
                                                         }
                                                  >
-                                                        {(categoriesLoaded ? categories : defaultCategories).map((category) => (
-                                                               <Option key={category.id} value={category.id} label={category.name}>
-                                                                      {category.name}
+                                                        {(categoriesLoaded ? categories : categories).map((category) => (
+                                                               <Option key={category.id} value={category.id} label={category.title}>
+                                                                      {category.title}
                                                                </Option>
                                                         ))}
                                                  </Select>
                                           </Form.Item>
 
+                                          <Form.Item
+                                                 label="Ressource publique"
+                                                 name="isPublic"
+                                                 valuePropName="checked" // Pour gérer la valeur cochée
+                                                 initialValue={true} // Valeur par défaut cochée
+                                                 rules={[{ required: true}]}
+                                          >
+                                                 <Checkbox />
+                                          </Form.Item>
 
-                                          <Form.Item label="Fichiers" name="files" valuePropName="fileList" getValueFromEvent={(e) => e.fileList} >
+
+                                          {/* <Form.Item label="Fichiers" name="files" valuePropName="fileList" getValueFromEvent={(e) => e.fileList} >
                                                  <Dragger style={{ width: "50%" }}>
                                                         <p className="ant-upload-drag-icon">
                                                                <InboxOutlined />
                                                         </p>
                                                         <p className="ant-upload-text">Cliquez ou faites glisser des fichiers ici</p>
                                                  </Dragger>
-                                          </Form.Item>
+                                          </Form.Item> */}
 
                                           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                                                  <Button icon={<SaveOutlined />} type="primary" htmlType="submit" loading={isSubmitting}>

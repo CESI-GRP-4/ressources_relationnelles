@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "title": "(Re)Sources Relationnelles",
-        "version": "0.25"
+        "version": "0.26.2"
     },
     "servers": [
         {
@@ -563,7 +563,7 @@
                                 "schema": {
                                     "properties": {
                                         "category": {
-                                            "$ref": "#/components/schemas/Category"
+                                            "$ref": "#/components/schemas/CategoryDetailWithRessources"
                                         },
                                         "ressources": {
                                             "description": "List of ressources associated with the category",
@@ -879,65 +879,96 @@
                 }
             }
         },
-        "/creer-ressource": {
+        "/ressource/{id}": {
+            "get": {
+                "tags": [
+                    "Ressource"
+                ],
+                "summary": "Get a specific resource",
+                "description": "Retrieves detailed information about a specific resource by ID and increments its view count.",
+                "operationId": "getRessource",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the resource to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resource retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "ressource": {
+                                            "$ref": "#/components/schemas/RessourceDetail"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource non trouvée"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/createRessource": {
             "post": {
                 "tags": [
-                    "Ressources"
+                    "Ressource"
                 ],
                 "summary": "Create a new ressource",
-                "description": "Creates a new ressource with the given data. File upload is supported.",
+                "description": "Creates a new resource with the given details. Returns the ID of the newly created resource.",
                 "operationId": "createRessource",
                 "requestBody": {
-                    "description": "Ressource data and optional file upload",
+                    "description": "Data for the new resource",
                     "required": true,
                     "content": {
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "required": [
                                     "label",
                                     "description",
-                                    "content"
+                                    "idCategory"
                                 ],
                                 "properties": {
                                     "label": {
-                                        "description": "The label of the ressource",
-                                        "type": "string",
-                                        "example": "A New Ressource"
+                                        "description": "The label of the new resource",
+                                        "type": "string"
                                     },
                                     "description": {
-                                        "description": "Detailed description of the ressource",
-                                        "type": "string",
-                                        "example": "This is a detailed description of the ressource."
+                                        "description": "The description of the new resource",
+                                        "type": "string"
                                     },
-                                    "content": {
-                                        "description": "The content of the ressource",
-                                        "type": "string",
-                                        "example": "Here goes the content of the ressource."
-                                    },
-                                    "id_category": {
-                                        "description": "The ID of the category this ressource belongs to",
+                                    "idCategory": {
+                                        "description": "The category ID for the new resource",
                                         "type": "integer"
                                     },
-                                    "is_public": {
-                                        "description": "Whether the ressource is public or not",
-                                        "type": "boolean"
-                                    },
-                                    "file": {
-                                        "description": "Optional file to upload",
-                                        "type": "string",
-                                        "format": "binary"
-                                    },
-                                    "view_count": {
-                                        "description": "Optional initial view count",
-                                        "type": "integer"
-                                    },
-                                    "id_user": {
-                                        "description": "Optional ID of the user creating the ressource",
-                                        "type": "integer"
-                                    },
-                                    "id_status": {
-                                        "description": "Optional status ID of the ressource",
-                                        "type": "integer"
+                                    "isPublic": {
+                                        "description": "Whether the resource is public",
+                                        "type": "boolean",
+                                        "example": true
                                     }
                                 },
                                 "type": "object"
@@ -947,7 +978,7 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Ressource created successfully",
+                        "description": "Resource created successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -955,6 +986,10 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Ressource créée avec succès"
+                                        },
+                                        "idRessource": {
+                                            "description": "The ID of the newly created resource",
+                                            "type": "integer"
                                         }
                                     },
                                     "type": "object"
@@ -963,17 +998,537 @@
                         }
                     },
                     "422": {
-                        "description": "Validation Error",
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "Validation message",
+                                            "type": "string"
+                                        },
+                                        "errors": {
+                                            "description": "Detailed validation errors",
+                                            "type": "object",
+                                            "additionalProperties": [
+                                                {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "property": null
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/myRessources": {
+            "get": {
+                "tags": [
+                    "Ressource"
+                ],
+                "summary": "Get user's resources",
+                "description": "Retrieves a list of resources created by the authenticated user.",
+                "operationId": "getMyRessources",
+                "responses": {
+                    "200": {
+                        "description": "Resources retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "ressources": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/RessourceDetail"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Champ(s) incorrects"
-                                        },
-                                        "errors": {
-                                            "type": "object"
+                                            "example": "Unauthorized - User must be logged in"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/ressources/pending": {
+            "get": {
+                "tags": [
+                    "Ressource"
+                ],
+                "summary": "Get pending ressources",
+                "description": "Retrieves a list of all ressources that are currently pending. This endpoint is restricted to moderators.",
+                "operationId": "getPendingRessources",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "ressources": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/RessourceDetail"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Moderator access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Access restricted to moderators"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/ressources/accepted": {
+            "get": {
+                "tags": [
+                    "Ressource"
+                ],
+                "summary": "Get accepted ressources",
+                "description": "Retrieves a list of all ressources that have been accepted. This endpoint is restricted to moderators.",
+                "operationId": "getAcceptedRessources",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "ressources": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/RessourceDetail"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Moderator access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Access restricted to moderators"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/ressources/rejected": {
+            "get": {
+                "tags": [
+                    "Ressource"
+                ],
+                "summary": "Get rejected ressources",
+                "description": "Retrieves a list of all ressources that have been rejected. This endpoint is restricted to moderators.",
+                "operationId": "getRejectedRessources",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "ressources": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/RessourceDetail"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Moderator access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Access restricted to moderators"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/ressources/blocked": {
+            "get": {
+                "tags": [
+                    "Ressource"
+                ],
+                "summary": "Get blocked ressources",
+                "description": "Retrieves a list of all ressources that have been blocked. This endpoint is restricted to moderators.",
+                "operationId": "getBlockedRessources",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "ressources": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/RessourceDetail"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Moderator access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Access restricted to moderators"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/ressources/accept/{id}": {
+            "patch": {
+                "tags": [
+                    "Ressource"
+                ],
+                "summary": "Accept a ressource",
+                "description": "Marks a pending ressource as accepted. This endpoint is restricted to moderators.",
+                "operationId": "acceptRessource",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the ressource to accept",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ressource accepted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource acceptée"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "ressource already processed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource déjà traitée"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "ressource not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource non trouvée"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Moderator access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Access restricted to moderators"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/ressources/reject/{id}": {
+            "patch": {
+                "tags": [
+                    "Ressource"
+                ],
+                "summary": "Reject a ressource",
+                "description": "Marks a pending ressource as rejected. This endpoint is restricted to moderators.",
+                "operationId": "rejectRessource",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the ressource to reject",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ressource rejected successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource refusée"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "ressource already processed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource déjà traitée"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "ressource not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource non trouvée"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Moderator access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Access restricted to moderators"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/ressources/block/{id}": {
+            "patch": {
+                "tags": [
+                    "Ressource"
+                ],
+                "summary": "Block a specific ressource",
+                "description": "Blocks a specific ressource by setting its status to blocked. This endpoint is restricted to moderators.",
+                "operationId": "blockRessource",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the ressource to block",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ressource blocked successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource bloquée"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "ressource not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource non trouvée"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Moderator access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Access restricted to moderators"
                                         }
                                     },
                                     "type": "object"
@@ -992,7 +1547,7 @@
         "/stats/connections": {
             "get": {
                 "tags": [
-                    "Stats"
+                    "Statistics"
                 ],
                 "summary": "Get connection statistics",
                 "description": "Fetches connection counts for a given date range along with the day having the highest average connections.",
@@ -1752,6 +2307,84 @@
                 ]
             }
         },
+        "/stats/users": {
+            "get": {
+                "tags": [
+                    "Statistics"
+                ],
+                "summary": "Get users statistics",
+                "description": "Returns statistics about users, including total users, distribution by roles, banned users count, and unverified emails count.",
+                "operationId": "getUsersInformation",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "totalUsers": {
+                                            "type": "integer",
+                                            "example": 15
+                                        },
+                                        "usersByRole": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "name": {
+                                                        "description": "The name of the role",
+                                                        "type": "string"
+                                                    },
+                                                    "userCount": {
+                                                        "description": "The count of users with this role",
+                                                        "type": "integer"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "example": [
+                                                {
+                                                    "name": "Administrateur",
+                                                    "userCount": 1
+                                                },
+                                                {
+                                                    "name": "Moderateur",
+                                                    "userCount": 5
+                                                },
+                                                {
+                                                    "name": "SuperAdministrateur",
+                                                    "userCount": 2
+                                                },
+                                                {
+                                                    "name": "Utilisateur",
+                                                    "userCount": 7
+                                                }
+                                            ]
+                                        },
+                                        "bannedUsersCount": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "unverifiedEmailsCount": {
+                                            "type": "integer",
+                                            "example": 6
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
         "/usersHistory": {
             "get": {
                 "tags": [
@@ -1862,49 +2495,6 @@
                         "description": "Last update date of the category",
                         "type": "string",
                         "format": "date-time"
-                    }
-                },
-                "type": "object"
-            },
-            "CategoryDetail": {
-                "description": "Detailed information about a category",
-                "properties": {
-                    "id": {
-                        "description": "Category ID",
-                        "type": "integer"
-                    },
-                    "title": {
-                        "description": "Title of the category",
-                        "type": "string"
-                    },
-                    "description": {
-                        "description": "Description of the category",
-                        "type": "string"
-                    },
-                    "icon": {
-                        "description": "Icon representing the category",
-                        "type": "string"
-                    },
-                    "color": {
-                        "description": "Color associated with the category. Hexadecimal format with '#': #000000",
-                        "type": "string"
-                    },
-                    "createdAt": {
-                        "description": "Creation date of the category",
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "updatedAt": {
-                        "description": "Last update date of the category",
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "isActive": {
-                        "description": "Whether the category is active. Visible to admins only.",
-                        "type": "boolean"
-                    },
-                    "createdBy": {
-                        "$ref": "#/components/schemas/UserDetail"
                     }
                 },
                 "type": "object"
@@ -2045,6 +2635,152 @@
                     },
                     "newUser": {
                         "type": "boolean"
+                    }
+                },
+                "type": "object"
+            },
+            "CategoryData": {
+                "description": "Information about a category",
+                "properties": {
+                    "id": {
+                        "description": "Category ID",
+                        "type": "integer"
+                    },
+                    "title": {
+                        "description": "Title of the category",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "Description of the category",
+                        "type": "string"
+                    },
+                    "icon": {
+                        "description": "Icon representing the category",
+                        "type": "string"
+                    },
+                    "color": {
+                        "description": "Color associated with the category. Hexadecimal format with '#': #000000",
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "description": "Creation date of the category",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "description": "Last update date of the category",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "CategoryDetail": {
+                "description": "Detailed information about a category",
+                "properties": {
+                    "id": {
+                        "description": "Category ID",
+                        "type": "integer"
+                    },
+                    "title": {
+                        "description": "Title of the category",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "Description of the category",
+                        "type": "string"
+                    },
+                    "icon": {
+                        "description": "Icon representing the category",
+                        "type": "string"
+                    },
+                    "color": {
+                        "description": "Color associated with the category. Hexadecimal format with '#': #000000",
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "description": "Creation date of the category",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "description": "Last update date of the category",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "isActive": {
+                        "description": "Whether the category is active. Visible to admins only.",
+                        "type": "boolean"
+                    },
+                    "createdBy": {
+                        "$ref": "#/components/schemas/UserDetail"
+                    }
+                },
+                "type": "object"
+            },
+            "CategoryDetailWithRessources": {
+                "description": "Detailed information about a category, including its associated resources",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/CategoryDetail"
+                    },
+                    {
+                        "properties": {
+                            "ressources": {
+                                "description": "An array of resources associated with the category",
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/RessourceDetail"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "RessourceDetail": {
+                "description": "Detailed information about a resource",
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier of the resource",
+                        "type": "integer"
+                    },
+                    "label": {
+                        "description": "The label or title of the resource",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "The detailed description of the resource",
+                        "type": "string"
+                    },
+                    "isPublic": {
+                        "description": "Indicates if the resource is public",
+                        "type": "boolean"
+                    },
+                    "status": {
+                        "description": "The status of the resource",
+                        "type": "string"
+                    },
+                    "category": {
+                        "$ref": "#/components/schemas/CategoryData"
+                    },
+                    "viewCount": {
+                        "description": "Number of views this resource has received",
+                        "type": "integer"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/UserData"
+                    },
+                    "creationDate": {
+                        "description": "The date and time when the resource was created",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "lastModificationDate": {
+                        "description": "The date and time when the resource was last updated",
+                        "type": "string",
+                        "format": "date-time"
                     }
                 },
                 "type": "object"

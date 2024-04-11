@@ -27,17 +27,25 @@ Route::get('countries', [CountryController::class, 'getCountries']);
 Route::get('categories', [CategoryController::class, 'getActiveCategories']);
 Route::get('category/{id}', [CategoryController::class, 'getCategory']);
 
-// Route::group(['middleware' => ['jwt.auth','jwt.refresh']], function() { // for refresh token. Commented for now as we got errors
+// Ressources
+Route::get('ressource/{id}', [RessourceController::class, 'getRessource']);
 
+// Connected access
 Route::group(['middleware' => ['jwt.auth']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('verifyUser', [AuthController::class, 'verifyUser']);
-       Route::post('creer-ressource', [RessourceController::class, 'createRessource']);
+    Route::post('createRessource', [RessourceController::class, 'createRessource']);
 
+    Route::get('myRessources', [RessourceController::class, 'getMyRessources']);
+
+
+
+    // SuperAdmin routes
     Route::group(['middleware' => 'isSuperAdmin'], function () {
         Route::post('createUser', [UserController::class, 'createUser']);
     });
 
+    // Admin & SuperAdmin routes
     Route::group(['middleware' => 'isAdmin'], function () {
         Route::get('users', [UserController::class, 'getUsers']);
         Route::get('usersHistory', [UserHistoryController::class, 'getUsersHistory']);
@@ -55,10 +63,24 @@ Route::group(['middleware' => ['jwt.auth']], function () {
 
         Route::group(['prefix' => 'stats'], function () {
             Route::get('connections', [ConnectionController::class, 'getConnections']);
+            Route::get('users', [UserController::class, 'getUsersInformation']);
+            // TODO : ressources stats
         });
     });
 
+    // Moderator, Admin & SuperAdmin routes
     Route::group(['middleware' => 'isModerator'], function () {
         // Routes for moderators (admins & superadmins can also access these routes)
+
+        Route::group(['prefix' => 'ressources'], function () {
+            Route::get('pending', [RessourceController::class, 'pending']);
+            Route::patch('accept/{id}', [RessourceController::class, 'accept']);
+            Route::patch('reject/{id}', [RessourceController::class, 'reject']);
+            Route::patch('block/{id}', [RessourceController::class, 'block']);
+
+            Route::get('accepted', [RessourceController::class, 'accepted']);
+            Route::get('rejected', [RessourceController::class, 'rejected']);
+            Route::get('blocked', [RessourceController::class, 'blocked']);
+        });
     });
 });

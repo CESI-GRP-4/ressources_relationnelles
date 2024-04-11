@@ -1,4 +1,4 @@
-import { Avatar, Button, Card, List, Tag, message } from "antd";
+import { Badge, Button, Card, List, Tag, message } from "antd";
 import Link from "next/link";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import axios, { AxiosError } from "axios";
@@ -64,26 +64,28 @@ export default function CategoriesPreview() {
        };
 
        return (
-              <Card
-                     title="Catégories"
-                     extra={<Link href="/gestion-categories"><Button type="text" shape="circle" icon={<PlusCircleOutlined style={{ color: "blue" }} />} /></Link>}
-              >
-                     <List
-                            itemLayout="horizontal"
-                            dataSource={[
-                                   { key: 'no_icon', icon: "solar:ghost-broken", description: 'Catégories sans icons', count: stats.noIconCount },
-                                   { key: 'inactive', icon: "mingcute:sleep-fill", description: 'Catégories inactives', count: stats.inactiveCount },
-                            ]}
-                            renderItem={(item) => (
-                                   <List.Item key={item.key}>
-                                          <div className='flex flex-row justify-start items-center'>
-                                                 <Icon icon={item.icon} style={{ fontSize: '32px', marginRight: 8 }} />
-                                                 {item.description}
-                                                 <Tag color={getTagColor(item.count)} style={{ marginLeft: 8 }}>{item.count}</Tag>
-                                          </div>
-                                   </List.Item>
-                            )}
-                     />
-              </Card>
+              <Badge.Ribbon text={categories.length} color="blue">
+                     <Card
+                            bordered={false}
+                            title="Catégories"
+                            extra={<Link href="/gestion-categories"><Button type="text" shape="circle" icon={<PlusCircleOutlined style={{ color: "blue" }} />} /></Link>}
+                     >
+                            <List
+                                   itemLayout="horizontal"
+                                   dataSource={[
+                                          { key: 'no_icon', icon: "solar:ghost-broken", description: 'Catégories sans icons', count: stats.noIconCount },
+                                          { key: 'inactive', icon: "mingcute:sleep-fill", description: 'Catégories inactives', count: stats.inactiveCount },
+                                   ]}
+                                   renderItem={(item) => (
+                                          <List.Item key={item.key}>
+                                                 <div className='flex flex-row justify-start items-center'>
+                                                        <Icon icon={item.icon} style={{ fontSize: '32px', marginRight: 8 }} />
+                                                        {item.description}
+                                                        <Tag color={getTagColor(item.count)} style={{ marginLeft: 8 }}>{item.count}</Tag>
+                                                 </div>
+                                          </List.Item>
+                                   )}
+                            />
+                     </Card></Badge.Ribbon>
        );
 }

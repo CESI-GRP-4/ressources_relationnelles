@@ -1,6 +1,6 @@
 
 import { Layout, Menu, Avatar, Spin } from "antd"
-import { FileDoneOutlined, FolderOpenOutlined, StarOutlined, PlusCircleOutlined, UserOutlined, LogoutOutlined, DashboardOutlined } from '@ant-design/icons';
+import { FileDoneOutlined, FolderOpenOutlined, StarOutlined, PlusCircleOutlined, UserOutlined, LogoutOutlined, DashboardOutlined, UnorderedListOutlined  } from '@ant-design/icons';
 import { useUser } from "@/providers/userProvider";
 import { useState, useEffect } from "react";
 import useLogout from "@/utils/logout";
@@ -31,6 +31,11 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                      label: <Link href={"/categories"}>{`Catégories`}</Link>,
                      style: { marginLeft: '30px' }, // TODO: When the menu is collapsed, we shouldnt have this margin
                      key: 'categories',
+              },
+              {
+                     icon: <UnorderedListOutlined />,
+                     label: <Link href={"/ressources"}>{`Liste des ressources`}</Link>,
+                     key: 'ressources',
               },
               {
                      icon: <PlusCircleOutlined />,

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const routeForEveryone = ['/'];
+const routeForEveryone = ['/', '/ressources', '/creer-ressource', '/^\/une-ressource(?:\/\d+)?$/'];
 
 // Routes accessible without authentication
 const routeWithoutAuth = [
@@ -20,6 +20,11 @@ const routeWithUserAuth = [
 const routeForModerator = [
        ...routeWithUserAuth,
        '/dashboard',
+       '/gestion-ressources/ressources-acceptees',
+       '/gestion-ressources/ressources-en-attente',
+       '/gestion-ressources/ressources-refusees',
+       '/gestion-ressources/ressources-bloquees',
+       '/gestion-ressources/ressources-desactivees',
 ];
 
 // Routes accessible to Admins (Administrateur)
@@ -100,7 +105,22 @@ export function middleware(request: NextRequest) {
                      break;
        }
 
-       if (allowedPaths.some(allowedPath => allowedPath.includes(path))) {
+       if (allowedPaths.some(route => {
+              if (typeof route === 'string') {
+                     // Gestion des routes sous forme de chaînes de caractères
+                     if (route.endsWith('/')) {
+                            return path.startsWith(route);
+                     } else {
+                            return route === path;
+                     }
+              } else if ((route as any) instanceof RegExp) {
+                     // Gestion des routes sous forme d'expressions régulières
+                     return (route as RegExp).test(path);
+              } else {
+                     // Autre type non pris en charge
+                     return false;
+              }
+       })) {
               return NextResponse.next();
        }
 

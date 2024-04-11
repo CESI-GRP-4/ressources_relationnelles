@@ -43,7 +43,7 @@ class CategoryController extends Controller {
     public function getAllCategories() {
         $categories = Category::all();
         $categoriesTransformed = $categories->map(function ($category) {
-            return self::formatCategory($category, true);
+            return Utils::getCategoryDetail($category, true);
         });
 
         return response()->json(['categories' => $categoriesTransformed]);
@@ -87,7 +87,7 @@ class CategoryController extends Controller {
     public function getActiveCategories() {
         $activeCategories = Category::where('is_active', 1)->get();
         $activeCategoriesTransformed = $activeCategories->map(function ($category) {
-            return self::formatCategory($category);
+            return Utils::getCategoryDetail($category, false);
         });
 
         return response()->json(['categories' => $activeCategoriesTransformed]);
@@ -117,7 +117,7 @@ class CategoryController extends Controller {
      *             type="object",
      *             @OA\Property(
      *                 property="category",
-     *                 ref="#/components/schemas/Category"
+     *                 ref="#/components/schemas/CategoryDetailWithRessources"
      *             ),
      *             @OA\Property(
      *                 property="ressources",
@@ -141,8 +141,7 @@ class CategoryController extends Controller {
             return response()->json(['message' => 'Catégorie non trouvée'], 404);
         }
 
-        //TODO : Get ressources associated with the category and regenerate the documentation
-        return response()->json(['category' => self::formatCategory($category), 'ressources' => ['Not implemented yet']]);
+        return response()->json(['category' => Utils::getCategoryDetailWithRessources($category)]);
     }
 
     /**
@@ -221,7 +220,7 @@ class CategoryController extends Controller {
         $category->created_by = auth()->user()->id_user;
         $category->save();
 
-        return response()->json(['category' => self::formatCategory($category)], 201);
+        return response()->json(['category' => Utils::getCategoryDetail($category)], 201);
     }
 
     /**
@@ -314,7 +313,7 @@ class CategoryController extends Controller {
         $category->is_active = $request->input('isActive', $category->is_active);
         $category->save();
 
-        return response()->json(['category' => self::formatCategory($category,true)], 200);
+        return response()->json(['category' => Utils::getCategoryDetail($category,true)], 200);
     }
 
     /**
@@ -370,43 +369,4 @@ class CategoryController extends Controller {
     }
 
 
-    /**
-     * @OA\Schema(
-     *     schema="CategoryDetail",
-     *     type="object",
-     *     description="Detailed information about a category",
-     *     @OA\Property(property="id", type="integer", description="Category ID"),
-     *     @OA\Property(property="title", type="string", description="Title of the category"),
-     *     @OA\Property(property="description", type="string", description="Description of the category"),
-     *     @OA\Property(property="icon", type="string", description="Icon representing the category"),
-     *     @OA\Property(property="color", type="string", description="Color associated with the category. Hexadecimal format with '#': #000000"),
-     *     @OA\Property(property="createdAt", type="string", format="date-time", description="Creation date of the category"),
-     *     @OA\Property(property="updatedAt", type="string", format="date-time", description="Last update date of the category"),
-     *     @OA\Property(property="isActive", type="boolean", description="Whether the category is active. Visible to admins only."),
-     *     @OA\Property(
-     *          property="createdBy",
-     *          type="object",
-     *          description="User details of the creator. Visible to admins only.",
-     *          ref="#/components/schemas/UserDetail"
-     *      ),
-     * )
-     */
-    public static function formatCategory($category, $getDetails = false){
-        $user = User::find($category->created_by);
-        $categoryData =  [
-            'id' => $category->id_category,
-            'title' => $category->title,
-            'description' => $category->description,
-            'icon' => $category->icon,
-            'color' => $category->color,
-            'createdAt' => $category->created_at->toDateTimeString(),
-            'updatedAt' => $category->updated_at->toDateTimeString(),
-        ];
-
-        if($getDetails){
-            $categoryData['isActive'] = $category->is_active;
-            $categoryData['createdBy'] = Utils::getAllUserData($user);
-        }
-        return $categoryData;
-    }
 }

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+// Add other properties of the Ressource model here
 class Ressource extends Model {
 
     use HasFactory;
@@ -37,15 +38,9 @@ class Ressource extends Model {
         'view_count',
         'id_user',
         'id_status',
+        'id_type',
         'file',
         'updated_at',
         'created_at',
     ];
-
-//    public function category()
-//    {
-//       // ! Weird, Category model doesnt exist
-//       // TODO: Look at it later
-//        return $this->belongsTo(Category::class, 'id_category');
-//    }
 }
