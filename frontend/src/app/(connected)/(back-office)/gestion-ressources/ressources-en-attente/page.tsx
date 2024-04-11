@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { message, Skeleton } from "antd";
 import Ressource from "@/types/ressource";
 import PendingRessourcesAccordion from "@/components/back-office/ressource-management/pendingRessourcesAccordion";
-import PageSummary from "@/components/back-office/pageSummary";
+import PageSummary from "@/components/pageSummary";
 
 export default function PendingRessources() {
        const [ressources, setRessources] = useState<Ressource[]>([]);

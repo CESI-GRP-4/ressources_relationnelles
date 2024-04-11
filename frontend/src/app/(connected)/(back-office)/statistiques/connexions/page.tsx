@@ -4,7 +4,7 @@ import ConnectionsChart from "@/components/back-office/statistics/connections/co
 import DateRangePicker from '@/components/dateRangePicker';
 import dayjs from 'dayjs';
 import { Typography } from 'antd';
-import PageSummary from '@/components/back-office/pageSummary';
+import PageSummary from '@/components/pageSummary';
 
 export default function ConnectionStats() {
        const defaultStartDate = dayjs().subtract(30, 'days').format('DD/MM/YYYY');

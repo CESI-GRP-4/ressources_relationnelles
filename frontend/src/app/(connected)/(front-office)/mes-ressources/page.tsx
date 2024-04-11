@@ -3,7 +3,7 @@ import { Tabs, message } from 'antd';
 import type { TabsProps } from 'antd';
 import { useState, useEffect } from 'react';
 import Ressource from '@/types/ressource';
-import PageSummary from '@/components/back-office/pageSummary';
+import PageSummary from '@/components/pageSummary';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import ListOfRessourcesAccordion from '@/components/front-office/ressource-management/listOfRessourcesAccordion';
 export default function MyRessources() {

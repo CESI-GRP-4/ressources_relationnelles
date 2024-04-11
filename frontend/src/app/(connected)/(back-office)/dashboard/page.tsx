@@ -1,7 +1,7 @@
 "use client"
 import { useUser } from "@/providers/userProvider";
 import { PlusCircleOutlined } from "@ant-design/icons";
-import PageSummary from '@/components/back-office/pageSummary';
+import PageSummary from '@/components/pageSummary';
 import InformationUser from "@/components/back-office/informationUser";
 import UserManagementHistory from '@/components/back-office/user-management-history/usersManagementHistory';
 import ConnectionPreviewCard from '@/components/back-office/statistics/connections/connectionPreviewCard';

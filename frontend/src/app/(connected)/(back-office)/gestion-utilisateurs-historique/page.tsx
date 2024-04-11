@@ -1,6 +1,6 @@
 "use client"
 import UserManagementHistory from "@/components/back-office/user-management-history/usersManagementHistory";
-import PageSummary from "@/components/back-office/pageSummary";
+import PageSummary from "@/components/pageSummary";
 export default function GestionUtilisateursHistorique() {
        return (
               <div className="flex flex-col gap-5">
