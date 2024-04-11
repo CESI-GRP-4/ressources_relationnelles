@@ -12,7 +12,7 @@ export default interface Ressource {
        user?: User;
        creationDate?: Date;
        lastModificationDate?: Date;
-       status?: "accepted" | "pending" | "rejected" | "blocked" | "disabled";
+       status: "accepted" | "pending" | "rejected" | "blocked" | "disabled";
        // content: string;
        // comments: Comment[];
 }
