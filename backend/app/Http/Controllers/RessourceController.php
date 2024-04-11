@@ -227,10 +227,10 @@ class RessourceController extends Controller {
             $request->isPublic = filter_var($request->isPublic, FILTER_VALIDATE_BOOLEAN);
         }
         $validatedData = Validator::make($request->all(), [
-            'label' => 'required|string|max:255',
-            'description' => 'required|string',
-            'idCategory' => 'required|integer',
-            'isPublic' => 'required|boolean',
+            'label' => 'string|max:255',
+            'description' => 'string',
+            'idCategory' => 'integer',
+            'isPublic' => 'boolean',
         ]);
 
         if ($validatedData->fails()) {
