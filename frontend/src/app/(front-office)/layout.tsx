@@ -1,28 +1,31 @@
+// layout.tsx (root layout)
 "use client"
 import React, { useState } from 'react';
-import { Layout, Divider } from 'antd';
-import AdminSidebar from '@/components/back-office/adminSidebar';
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import Providers from '@/providers/providers';
+import '@/styles/globals.css';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
 
-const { Content } = Layout;
+const inter = Inter({ subsets: ['latin'] });
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+       children,
+}: {
+       children: React.ReactNode;
+}) {
        const [collapsed, setCollapsed] = useState(true);
 
        return (
-              <Layout style={{ minHeight: '100vh' }}>
-                     <Layout
-                            style={{ marginLeft: !collapsed ? 200 : 0, }}>
-                            <Header collapsed={collapsed} setCollapsed={setCollapsed} />
-                            <Content className="py-12 px-3 lg:px-16">
+              <html lang="fr">
+                     <body className={inter.className}>
+                            <Providers>
+                                   <Header collapsed={true} setCollapsed={setCollapsed} />
                                    {children}
-                            </Content>
-                            <div className='!bg-white'>
-                                   <Divider className='' style={{ margin: 0 }}></Divider>
-                                   <Footer />
-                            </div>
-                     </Layout>
-              </Layout>
+                                   <Footer></Footer>
+                            </Providers>
+                     </body>
+              </html>
        );
 }

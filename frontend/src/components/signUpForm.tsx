@@ -127,7 +127,7 @@ export default function SignUpForm() {
                      </Form.Item>
 
                      {/* password */}
-                     <PasswordInputComponent
+                     <PasswordInputComponent useRegex={true}
                             label="Mot de passe"
                             name="password"
                             hasFeedback

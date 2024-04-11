@@ -14,3 +14,7 @@ export const oneUpperCasePasswdRegex = /[A-Z]/;
 export const oneDigitPasswdRegex = /\d/;
 export const oneSpecialCharPasswdRegex = /[@$!%*?&]/;
 export const authorizedCharsPasswdRegex = /^[A-Za-z\d@$!%*?&]+$/;
+
+// City and Postal Code
+export const cityRegex = /^[a-zA-Z\s-']*$/;
+export const postalCodeRegex = /^[0-9]+$/;
