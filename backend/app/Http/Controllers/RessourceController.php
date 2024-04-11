@@ -54,7 +54,13 @@ class RessourceController extends Controller {
     public function getRessource($id) {
         $ressource = Ressource::find($id);
 
-        if (!$ressource || $ressource->id_status != self::ID_ACCEPTED_STATUS) {
+        if (!$ressource) {
+            return response()->json(['message' => 'Ressource non trouvée'], 404);
+        }
+
+        if ($ressource->id_status != self::ID_ACCEPTED_STATUS &&
+            auth()->user()->id_user != $ressource->id_user &&
+            auth()->user()->role->name == 'Utilisateur') {
             return response()->json(['message' => 'Ressource non trouvée'], 404);
         }
 
