@@ -38,7 +38,7 @@ class User extends Authenticatable implements JWTSubject {
         'password',
         'is_verified',
         'ban_until',
-        'path_picture',
+        'id_profile_picture',
         'id_city',
         'id_postal_code',
         'id_country',
@@ -47,7 +47,7 @@ class User extends Authenticatable implements JWTSubject {
         'password_reset_token',
         'deleted_at',
     ];
-
+    protected $appends = ['path_picture'];
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -67,6 +67,14 @@ class User extends Authenticatable implements JWTSubject {
         'is_banned' => 'boolean',
     ];
 
+
+    public function getPathPictureAttribute() {
+        return $this->profilePicture ? $this->profilePicture->url : null;
+    }
+    public function profilePicture() {
+        return $this->belongsTo(ProfilePicture::class, 'id_profile_picture', 'id_profile_picture');
+    }
+
     public function role() {
         return $this->belongsTo(Role::class, 'id_role');
     }
@@ -82,7 +90,6 @@ class User extends Authenticatable implements JWTSubject {
     public function postalCode() {
         return $this->belongsTo(PostalCode::class, 'id_postal_code');
     }
-
     public function getJWTIdentifier() {
         return $this->getKey();
     }

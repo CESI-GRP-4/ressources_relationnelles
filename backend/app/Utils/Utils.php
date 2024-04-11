@@ -3,6 +3,7 @@
 namespace App\Utils;
 
 use App\Models\Category;
+use App\Models\ProfilePicture;
 use App\Models\Ressource;
 use App\Models\StatusRessource;
 use App\Models\User;
@@ -245,5 +246,12 @@ class Utils{
         return $ressources->map(function ($ressource) {
             return self::getRessourceDetail($ressource);
         });
+    }
+
+
+    public static function getRandomProfilePicture() {
+        $profilePictures = ProfilePicture::all();
+        $randomIndex = rand(0, count($profilePictures) - 1);
+        return $profilePictures[$randomIndex];
     }
 }

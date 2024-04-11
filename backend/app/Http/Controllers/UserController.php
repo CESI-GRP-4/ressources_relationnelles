@@ -352,7 +352,7 @@ class UserController extends Controller
             'is_verified' => self::EMAIL_NOT_VERIFIED,
             'ban_until' => self::IS_NOT_BANNED,
             'verification_token' => $verificationToken,
-            'path_picture' => 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Angel',
+            'id_profile_picture' => Utils::getRandomProfilePicture()->id_profile_picture
         ]);
 
         $user->notify(new VerifyEmail());
