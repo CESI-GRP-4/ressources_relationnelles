@@ -121,7 +121,7 @@ const UserProfilePage = () => {
 
     return (
         <Card
-            style={{ width: '100%', maxWidth: '1000px', margin: 'auto', marginTop: '2%', marginBottom: '2%' }}
+            style={{ width: '100%', maxWidth: '1000px', margin: 'auto', marginTop: '2%', marginBottom: '2%', borderColor: '#aeaeaecc'}}
             actions={[
                 <Button
                     icon={editing ? <LeftOutlined /> : <EditOutlined />}
@@ -156,7 +156,7 @@ const UserProfilePage = () => {
             >
                 <Row gutter={16}>
                     <Col span={12}>
-                        <Card title="Détails" bordered={false} style={{ marginBottom: 16 }}>
+                        <Card title="Détails" bordered={true} style={{ marginBottom: 16, borderColor: '#aeaeaecc'}} headStyle={{ borderBottomColor: '#aeaeaecc' }}>
                             <Form.Item
                                 label="Nom"
                                 name="lastName"
@@ -207,7 +207,7 @@ const UserProfilePage = () => {
                         </Card>
                     </Col>
                     <Col span={12}>
-                        <Card title="Localisation" bordered={false} style={{ marginBottom: 16 }}>
+                        <Card title="Localisation" bordered={true} style={{ marginBottom: 16, borderColor: '#aeaeaecc' }} headStyle={{ borderBottomColor: '#aeaeaecc' }}>
                             <Form.Item
                                 label="Ville"
                                 name="city"
@@ -271,7 +271,7 @@ const UserProfilePage = () => {
                     </Col>
                 </Row>
                 <Col span={12}>
-                    <Card title="Vos accès" bordered={false} style={{ marginBottom: 16, width: '200%' }}>
+                    <Card title="Vos accès" bordered={true} style={{ marginBottom: 16, width: '200%', borderColor: '#aeaeaecc' }} headStyle={{ borderBottomColor: '#aeaeaecc' }}>
                         <Form.Item
                             label="Role"
                             name="role"

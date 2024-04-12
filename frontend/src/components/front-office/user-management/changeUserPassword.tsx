@@ -40,7 +40,7 @@ const ChangeUserPassword = () => {
     };
 
     return (
-        <Card title="Modification de votre mot de passe" bordered={false} style={{ marginBottom: 16, maxWidth: '1000px' }}>
+        <Card title="Modification de votre mot de passe" bordered={true} style={{ marginBottom: 16, maxWidth: '1000px', borderColor: '#aeaeaecc' }} headStyle={{ borderBottomColor: '#aeaeaecc' }}>
             <Form
                 form={form}
                 layout="horizontal"
