@@ -6,7 +6,7 @@ import { Button, message, Skeleton } from "antd"
 import Ressource from "@/types/ressource"
 import { Typography } from "antd"
 import PageSummary from "@/components/pageSummary"
-import BlockedRessourcesAccordion from "@/components/back-office/ressource-management/blockedRessourcesAccordion"
+import RessourcesAccordionAdmin from "@/components/back-office/ressource-management/ressourcesAccordionAdmin"
 
 export default function BlockedResources() {
        const [ressources, setRessources] = useState<Ressource[]>([])
@@ -57,7 +57,7 @@ export default function BlockedResources() {
        return (
               <div>
                      <PageSummary title={"Ressources bloquées"} description={undefined}></PageSummary>
-                     <BlockedRessourcesAccordion ressources={ressources} refreshRessources={fetchRessources} />
+                     <RessourcesAccordionAdmin ressources={ressources} refreshRessources={fetchRessources} showAccept={true} showRefuse={true} showDelete={true} showBlock={false} />
               </div>
        )
 }

@@ -3,7 +3,7 @@ import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { message, Skeleton } from "antd";
 import Ressource from "@/types/ressource";
-import PendingRessourcesAccordion from "@/components/back-office/ressource-management/pendingRessourcesAccordion";
+import RessourcesAccordionAdmin from "@/components/back-office/ressource-management/ressourcesAccordionAdmin"
 import PageSummary from "@/components/pageSummary";
 
 export default function PendingRessources() {
@@ -48,7 +48,7 @@ export default function PendingRessources() {
               <div className="flex flex-col gap-10">
                      <PageSummary title={"Ressources en attente"} description={"Consulter les ressources soumises par les utilisateurs. Le contenu de la ressource est disponible en cliquant l'un des éléments. En dépliant un élément, vous pourrez accepter, refuser ou bloquer la ressource"}></PageSummary>
                      {loading && <Skeleton active />}
-                     <PendingRessourcesAccordion ressources={ressources} refreshRessources={fetchPendingRessources} />
+                     <RessourcesAccordionAdmin ressources={ressources} refreshRessources={fetchPendingRessources} showAccept={true} showRefuse={true} showDelete={true} showBlock={true} />
               </div>
        );
 }

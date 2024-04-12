@@ -6,7 +6,7 @@ import { Button, message, Skeleton } from "antd"
 import Ressource from "@/types/ressource"
 import { Typography } from "antd"
 import PageSummary from "@/components/pageSummary"
-import RefusedRessourcesAccordion from "@/components/back-office/ressource-management/refusedRessourcesAccordion"
+import RessourcesAccordionAdmin from "@/components/back-office/ressource-management/ressourcesAccordionAdmin"
 
 export default function RefusedResources() {
        const [ressources, setRessources] = useState<Ressource[]>([])
@@ -57,7 +57,7 @@ export default function RefusedResources() {
        return (
               <div>
                      <PageSummary title={"Ressources refusées"} description={undefined}></PageSummary>
-                     <RefusedRessourcesAccordion ressources={ressources} refreshRessources={fetchRessources} />
+                     <RessourcesAccordionAdmin ressources={ressources} refreshRessources={fetchRessources} showAccept={true} showRefuse={false} showDelete={true} showBlock={true} />
               </div>
        )
 }
