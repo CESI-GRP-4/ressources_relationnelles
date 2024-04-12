@@ -564,13 +564,6 @@
                                     "properties": {
                                         "category": {
                                             "$ref": "#/components/schemas/CategoryDetailWithRessources"
-                                        },
-                                        "ressources": {
-                                            "description": "List of ressources associated with the category",
-                                            "type": "array",
-                                            "items": {
-                                                "type": "string"
-                                            }
                                         }
                                     },
                                     "type": "object"

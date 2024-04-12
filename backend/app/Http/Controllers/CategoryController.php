@@ -118,12 +118,6 @@ class CategoryController extends Controller {
      *             @OA\Property(
      *                 property="category",
      *                 ref="#/components/schemas/CategoryDetailWithRessources"
-     *             ),
-     *             @OA\Property(
-     *                 property="ressources",
-     *                 type="array",
-     *                 description="List of ressources associated with the category",
-     *                 @OA\Items(type="string")
      *             )
      *         )
      *     ),

@@ -159,10 +159,11 @@ const UserProfilePage = () => {
                             >
                                    <Row gutter={16}>
                                           <Col span={12}>
-                                                 <Card title="Détails" bordered={true} style={{ marginBottom: 16, borderColor: '#aeaeaecc'}} headStyle={{ borderBottomColor: '#aeaeaecc' }}>
+                                                 <Card title="Détails" bordered={true} style={{ marginBottom: 16, borderColor: '#aeaeaecc' }} headStyle={{ borderBottomColor: '#aeaeaecc' }}>
                                                         <Form.Item
                                                                label="Nom"
                                                                name="lastName"
+                                                               labelCol={{ style: { textAlign: 'left' } }}
                                                                rules={[
                                                                       {
                                                                              required: editing,
@@ -177,6 +178,7 @@ const UserProfilePage = () => {
                                                         <Form.Item
                                                                label="Prénom"
                                                                name="firstName"
+                                                               labelCol={{ style: { textAlign: 'left' } }}
                                                                rules={[
                                                                       {
                                                                              required: editing,
@@ -191,6 +193,7 @@ const UserProfilePage = () => {
                                                         <Form.Item
                                                                label="Email"
                                                                name="email"
+                                                               labelCol={{ style: { textAlign: 'left' } }}
                                                                rules={[
                                                                       {
                                                                              required: editing,
@@ -214,6 +217,7 @@ const UserProfilePage = () => {
                                                         <Form.Item
                                                                label="Ville"
                                                                name="city"
+                                                               labelCol={{ style: { textAlign: 'left' } }}
                                                                rules={[
                                                                       {
                                                                              min: 2,
@@ -233,6 +237,7 @@ const UserProfilePage = () => {
                                                         <Form.Item
                                                                label="Code postal"
                                                                name="postalCode"
+                                                               labelCol={{ style: { textAlign: 'left' } }}
                                                                rules={[
                                                                       {
                                                                              required: editing,
@@ -251,6 +256,7 @@ const UserProfilePage = () => {
                                                         <Form.Item
                                                                label="Pays"
                                                                name="country"
+                                                               labelCol={{ style: { textAlign: 'left' } }}
                                                                rules={[
                                                                       {
                                                                              required: editing,
@@ -280,6 +286,7 @@ const UserProfilePage = () => {
                                                                label="Role"
                                                                name="role"
                                                                style={{ width: '50%' }}
+                                                               labelCol={{ style: { textAlign: 'left' } }}
                                                                rules={[
                                                                ]}
                                                         >
