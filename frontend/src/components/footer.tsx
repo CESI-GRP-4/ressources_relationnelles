@@ -6,6 +6,7 @@ import NicolasC from "/public/NicolasC.jpeg"
 import KilianB from "/public/KilianB.jpeg"
 import ArthurC from "/public/ArthurC.jpeg"
 import React from "react";
+import Link from 'next/link';
 const { Footer: AntdFooter } = Layout
 
 export default function Footer() {
@@ -23,7 +24,7 @@ export default function Footer() {
                             />
                             <p>{`© 2024 (RE)Sources Relationnelles.`}</p>
                             <p>Ministère des solidarités et de la santé</p>
-
+                            <Link href="/mentions-legales"><p>Mentions légales</p></Link>
                             <div className="mt-6 flex flex-row items-center">
                                    <Tooltip title="CESI Aix-en-Provence | Groupe n°4" placement="top">
                                           <Image
