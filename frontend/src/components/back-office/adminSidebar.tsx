@@ -271,10 +271,13 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                                           />
                                    </Tooltip>
                             </div>
-                            <div className="">
+                            <div className="custom-scrollbar">
                                    <Menu
                                           mode="inline"
-                                          style={{ height: '100vh' }}
+                                          style={{
+                                                 height: 'calc(100vh - 150px)', overflowY: 'auto' // Allow vertical scroll
+                                          }}
+                                          className="custom-scrollbar"
                                           theme="light"
                                           items={sidebarItems}
                                           selectedKeys={[selectedKey]}
