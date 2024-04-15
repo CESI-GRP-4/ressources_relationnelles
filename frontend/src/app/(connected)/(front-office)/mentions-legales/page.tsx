@@ -19,10 +19,10 @@ export default function MentionsLegales() {
                                    13290 Aix-en-Provence.`}
                             </Paragraph>
                             <Paragraph>
-                            {`Directeur de la publication : Kilian Breton`}
+                                   {`Directeur de la publication : Kilian Breton`}
                             </Paragraph>
                             <Paragraph>
-                            {`Contact : kilian.breton1@viacesi.fr`}
+                                   {`Contact : kilian.breton1@viacesi.fr`}
                             </Paragraph>
                             <Paragraph>
                                    {`Hébergeur : OVH SAS, 2 rue Kellermann, 59100 Roubaix, France, +33 9 72 10 10 07`}
