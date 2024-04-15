@@ -27,4 +27,14 @@ describe('Login page', () => {
               cy.get('#logInForm_email').should('have.value', '');
               cy.get('#logInForm_password').should('have.value', '');
        });
+
+       // toggle password visibility
+       it('Toggle password visibility', () => {
+              cy.visit('http://localhost:3000/connexion');
+              cy.get('#logInForm_password').type('aze');
+              cy.get('.ant-form-item-has-success > .ant-row > .ant-form-item-control > .ant-form-item-control-input > .ant-form-item-control-input-content > .ant-input-affix-wrapper > .ant-input-suffix').click();
+              cy.get('#logInForm_password').should('have.attr', 'type', 'text');
+              cy.get('.ant-form-item-has-success > .ant-row > .ant-form-item-control > .ant-form-item-control-input > .ant-form-item-control-input-content > .ant-input-affix-wrapper > .ant-input-suffix').click();
+              cy.get('#logInForm_password').should('have.attr', 'type', 'password');
+       });
 });

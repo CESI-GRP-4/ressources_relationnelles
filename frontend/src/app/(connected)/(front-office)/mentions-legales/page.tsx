@@ -64,6 +64,6 @@ export default function MentionsLegales() {
                                    {`Ce site web est fourni "tel quel" sans aucune garantie, expresse ou implicite. CESI groupe n°4 ne fait aucune déclaration et n'offre aucune garantie quant à l'exactitude, l'exhaustivité, la fiabilité, l'actualité ou l'adéquation du contenu de ce site à un usage particulier. En aucun cas, CESI groupe n°4 ne sera responsable des dommages directs, indirects, accessoires, spéciaux, consécutifs ou punitifs résultant de l'utilisation de ce site.`}
                             </Paragraph>
                      </Card>
-              </div>
+              </div> 
        );
 }
