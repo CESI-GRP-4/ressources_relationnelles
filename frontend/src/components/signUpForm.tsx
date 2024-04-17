@@ -112,7 +112,7 @@ export default function SignUpForm() {
                             tooltip="Votre prénom sera visible par les autres utilisateurs."
                             label="Prénom"
                             name="firstName"
-                            rules={[{ required: true, message: 'Veuillez entrer votre adresse e-mail' }, firstNameValidationRule]}>
+                            rules={[{ required: true, message: 'Veuillez entrer votre prénom' }, firstNameValidationRule]}>
                             <Input allowClear />
                      </Form.Item>
 
@@ -122,12 +122,12 @@ export default function SignUpForm() {
                             label="Nom"
                             name="lastName"
                             tooltip="Votre nom ne sera pas visible par les autres utilisateurs."
-                            rules={[{ required: true, message: 'Veuillez entrer votre adresse e-mail' }, lastNameValidationRule]}>
+                            rules={[{ required: true, message: 'Veuillez entrer votre nom de famille' }, lastNameValidationRule]}>
                             <Input allowClear />
                      </Form.Item>
 
                      {/* password */}
-                     <PasswordInputComponent
+                     <PasswordInputComponent useRegex={true}
                             label="Mot de passe"
                             name="password"
                             hasFeedback

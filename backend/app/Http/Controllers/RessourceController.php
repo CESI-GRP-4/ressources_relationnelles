@@ -3,132 +3,784 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ressource;
+use App\Utils\Utils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 
-class RessourceController extends Controller
-{
+class RessourceController extends Controller {
+    const ID_ACCEPTED_STATUS = 1;
+    const ID_PENDING_STATUS = 2;
+    const ID_REJECTED_STATUS = 3;
+    const ID_BLOCKED_STATUS = 4;
+
     /**
-     * @OA\Post(
-     *     path="/creer-ressource",
-     *     tags={"Ressources"},
-     *     summary="Create a new ressource",
-     *     description="Creates a new ressource with the given data. File upload is supported.",
-     *     operationId="createRessource",
-     *     security={{ "BearerAuth": {} }},
-     *     @OA\RequestBody(
+     * @OA\Get(
+     *     path="/ressource/{id}",
+     *     tags={"Ressource"},
+     *     summary="Get a specific ressource",
+     *     description="Retrieves detailed information about a specific ressource by ID and increments its view count.",
+     *     operationId="getRessource",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
      *         required=true,
-     *         description="Ressource data and optional file upload",
-     *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
-     *             @OA\Schema(
-     *                 type="object",
-     *                 required={"label", "description", "content"},
-     *                 @OA\Property(
-     *                     property="label",
-     *                     type="string",
-     *                     description="The label of the ressource",
-     *                     example="A New Ressource"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="description",
-     *                     type="string",
-     *                     description="Detailed description of the ressource",
-     *                     example="This is a detailed description of the ressource."
-     *                 ),
-     *                 @OA\Property(
-     *                     property="content",
-     *                     type="string",
-     *                     description="The content of the ressource",
-     *                     example="Here goes the content of the ressource."
-     *                 ),
-     *                 @OA\Property(
-     *                     property="id_category",
-     *                     type="integer",
-     *                     description="The ID of the category this ressource belongs to",
-     *                 ),
-     *                 @OA\Property(
-     *                     property="is_public",
-     *                     type="boolean",
-     *                     description="Whether the ressource is public or not",
-     *                 ),
-     *                 @OA\Property(
-     *                     property="file",
-     *                     type="string",
-     *                     format="binary",
-     *                     description="Optional file to upload"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="view_count",
-     *                     type="integer",
-     *                     description="Optional initial view count",
-     *                 ),
-     *                 @OA\Property(
-     *                     property="id_user",
-     *                     type="integer",
-     *                     description="Optional ID of the user creating the ressource",
-     *                 ),
-     *                 @OA\Property(
-     *                     property="id_status",
-     *                     type="integer",
-     *                     description="Optional status ID of the ressource",
-     *                 )
+     *         description="ID of the ressource to retrieve",
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="ressource retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="ressource",
+     *                 ref="#/components/schemas/RessourceDetail"
      *             )
      *         )
      *     ),
      *     @OA\Response(
-     *         response=201,
-     *         description="Ressource created successfully",
+     *         response=404,
+     *         description="ressource not found",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="message", type="string", example="Ressource créée avec succès")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=422,
-     *         description="Validation Error",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="Champ(s) incorrects"),
-     *             @OA\Property(property="errors", type="object")
+     *             @OA\Property(property="message", type="string", example="Ressource non trouvée")
      *         )
      *     )
      * )
      */
-    public function createRessource(Request $request)
-    {
+    public function getRessource($id) {
+        $ressource = Ressource::find($id);
+
+        if (!$ressource) {
+            return response()->json(['message' => 'Ressource non trouvée'], 404);
+        }
+
+        if ($ressource->id_status != self::ID_ACCEPTED_STATUS &&
+            auth()->user()->id_user != $ressource->id_user &&
+            auth()->user()->role->name == 'Utilisateur') {
+            return response()->json(['message' => 'Ressource non trouvée'], 404);
+        }
+
+        // Add one to the view count
+        $ressource->view_count += 1;
+        $ressource->save();
+
+        return response()->json(['ressource' => Utils::getRessourceDetail($ressource)], 200);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/ressource/create",
+     *     tags={"Ressource"},
+     *     summary="Create a new ressource",
+     *     description="Creates a new ressource with the given details. Returns the ID of the newly created ressource.",
+     *     operationId="createRessource",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Data for the new ressource",
+     *         @OA\JsonContent(
+     *             required={"label", "description", "idCategory"},
+     *             @OA\Property(property="label", type="string", description="The label of the new ressource"),
+     *             @OA\Property(property="description", type="string", description="The description of the new ressource"),
+     *             @OA\Property(property="idCategory", type="integer", description="The category ID for the new ressource"),
+     *             @OA\Property(property="isPublic", type="boolean", description="Whether the ressource is public", example=true),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="ressource created successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Ressource créée avec succès"),
+     *             @OA\Property(property="idRessource", type="integer", description="The ID of the newly created ressource")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", description="Validation message"),
+     *             @OA\Property(
+     *                 property="errors",
+     *                 type="object",
+     *                 additionalProperties={
+     *                     @OA\Property(type="array", @OA\Items(type="string"))
+     *                 },
+     *                 description="Detailed validation errors"
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function create(Request $request) {
+        if ($request->has('isPublic')) {
+            $request->isPublic = filter_var($request->isPublic, FILTER_VALIDATE_BOOLEAN);
+        }
 
         $validatedData = Validator::make($request->all(), [
             'label' => 'required|string|max:255',
             'description' => 'required|string',
-            'content' => 'required|string',
-            // 'id_category' => 'required|integer',
-            'id_category' => 'nullable|integer',
-            'is_public' => 'nullable|boolean',
-            'file' => 'nullable|file',
-            'view_count' => 'nullable|integer',
-            'id_user' => 'nullable|integer',
-            'id_status' => 'nullable|integer'
+            'idCategory' => 'required|integer',
+            'isPublic' => 'sometimes|boolean',
         ]);
 
         if ($validatedData->fails()) {
             return response()->json(['message' => 'Champ(s) incorects', 'errors' => $validatedData->errors()], 422);
         }
 
-        if ($request->hasFile('files')) {
-            $file = $request->file('files');
-            // Stockez le fichier et obtenez le chemin
-            $path = $file->store('public/files');
-            // Ajoutez le chemin à vos données validées
-            $validatedData['file'] = $path;
+        $ressource = Ressource::create([
+            'label' => $request->label,
+            'description' => $request->description,
+            'id_category' => $request->idCategory,
+            'is_public' => $request->isPublic,
+            'id_user' => auth()->user()->id_user,
+            'id_status' => self::ID_PENDING_STATUS,
+            'id_type' => 1,
+        ]);
+
+        return response()->json(['message' => 'Ressource créée avec succès', 'idRessource' => $ressource->id_ressource], 201);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/ressource/edit/{id}",
+     *     tags={"Ressource"},
+     *     summary="Edit a specific resource",
+     *     description="Allows an authenticated user to edit their own resource. The resource's status is set to pending after the edit.",
+     *     operationId="editRessource",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the resource to be edited",
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Fields required to edit the resource",
+     *         @OA\JsonContent(
+     *             required={"label", "description", "idCategory", "isPublic"},
+     *             @OA\Property(property="label", type="string", description="The new label of the resource"),
+     *             @OA\Property(property="description", type="string", description="The new description of the resource"),
+     *             @OA\Property(property="idCategory", type="integer", description="The category ID of the resource"),
+     *             @OA\Property(property="isPublic", type="boolean", description="Whether the resource should be public")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Resource edited successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Ressource modifiée avec succès")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - User must be logged in",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthorized - User must be logged in")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden - User does not have rights to modify this resource",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Vous n'avez pas les droits pour modifier cette ressource")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Resource not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Ressource non trouvée")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", description="Validation message"),
+     *             @OA\Property(
+     *                 property="errors",
+     *                 type="object",
+     *                 additionalProperties={
+     *                     @OA\Property(type="array", @OA\Items(type="string"))
+     *                 },
+     *                 description="Detailed validation errors"
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function edit($id,Request $request){
+        $ressource = Ressource::find($id);
+        if (!$ressource) {
+            return response()->json(['message' => 'Ressource non trouvée'], 404);
         }
 
-        $ressource = Ressource::create($validatedData->valid());
+        if ($ressource->id_user != auth()->user()->id_user) {
+            return response()->json(['message' => 'Vous n\'avez pas les droits pour modifier cette ressource'], 403);
+        }
 
-    return response()->json(['message' => 'Ressource créée avec succès', 'ressource' => $ressource], 201);
+        if ($request->has('isPublic')) {
+            $request->isPublic = filter_var($request->isPublic, FILTER_VALIDATE_BOOLEAN);
+        }
+        $validatedData = Validator::make($request->all(), [
+            'label' => 'string|max:255',
+            'description' => 'string',
+            'idCategory' => 'integer',
+            'isPublic' => 'boolean',
+        ]);
 
+        if ($validatedData->fails()) {
+            return response()->json(['message' => 'Champ(s) incorects', 'errors' => $validatedData->errors()], 422);
+        }
+
+        $ressource->label = $request->label;
+        $ressource->description = $request->description;
+        $ressource->id_category = $request->idCategory;
+        $ressource->is_public = $request->isPublic;
+        $ressource->id_status = self::ID_PENDING_STATUS;
+        $ressource->staff_comment = null;
+        $ressource->save();
+
+        return response()->json(['message' => 'Ressource modifiée avec succès'], 200);
+    }
+
+    /**
+     * @OA\Delete(
+     *     path="/ressource/delete/{id}",
+     *     tags={"Ressource"},
+     *     summary="Delete a specific resource",
+     *     description="Allows an authenticated user to delete their own resource, or allows staff members (moderators, administrators, super administrators) to delete any resource. The operation checks if the user owns the resource or if the user is a staff member before allowing deletion.",
+     *     operationId="deleteRessource",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the resource to be deleted",
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Resource deleted successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Ressource supprimée avec succès")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden - User does not have rights to delete this resource",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Vous n'avez pas les droits pour supprimer cette ressource")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Resource not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Ressource non trouvée")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - User must be logged in",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthorized - User must be logged in")
+     *         )
+     *     )
+     * )
+     */
+    public function delete($id){
+        $ressource = Ressource::find($id);
+        if (!$ressource) {
+            return response()->json(['message' => 'Ressource non trouvée'], 404);
+        }
+
+        if (auth()->user()->role->name == 'Utilisateur' && $ressource->id_user != auth()->user()->id_user) {
+            return response()->json(['message' => 'Vous n\'avez pas les droits pour supprimer cette ressource'], 403);
+        }
+
+        $ressource->delete();
+        return response()->json(['message' => 'Ressource supprimée avec succès'], 200);
     }
 
 
+    /**
+     * @OA\Get(
+     *     path="/myRessources",
+     *     tags={"Ressource"},
+     *     summary="Get user's ressources",
+     *     description="Retrieves a list of ressources created by the authenticated user.",
+     *     operationId="getMyRessources",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Response(
+     *         response=200,
+     *         description="ressources retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="ressources",
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/RessourceDetail")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - User must be logged in",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthorized - User must be logged in")
+     *         )
+     *     )
+     * )
+     */
+    public function getMyRessources() {
+        $ressources = Ressource::where('id_user', auth()->user()->id_user)->get();
+        return response()->json(['ressources' => Utils::mapRessourcesToDetails($ressources)], 200);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/myRessources/stats",
+     *     tags={"Ressource"},
+     *     summary="Get statistics on the user's ressources",
+     *     description="Retrieves statistics about the authenticated user's ressources, including totals, views, and status counts.",
+     *     operationId="getMyRessourcesStats",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Response(
+     *         response=200,
+     *         description="User's ressources statistics retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="ressources",
+     *                 type="object",
+     *                 @OA\Property(property="total", type="integer", description="Total number of the user's ressources"),
+     *                 @OA\Property(property="totalView", type="integer", description="Total views across the user's ressources"),
+     *                 @OA\Property(property="public", type="integer", description="Count of the user's public ressources"),
+     *                 @OA\Property(property="private", type="integer", description="Count of the user's private ressources"),
+     *                 @OA\Property(property="pending", type="integer", description="Count of the user's ressources pending moderation"),
+     *                 @OA\Property(property="accepted", type="integer", description="Count of the user's ressources accepted by moderators"),
+     *                 @OA\Property(property="rejected", type="integer", description="Count of the user's ressources rejected by moderators"),
+     *                 @OA\Property(property="blocked", type="integer", description="Count of the user's ressources blocked by moderators")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - User must be logged in",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthorized - User must be logged in")
+     *         )
+     *     )
+     * )
+     */
+    public function getMyRessourcesStats(){
+        $ressources = Ressource::where('id_user', auth()->user()->id_user)->get();
+        $ressourcesStats = [
+            'total' => $ressources->count(),
+            'totalView' => $ressources->sum('view_count'),
+            'public' => $ressources->where('is_public', true)->count(),
+            'private' => $ressources->where('is_public', false)->count(),
+            'pending' => $ressources->where('id_status', self::ID_PENDING_STATUS)->count(),
+            'accepted' => $ressources->where('id_status', self::ID_ACCEPTED_STATUS)->count(),
+            'rejected' => $ressources->where('id_status', self::ID_REJECTED_STATUS)->count(),
+            'blocked' => $ressources->where('id_status', self::ID_BLOCKED_STATUS)->count(),
+        ];
+
+        return response()->json(['ressources' => $ressourcesStats], 200);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/ressources/pending",
+     *     tags={"Ressource"},
+     *     summary="Get pending ressources",
+     *     description="Retrieves a list of all ressources that are currently pending. This endpoint is restricted to moderators.",
+     *     operationId="getPendingRessources",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="ressources",
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/RessourceDetail")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden - Moderator access required",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Access restricted to moderators")
+     *         )
+     *     )
+     * )
+     */
+    public function pending() {
+        $ressources = Ressource::where('id_status', self::ID_PENDING_STATUS)->get();
+
+        return response()->json(['ressources' => Utils::mapRessourcesToDetails($ressources)], 200);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/ressources/accepted",
+     *     tags={"Ressource"},
+     *     summary="Get accepted ressources",
+     *     description="Retrieves a list of all ressources that have been accepted. This endpoint is restricted to moderators.",
+     *     operationId="getAcceptedRessources",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="ressources",
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/RessourceDetail")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden - Moderator access required",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Access restricted to moderators")
+     *         )
+     *     )
+     * )
+     */
+    public function accepted(){
+        $ressources = Ressource::where('id_status', self::ID_ACCEPTED_STATUS)->get();
+        return response()->json(['ressources' => Utils::mapRessourcesToDetails($ressources)], 200);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/ressources/rejected",
+     *     tags={"Ressource"},
+     *     summary="Get rejected ressources",
+     *     description="Retrieves a list of all ressources that have been rejected. This endpoint is restricted to moderators.",
+     *     operationId="getRejectedRessources",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="ressources",
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/RessourceDetail")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden - Moderator access required",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Access restricted to moderators")
+     *         )
+     *     )
+     * )
+     */
+    public function rejected(){
+        $ressources = Ressource::where('id_status', self::ID_REJECTED_STATUS)->get();
+        return response()->json(['ressources' => Utils::mapRessourcesToDetails($ressources)], 200);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/ressources/blocked",
+     *     tags={"Ressource"},
+     *     summary="Get blocked ressources",
+     *     description="Retrieves a list of all ressources that have been blocked. This endpoint is restricted to moderators.",
+     *     operationId="getBlockedRessources",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="ressources",
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/RessourceDetail")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden - Moderator access required",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Access restricted to moderators")
+     *         )
+     *     )
+     * )
+     */
+    public function blocked(){
+        $ressources = Ressource::where('id_status', 4)->get();
+        return response()->json(['ressources' => Utils::mapRessourcesToDetails($ressources)], 200);
+    }
+
+    /**
+     * @OA\Patch(
+     *     path="/ressources/accept/{id}",
+     *     tags={"Ressource"},
+     *     summary="Accept a ressource",
+     *     description="Marks a pending ressource as accepted. This endpoint is restricted to moderators.",
+     *     operationId="acceptRessource",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the ressource to accept",
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="ressource accepted successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Ressource acceptée")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="ressource not found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Ressource non trouvée")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden - Moderator access required",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Access restricted to moderators")
+     *         )
+     *     )
+     * )
+     */
+    public function accept($id) {
+        $ressource = Ressource::find($id);
+
+        if (!$ressource) {
+            return response()->json(['message' => 'Ressource non trouvée'], 404);
+        }
+
+        $ressource->id_status = self::ID_ACCEPTED_STATUS;
+        $ressource->save();
+
+        return response()->json(['message' => 'Ressource acceptée'], 200);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/ressources/reject/{id}",
+     *     tags={"Ressource"},
+     *     summary="Reject a specific ressource",
+     *     description="Rejects a specific ressource by changing its status to rejected and records a staff comment. This endpoint is restricted to moderators.",
+     *     operationId="rejectRessource",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the ressource to reject",
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Staff comment on why the ressource is being rejected",
+     *         @OA\JsonContent(
+     *             required={"staffComment"},
+     *             @OA\Property(property="staffComment", type="string", description="Comment explaining the reason for rejection")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="ressource rejected successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Ressource refusée")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="ressource not found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Ressource non trouvée")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden - Moderator access required",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Access restricted to moderators")
+     *         )
+     *     )
+     * )
+     */
+    public function reject($id, Request $request) {
+        $ressource = Ressource::find($id);
+        if (!$ressource) {
+            return response()->json(['message' => 'Ressource non trouvée'], 404);
+        }
+
+        if (!$request->has('staffComment')) {
+            return response()->json(['message' => 'Commentaire du staff manquant'], 400);
+        }
+
+        $ressource->staff_comment = $request->staffComment;
+        $ressource->id_status = self::ID_REJECTED_STATUS;
+        $ressource->save();
+
+        return response()->json(['message' => 'Ressource refusée'], 200);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/ressources/block/{id}",
+     *     tags={"Ressource"},
+     *     summary="Block a specific ressource",
+     *     description="Blocks a specific ressource by changing its status to blocked and records a staff comment. This endpoint is restricted to moderators.",
+     *     operationId="blockRessource",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the ressource to block",
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Staff comment on why the ressource is being blocked",
+     *         @OA\JsonContent(
+     *             required={"staffComment"},
+     *             @OA\Property(property="staffComment", type="string", description="Comment explaining the reason for blocking")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="ressource blocked successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Ressource bloquée")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Staff comment missing",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", description="Commentaire du staff manquant")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="ressource not found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Ressource non trouvée")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden - Moderator access required",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Access restricted to moderators")
+     *         )
+     *     )
+     * )
+     */
+    public function block($id, Request $request) {
+        $ressource = Ressource::find($id);
+
+        if (!$ressource) {
+            return response()->json(['message' => 'Ressource non trouvée'], 404);
+        }
+
+        if (!$request->has('staffComment')) {
+            return response()->json(['message' => 'Commentaire du staff manquant'], 400);
+        }
+
+        $ressource->staff_comment = $request->staffComment;
+        $ressource->id_status = self::ID_BLOCKED_STATUS;
+        $ressource->save();
+
+        return response()->json(['message' => 'Ressource bloquée'], 200);
+    }
+
+
+    /**
+     * @OA\Get(
+     *     path="/stats/ressources",
+     *     tags={"Statistics"},
+     *     summary="Get statistics about ressources, Moderator and more",
+     *     description="Retrieves statistics about ressources, including totals, views, and status counts.",
+     *     operationId="getRessourcesStats",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Statistics retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="ressources",
+     *                 type="object",
+     *                 @OA\Property(property="total", type="integer", description="Total number of ressources"),
+     *                 @OA\Property(property="totalView", type="integer", description="Total views across all ressources"),
+     *                 @OA\Property(property="public", type="integer", description="Count of public ressources"),
+     *                 @OA\Property(property="private", type="integer", description="Count of private ressources"),
+     *                 @OA\Property(property="pending", type="integer", description="Count of ressources pending moderation"),
+     *                 @OA\Property(property="accepted", type="integer", description="Count of ressources accepted by moderators"),
+     *                 @OA\Property(property="rejected", type="integer", description="Count of ressources rejected by moderators"),
+     *                 @OA\Property(property="blocked", type="integer", description="Count of ressources blocked by moderators")
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function getRessourcesStats(){
+        $ressources = Ressource::all();
+        $ressourcesStats = [
+            'total' => $ressources->count(),
+            'totalView' => $ressources->sum('view_count'),
+            'public' => $ressources->where('is_public', true)->count(),
+            'private' => $ressources->where('is_public', false)->count(),
+            'pending' => $ressources->where('id_status', self::ID_PENDING_STATUS)->count(),
+            'accepted' => $ressources->where('id_status', self::ID_ACCEPTED_STATUS)->count(),
+            'rejected' => $ressources->where('id_status', self::ID_REJECTED_STATUS)->count(),
+            'blocked' => $ressources->where('id_status', self::ID_BLOCKED_STATUS)->count(),
+        ];
+
+        return response()->json(['ressources' => $ressourcesStats], 200);
+    }
 }

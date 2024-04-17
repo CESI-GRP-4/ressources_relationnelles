@@ -1,25 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const routeForEveryone = ['/'];
+const routeForEveryone = ['/', '/ressources', '/creer-ressource', '/^\/une-ressource(?:\/\d+)?$/', '/verification-mail'];
 
 // Routes accessible without authentication
 const routeWithoutAuth = [
        '/connexion',
        '/mot-de-passe-oublie',
-       '/reinitialisation-mot-de-passe',
-       '/verification-mail'
+       '/reinitialisation-mot-de-passe'
 ];
 
 // Routes accessible to authenticated users (Utilisateur)
 const routeWithUserAuth = [
        ...routeForEveryone,
-       '/categories'
+       '/categories',
+       '/mes-ressources',
+       '/profil',
+       /^\/editer-ressource\/\d+$/
 ];
 
 // Routes accessible to Moderators (Moderateur)
 const routeForModerator = [
        ...routeWithUserAuth,
        '/dashboard',
+       '/gestion-ressources/ressources-acceptees',
+       '/gestion-ressources/ressources-en-attente',
+       '/gestion-ressources/ressources-refusees',
+       '/gestion-ressources/ressources-bloquees',
+       '/gestion-ressources/ressources-desactivees',
 ];
 
 // Routes accessible to Admins (Administrateur)
@@ -75,6 +82,7 @@ export const config = {
 export function middleware(request: NextRequest) {
        const path = request.nextUrl.pathname;
        const userRole = getUserRole(request);
+       console.log("🚀 ~ middleware ~ userRole:", userRole);
 
        // Redirect authenticated users trying to access routeWithoutAuth paths
        if (userRole && routeWithoutAuth.includes(path)) {
@@ -100,10 +108,47 @@ export function middleware(request: NextRequest) {
                      break;
        }
 
-       if (allowedPaths.some(allowedPath => allowedPath.includes(path))) {
+       const isPathAllowed = allowedPaths.some(allowedPath => {
+              if (allowedPath instanceof RegExp) {
+                     return allowedPath.test(path);
+              }
+              return allowedPath === path;
+       });
+
+       if (isPathAllowed) {
               return NextResponse.next();
        }
 
-       // Redirect users not allowed to access the path
+       if (!isPathAllowed) {
+              // Aggregate all possible paths from all roles
+              const allPaths = Array.from(new Set([
+                     ...routeWithoutAuth,
+                     ...routeForEveryone,
+                     ...routeWithUserAuth,
+                     ...routeForModerator,
+                     ...routeForAdmin,
+                     ...routeForSuperAdmin
+                   ].flat()));
+                   
+
+              // Check against all possible paths to see if the route is really unrecognized
+              const isKnownRoute = allPaths.some(knownPath => {
+                     if (knownPath instanceof RegExp) {
+                            return knownPath.test(path);
+                     }
+                     return knownPath === path;
+              });
+
+              // If it's not a known route, let Next.js handle it which could lead to a 404
+              if (!isKnownRoute) {
+                     return NextResponse.next();
+              }
+
+              // If it's a known route but not allowed, redirect to a safe place, like home or login
+              return NextResponse.redirect(new URL('/connexion', request.url));
+       }
+
+
+
        return NextResponse.redirect(new URL('/connexion', request.url));
 };

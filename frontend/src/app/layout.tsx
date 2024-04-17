@@ -7,6 +7,7 @@ import '@/styles/globals.css';
 import Head from 'next/head'; // Import the Head component
 import CookiesNotification from '@/components/cookiesNotification';
 const inter = Inter({ subsets: ['latin'] });
+import MainLayout from '@/components/mainLayout';
 
 export const metadata: Metadata = {
        title: '(Re)Sources Relationnelles',
@@ -45,7 +46,7 @@ export default function RootLayout({
                             <body className={inter.className}>
                                    <Providers>
                                           <>
-                                                 {children}
+                                                 <MainLayout>{children}</MainLayout>
                                                  <CookiesNotification></CookiesNotification>
                                           </>
                                    </Providers>

@@ -1,5 +1,6 @@
+
 import { Layout, Menu, Avatar, Spin } from "antd"
-import { FileDoneOutlined, FolderOpenOutlined, StarOutlined, PlusCircleOutlined, UserOutlined, LogoutOutlined, DashboardOutlined } from '@ant-design/icons';
+import { FileDoneOutlined, FolderOpenOutlined, StarOutlined, PlusCircleOutlined, UserOutlined, LogoutOutlined, DashboardOutlined, UnorderedListOutlined  } from '@ant-design/icons';
 import { useUser } from "@/providers/userProvider";
 import { useState, useEffect } from "react";
 import useLogout from "@/utils/logout";
@@ -32,6 +33,11 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                      key: 'categories',
               },
               {
+                     icon: <UnorderedListOutlined />,
+                     label: <Link href={"/ressources"}>{`Liste des ressources`}</Link>,
+                     key: 'ressources',
+              },
+              {
                      icon: <PlusCircleOutlined />,
                      label: <Link href={"/creer-ressource"}>{`Créer une ressource`}</Link>,
                      key: 'create-resource',
@@ -54,7 +60,7 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                             key: "dashboard",
                             style: { marginLeft: '15px' },
                      }
-              ] : []),
+              ] : []),              
               {
                      label: (<>
                             {avatarSrc ? (
@@ -76,16 +82,20 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                                    />
                             )}
                      </>),
+
                      key: 'User',
                      children: [
                             {
+
                                    label: <Link href={"/profil"}>{`Mon profil`}</Link>,
                                    key: 'profil',
                             },
                             {
+
                                    icon: (isLoading ? <Spin size="small" /> : <LogoutOutlined />),
                                    disabled: isLoading,
                                    danger: true,
+
                                    label: <span onClick={() => { if (!isLoading) logout() }}>Se déconnecter</span>,
                                    key: 'logout',
                             }
@@ -99,12 +109,13 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
 
        return (
               <AntdHeader className="site-layout-background" style={{
-                     padding: 0,
-                     position: 'sticky',
-                     top: 0,
-                     display: 'flex',
-                     alignItems: 'center',
-                     zIndex: 5,
+                padding: 0,
+                position: 'sticky',
+                top: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between', // Utilisez cette propriété pour aligner les éléments à gauche et à droite
+                zIndex: 5,
               }}>
                      <Menu
                             mode="horizontal"

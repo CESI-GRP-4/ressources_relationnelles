@@ -12,15 +12,16 @@ import {
        oneSpecialCharPasswdRegex,
        authorizedCharsPasswdRegex
 } from '@/utils/regex';
-import { RuleObject } from 'antd/lib/form'; // Import the RuleObject type from Ant Design
-import type { FormItemProps } from 'antd/lib/form'; // Importez FormItemProps
+import { RuleObject } from 'antd/lib/form';
+import type { FormItemProps } from 'antd/lib/form';
 
 interface PasswordInputComponentProps extends FormItemProps {
        label: string;
        name: string;
+       useRegex: boolean; // Nouvelle propriété pour permettre à l'utilisateur de choisir s'il veut utiliser la regex ou non
 }
 
-const PasswordInputComponent: React.FC<PasswordInputComponentProps> = ({ label, name, ...props }) => {
+const PasswordInputComponent: React.FC<PasswordInputComponentProps> = ({ label, name, useRegex, ...props }) => {
        const [passwordValidationResults, setPasswordValidationResults] = useState({
               minLength: false,
               oneLowerCase: false,
@@ -33,39 +34,54 @@ const PasswordInputComponent: React.FC<PasswordInputComponentProps> = ({ label, 
        const passwordValidationRule = {
               validator: async (rule: RuleObject, password: string) => {
                      if (!password) {
-                            return Promise.reject(new Error(undefined)); // Do not display any error message if the field is empty (handled by the required rule)
+                            return Promise.reject(new Error(undefined));
                      }
-                     if (!minLengthPasswdRegex.test(password)) {
-                            return Promise.reject(new Error("Le mot de passe doit contenir au moins 8 caractères"));
-                     }
-                     if (!oneLowerCasePasswdRegex.test(password)) {
-                            return Promise.reject(new Error("Le mot de passe doit contenir au moins une lettre minuscule"));
-                     }
-                     if (!oneUpperCasePasswdRegex.test(password)) {
-                            return Promise.reject(new Error("Le mot de passe doit contenir au moins une lettre majuscule"));
-                     }
-                     if (!oneDigitPasswdRegex.test(password)) {
-                            return Promise.reject(new Error("Le mot de passe doit contenir au moins un chiffre"));
-                     }
-                     if (!oneSpecialCharPasswdRegex.test(password)) {
-                            return Promise.reject(new Error("Le mot de passe doit contenir au moins un caractère spécial (@$!%*?&)"));
-                     }
-                     if (!authorizedCharsPasswdRegex.test(password)) {
-                            return Promise.reject(new Error("Le mot de passe contient des caractères non autorisés"));
+
+                     if (useRegex) {
+                            if (!minLengthPasswdRegex.test(password)) {
+                                   return Promise.reject(new Error("Le mot de passe doit contenir au moins 8 caractères"));
+                            }
+                            if (!oneLowerCasePasswdRegex.test(password)) {
+                                   return Promise.reject(new Error("Le mot de passe doit contenir au moins une lettre minuscule"));
+                            }
+                            if (!oneUpperCasePasswdRegex.test(password)) {
+                                   return Promise.reject(new Error("Le mot de passe doit contenir au moins une lettre majuscule"));
+                            }
+                            if (!oneDigitPasswdRegex.test(password)) {
+                                   return Promise.reject(new Error("Le mot de passe doit contenir au moins un chiffre"));
+                            }
+                            if (!oneSpecialCharPasswdRegex.test(password)) {
+                                   return Promise.reject(new Error("Le mot de passe doit contenir au moins un caractère spécial (@$!%*?&)"));
+                            }
+                            if (!authorizedCharsPasswdRegex.test(password)) {
+                                   return Promise.reject(new Error("Le mot de passe contient des caractères non autorisés"));
+                            }
                      }
                      return Promise.resolve();
               }
        };
 
        const validatePassword = (password: string) => {
-              setPasswordValidationResults({
-                     minLength: minLengthPasswdRegex.test(password),
-                     oneLowerCase: oneLowerCasePasswdRegex.test(password),
-                     oneUpperCase: oneUpperCasePasswdRegex.test(password),
-                     oneDigit: oneDigitPasswdRegex.test(password),
-                     oneSpecialChar: oneSpecialCharPasswdRegex.test(password),
-                     noInvalidChar: authorizedCharsPasswdRegex.test(password),
-              });
+              if (useRegex) {
+                     setPasswordValidationResults({
+                            minLength: minLengthPasswdRegex.test(password),
+                            oneLowerCase: oneLowerCasePasswdRegex.test(password),
+                            oneUpperCase: oneUpperCasePasswdRegex.test(password),
+                            oneDigit: oneDigitPasswdRegex.test(password),
+                            oneSpecialChar: oneSpecialCharPasswdRegex.test(password),
+                            noInvalidChar: authorizedCharsPasswdRegex.test(password),
+                     });
+              } else {
+                     // Réinitialiser les résultats de la validation si la regex n'est pas utilisée
+                     setPasswordValidationResults({
+                            minLength: false,
+                            oneLowerCase: false,
+                            oneUpperCase: false,
+                            oneDigit: false,
+                            oneSpecialChar: false,
+                            noInvalidChar: true,
+                     });
+              }
        };
 
        const passwordTooltipContent = (
@@ -118,7 +134,7 @@ const PasswordInputComponent: React.FC<PasswordInputComponentProps> = ({ label, 
                      label={label}
                      name={name}
                      {...props}
-                     tooltip={!allRulesRespected() ? passwordTooltipContent : undefined}
+                     tooltip={(useRegex && !allRulesRespected()) ? passwordTooltipContent : undefined}
                      rules={[{ required: true, message: 'Veuillez entrer votre mot de passe' }, passwordValidationRule]}
               >
                      <Input.Password maxLength={150} onChange={(e) => validatePassword(e.target.value)} />

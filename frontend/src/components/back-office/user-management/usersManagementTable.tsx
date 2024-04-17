@@ -234,7 +234,7 @@ const EditableTable: React.FC = () => {
                      const editUserResponse = await axios({
                             method: 'post',
                             baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
-                            url: `/editUser/${user.id}`,
+                            url: `/user/edit/${user.id}`,
                             withCredentials: true,
                             responseType: 'json',
                             data: editUserForm.getFieldsValue(),
@@ -280,7 +280,7 @@ const EditableTable: React.FC = () => {
               }
        };
 
-       const columns: ColumnType<User>[] = [
+       const columns: any[] = [
               {
                      title: 'Email',
                      dataIndex: 'email',
@@ -402,7 +402,7 @@ const EditableTable: React.FC = () => {
               dataIndex: 'operation',
               width: 250,
               fixed: isFixed ? 'right' as const : undefined,
-              render: (_, record: User) => {
+              render: (_: undefined, record: User) => {
                      const editable = isEditingUser(record);
                      return editable ? (
                             <div>
