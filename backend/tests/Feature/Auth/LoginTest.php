@@ -20,7 +20,7 @@ class LoginTest extends TestCase {
             'is_verified' => 0,
             'ban_until' => null,
             'verification_token' => 'token',
-            'path_picture' => 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Angel',
+            'id_profile_picture' => 1,
         ]);
 
         $response = $this->postJson('/api/login', [
@@ -53,7 +53,7 @@ class LoginTest extends TestCase {
             'is_verified' => 0,
             'ban_until' => $bannedUntil,
             'verification_token' => 'token',
-            'path_picture' => 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Angel',
+            'id_profile_picture' => 1,
         ]);
 
         $response = $this->postJson('/api/login', [
@@ -75,7 +75,7 @@ class LoginTest extends TestCase {
             'is_verified' => 0,
             'ban_until' => null,
             'verification_token' => 'token',
-            'path_picture' => 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Angel',
+            'id_profile_picture' => 1,
         ]);
 
         $user->deleted_at = now();

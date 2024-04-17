@@ -10,7 +10,8 @@ class CreateCategoryTest extends TestCase
 {
     use DatabaseTransactions;
 
-    public function setUp(): void {
+    public function setUp(): void
+    {
         parent::setUp();
         $this->adminUser = User::create([
             'email' => 'admin@example.com',
@@ -22,7 +23,8 @@ class CreateCategoryTest extends TestCase
         ]);
     }
 
-    public function testCategoryCreationSuccess() {
+    public function testCategoryCreationSuccess()
+    {
         $token = auth()->login($this->adminUser);
         $headers = ['Authorization' => "Bearer $token"];
 
@@ -38,11 +40,12 @@ class CreateCategoryTest extends TestCase
         $response->assertJsonStructure(['category' => ['id', 'title', 'description', 'icon', 'color']]);
     }
 
-    public function testCategoryCreationWithoutAdminRights() {
+    public function testCategoryCreationWithoutAdminRights()
+    {
         $nonAdminUser = User::create([
             'email' => 'user@example.com',
             'password' => bcrypt('password'),
-            'first_name' => 'John',
+            'first_name' => 'Jane',
             'last_name' => 'Doe',
             'id_role' => 4,
             'is_verified' => true
@@ -58,7 +61,7 @@ class CreateCategoryTest extends TestCase
             'isActive' => true
         ]);
 
-        $response->assertStatus(403);  // Forbidden
+        $response->assertStatus(403);
     }
 
     public function testCategoryCreationValidationError()
