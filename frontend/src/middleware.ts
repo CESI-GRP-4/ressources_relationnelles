@@ -119,5 +119,36 @@ export function middleware(request: NextRequest) {
               return NextResponse.next();
        }
 
+       if (!isPathAllowed) {
+              // Aggregate all possible paths from all roles
+              const allPaths = Array.from(new Set([
+                     ...routeWithoutAuth,
+                     ...routeForEveryone,
+                     ...routeWithUserAuth,
+                     ...routeForModerator,
+                     ...routeForAdmin,
+                     ...routeForSuperAdmin
+                   ].flat()));
+                   
+
+              // Check against all possible paths to see if the route is really unrecognized
+              const isKnownRoute = allPaths.some(knownPath => {
+                     if (knownPath instanceof RegExp) {
+                            return knownPath.test(path);
+                     }
+                     return knownPath === path;
+              });
+
+              // If it's not a known route, let Next.js handle it which could lead to a 404
+              if (!isKnownRoute) {
+                     return NextResponse.next();
+              }
+
+              // If it's a known route but not allowed, redirect to a safe place, like home or login
+              return NextResponse.redirect(new URL('/connexion', request.url));
+       }
+
+
+
        return NextResponse.redirect(new URL('/connexion', request.url));
 };

@@ -4,6 +4,7 @@ import { Layout, Divider } from 'antd';
 import AdminSidebar from '@/components/back-office/adminSidebar';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
+import { Card } from 'antd';
 
 const { Content } = Layout;
 
@@ -15,13 +16,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                      <Layout
                             style={{ marginLeft: !collapsed ? 200 : 0, }}>
                             <Header collapsed={collapsed} setCollapsed={setCollapsed} />
-                            <Content className="py-12 px-3 lg:px-16">
-                                   {children}
+                            <Content className="py-12 lg:py-6 px-3 lg:px-14">
+                                   <Card className='w-full h-full'>
+                                          {children}
+                                   </Card>
                             </Content>
-                            <div className='!bg-white'>
-                                   <Divider className='' style={{ margin: 0 }}></Divider>
-                                   <Footer />
-                            </div>
                      </Layout>
               </Layout>
        );

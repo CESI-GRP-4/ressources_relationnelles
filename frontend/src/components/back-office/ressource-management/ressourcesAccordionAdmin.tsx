@@ -11,7 +11,7 @@ export default function RessourcesAccordionAdmin({ ressources, refreshRessources
 
        if (ressources.length === 0) {
               return (
-                     <Card>
+                     <Card style={{backgroundColor: "#f5f5f5"}}>
                             <Empty></Empty>
                      </Card>
               )

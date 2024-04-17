@@ -64,7 +64,6 @@ export default function RessourceStatsPreviewCard() {
               <Badge.Ribbon text={`${ressourcesStats?.total || 0} Ressources`} color="green">
                      <Card
                             style={{ minWidth: 300 }}
-                            bordered={false}
                             title="Ressources"
                      // extra={<Link className="mr-20" href="/gestion-utilisateurs"><Button type="text" shape="circle" icon={<PlusCircleOutlined style={{ color: "blue" }} />} /></Link>}
                      >

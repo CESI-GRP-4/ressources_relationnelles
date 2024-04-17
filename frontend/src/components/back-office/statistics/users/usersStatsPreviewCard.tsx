@@ -62,7 +62,6 @@ export default function UsersStatsPreviewCard() {
               <Badge.Ribbon text={`${usersStats?.totalUsers || 0} Utilisateurs`} color="blue">
                      <Card
                             style={{ minWidth: 300 }}
-                            bordered={false}
                             title="Utilisateurs"
                             extra={<Link className="mr-20" href="/gestion-utilisateurs"><Button type="text" shape="circle" icon={<PlusCircleOutlined style={{ color: "blue" }} />} /></Link>}
                      >

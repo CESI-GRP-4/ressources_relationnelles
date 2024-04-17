@@ -66,7 +66,6 @@ export default function CategoriesPreview() {
        return (
               <Badge.Ribbon text={categories.length} color="blue">
                      <Card
-                            bordered={false}
                             title="Catégories"
                             extra={<Link href="/gestion-categories"><Button type="text" shape="circle" icon={<PlusCircleOutlined style={{ color: "blue" }} />} /></Link>}
                      >

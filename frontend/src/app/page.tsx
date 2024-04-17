@@ -1,5 +1,4 @@
 // page.tsx (default page at frontend/src/app/page.tsx)
-import { Button } from 'antd';
 
 export default function Home() {
        return (
