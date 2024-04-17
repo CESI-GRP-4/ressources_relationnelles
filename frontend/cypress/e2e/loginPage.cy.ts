@@ -1,5 +1,6 @@
 describe('Login page', () => {
        it('Login with empty email and password', () => {
+
               cy.visit('http://localhost:3000/connexion');
               cy.contains('button', 'Se connecter').click();
 
@@ -8,13 +9,13 @@ describe('Login page', () => {
               cy.get('#logInForm_password_help > .ant-form-item-explain-error').should('be.visible').and('contain', 'Veuillez entrer votre mot de passe');
        });
 
-       // it('Login with right credentials', () => {
-       //        cy.visit('http://localhost:3000/connexion');
-       //        cy.get('#logInForm_email').type('john.doe@example.com');
-       //        cy.get('#logInForm_password').type('aze');
-       //        cy.contains('button', 'Se connecter').click();
-       //        cy.url().should('eq', 'http://localhost:3000/');
-       // });
+       it('Login with right credentials', () => {
+              cy.visit('http://localhost:3000/connexion');
+              cy.get('#logInForm_email').type('john.doe@example.com');
+              cy.get('#logInForm_password').type('aze');
+              cy.contains('button', 'Se connecter').click();
+              cy.url().should('eq', 'http://localhost:3000/');
+       });
 
        it('Login with wrong credentials', () => {
               cy.visit('http://localhost:3000/connexion');
