@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Avatar, Collapse, Popover, Tag, Typography, Button, message, Skeleton, Popconfirm, Form, Input, Badge } from 'antd';
+import { Avatar, Collapse, Popover, Tag, Typography, Button, message, Skeleton, Popconfirm, Form, Input, Badge, Empty, Card } from 'antd';
 import Ressource from '@/types/ressource';
 import { Icon } from '@iconify/react';
 const { Title, Text, Paragraph } = Typography;
@@ -8,6 +8,14 @@ import axios, { AxiosError } from 'axios';
 export default function RessourcesAccordionAdmin({ ressources, refreshRessources, showAccept, showRefuse, showDelete, showBlock }: { ressources: Ressource[], refreshRessources: Function, showAccept: boolean, showRefuse: boolean, showDelete: boolean, showBlock: boolean }) {
        const [loading, setLoading] = useState(false); // Used for loading state of buttons, but the global loading of the list is handle throught the parent component from the refreshRessources function
        const [visiblePopoverId, setVisiblePopoverId] = useState<string | null>(null);
+
+       if (ressources.length === 0) {
+              return (
+                     <Card>
+                            <Empty></Empty>
+                     </Card>
+              )
+       }
 
        const rejectRessource = async (id: number, staffComment: string) => {
               try {
