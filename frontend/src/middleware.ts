@@ -12,7 +12,10 @@ const routeWithoutAuth = [
 // Routes accessible to authenticated users (Utilisateur)
 const routeWithUserAuth = [
        ...routeForEveryone,
-       '/categories'
+       '/categories',
+       '/mes-ressources',
+       '/profil',
+       /^\/editer-ressource\/\d+$/
 ];
 
 // Routes accessible to Moderators (Moderateur)
@@ -79,6 +82,7 @@ export const config = {
 export function middleware(request: NextRequest) {
        const path = request.nextUrl.pathname;
        const userRole = getUserRole(request);
+       console.log("🚀 ~ middleware ~ userRole:", userRole);
 
        // Redirect authenticated users trying to access routeWithoutAuth paths
        if (userRole && routeWithoutAuth.includes(path)) {
@@ -104,25 +108,16 @@ export function middleware(request: NextRequest) {
                      break;
        }
 
-       if (allowedPaths.some(route => {
-              if (typeof route === 'string') {
-                     // Gestion des routes sous forme de chaînes de caractères
-                     if (route.endsWith('/')) {
-                            return path.startsWith(route);
-                     } else {
-                            return route === path;
-                     }
-              } else if ((route as any) instanceof RegExp) {
-                     // Gestion des routes sous forme d'expressions régulières
-                     return (route as RegExp).test(path);
-              } else {
-                     // Autre type non pris en charge
-                     return false;
+       const isPathAllowed = allowedPaths.some(allowedPath => {
+              if (allowedPath instanceof RegExp) {
+                     return allowedPath.test(path);
               }
-       })) {
+              return allowedPath === path;
+       });
+
+       if (isPathAllowed) {
               return NextResponse.next();
        }
 
-       // Redirect users not allowed to access the path
        return NextResponse.redirect(new URL('/connexion', request.url));
 };
