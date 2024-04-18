@@ -82,7 +82,6 @@ export const config = {
 export function middleware(request: NextRequest) {
        const path = request.nextUrl.pathname;
        const userRole = getUserRole(request);
-       console.log("🚀 ~ middleware ~ userRole:", userRole);
 
        // Redirect authenticated users trying to access routeWithoutAuth paths
        if (userRole && routeWithoutAuth.includes(path)) {
@@ -128,8 +127,8 @@ export function middleware(request: NextRequest) {
                      ...routeForModerator,
                      ...routeForAdmin,
                      ...routeForSuperAdmin
-                   ].flat()));
-                   
+              ].flat()));
+
 
               // Check against all possible paths to see if the route is really unrecognized
               const isKnownRoute = allPaths.some(knownPath => {
@@ -147,8 +146,6 @@ export function middleware(request: NextRequest) {
               // If it's a known route but not allowed, redirect to a safe place, like home or login
               return NextResponse.redirect(new URL('/connexion', request.url));
        }
-
-
 
        return NextResponse.redirect(new URL('/connexion', request.url));
 };
