@@ -28,8 +28,27 @@ export default function MyRessources() {
        }, []);
 
        const applyFilter = (values: FormValues) => {
-              console.log(values)
+              // Filter resources for each category based on matching any provided form value.
+              console.log(values.isPublic)
+              console.log(acceptedRessources)
+              const filterResources = (resources: Ressource[]) => {
+                     return resources.filter(resource => {
+                            return (values.label && resource.label.includes(values.label)) ||
+                                   (values.description && resource.description.includes(values.description)) ||
+                                   (values.idCategory && resource.category.id === values.idCategory) ||
+                                   (values.isPublic !== undefined && resource.isPublic == values.isPublic);
+                     });
+              };
+
+              setFilteredRessources([
+                     filterResources(acceptedRessources),
+                     filterResources(pendingRessources),
+                     filterResources(rejectedRessources),
+                     filterResources(blockedRessources)
+              ]);
+              setFilterActive(true);
        };
+
 
        const resetFilter = () => {
               form.resetFields();
@@ -158,14 +177,12 @@ export default function MyRessources() {
                             <Card title="Filtres">
                                    <Form
                                           onValuesChange={(_, allValues) => {
-                                                 if (filterActive) {
+                                                 if (Object.values(allValues).some(value => value !== undefined)) {
                                                         applyFilter(allValues);
                                                  }
                                           }}
-
                                           form={form}
                                           name="filterRessourceListForm"
-                                          // onFinish={onFinish}
                                           autoComplete="off"
                                           layout='vertical'
                                    >
@@ -176,7 +193,7 @@ export default function MyRessources() {
                                           <Form.Item label="Description" name="description">
                                                  <Input.TextArea />
                                           </Form.Item>
-
+                                          
                                           <Form.Item
                                                  label="Catégorie"
                                                  name="idCategory"
@@ -209,17 +226,24 @@ export default function MyRessources() {
                                           >
                                                  {filterActive ? (
                                                         <Button
+                                                        className='mt-10'
                                                                onClick={() => {
                                                                       form.resetFields();
                                                                       setFilterActive(false);
+                                                                      setFilteredRessources([acceptedRessources, pendingRessources, rejectedRessources, blockedRessources]);
                                                                }}
-                                                               type="primary" htmlType="submit">Réinitialiser les filtres</Button>
+                                                               type="primary" htmlType="button">Réinitialiser les filtres</Button>
                                                  ) : (
                                                         <Button
+                                                        className='mt-10'
+
                                                                onClick={() => {
+                                                                      form.submit(); // Make sure to submit the form, triggering the onValuesChange
                                                                       setFilterActive(true);
                                                                }}
                                                                type="primary" htmlType="submit">Appliquer les filtres</Button>
+
+
                                                  )}
                                           </Form.Item>
                                    </Form>
