@@ -1,12 +1,22 @@
 import React, { useState } from 'react';
-import { Avatar, Collapse, Popover, Tag, Typography, Button, message, Skeleton, Popconfirm, Badge } from 'antd';
+import { Collapse, Tag, Typography, Button, Badge, Card, Empty } from 'antd';
 import Ressource from '@/types/ressource';
 import { Icon } from '@iconify/react';
-const { Title, Text, Paragraph } = Typography;
-import axios, { AxiosError } from 'axios';
+const { Text, Paragraph } = Typography;
 import Link from 'next/link';
+import { useUser } from '@/providers/userProvider';
+
 export default function ListOfRessourcesAccordion({ ressources, refreshRessources }: { ressources: Ressource[], refreshRessources: Function }) {
        const [loading, setLoading] = useState(false); // Used for loading state of buttons, but the global loading of the list is handle throught the parent component from the refreshRessources function
+       const { user } = useUser();
+
+       if (ressources.length === 0) {
+              return (
+                     <Card style={{ backgroundColor: "#f5f5f5" }}>
+                            <Empty></Empty>
+                     </Card>
+              )
+       }
 
        // Prepare items for the Collapse component
        const collapseItems = ressources.map((ressource) => ({
@@ -40,11 +50,13 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
                                                  </div>
                                           </Badge.Ribbon>
                                    )}
-                                   <div className="flex flex-row justify-end">
-                                          <Link href={`/editer-ressource/${ressource.id}`}>
-                                                 <Button className='w-fit' type='primary'>Apporter des modifications</Button>
-                                          </Link>
-                                   </div>
+                                   {(ressource.user?.id === user?.id) && (
+                                          <div className="flex flex-row justify-end">
+                                                 <Link href={`/editer-ressource/${ressource.id}`}>
+                                                        <Button className='w-fit' type='primary'>Apporter des modifications</Button>
+                                                 </Link>
+                                          </div>)
+                                   }
                             </div>
                      </>
               ),
