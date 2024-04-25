@@ -7,7 +7,7 @@ export default function DeleteCategory({category, refreshCategories} : {category
                      const response = await axios({
                             method: 'DELETE',
                             baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
-                            url: '/deleteCategory/' + category.id,
+                            url: '/category/delete/' + category.id,
                             responseType: 'json',
                             timeout: 10000,
                             withCredentials: true,

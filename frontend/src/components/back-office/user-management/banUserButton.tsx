@@ -55,7 +55,7 @@ export default function BanUserButton({ user, isDisabled, onBanChange }: { user:
                      const response = await axios({
                             method: 'post',
                             baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
-                            url: `/banUser/${user.id}`,
+                            url: `/user/ban/${user.id}`,
                             withCredentials: true,
                             headers: {
                                    'Content-Type': 'application/json',
@@ -114,7 +114,7 @@ export default function BanUserButton({ user, isDisabled, onBanChange }: { user:
                      const response = await axios({
                             method: 'patch',
                             baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
-                            url: `/unbanUser/${user.id}`,
+                            url: `/user/unban/${user.id}`,
                             withCredentials: true,
                             responseType: 'json',
                             timeout: 10000, // * Increased value because we had some timeout errors

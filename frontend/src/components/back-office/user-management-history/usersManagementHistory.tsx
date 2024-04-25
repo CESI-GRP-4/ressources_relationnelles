@@ -78,13 +78,18 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
               fetchData(tableParams)
        }, []);
 
+       type DataIndexType = keyof userHistory
+       interface CustomColumnType extends ColumnType<userHistory> {
+              dataIndex?: DataIndexType;
+       }
+
        const fetchData = async (tableParams: tableSettings) => {
               setIsTableLoading(true);
               try {
                      const response = await axios({
                             method: 'get',
                             baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL, // * Might be changed depending on the backend implementation
-                            url: "/usersHistory",
+                            url: "/users/history",
                             withCredentials: true,
                             params: tableParams,
                             responseType: 'json',
@@ -121,35 +126,37 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
 
        if (isPreview) {
               return (
-                     <Card
-                            title="Actions récentes sur les utilisateurs"
-                            extra={<Link href="/gestion-utilisateurs-historique"><Button type="text" shape="circle" icon={<PlusCircleOutlined style={{ color: "blue" }} />} /></Link>}
-                     >
-                            <List
-                                   itemLayout="horizontal"
-                                   dataSource={tableData ?? []} // Directly use list.userHistory since list is now a DataType object
-                                   renderItem={(item, index) => (
-                                          <List.Item key={index}>
-                                                 <div className='flex flex-row justify-start items-center'>
-                                                        <Avatar
-                                                               src={item.userModified.imgURL}
-                                                               alt={`${item.userModified.firstName} ${item.userModified.lastName}`}
-                                                        />
-                                                        <div style={{ margin: '0 8px', display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
-                                                               <div>
-                                                                      {`${item.userModified.firstName} ${item.userModified.lastName} a été `}
-                                                                      <Tag color={getTagColor(item.action)}>{getActionText(item.action)}</Tag>
-                                                                      {` par `}
-                                                                      <Typography.Link href={`mailto:${item.modifyBy.email}`}>
-                                                                             {item.modifyBy.email}
-                                                                      </Typography.Link>
+                     <div>
+                            <Card
+                                   title="Actions récentes sur les utilisateurs"
+                                   extra={<Link href="/gestion-utilisateurs-historique"><Button type="text" shape="circle" icon={<PlusCircleOutlined style={{ color: "blue" }} />} /></Link>}
+                            >
+                                   <List
+                                          itemLayout="horizontal"
+                                          dataSource={tableData ?? []} // Directly use list.userHistory since list is now a DataType object
+                                          renderItem={(item, index) => (
+                                                 <List.Item key={index}>
+                                                        <div className='flex flex-row justify-start items-center'>
+                                                               <Avatar
+                                                                      src={item.userModified.imgURL}
+                                                                      alt={`${item.userModified.firstName} ${item.userModified.lastName}`}
+                                                               />
+                                                               <div style={{ margin: '0 8px', display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
+                                                                      <div>
+                                                                             {`${item.userModified.firstName} ${item.userModified.lastName} a été `}
+                                                                             <Tag color={getTagColor(item.action)}>{getActionText(item.action)}</Tag>
+                                                                             {` par `}
+                                                                             <Typography.Link href={`mailto:${item.modifyBy.email}`}>
+                                                                                    {item.modifyBy.email}
+                                                                             </Typography.Link>
+                                                                      </div>
                                                                </div>
                                                         </div>
-                                                 </div>
-                                          </List.Item>
-                                   )}
-                            />
-                     </Card>
+                                                 </List.Item>
+                                          )}
+                                   />
+                            </Card>
+                     </div>
               );
        }
 
@@ -157,7 +164,7 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
               fetchData({ ...tableParams, perPage: pagination.pageSize, page: pagination.current });
        }
 
-       const columns = [
+       const columns: CustomColumnType[] = [
               {
                      title: 'Utilisateur modifié',
                      dataIndex: 'userModified',
@@ -225,7 +232,7 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
               {
                      title: 'Changement',
                      key: 'change',
-                     dataIndex: 'change',
+                     dataIndex: 'change' as keyof userHistory,
                      render: (_: unknown, record: userHistory) => {
                             if (record.action === 'Unban' || record.action === 'Delete' || record.action === 'Create') {
                                    return null; // or return ""; to explicitly render nothing
@@ -395,7 +402,7 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
                             </Select>
                             <Button
                                    type="primary"
-                                   onClick={() => setSelectedColumns(columns.map(col => col.dataIndex || col.key))}
+                                   onClick={() => setSelectedColumns(columns.map(col => col.dataIndex || col.key).filter(Boolean) as string[])}
                             >
                                    Tout afficher
                             </Button>
@@ -409,7 +416,7 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
                             bordered
                             dataSource={tableData ?? []} // * Added nullish coalescing operator to prevent error
                             columns={getVisibleColumns()}
-                            rowKey="id"
+                            rowKey="time"
                             pagination={{ showQuickJumper: true, total: tableParams.total, pageSize: tableParams.perPage, current: tableParams.page, showSizeChanger: true, pageSizeOptions: ['10', '20', '50', '100'], showTotal: (total, range) => `${range[0]}-${range[1]} sur ${total}` }}
                             scroll={{ x: 'max-content', y: 610 }}
                      />

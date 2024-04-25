@@ -246,7 +246,7 @@ class UserController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/createUser",
+     *     path="/user/create",
      *     tags={"Users"},
      *     summary="Create a new user",
      *     description="Registers a new user into the system with provided user details. Validates input data and checks for email uniqueness. On success, sends a verification email.",
@@ -322,8 +322,7 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function createUser(Request $request)
-    {
+    public function create(Request $request) {
 
         $validator = Validator::make($request->all(), [
             'firstName' => 'required|string|max:255',
@@ -352,7 +351,7 @@ class UserController extends Controller
             'is_verified' => self::EMAIL_NOT_VERIFIED,
             'ban_until' => self::IS_NOT_BANNED,
             'verification_token' => $verificationToken,
-            'path_picture' => 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Angel',
+            'id_profile_picture' => Utils::getRandomProfilePicture()->id_profile_picture
         ]);
 
         $user->notify(new VerifyEmail());
@@ -362,7 +361,7 @@ class UserController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/editUser/{id}",
+     *     path="/user/edit/{id}",
      *     tags={"Users"},
      *     summary="Edit a user's details",
      *     description="Allows editing user details. Note: Only Super Administrators can change the user's role.",
@@ -427,8 +426,7 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function editUser(Request $request, $id)
-    {
+    public function editUser(Request $request, $id) {
         DB::beginTransaction();
         try {
             $user = User::findOrFail($id);
@@ -480,7 +478,7 @@ class UserController extends Controller
             }
 
             if ($request->filled('city')) {
-                $city = City::where('name', $request->city)->firstOrFail();
+                $city = City::firstOrCreate(['name' => $request->city]);
                 if ($user->id_city !== $city->id_city) {
                     Utils::addUserHistoryEntry(
                         $authUserId,
@@ -495,7 +493,7 @@ class UserController extends Controller
             }
 
             if ($request->filled('postalCode')) {
-                $postalCode = PostalCode::where('postal_code', $request->postalCode)->firstOrFail();
+                $postalCode = PostalCode::firstOrCreate(['postal_code' => $request->postalCode]);
                 if ($user->id_postal_code !== $postalCode->id_postal_code) {
                     Utils::addUserHistoryEntry(
                         $authUserId,
@@ -536,7 +534,7 @@ class UserController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/deleteUser/{id}",
+     *     path="/user/delete/{id}",
      *     tags={"Users"},
      *     summary="Delete a user",
      *     description="Deletes a user. This action is restricted to Super Administrators only.",
@@ -605,7 +603,7 @@ class UserController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/banUser/{id}",
+     *     path="/user/ban/{id}",
      *     tags={"Users"},
      *     summary="Ban a user",
      *     description="Bans a user either permanently or until a specified timestamp. Super Administrators and Administrators cannot be banned.",
@@ -722,7 +720,7 @@ class UserController extends Controller
 
     /**
      * @OA\Patch(
-     *     path="/unbanUser/{id}",
+     *     path="/user/unban/{id}",
      *     tags={"Users"},
      *     summary="Unban a user",
      *     description="Unban a previously unban user.",
@@ -779,5 +777,77 @@ class UserController extends Controller
         );
 
         return response()->json(['message' => 'L\'utilisateur a été débanni']);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/stats/users",
+     *     tags={"Statistics"},
+     *     summary="Get users statistics",
+     *     description="Returns statistics about users, including total users, distribution by roles, banned users count, and unverified emails count.",
+     *     operationId="getUsersInformation",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="totalUsers", type="integer", example=15),
+     *             @OA\Property(
+     *                 property="usersByRole",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="name", type="string", description="The name of the role"),
+     *                     @OA\Property(property="userCount", type="integer", description="The count of users with this role")
+     *                 ),
+     *                 example={
+     *                     {"name": "Administrateur", "userCount": 1},
+     *                     {"name": "Moderateur", "userCount": 5},
+     *                     {"name": "SuperAdministrateur", "userCount": 2},
+     *                     {"name": "Utilisateur", "userCount": 7}
+     *                 }
+     *             ),
+     *             @OA\Property(property="bannedUsersCount", type="integer", example=1),
+     *             @OA\Property(property="unverifiedEmailsCount", type="integer", example=6)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden - Admin access required"
+     *     )
+     * )
+     */
+    public function getUsersInformation(){
+        $totalUsers = $this->getTotalUsers();
+        $usersByRole = $this->getUsersByRole();
+        $bannedUsersCount = $this->getBannedUsersCount();
+        $unverifiedEmailsCount = $this->getUnverifiedEmailsCount();
+
+        return response()->json([
+            'totalUsers' => $totalUsers,
+            'usersByRole' => $usersByRole,
+            'bannedUsersCount' => $bannedUsersCount,
+            'unverifiedEmailsCount' => $unverifiedEmailsCount,
+        ]);
+    }
+
+    protected function getTotalUsers() {
+        return User::count();
+    }
+
+    protected function getUsersByRole() {
+        return User::select('roles.name', DB::raw('count(users.id_user) as userCount'))
+            ->join('roles', 'users.id_role', '=', 'roles.id_role')
+            ->groupBy('roles.name')
+            ->get();
+    }
+
+    protected function getBannedUsersCount() {
+        return User::where('ban_until', '>', now())->count();
+    }
+
+    protected function getUnverifiedEmailsCount() {
+        return User::where('is_verified', false)->count();
     }
 }

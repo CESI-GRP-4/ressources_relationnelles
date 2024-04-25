@@ -13,7 +13,7 @@ export default function DeleteUserButton({ user, isDisabled, onDelete }: { user:
                      const deleteUserResponse = await axios({
                             method: 'delete',
                             baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL, // * Might be changed depending on the backend implementation
-                            url: `/deleteUser/${user?.id}`,
+                            url: `/user/delete/${user?.id}`,
                             withCredentials: true,
                             responseType: 'json',
                             timeout: 10000, // * Increased value because we had some timeout errors
@@ -22,7 +22,8 @@ export default function DeleteUserButton({ user, isDisabled, onDelete }: { user:
                      if (deleteUserResponse.status === 200) {
                             onDelete(user?.id!);
                      }
-              } catch (error) { // TODO : Handle errors
+              } catch (error) {
+                     console.error(error)
                      const axiosError = error as AxiosError;
                      if (axiosError.response) {
                             switch (axiosError.response.status) {

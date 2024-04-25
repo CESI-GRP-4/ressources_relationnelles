@@ -16,20 +16,22 @@ export default function LogInForm() {
        const { setUser } = useUser();
        const [isLoginLoading, setLoginLoading] = useState(false);
 
+       const [form] = Form.useForm(); // Using useForm hook to create form instance
+
        type LogInForm = {
               email: string;
               password: string;
               remember: boolean;
        };
 
-       async function handleLoginForm(form: LogInForm) {
+       async function handleLoginForm(formData: LogInForm) {
               setLoginLoading(true);
               try {
                      const logInResponse: AxiosResponse<LogInResponse> = await axios({
                             method: 'post',
                             baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
                             url: "/login",
-                            data: form,
+                            data: formData,
                             withCredentials: true,
                             responseType: 'json',
                             timeout: 10000, // * Increased value because we had some timeout errors
@@ -37,12 +39,18 @@ export default function LogInForm() {
 
                      const userData: User = logInResponse.data.user;
                      if (userData) {
-                            setUser(userData, form.remember);
+                            setUser(userData, formData.remember);
                             message.success('Connexion réussie');
-                            router.push('/'); // * Redirect to the home page
+                            if(userData.role === 'Utilisateur'){
+                                   router.push('/profil'); // * Redirect to the home page
+                            }else{
+
+                                   router.push('/dashboard'); // * Redirect to the home page
+                            }
                      }
               } catch (error) {
                      const axiosError = error as AxiosError;
+                     form.resetFields(); // Reset form fields on login failure
                      console.error('Erreur lors de la connexion. Axios error :', axiosError);
 
                      if (axiosError.response) {
@@ -81,6 +89,7 @@ export default function LogInForm() {
               <Form
                      name="logInForm"
                      layout='vertical'
+                     form={form} // Bind form instance to Form component
                      style={{ marginBottom: 0, paddingTop: 20, paddingLeft: 20, paddingRight: 20 }} // * padding left & right are used to create a space between the log in form and the sign up form when changing carousel slide
                      initialValues={{ remember: (consentStatus === 'accepted') }}
                      onFinish={handleLoginForm}

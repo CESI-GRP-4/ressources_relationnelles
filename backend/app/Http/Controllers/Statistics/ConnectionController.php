@@ -15,7 +15,7 @@ class ConnectionController extends Controller {
     /**
      * @OA\Get(
      *     path="/stats/connections",
-     *     tags={"Stats"},
+     *     tags={"Statistics"},
      *     summary="Get connection statistics",
      *     description="Fetches connection counts for a given date range along with the day having the highest average connections.",
      *     operationId="getConnections",

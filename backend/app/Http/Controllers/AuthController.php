@@ -9,6 +9,7 @@ use App\Notifications\VerifyEmail;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -57,8 +58,7 @@ class AuthController extends Controller
         *     )
         * )
         */
-       public function login(Request $request)
-       {
+       public function login(Request $request) {
               $credentials = $request->validate([
                      'email' => 'required|email',
                      'password' => 'required'
@@ -128,8 +128,7 @@ class AuthController extends Controller
         *     ),
         * )
         */
-       public function signup(Request $request)
-       {
+       public function signup(Request $request) {
               $data = $request->validate([
                      'email' => 'required|email',
                      'firstName' => 'required',
@@ -156,7 +155,7 @@ class AuthController extends Controller
                      'is_verified' => self::EMAIL_NOT_VERIFIED,
                      'ban_until' => self::IS_NOT_BANNED,
                      'verification_token' => $verificationToken,
-                     'path_picture' => 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Angel',
+                     'id_profile_picture' => Utils::getRandomProfilePicture()->id_profile_picture,
               ]);
 
               $user->notify(new VerifyEmail());
@@ -184,16 +183,15 @@ class AuthController extends Controller
         *          response=401,
         *          description="Invalid verification token",
         *          @OA\JsonContent(
-        *              @OA\Property(property="message", type="string", example="Token de vérification invalide")
+        *              @OA\Property(property="message", type="string", example="Wrong number of segments")
         *          )
         *      )
         * )
         */
-       public function logout()
-       {
+       public function logout() {
               try {
                      auth()->logout();
-                     $cookie = \Cookie::forget('token');
+                     $cookie = Cookie::forget('token');
                      return response(null, 200)->withCookie($cookie);
               } catch (\Exception $e) {
                      return response()->json(['message' => 'Token de vérification invalide'], 401);
@@ -233,8 +231,7 @@ class AuthController extends Controller
         *      )
         * )
         */
-       public function verifyUser()
-       {
+       public function verifyUser() {
               $user = auth()->user();
               if (!$user) return response()->json(['error' => 'Utilisateur non authentifié'], 401);
               return response()->json(['user' => Utils::getUserData($user)]);
@@ -270,8 +267,7 @@ class AuthController extends Controller
         *     ),
         * )
         */
-       public function verifyEmail(Request $request)
-       {
+       public function verifyEmail(Request $request) {
               $token = $request->input('token');
 
               $user = User::where('verification_token', $token)->first();
@@ -310,8 +306,7 @@ class AuthController extends Controller
         *     )
         * )
         */
-       public function forgotPassword()
-       {
+       public function forgotPassword() {
               $data = request()->validate([
                      'email' => 'required|email',
               ]);
@@ -361,8 +356,7 @@ class AuthController extends Controller
         *
         * )
         */
-       public function resetPassword()
-       {
+       public function resetPassword() {
               $data = request()->validate([
                      'token' => 'required',
                      'password' => 'required|min:8',

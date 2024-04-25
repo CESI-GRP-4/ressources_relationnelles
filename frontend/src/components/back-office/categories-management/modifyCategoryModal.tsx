@@ -20,7 +20,7 @@ export default function ModifyCategoryModal({ category, visible, setVisible, ref
                      const response = await axios({
                             method: 'POST',
                             baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
-                            url: '/editCategory/' + category.id,
+                            url: '/category/edit/' + category.id,
                             responseType: 'json',
                             timeout: 10000,
                             withCredentials: true,
