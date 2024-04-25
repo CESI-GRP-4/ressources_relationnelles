@@ -41,7 +41,12 @@ export default function LogInForm() {
                      if (userData) {
                             setUser(userData, formData.remember);
                             message.success('Connexion réussie');
-                            router.push('/'); // * Redirect to the home page
+                            if(userData.role === 'Utilisateur'){
+                                   router.push('/profil'); // * Redirect to the home page
+                            }else{
+
+                                   router.push('/dashboard'); // * Redirect to the home page
+                            }
                      }
               } catch (error) {
                      const axiosError = error as AxiosError;
