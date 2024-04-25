@@ -55,7 +55,7 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                             key: "dashboard",
                             style: { marginLeft: '15px' },
                      }
-              ] : []),              
+              ] : []),
               {
                      label: (<>
                             {avatarSrc ? (
