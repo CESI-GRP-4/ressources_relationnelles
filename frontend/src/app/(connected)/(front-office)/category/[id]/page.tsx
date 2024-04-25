@@ -1,5 +1,5 @@
 "use client"
-import { Button, Card, Typography } from "antd";
+import { Card, Typography, Empty } from "antd";
 import { Icon } from '@iconify/react';
 import { Category } from "@/types/category";
 import { useState, useEffect } from "react";
@@ -14,7 +14,7 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
        const [category, setCategory] = useState<Category>();
        const [resources, setResources] = useState<any[]>([]);
        const [isLoading, setIsLoading] = useState<boolean>(false);
-       const {user} = useUser();
+       const { user } = useUser();
 
        useEffect(() => {
               fetchResources();
@@ -44,7 +44,7 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
        return (
               <div className="flex flex-col gap-5">
                      <PageSummary title={category?.title || "Page de la catégorie"} description={category?.description} />
-                     {resources.length > 0 && (
+                     {resources.length > 0 ? (
                             <div>
                                    {/* <h3>Ressources liées à {category.title} :</h3> */}
                                    {isLoading ? (
@@ -53,7 +53,11 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
                                           <ListOfRessourcesAccordion ressources={resources} refreshRessources={fetchResources} />
                                    )}
                             </div>
-                     )}
+                     ) :
+                            <Card style={{ backgroundColor: "#f5f5f5" }}>
+                                   <Empty></Empty>
+                            </Card>
+                     }
               </div>
        );
 }
