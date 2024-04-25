@@ -33,11 +33,6 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                      key: 'categories',
               },
               {
-                     icon: <UnorderedListOutlined />,
-                     label: <Link href={"/ressources"}>{`Liste des ressources`}</Link>,
-                     key: 'ressources',
-              },
-              {
                      icon: <PlusCircleOutlined />,
                      label: <Link href={"/creer-ressource"}>{`Créer une ressource`}</Link>,
                      key: 'create-resource',
