@@ -17,25 +17,19 @@ export default function CreateRessourceForm() {
        const [isSubmitting, setSubmitting] = useState(false);
        const [categories, setCategories] = useState<Category[]>([]);
        const [categoriesLoaded, setCategoriesLoaded] = useState(false);
-       const { user } = useUser();
-       // Utilisez useEffect pour récupérer les catégories et les statuts lors du chargement du composant
+
        useEffect(() => {
-              const fetchCategories = async () => {
-                     try {
-                            const categoriesResponse = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/categories`);
-                            setCategories(categoriesResponse.data.categories);
-                            setCategoriesLoaded(true);
+              fetchCategories();
+       }, []);
 
-                     } catch (error) {
-                            console.error("Erreur lors de la récupération des catégories et des statuts:", error);
-                     }
-              };
-
-              if (!categoriesLoaded) {
-                     fetchCategories();
+       const fetchCategories = async () => {
+              try {
+                     const categoriesResponse = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/categories`);
+                     setCategories(categoriesResponse.data.categories);
+              } catch (error) {
+                     console.error("Erreur lors de la récupération des catégories et des statuts:", error);
               }
-       }, [categoriesLoaded]); // Charger les catégories et les statuts une seule fois au chargement du composant
-
+       };
 
        const onFinish = async (ressourceForm: Ressource) => {
               const ressourceFormWithUserId = { ...ressourceForm};
