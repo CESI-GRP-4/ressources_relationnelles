@@ -35,7 +35,7 @@ export default function MyRessources() {
                      return resources.filter(resource => {
                             return (values.label && resource.label.includes(values.label)) ||
                                    (values.description && resource.description.includes(values.description)) ||
-                                   (values.idCategory && resource.category.id === values.idCategory) ||
+                                   (values.idCategory && resource.category.id === Number(values.idCategory)) || // Convert string to number
                                    (values.isPublic !== undefined && resource.isPublic == values.isPublic);
                      });
               };
@@ -193,7 +193,7 @@ export default function MyRessources() {
                                           <Form.Item label="Description" name="description">
                                                  <Input.TextArea />
                                           </Form.Item>
-                                          
+
                                           <Form.Item
                                                  label="Catégorie"
                                                  name="idCategory"
@@ -226,7 +226,7 @@ export default function MyRessources() {
                                           >
                                                  {filterActive ? (
                                                         <Button
-                                                        className='mt-10'
+                                                               className='mt-10'
                                                                onClick={() => {
                                                                       form.resetFields();
                                                                       setFilterActive(false);
@@ -235,7 +235,7 @@ export default function MyRessources() {
                                                                type="primary" htmlType="button">Réinitialiser les filtres</Button>
                                                  ) : (
                                                         <Button
-                                                        className='mt-10'
+                                                               className='mt-10'
 
                                                                onClick={() => {
                                                                       form.submit(); // Make sure to submit the form, triggering the onValuesChange
