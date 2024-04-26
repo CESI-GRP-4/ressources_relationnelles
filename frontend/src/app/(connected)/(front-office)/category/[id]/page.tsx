@@ -8,13 +8,10 @@ import { useUser } from "@/providers/userProvider";
 import ListOfRessourcesAccordion from "@/components/front-office/ressource-management/listOfRessourcesAccordion";
 import PageSummary from "@/components/pageSummary";
 
-const { Paragraph } = Typography;
-
 export default function CategoryPage({ params }: { params: { id: string } }) {
        const [category, setCategory] = useState<Category>();
        const [resources, setResources] = useState<any[]>([]);
        const [isLoading, setIsLoading] = useState<boolean>(false);
-       const { user } = useUser();
 
        useEffect(() => {
               fetchResources();
