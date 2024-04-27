@@ -99,6 +99,13 @@ class RessourceController extends Controller {
      *         )
      *     ),
      *     @OA\Response(
+     *        response=403,
+     *        description="Forbidden - User must verify their account before creating a ressource",
+     *        @OA\JsonContent(
+     *        @OA\Property(property="message", type="string", example="Vous devez vérifier votre compte avant de pouvoir créer une ressource")
+     *       )
+     *     ),
+     *     @OA\Response(
      *         response=422,
      *         description="Validation error",
      *         @OA\JsonContent(
@@ -117,6 +124,10 @@ class RessourceController extends Controller {
      * )
      */
     public function create(Request $request) {
+        if (auth()->user()->is_verified == 0) {
+            return response()->json(['message' => 'Vous devez vérifier votre compte avant de pouvoir créer une ressource'], 403);
+        }
+
         if ($request->has('isPublic')) {
             $request->isPublic = filter_var($request->isPublic, FILTER_VALIDATE_BOOLEAN);
         }
@@ -191,7 +202,7 @@ class RessourceController extends Controller {
      *         response=403,
      *         description="Forbidden - User does not have rights to modify this resource",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Vous n'avez pas les droits pour modifier cette ressource")
+     *             @OA\Property(property="message", type="string", example="Vous n'avez pas les droits pour modifier cette ressource ou vous devez avoir un compte vérifié pour pouvoir modifier une ressource")
      *         )
      *     ),
      *     @OA\Response(
@@ -220,6 +231,9 @@ class RessourceController extends Controller {
      * )
      */
     public function edit($id,Request $request){
+        if (auth()->user()->is_verified == 0) {
+            return response()->json(['message' => 'Vous devez vérifier votre compte avant de pouvoir éditer une ressource'], 403);
+        }
         $ressource = Ressource::find($id);
         if (!$ressource) {
             return response()->json(['message' => 'Ressource non trouvée'], 404);

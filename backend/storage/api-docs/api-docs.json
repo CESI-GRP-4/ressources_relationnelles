@@ -214,7 +214,7 @@
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Token de vérification invalide"
+                                            "example": "Wrong number of segments"
                                         }
                                     },
                                     "type": "object"
@@ -990,6 +990,22 @@
                             }
                         }
                     },
+                    "403": {
+                        "description": "Forbidden - User must verify their account before creating a ressource",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Vous devez vérifier votre compte avant de pouvoir créer une ressource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
                     "422": {
                         "description": "Validation error",
                         "content": {
@@ -1117,7 +1133,7 @@
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Vous n'avez pas les droits pour modifier cette ressource"
+                                            "example": "Vous n'avez pas les droits pour modifier cette ressource ou vous devez avoir un compte vérifié pour pouvoir modifier une ressource"
                                         }
                                     },
                                     "type": "object"
