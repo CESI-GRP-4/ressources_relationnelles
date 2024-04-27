@@ -188,7 +188,10 @@ class Utils{
      */
     public static function getCategoryDetailWithRessources($category) {
         $categoryData = self::getCategoryData($category);
-        $ressources = Ressource::where('id_category', $category->id_category )->where('id_status', 1)->get();
+        $ressources = Ressource::where('id_category', $category->id_category)
+            ->where('id_status', 1)
+            ->where('is_public', 1)
+            ->get();
         $categoryData['ressources'] = $ressources->map(function ($ressource) {
             return self::getRessourceDetail($ressource);
         });
