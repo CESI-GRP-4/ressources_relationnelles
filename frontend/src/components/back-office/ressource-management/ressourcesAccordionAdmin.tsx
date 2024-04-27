@@ -370,6 +370,6 @@ export default function RessourcesAccordionAdmin({ ressources, refreshRessources
        }));
 
        return (
-              <Collapse accordion size='large' items={collapseItems} className='w-full' />
+              <Collapse accordion size='large' items={collapseItems} className='w-full h-fit' />
        );
 };

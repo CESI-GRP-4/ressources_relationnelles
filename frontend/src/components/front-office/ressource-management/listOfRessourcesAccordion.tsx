@@ -12,7 +12,7 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
 
        if (ressources.length === 0) {
               return (
-                     <Card style={{ backgroundColor: "#f5f5f5" }}>
+                     <Card className='w-full h-fit' style={{ backgroundColor: "#f5f5f5" }}>
                             <Empty></Empty>
                      </Card>
               )
@@ -63,6 +63,6 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
        }));
 
        return (
-              <Collapse accordion size='large' items={collapseItems} className='w-full' />
+              <Collapse accordion size='large' items={collapseItems} className='w-full h-fit' />
        );
 };

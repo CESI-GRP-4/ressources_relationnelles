@@ -7,9 +7,11 @@ import Ressource from "@/types/ressource"
 import { Typography } from "antd"
 import PageSummary from "@/components/pageSummary"
 import RessourcesAccordionAdmin from "@/components/back-office/ressource-management/ressourcesAccordionAdmin"
+import FilterRessources from "@/components/filterRessources"
 
 export default function AcceptedResources() {
-       const [ressources, setRessources] = useState<Ressource[]>([])
+       const [ressources, setRessources] = useState<Ressource[]>([]);
+       const [filteredRessources, setFilteredRessources] = useState<Ressource[][]>([[], [], [], []]);
        const [loading, setLoading] = useState(true)
 
        useEffect(() => {
@@ -57,7 +59,10 @@ export default function AcceptedResources() {
        return (
               <div>
                      <PageSummary title={"Ressources acceptées"} description={undefined}></PageSummary>
-                     <RessourcesAccordionAdmin ressources={ressources} refreshRessources={fetchRessources} showAccept={false} showRefuse={true} showDelete={true} showBlock={true} />
+                     <div className="flex flex-row justify-center gap-3">
+                            <RessourcesAccordionAdmin ressources={filteredRessources[0]} refreshRessources={fetchRessources} showAccept={false} showRefuse={true} showDelete={true} showBlock={true} />
+                            <FilterRessources acceptedRessources={ressources} setFilteredRessources={setFilteredRessources}></FilterRessources>
+                     </div>
               </div>
        )
 }

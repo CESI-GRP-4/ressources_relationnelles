@@ -35,12 +35,12 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
               {
                      icon: <PlusCircleOutlined />,
                      label: <Link href={"/creer-ressource"}>{`Créer une ressource`}</Link>,
-                     key: 'create-resource',
+                     key: 'creer-ressource',
               },
               {
                      icon: <FileDoneOutlined />,
                      label: <Link href={"/mes-ressources"}>{`Mes ressources`}</Link>,
-                     key: 'my-resources',
+                     key: 'mes-ressources',
               },
               {
                      label: <Link href={"/mes-favoris"}>{`Mes favoris`}</Link>,
