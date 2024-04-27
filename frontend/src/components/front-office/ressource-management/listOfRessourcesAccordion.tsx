@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Collapse, Tag, Typography, Button, Badge, Card, Empty } from 'antd';
+import { Collapse, Tag, Typography, Button, Badge, Card, Empty, Popconfirm, Tooltip, message } from 'antd';
 import Ressource from '@/types/ressource';
 import { Icon } from '@iconify/react';
 const { Text, Paragraph } = Typography;
 import Link from 'next/link';
 import { useUser } from '@/providers/userProvider';
+import axios, { AxiosError } from 'axios';
 
 export default function ListOfRessourcesAccordion({ ressources, refreshRessources }: { ressources: Ressource[], refreshRessources: Function }) {
        const [loading, setLoading] = useState(false); // Used for loading state of buttons, but the global loading of the list is handle throught the parent component from the refreshRessources function
@@ -51,10 +52,56 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
                                           </Badge.Ribbon>
                                    )}
                                    {(ressource.user?.id === user?.id) && (
-                                          <div className="flex flex-row justify-end">
+                                          <div className="flex flex-row justify-end gap-5">
                                                  <Link href={`/editer-ressource/${ressource.id}`}>
                                                         <Button className='w-fit' type='primary'>Apporter des modifications</Button>
                                                  </Link>
+
+
+                                                 <Popconfirm
+                                                        title="Êtes-vous sûr de vouloir supprimer cette ressource?"
+                                                        onConfirm={async () => {
+                                                               try {
+                                                                      const response = await axios({
+                                                                             method: 'DELETE',
+                                                                             baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
+                                                                             url: '/ressource/delete/' + ressource.id,
+                                                                             responseType: 'json',
+                                                                             timeout: 10000,
+                                                                             withCredentials: true,
+                                                                      });
+                                                                      if (response.status === 200) {
+                                                                             message.success("Ressource supprimée avec succès")
+                                                                             console.log(response.data)
+                                                                             refreshRessources();
+                                                                      }
+                                                               } catch (error) {
+                                                                      console.error(error);
+                                                                      const axiosError = error as AxiosError
+
+                                                                      if (axiosError.response) {
+                                                                             switch (axiosError.response.status) {
+                                                                                    case 403 || 401:
+                                                                                           message.error("Vous n'êtes pas autorisé à supprimer cette ressource")
+                                                                                           break;
+                                                                                    case 404:
+                                                                                           message.error("Ressource introuvable")
+                                                                                           break;
+                                                                                    default:
+                                                                                           message.error("Erreur lors de la suppression de la ressource")
+                                                                             }
+                                                                      } else {
+                                                                             message.error("Erreur lors de la suppression de la ressource")
+                                                                      }
+                                                               }
+                                                        }}
+                                                        okText="Oui"
+                                                        cancelText="Non"
+                                                 >
+                                                        <Tooltip title="Supprimer">
+                                                               <Button className='w-fit' type='primary' danger>Supprimer</Button>
+                                                        </Tooltip>
+                                                 </Popconfirm>
                                           </div>)
                                    }
                             </div>
