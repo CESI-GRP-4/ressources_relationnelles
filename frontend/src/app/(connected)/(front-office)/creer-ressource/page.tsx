@@ -1,15 +1,13 @@
 // /creer-ressource/page.tsx
 "use client"
 import { useState, useEffect } from "react";
-import { Form, Input, Select, Button, Upload, message, Typography, Checkbox } from "antd";
+import { Form, Input, Select, Button, Upload, message, Typography, Checkbox, Tooltip } from "antd";
 import { InboxOutlined, SaveOutlined } from "@ant-design/icons";
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import type Ressource from "@/types/ressource";
-import type User from '@/types/user';
 import { useUser } from '@/providers/userProvider';
 import { Category } from "@/types/category";
 const { Option } = Select;
-const { Dragger } = Upload;
 const { Title } = Typography;
 
 export default function CreateRessourceForm() {
@@ -17,7 +15,7 @@ export default function CreateRessourceForm() {
        const [isSubmitting, setSubmitting] = useState(false);
        const [categories, setCategories] = useState<Category[]>([]);
        const [categoriesLoaded, setCategoriesLoaded] = useState(false);
-
+       const { user } = useUser();
        useEffect(() => {
               fetchCategories();
        }, []);
@@ -56,8 +54,23 @@ export default function CreateRessourceForm() {
                      message.success("La ressource a été créée avec succès");
                      form.resetFields();
               } catch (error) {
-                     console.error("Erreur lors de la création de la ressource:", error);
-                     message.error("Une erreur est survenue lors de la création de la ressource");
+                     console.error(error);
+                     const axiosError = error as AxiosError
+
+                     if (axiosError.response) {
+                            switch (axiosError.response.status) {
+                                   case 403:
+                                          message.error("Vous n'êtes pas autorisé à créer une ressource. Est-ce que votre mail est vérifié ?")
+                                          break;
+                                   case 422:
+                                          message.error("Erreur de validation des données")
+                                          break;
+                                   default:
+                                          message.error("Erreur lors de la création de la ressource")
+                            }
+                     } else {
+                            message.error("Erreur lors de la création de la ressource")
+                     }
               } finally {
                      setSubmitting(false);
               }
@@ -126,9 +139,17 @@ export default function CreateRessourceForm() {
                                           </Form.Item> */}
 
                                           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                                                 <Button icon={<SaveOutlined />} type="primary" htmlType="submit" loading={isSubmitting}>
-                                                        Enregistrer
-                                                 </Button>
+                                                 {user?.isEmailVerified ? (
+                                                        <Button icon={<SaveOutlined />} type="primary" htmlType="submit" loading={isSubmitting}>
+                                                               Enregistrer
+                                                        </Button>
+                                                 ) : (
+                                                        <Tooltip title="Votre email n'est pas vérifié">
+                                                               <Button icon={<SaveOutlined />} type="primary" htmlType="submit" loading={isSubmitting} disabled>
+                                                                      Enregistrer
+                                                               </Button>
+                                                        </Tooltip>
+                                                 )}
                                           </Form.Item>
                                    </Form>
                             </div>
