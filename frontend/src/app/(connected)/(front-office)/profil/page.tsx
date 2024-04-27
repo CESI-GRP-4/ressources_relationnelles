@@ -11,6 +11,7 @@ import SelectCountry from '@/components/selectCountry';
 import PageSummary from '@/components/pageSummary';
 import PasswordForm from '@/components/front-office/user-management/changeUserPassword'; // Importez le composant PasswordForm
 import { emailRegex, firstNameRegex, lastNameRegex, cityRegex, postalCodeRegex } from '@/utils/regex';
+import { Span } from 'next/dist/trace';
 
 const { Meta } = Card;
 const { Title } = Typography;
@@ -292,6 +293,17 @@ const UserProfilePage = () => {
                                                         >
                                                                <span>{userData?.role}</span>
                                                         </Form.Item>
+
+                                                        { userData?.isEmailVerified ? (
+                                                               <span>
+                                                                      {`Email vérifié, vous avez accès à toutes les fonctionnalités`}
+                                                               </span>)
+                                                        : (
+                                                               <span>
+                                                                      {`Email non vérifié, vous n'avez pas accès à toutes les fonctionnalités`}
+                                                               </span>
+                                                        )       
+                                                        }
                                                  </Card>
                                           </Col>
                                           <Col span={12}>
