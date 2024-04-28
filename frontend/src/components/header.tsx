@@ -1,6 +1,6 @@
 
 import { Layout, Menu, Avatar, Spin, Tooltip } from "antd"
-import { FileDoneOutlined, FolderOpenOutlined, StarOutlined, PlusCircleOutlined, UserOutlined, LogoutOutlined, DashboardOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import { FileDoneOutlined, FolderOpenOutlined, StarOutlined, PlusCircleOutlined, UserOutlined, LogoutOutlined, DashboardOutlined } from '@ant-design/icons';
 import { useUser } from "@/providers/userProvider";
 import { useState, useEffect } from "react";
 import useLogout from "@/utils/logout";
@@ -9,7 +9,6 @@ import Link from "next/link";
 const { Header: AntdHeader } = Layout;
 import Image from 'next/image';
 import logo from "/public/logo.png"
-const { Sider } = Layout;
 
 export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean, setCollapsed: (collapsed: boolean) => void }) {
        const { user } = useUser();
