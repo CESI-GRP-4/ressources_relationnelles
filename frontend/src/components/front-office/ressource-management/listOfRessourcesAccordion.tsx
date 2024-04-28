@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Collapse, Tag, Typography, Button, Badge, Card, Empty, Popconfirm, Tooltip, message } from 'antd';
+import { Collapse, Tag, Typography, Button, Badge, Card, Empty, Popconfirm, Tooltip, message, Popover, Avatar } from 'antd';
 import Ressource from '@/types/ressource';
 import { Icon } from '@iconify/react';
 const { Text, Paragraph } = Typography;
@@ -27,7 +27,15 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
                             <Paragraph strong className='text-nowrap'>{ressource.label}</Paragraph>
                             <Paragraph ellipsis={{ rows: 2, expandable: true }} type='secondary'>{ressource.description}</Paragraph>
                      </div>
-
+                     <div className='flex flex-row justify-start items-center'>
+                            <Avatar
+                                   src={ressource.user?.imgURL}
+                                   alt={`${ressource.user?.firstName} ${ressource.user?.lastName}`}
+                            />
+                            <div style={{ marginLeft: 8 }}>
+                                   {`${ressource.user?.firstName} ${ressource.user?.lastName}`}
+                            </div>
+                     </div>
                      <div className='flex flex-row items-center gap-5'>
                             <div className="flex flex-row items-center gap-2">
                                    <Tag color={ressource.category?.color || "blue"}>
@@ -56,8 +64,6 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
                                                  <Link href={`/editer-ressource/${ressource.id}`}>
                                                         <Button className='w-fit' type='primary'>Apporter des modifications</Button>
                                                  </Link>
-
-
                                                  <Popconfirm
                                                         title="Êtes-vous sûr de vouloir supprimer cette ressource?"
                                                         onConfirm={async () => {
