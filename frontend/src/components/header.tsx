@@ -1,5 +1,5 @@
 
-import { Layout, Menu, Avatar, Spin } from "antd"
+import { Layout, Menu, Avatar, Spin, Tooltip } from "antd"
 import { FileDoneOutlined, FolderOpenOutlined, StarOutlined, PlusCircleOutlined, UserOutlined, LogoutOutlined, DashboardOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import { useUser } from "@/providers/userProvider";
 import { useState, useEffect } from "react";
@@ -7,6 +7,9 @@ import useLogout from "@/utils/logout";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 const { Header: AntdHeader } = Layout;
+import Image from 'next/image';
+import logo from "/public/logo.png"
+const { Sider } = Layout;
 
 export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean, setCollapsed: (collapsed: boolean) => void }) {
        const { user } = useUser();
@@ -103,7 +106,7 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
               [headerItems[headerItems.length - 0], headerItems[headerItems.length - 1]];
 
        return (
-              <AntdHeader className="site-layout-background" style={{
+              <AntdHeader style={{
                      padding: 0,
                      position: 'sticky',
                      top: 0,
@@ -111,7 +114,29 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                      alignItems: 'center',
                      justifyContent: 'space-between', // Utilisez cette propriété pour aligner les éléments à gauche et à droite
                      zIndex: 5,
+                     background: 'white'
+
               }}>
+                     {collapsed && (
+                            <div style={
+                                   {
+                                          borderBottomWidth: 1,
+                                          borderBottomStyle: 'solid',
+                                          borderBottomColor: 'rgba(5, 5, 5, 0.06)',
+                                   }
+                            }
+                                   className="w-fit h-full">
+                                   <Tooltip title="(Re)Sources Relationnelles - Ministère des solidarités et de la santé ">
+                                          <Image
+                                                 draggable={false}
+                                                 className='rounded-none pl-8 py-2'
+                                                 src={logo}
+                                                 alt="Logo du ministère des solidarités et de la santé"
+                                                 width={95}
+                                                 height={110}
+                                          />
+                                   </Tooltip>
+                            </div>)}
                      <Menu
                             mode="horizontal"
                             items={headerItems.slice(0, -2)} // Tous les éléments sauf les deux derniers
