@@ -6,6 +6,7 @@ const { Text, Paragraph } = Typography;
 import Link from 'next/link';
 import { useUser } from '@/providers/userProvider';
 import axios, { AxiosError } from 'axios';
+import RessourceData from './ressourceData';
 
 export default function ListOfRessourcesAccordion({ ressources, refreshRessources }: { ressources: Ressource[], refreshRessources: Function }) {
        const [loading, setLoading] = useState(false); // Used for loading state of buttons, but the global loading of the list is handle throught the parent component from the refreshRessources function
@@ -184,13 +185,16 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
               }
        }
 
+
+       
+
        // Prepare items for the Collapse component
        const collapseItems = ressources.map((ressource) => ({
               key: ressource.id?.toString() ?? 'unknown',
               label: <div className='flex flex-row justify-between gap-5'>
                      <div className="flex flex-row gap-5 items-start w-3/4">
                             <Paragraph strong className='text-nowrap'>{ressource.label}</Paragraph>
-                            <Paragraph ellipsis={{ rows: 2, expandable: true }} type='secondary'>{ressource.description}</Paragraph>
+                            {/* <Paragraph ellipsis={{ rows: 2, expandable: true }} type='secondary'>{ressource.description}</Paragraph> */}
                      </div>
                      <div className='flex flex-row justify-start items-center'>
                             <Avatar
@@ -208,7 +212,6 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
                                                  <Icon icon={ressource.category?.icon} fontSize={"20px"} /> <span className='text-lg'>{ressource.category?.title}</span>
                                           </div>
                                    </Tag>
-
                                    <Icon icon={ressource.isPublic ? 'fontisto:unlocked' : 'fontisto:locked'} style={{ color: ressource.isPublic ? 'green' : 'red' }} />
                             </div>
                      </div>
@@ -217,38 +220,42 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
               children: (
                      <>
                             <div className="flex flex-col gap-10">
-                                   <div className='flex flex-row justify-end space-x-2'>
-                                          <Tooltip title={ressource.isFavorite ? "Enlever des favoris" : "Ajouter aux favoris"}>
-                                                 {ressource.isFavorite ? (
-                                                        <Button loading={loading} onClick={() => {
-                                                               removeFromFavorites(ressource.id);
-                                                        }}
-                                                               shape="circle" icon={<Icon style={{ fontSize: "1.7rem", color: "gold" }} icon={"emojione-monotone:star"}></Icon>} />
-                                                 ) : (
-                                                        <Button loading={loading} onClick={() => {
-                                                               addToFavorites(ressource.id);
-                                                        }}
-                                                               size='large' shape="circle" icon={<Icon style={{ fontSize: "1.7rem" }} icon={"emojione-monotone:star"}></Icon>} />
-                                                 )}
-                                          </Tooltip>
+                                   <div className="flex flex-row w-full justify-between items-start">
+                                          <RessourceData ressource={ressource}></RessourceData>
+                                          <div className='flex flex-row justify-end space-x-2'>
+                                                 <Tooltip title={ressource.isFavorite ? "Enlever des favoris" : "Ajouter aux favoris"}>
+                                                        {ressource.isFavorite ? (
+                                                               <Button loading={loading} onClick={() => {
+                                                                      removeFromFavorites(ressource.id);
+                                                               }}
+                                                                      shape="circle" icon={<Icon style={{ fontSize: "1.7rem", color: "gold" }} icon={"emojione-monotone:star"}></Icon>} />
+                                                        ) : (
+                                                               <Button loading={loading} onClick={() => {
+                                                                      addToFavorites(ressource.id);
+                                                               }}
+                                                                      size='large' shape="circle" icon={<Icon style={{ fontSize: "1.7rem" }} icon={"emojione-monotone:star"}></Icon>} />
+                                                        )}
+                                                 </Tooltip>
 
-                                          <Tooltip title={ressource.isBookmarked ? `Enlever des "A regarder plus tard"` : `Ajouter à "A regarder plus tard"`}>
-                                                 {ressource.isBookmarked ? (
-                                                        <Button
-                                                               loading={loading}
-                                                               onClick={() => {
-                                                                      removeFromBookmarks(ressource.id);
-                                                               }}
-                                                               size='large' shape="circle" icon={<Icon style={{ fontSize: "1.7rem", color: "red" }} icon={"fluent:bookmark-off-24-regular"}></Icon>} />
-                                                 ) : (
-                                                        <Button
-                                                               loading={loading}
-                                                               onClick={() => {
-                                                                      addToBookmarks(ressource.id);
-                                                               }}
-                                                               size='large' shape="circle" icon={<Icon style={{ fontSize: "1.7rem", color: "blue" }} icon={"fluent:bookmark-add-24-regular"}></Icon>} />
-                                                 )}
-                                          </Tooltip>
+                                                 <Tooltip title={ressource.isBookmarked ? `Enlever des "A regarder plus tard"` : `Ajouter à "A regarder plus tard"`}>
+                                                        {ressource.isBookmarked ? (
+                                                               <Button
+                                                                      loading={loading}
+                                                                      onClick={() => {
+                                                                             removeFromBookmarks(ressource.id);
+                                                                      }}
+                                                                      size='large' shape="circle" icon={<Icon style={{ fontSize: "1.7rem", color: "red" }} icon={"fluent:bookmark-off-24-regular"}></Icon>} />
+                                                        ) : (
+                                                               <Button
+                                                                      loading={loading}
+                                                                      onClick={() => {
+                                                                             addToBookmarks(ressource.id);
+                                                                      }}
+                                                                      size='large' shape="circle" icon={<Icon style={{ fontSize: "1.7rem", color: "blue" }} icon={"fluent:bookmark-add-24-regular"}></Icon>} />
+                                                        )}
+                                                 </Tooltip>
+
+                                          </div>
 
                                    </div>
                                    {(ressource.status === 'rejected' || ressource.status === 'blocked') && (
