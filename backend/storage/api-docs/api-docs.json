@@ -1795,6 +1795,67 @@
                 ]
             }
         },
+        "/stats/ressources": {
+            "get": {
+                "tags": [
+                    "Statistics"
+                ],
+                "summary": "Get statistics about ressources, Moderator and more",
+                "description": "Retrieves statistics about ressources, including totals, views, and status counts.",
+                "operationId": "getRessourcesStats",
+                "responses": {
+                    "200": {
+                        "description": "Statistics retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "ressources": {
+                                            "properties": {
+                                                "total": {
+                                                    "description": "Total number of ressources",
+                                                    "type": "integer"
+                                                },
+                                                "totalView": {
+                                                    "description": "Total views across all ressources",
+                                                    "type": "integer"
+                                                },
+                                                "public": {
+                                                    "description": "Count of public ressources",
+                                                    "type": "integer"
+                                                },
+                                                "private": {
+                                                    "description": "Count of private ressources",
+                                                    "type": "integer"
+                                                },
+                                                "pending": {
+                                                    "description": "Count of ressources pending moderation",
+                                                    "type": "integer"
+                                                },
+                                                "accepted": {
+                                                    "description": "Count of ressources accepted by moderators",
+                                                    "type": "integer"
+                                                },
+                                                "rejected": {
+                                                    "description": "Count of ressources rejected by moderators",
+                                                    "type": "integer"
+                                                },
+                                                "blocked": {
+                                                    "description": "Count of ressources blocked by moderators",
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/ressources/block/{id}": {
             "post": {
                 "tags": [
@@ -1907,57 +1968,43 @@
                 ]
             }
         },
-        "/stats/ressources": {
+        "/ressource/favorite/get": {
             "get": {
                 "tags": [
-                    "Statistics"
+                    "Ressource"
                 ],
-                "summary": "Get statistics about ressources, Moderator and more",
-                "description": "Retrieves statistics about ressources, including totals, views, and status counts.",
-                "operationId": "getRessourcesStats",
+                "summary": "Get user's favorite resources",
+                "description": "Retrieves a list of favorite resources for the authenticated user, providing detailed information about each resource.",
+                "operationId": "getFavorites",
                 "responses": {
                     "200": {
-                        "description": "Statistics retrieved successfully",
+                        "description": "Favorites retrieved successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "ressources": {
-                                            "properties": {
-                                                "total": {
-                                                    "description": "Total number of ressources",
-                                                    "type": "integer"
-                                                },
-                                                "totalView": {
-                                                    "description": "Total views across all ressources",
-                                                    "type": "integer"
-                                                },
-                                                "public": {
-                                                    "description": "Count of public ressources",
-                                                    "type": "integer"
-                                                },
-                                                "private": {
-                                                    "description": "Count of private ressources",
-                                                    "type": "integer"
-                                                },
-                                                "pending": {
-                                                    "description": "Count of ressources pending moderation",
-                                                    "type": "integer"
-                                                },
-                                                "accepted": {
-                                                    "description": "Count of ressources accepted by moderators",
-                                                    "type": "integer"
-                                                },
-                                                "rejected": {
-                                                    "description": "Count of ressources rejected by moderators",
-                                                    "type": "integer"
-                                                },
-                                                "blocked": {
-                                                    "description": "Count of ressources blocked by moderators",
-                                                    "type": "integer"
-                                                }
-                                            },
-                                            "type": "object"
+                                            "description": "An array of the user's favorite resources",
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/RessourceDetail"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in"
                                         }
                                     },
                                     "type": "object"
@@ -1965,7 +2012,468 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/ressource/favorite/add": {
+            "post": {
+                "tags": [
+                    "Ressource"
+                ],
+                "summary": "Add a resource to favorites",
+                "description": "Allows an authenticated user to add a resource to their favorites. Validates that the resource exists and is not already favorited by the user.",
+                "operationId": "addFavorite",
+                "requestBody": {
+                    "description": "Resource ID to add to favorites",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "ressourceId"
+                                ],
+                                "properties": {
+                                    "ressourceId": {
+                                        "description": "The ID of the resource to be added to favorites",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Resource added to favorites or already in favorites",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource ajoutée aux favoris or Ressource déjà ajoutée aux favoris"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Resource ID missing",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "ID de la ressource manquant"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource non trouvée"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/ressource/favorite/remove": {
+            "post": {
+                "tags": [
+                    "Ressource"
+                ],
+                "summary": "Remove a resource from favorites",
+                "description": "Allows an authenticated user to remove a resource from their favorites list. Validates that the resource exists in the user's favorites before removal.",
+                "operationId": "removeFavorite",
+                "requestBody": {
+                    "description": "Resource ID to remove from favorites",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "ressourceId"
+                                ],
+                                "properties": {
+                                    "ressourceId": {
+                                        "description": "The ID of the resource to be removed from favorites",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Resource removed from favorites successfully or not found in favorites",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource retirée des favoris or Ressource non trouvée dans les favoris"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Resource ID missing",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "ID de la ressource manquant"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource non trouvée"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/ressource/bookmark/get": {
+            "get": {
+                "tags": [
+                    "Ressource"
+                ],
+                "summary": "Get user's bookmarked resources",
+                "description": "Retrieves a list of bookmarked resources for the authenticated user, providing detailed information about each resource.",
+                "operationId": "getBookmarks",
+                "responses": {
+                    "200": {
+                        "description": "Bookmarks retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "ressources": {
+                                            "description": "An array of the user's bookmarked resources",
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/RessourceDetail"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/ressource/bookmark/add": {
+            "post": {
+                "tags": [
+                    "Ressource"
+                ],
+                "summary": "Add a bookmark to a resource",
+                "description": "Allows an authenticated user to add a bookmark to a resource. Ensures the resource exists and is not already bookmarked by the user.",
+                "operationId": "addBookmark",
+                "requestBody": {
+                    "description": "Provide the ID of the resource to be bookmarked",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "ressourceId"
+                                ],
+                                "properties": {
+                                    "ressourceId": {
+                                        "description": "The ID of the resource to be bookmarked",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Bookmark added successfully or already exists",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource ajoutée aux bookmarks or Ressource déjà ajoutée aux bookmarks"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Resource ID missing",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "ID de la ressource manquant"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource non trouvée"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/ressource/bookmark/remove": {
+            "post": {
+                "tags": [
+                    "Ressource"
+                ],
+                "summary": "Remove a bookmark from a resource",
+                "description": "Allows an authenticated user to remove a bookmark from a resource. Ensures the resource exists and is bookmarked by the user before removal.",
+                "operationId": "removeBookmark",
+                "requestBody": {
+                    "description": "Provide the ID of the resource to remove from bookmarks",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "ressourceId"
+                                ],
+                                "properties": {
+                                    "ressourceId": {
+                                        "description": "The ID of the resource whose bookmark is to be removed",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Bookmark removed successfully or not found in bookmarks",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource retirée des bookmarks or Ressource non trouvée dans les bookmarks"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Resource ID missing",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "ID de la ressource manquant"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource non trouvée"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
             }
         },
         "/stats/connections": {

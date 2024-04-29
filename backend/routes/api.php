@@ -31,7 +31,6 @@ Route::get('category/{id}', [CategoryController::class, 'getCategory']);
 Route::get('ressource/{id}', [RessourceController::class, 'getRessource']);
 
 
-
 // Connected access
 Route::group(['middleware' => ['jwt.auth']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
@@ -42,6 +41,20 @@ Route::group(['middleware' => ['jwt.auth']], function () {
         Route::post('create', [RessourceController::class, 'create']);
         Route::post('edit/{id}', [RessourceController::class, 'edit']);
         Route::delete('delete/{id}', [RessourceController::class, 'delete']);
+
+        // Favorite
+        Route::group(['prefix' => 'favorite'], function () {
+            Route::get('get', [RessourceController::class, 'getFavotites']);
+            Route::post('add', [RessourceController::class, 'addFavotite']);
+            Route::post('remove', [RessourceController::class, 'removeFavorite']);
+        });
+
+        // Bookmark
+        Route::group(['prefix' => 'bookmark'], function () {
+            Route::get('get', [RessourceController::class, 'getBookmarks']);
+            Route::post('add', [RessourceController::class, 'addBookmark']);
+            Route::post('remove', [RessourceController::class, 'removeBookmark']);
+        });
     });
 
     // myRessources

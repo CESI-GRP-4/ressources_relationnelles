@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : jeu. 11 avr. 2024 à 13:10
+-- Généré le : lun. 29 avr. 2024 à 21:41
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -75,6 +75,24 @@ CREATE TABLE `asso_user_bookmark` (
 -- --------------------------------------------------------
 
 --
+-- Structure de la table `asso_user_favorite`
+--
+
+CREATE TABLE `asso_user_favorite` (
+  `id_user` int(11) NOT NULL,
+  `id_ressource` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `asso_user_favorite`
+--
+
+INSERT INTO `asso_user_favorite` (`id_user`, `id_ressource`) VALUES
+(1, 5);
+
+-- --------------------------------------------------------
+
+--
 -- Structure de la table `asso_user_note`
 --
 
@@ -133,11 +151,11 @@ INSERT INTO `categories` (`id_category`, `title`, `description`, `icon`, `color`
 (3, 'Voyages', 'Tout sur les voyages, des destinations aux conseils.', 'ph:airplane', '#1E90FF', 1, 1, '2024-03-26 19:55:26', '2024-03-26 19:55:26'),
 (4, 'Technologie', 'Dernières nouvelles et revues de technologie.', 'ph:device-mobile-camera', '#32CD32', 1, 1, '2024-03-26 19:55:26', '2024-03-26 19:55:26'),
 (5, 'Cuisine', 'Recettes, astuces et plus sur la cuisine.', 'ph:fork-knife', '#FFA07A', 0, 1, '2024-03-26 19:55:26', '2024-03-26 21:42:01'),
-(6, 'Title de ma catégorie', 'C\'est une catégorie de fou', ' ', '#555555', 1, 1, '2024-03-26 22:46:55', '2024-04-04 19:17:01'),
-(7, 'Title de ma catégorie 2', 'C\'est une catégorie de fou', ' ', '#555555', 1, 1, '2024-03-26 22:49:00', '2024-04-04 19:17:01'),
-(8, 'Title de ma catégorie 3', 'C\'est une catégorie de fou', ' ', '#555555', 0, 1, '2024-03-26 22:53:09', '2024-04-04 19:17:01'),
-(9, 'Title de ma catégorie 4', 'C\'est une catégorie de fou', ' ', '#666abc', 1, 1, '2024-03-26 22:54:55', '2024-04-04 19:17:01'),
-(10, 'Title de ma catégorie 5', 'C\'est une catégorie de fou', '  ', '#ffefef', 1, 1, '2024-03-26 22:55:12', '2024-04-04 19:17:01'),
+(6, 'Title de ma catégorie', 'C\'est une catégorie de fou', '', '#555555', 1, 1, '2024-03-26 22:46:55', '2024-04-29 19:41:35'),
+(7, 'Title de ma catégorie 2', 'C\'est une catégorie de fou', '', '#555555', 1, 1, '2024-03-26 22:49:00', '2024-04-29 19:41:35'),
+(8, 'Title de ma catégorie 3', 'C\'est une catégorie de fou', '', '#555555', 0, 1, '2024-03-26 22:53:09', '2024-04-29 19:41:35'),
+(9, 'Title de ma catégorie 4', 'C\'est une catégorie de fou', '', '#666abc', 1, 1, '2024-03-26 22:54:55', '2024-04-29 19:41:35'),
+(10, 'le concert était cool', 'C\'est une catégorie de fou', '', '#ffefef', 1, 1, '2024-03-26 22:55:12', '2024-04-29 19:41:35'),
 (16, 'PERIPHHHH', 'MAIS YA LA CHAMBRE 140', 'ya pas d\'icon mon reuf', '#faeaaa', 1, 1, '2024-04-10 20:08:54', '2024-04-10 20:08:57');
 
 -- --------------------------------------------------------
@@ -575,7 +593,9 @@ INSERT INTO `login_logs` (`id`, `id_user`, `login_datetime`) VALUES
 (92, 1, '2024-04-11 12:59:31'),
 (93, 39, '2024-04-11 13:08:10'),
 (94, 39, '2024-04-11 13:08:45'),
-(95, 40, '2024-04-11 13:09:53');
+(95, 40, '2024-04-11 13:09:53'),
+(96, 1, '2024-04-17 23:02:58'),
+(97, 1, '2024-04-25 19:02:59');
 
 -- --------------------------------------------------------
 
@@ -676,14 +696,15 @@ CREATE TABLE `ressources` (
 --
 
 INSERT INTO `ressources` (`id_ressource`, `label`, `description`, `content`, `is_public`, `view_count`, `id_user`, `id_category`, `id_status`, `id_type`, `file`, `created_at`, `updated_at`, `staff_comment`) VALUES
-(4, 'A', 'Hello', NULL, 1, 7, 28, 3, 4, 1, NULL, '2024-04-10 11:10:06', '2024-04-11 08:29:57', NULL),
-(5, 'B', 'Hello', NULL, 1, 65, 1, 3, 3, 1, NULL, '2024-04-10 11:11:48', '2024-04-11 08:38:03', 'C\'est pas une ress'),
+(4, 'A', 'Hello', NULL, 1, 7, 28, 3, 1, 1, NULL, '2024-04-10 11:10:06', '2024-04-27 10:35:58', NULL),
+(5, 'B', 'Hello', NULL, 0, 70, 1, 3, 1, 1, NULL, '2024-04-10 11:11:48', '2024-04-29 17:34:31', 'C\'est pas une ress'),
 (6, 'Wshee', 'Hello', NULL, 1, 150, 23, 3, 1, 1, NULL, '2024-04-10 11:13:44', '2024-04-11 08:29:57', NULL),
 (8, 'ON ARRIVE A 200', 'PLK ', NULL, 1, 2553, 1, 16, 1, 1, NULL, '2024-04-10 20:09:04', '2024-04-11 06:48:04', NULL),
 (9, 'TOUT ROULE POUR NOUS', 'PLK', NULL, 1, 17402, 30, 16, 1, 1, NULL, '2024-04-10 20:09:32', '2024-04-11 08:29:57', NULL),
 (10, 'IL PLEUT A PARIS', 'PLK', NULL, 1, 12245, 1, 16, 2, 1, NULL, '2024-04-10 20:29:27', '2024-04-11 08:29:57', NULL),
 (11, 'test', 'test', NULL, 1, 0, 1, 4, 3, 1, NULL, '2024-04-11 06:52:22', '2024-04-11 06:53:30', 'c\'est pas une ressource mon gars :('),
-(13, 'test', 'test\n\nzzz\n\nee', NULL, 1, 0, 1, 4, 2, 1, NULL, '2024-04-11 07:09:50', '2024-04-11 07:09:50', NULL);
+(13, 'test', 'test\n\nzzz\n\nee', NULL, 1, 0, 1, 4, 2, 1, NULL, '2024-04-11 07:09:50', '2024-04-11 07:09:50', NULL),
+(14, 'test', 'test\n\nzzz\n\nee', NULL, 1, 0, 1, 4, 2, 1, NULL, '2024-04-27 09:11:25', '2024-04-27 09:11:25', NULL);
 
 -- --------------------------------------------------------
 
@@ -818,11 +839,11 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id_user`, `email`, `first_name`, `last_name`, `password`, `is_verified`, `ban_until`, `id_city`, `id_postal_code`, `id_country`, `id_role`, `created_at`, `updated_at`, `verification_token`, `password_reset_token`, `deleted_at`, `id_profile_picture`) VALUES
-(1, 'john.doe@example.com', 'John', 'Doe', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, NULL, 1, 1, 1, 1, '2024-01-23 21:58:57', '2024-04-11 09:29:16', NULL, NULL, NULL, 12),
+(1, 'john.doe@example.com', 'John', 'Doe', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, NULL, 1, 1, 1, 1, '2024-01-23 21:58:57', '2024-04-27 11:12:02', NULL, NULL, NULL, 12),
 (22, 'jordan.davis53@example.com', 'Jordan', 'Davis', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, NULL, 3, 3, 1, 3, '2024-02-13 18:05:16', '2024-04-11 09:29:16', NULL, NULL, '2024-03-06 15:19:53', 2),
 (23, 'dakota.wilson74@sample.com', 'Dakota', 'Wilsoaze', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, 1742071249, 2, 2, 3, 3, '2024-02-13 18:05:16', '2024-04-11 09:29:16', NULL, NULL, NULL, 3),
 (24, 'jordan.smith21@sample.com', 'Jordan', 'Smith', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, NULL, 3, 1, 1, 3, '2024-02-13 18:05:16', '2024-04-11 09:29:16', NULL, NULL, NULL, 4),
-(25, 'morgan.davis85@sample.com', 'Morgan', 'Davis', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, NULL, 1, 7, 18, 4, '2024-02-13 18:05:16', '2024-04-11 09:29:16', NULL, NULL, NULL, 5),
+(25, 'morgan.davis85@sample.com', 'Morgane', 'Davis', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, NULL, 1, 7, 18, 4, '2024-02-13 18:05:16', '2024-04-17 20:00:17', NULL, NULL, NULL, 5),
 (26, 'robin.wilson93@example.com', 'Robin', 'Wilson', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, NULL, 1, 2, 1, 3, '2024-02-13 18:05:16', '2024-04-11 09:29:16', NULL, NULL, NULL, 6),
 (27, 'casey.brown77@sample.com', 'Casey', 'Brown', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 1, NULL, 2, 3, 3, 2, '2024-02-13 18:05:16', '2024-04-11 09:29:16', NULL, NULL, NULL, 7),
 (28, 'robin.johnson19@example.com', 'Robin', 'Johnson', '$2y$12$lIhe391bPTE7QR1h8NVjQ.wpKCh5VWt2lvLcEvedSn9vFgK99T40m', 0, NULL, 2, 2, 1, 1, '2024-02-13 18:05:16', '2024-04-11 09:29:16', NULL, NULL, NULL, 8),
@@ -873,7 +894,8 @@ INSERT INTO `user_history` (`id`, `user_id`, `affected_user_id`, `action`, `modi
 (75, 1, 25, 'Modify', 'last_name', 'Davis', 'Daviss', '2024-03-18 21:18:22'),
 (76, 1, 25, 'Modify', 'role', 'Moderateur', 'Utilisateur', '2024-03-18 21:18:22'),
 (77, 1, 25, 'Modify', 'first_name', 'Morgans', 'Morgan', '2024-03-18 21:18:31'),
-(78, 1, 25, 'Modify', 'last_name', 'Daviss', 'Davis', '2024-03-18 21:18:31');
+(78, 1, 25, 'Modify', 'last_name', 'Daviss', 'Davis', '2024-03-18 21:18:31'),
+(79, 1, 25, 'Modify', 'first_name', 'Morgan', 'Morgane', '2024-04-17 22:00:17');
 
 --
 -- Index pour les tables déchargées
@@ -906,6 +928,13 @@ ALTER TABLE `asso_role_right`
 ALTER TABLE `asso_user_bookmark`
   ADD PRIMARY KEY (`id_user`,`id_ressource`),
   ADD KEY `id_ressource` (`id_ressource`);
+
+--
+-- Index pour la table `asso_user_favorite`
+--
+ALTER TABLE `asso_user_favorite`
+  ADD PRIMARY KEY (`id_user`,`id_ressource`),
+  ADD KEY `idx_ressource` (`id_ressource`);
 
 --
 -- Index pour la table `asso_user_note`
@@ -1119,7 +1148,7 @@ ALTER TABLE `invitations`
 -- AUTO_INCREMENT pour la table `login_logs`
 --
 ALTER TABLE `login_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=96;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=98;
 
 --
 -- AUTO_INCREMENT pour la table `migrations`
@@ -1143,7 +1172,7 @@ ALTER TABLE `profile_pictures`
 -- AUTO_INCREMENT pour la table `ressources`
 --
 ALTER TABLE `ressources`
-  MODIFY `id_ressource` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id_ressource` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT pour la table `rights`
@@ -1185,7 +1214,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT pour la table `user_history`
 --
 ALTER TABLE `user_history`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
 
 --
 -- Contraintes pour les tables déchargées
@@ -1218,6 +1247,13 @@ ALTER TABLE `asso_role_right`
 ALTER TABLE `asso_user_bookmark`
   ADD CONSTRAINT `asso_user_bookmark_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`),
   ADD CONSTRAINT `asso_user_bookmark_ibfk_2` FOREIGN KEY (`id_ressource`) REFERENCES `ressources` (`id_ressource`);
+
+--
+-- Contraintes pour la table `asso_user_favorite`
+--
+ALTER TABLE `asso_user_favorite`
+  ADD CONSTRAINT `fk_asuo_user_favorite_ressource_id` FOREIGN KEY (`id_ressource`) REFERENCES `ressources` (`id_ressource`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_asuo_user_favorite_user_id` FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`) ON DELETE CASCADE;
 
 --
 -- Contraintes pour la table `asso_user_note`

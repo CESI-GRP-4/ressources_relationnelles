@@ -242,6 +242,8 @@ class Utils{
             'creationDate' => $ressource->created_at,
             'lastModificationDate' => $ressource->updated_at,
             'staffComment' => $ressource->staff_comment,
+            'isFavorite' => self::isFavorite($ressource->id_ressource),
+            'isBookmark' => self::isBookmark($ressource->id_ressource),
         ];
     }
 
@@ -256,5 +258,21 @@ class Utils{
         $profilePictures = ProfilePicture::all();
         $randomIndex = rand(0, count($profilePictures) - 1);
         return $profilePictures[$randomIndex];
+    }
+
+    private static function isFavorite($ressource){
+        $user = auth()->user();
+        if ($user) {
+            return $user->favorites->contains($ressource);
+        }
+        return false;
+    }
+
+    private static function isBookmark($ressource){
+        $user = auth()->user();
+        if ($user) {
+            return $user->bookmarks->contains($ressource);
+        }
+        return false;
     }
 }

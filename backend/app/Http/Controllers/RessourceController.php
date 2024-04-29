@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Bookmark;
+use App\Models\Favorite;
 use App\Models\Ressource;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -678,6 +681,50 @@ class RessourceController extends Controller {
     }
 
     /**
+     * @OA\Get(
+     *     path="/stats/ressources",
+     *     tags={"Statistics"},
+     *     summary="Get statistics about ressources, Moderator and more",
+     *     description="Retrieves statistics about ressources, including totals, views, and status counts.",
+     *     operationId="getRessourcesStats",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Statistics retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="ressources",
+     *                 type="object",
+     *                 @OA\Property(property="total", type="integer", description="Total number of ressources"),
+     *                 @OA\Property(property="totalView", type="integer", description="Total views across all ressources"),
+     *                 @OA\Property(property="public", type="integer", description="Count of public ressources"),
+     *                 @OA\Property(property="private", type="integer", description="Count of private ressources"),
+     *                 @OA\Property(property="pending", type="integer", description="Count of ressources pending moderation"),
+     *                 @OA\Property(property="accepted", type="integer", description="Count of ressources accepted by moderators"),
+     *                 @OA\Property(property="rejected", type="integer", description="Count of ressources rejected by moderators"),
+     *                 @OA\Property(property="blocked", type="integer", description="Count of ressources blocked by moderators")
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function getRessourcesStats(){
+        $ressources = Ressource::all();
+        $ressourcesStats = [
+            'total' => $ressources->count(),
+            'totalView' => $ressources->sum('view_count'),
+            'public' => $ressources->where('is_public', true)->count(),
+            'private' => $ressources->where('is_public', false)->count(),
+            'pending' => $ressources->where('id_status', self::ID_PENDING_STATUS)->count(),
+            'accepted' => $ressources->where('id_status', self::ID_ACCEPTED_STATUS)->count(),
+            'rejected' => $ressources->where('id_status', self::ID_REJECTED_STATUS)->count(),
+            'blocked' => $ressources->where('id_status', self::ID_BLOCKED_STATUS)->count(),
+        ];
+
+        return response()->json(['ressources' => $ressourcesStats], 200);
+    }
+
+    /**
      * @OA\Post(
      *     path="/ressources/block/{id}",
      *     tags={"Ressource"},
@@ -753,48 +800,363 @@ class RessourceController extends Controller {
         return response()->json(['message' => 'Ressource bloquée'], 200);
     }
 
-
     /**
      * @OA\Get(
-     *     path="/stats/ressources",
-     *     tags={"Statistics"},
-     *     summary="Get statistics about ressources, Moderator and more",
-     *     description="Retrieves statistics about ressources, including totals, views, and status counts.",
-     *     operationId="getRessourcesStats",
+     *     path="/ressource/favorite/get",
+     *     tags={"Ressource"},
+     *     summary="Get user's favorite resources",
+     *     description="Retrieves a list of favorite resources for the authenticated user, providing detailed information about each resource.",
+     *     operationId="getFavorites",
+     *     security={{ "BearerAuth": {} }},
      *     @OA\Response(
      *         response=200,
-     *         description="Statistics retrieved successfully",
+     *         description="Favorites retrieved successfully",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(
      *                 property="ressources",
-     *                 type="object",
-     *                 @OA\Property(property="total", type="integer", description="Total number of ressources"),
-     *                 @OA\Property(property="totalView", type="integer", description="Total views across all ressources"),
-     *                 @OA\Property(property="public", type="integer", description="Count of public ressources"),
-     *                 @OA\Property(property="private", type="integer", description="Count of private ressources"),
-     *                 @OA\Property(property="pending", type="integer", description="Count of ressources pending moderation"),
-     *                 @OA\Property(property="accepted", type="integer", description="Count of ressources accepted by moderators"),
-     *                 @OA\Property(property="rejected", type="integer", description="Count of ressources rejected by moderators"),
-     *                 @OA\Property(property="blocked", type="integer", description="Count of ressources blocked by moderators")
+     *                 type="array",
+     *                 description="An array of the user's favorite resources",
+     *                 @OA\Items(ref="#/components/schemas/RessourceDetail")
      *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - User must be logged in",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthorized - User must be logged in")
      *         )
      *     )
      * )
      */
-    public function getRessourcesStats(){
-        $ressources = Ressource::all();
-        $ressourcesStats = [
-            'total' => $ressources->count(),
-            'totalView' => $ressources->sum('view_count'),
-            'public' => $ressources->where('is_public', true)->count(),
-            'private' => $ressources->where('is_public', false)->count(),
-            'pending' => $ressources->where('id_status', self::ID_PENDING_STATUS)->count(),
-            'accepted' => $ressources->where('id_status', self::ID_ACCEPTED_STATUS)->count(),
-            'rejected' => $ressources->where('id_status', self::ID_REJECTED_STATUS)->count(),
-            'blocked' => $ressources->where('id_status', self::ID_BLOCKED_STATUS)->count(),
-        ];
+    public function getFavotites() {
+        return response()->json(['ressources' => Utils::mapRessourcesToDetails(auth()->user()->favorites)], 200);
+    }
 
-        return response()->json(['ressources' => $ressourcesStats], 200);
+    /**
+     * @OA\Post(
+     *     path="/ressource/favorite/add",
+     *     tags={"Ressource"},
+     *     summary="Add a resource to favorites",
+     *     description="Allows an authenticated user to add a resource to their favorites. Validates that the resource exists and is not already favorited by the user.",
+     *     operationId="addFavorite",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Resource ID to add to favorites",
+     *         @OA\JsonContent(
+     *             required={"ressourceId"},
+     *             @OA\Property(property="ressourceId", type="integer", description="The ID of the resource to be added to favorites")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Resource added to favorites or already in favorites",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Ressource ajoutée aux favoris or Ressource déjà ajoutée aux favoris")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Resource ID missing",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="ID de la ressource manquant")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Resource not found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Ressource non trouvée")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - User must be logged in",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Unauthorized - User must be logged in")
+     *         )
+     *     )
+     * )
+     */
+    public function addFavotite(Request $request){
+        if (!$request->has('ressourceId')) {
+            return response()->json(['message' => 'ID de la ressource manquant'], 400);
+        }
+
+        $ressource = Ressource::find($request->ressourceId);
+        if (!$ressource) {
+            return response()->json(['message' => 'Ressource non trouvée'], 404);
+        }
+
+        $favorite = Favorite::where('id_user', auth()->user()->id_user)
+            ->where('id_ressource', $request->ressourceId)
+            ->first();
+
+        if ($favorite) {
+            return response()->json(['message' => 'Ressource déjà ajoutée aux favoris'], 200);
+        }
+
+        Favorite::create([
+            'id_user' => auth()->user()->id_user,
+            'id_ressource' => $request->ressourceId
+        ]);
+        return response()->json(['message' => 'Ressource ajoutée aux favoris'], 200);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/ressource/favorite/remove",
+     *     tags={"Ressource"},
+     *     summary="Remove a resource from favorites",
+     *     description="Allows an authenticated user to remove a resource from their favorites list. Validates that the resource exists in the user's favorites before removal.",
+     *     operationId="removeFavorite",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Resource ID to remove from favorites",
+     *         @OA\JsonContent(
+     *             required={"ressourceId"},
+     *             @OA\Property(property="ressourceId", type="integer", description="The ID of the resource to be removed from favorites")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Resource removed from favorites successfully or not found in favorites",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Ressource retirée des favoris or Ressource non trouvée dans les favoris")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Resource ID missing",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="ID de la ressource manquant")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Resource not found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Ressource non trouvée")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - User must be logged in",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Unauthorized - User must be logged in")
+     *         )
+     *     )
+     * )
+     */
+    public function removeFavorite(Request $request){
+        if (!$request->has('ressourceId')) {
+            return response()->json(['message' => 'ID de la ressource manquant'], 400);
+        }
+
+        $ressource = Ressource::find($request->ressourceId);
+        if (!$ressource) {
+            return response()->json(['message' => 'Ressource non trouvée'], 404);
+        }
+
+        $result = Favorite::where('id_user', auth()->user()->id_user)
+            ->where('id_ressource', $request->ressourceId)
+            ->delete();
+
+        if($result){
+            return response()->json(['message' => 'Ressource retirée des favoris'], 200);
+        }else{
+            return response()->json(['message' => 'Ressource non trouvée dans les favoris'], 200);
+        }
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/ressource/bookmark/get",
+     *     tags={"Ressource"},
+     *     summary="Get user's bookmarked resources",
+     *     description="Retrieves a list of bookmarked resources for the authenticated user, providing detailed information about each resource.",
+     *     operationId="getBookmarks",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Bookmarks retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="ressources",
+     *                 type="array",
+     *                 description="An array of the user's bookmarked resources",
+     *                 @OA\Items(ref="#/components/schemas/RessourceDetail")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - User must be logged in",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthorized - User must be logged in")
+     *         )
+     *     )
+     * )
+     */
+    public function getBookmarks() {
+        return response()->json(['ressources' => Utils::mapRessourcesToDetails(auth()->user()->bookmarks)], 200);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/ressource/bookmark/add",
+     *     tags={"Ressource"},
+     *     summary="Add a bookmark to a resource",
+     *     description="Allows an authenticated user to add a bookmark to a resource. Ensures the resource exists and is not already bookmarked by the user.",
+     *     operationId="addBookmark",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Provide the ID of the resource to be bookmarked",
+     *         @OA\JsonContent(
+     *             required={"ressourceId"},
+     *             @OA\Property(property="ressourceId", type="integer", description="The ID of the resource to be bookmarked")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Bookmark added successfully or already exists",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Ressource ajoutée aux bookmarks or Ressource déjà ajoutée aux bookmarks")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Resource ID missing",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="ID de la ressource manquant")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Resource not found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Ressource non trouvée")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - User must be logged in",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Unauthorized - User must be logged in")
+     *         )
+     *     )
+     * )
+     */
+    public function addBookmark(Request $request){
+        if (!$request->has('ressourceId')) {
+            return response()->json(['message' => 'ID de la ressource manquant'], 400);
+        }
+
+        $ressource = Ressource::find($request->ressourceId);
+        if (!$ressource) {
+            return response()->json(['message' => 'Ressource non trouvée'], 404);
+        }
+
+        $bookmark = Bookmark::where('id_user', auth()->user()->id_user)
+            ->where('id_ressource', $request->ressourceId)
+            ->first();
+
+        if ($bookmark) {
+            return response()->json(['message' => 'Ressource déjà ajoutée aux bookmarks'], 200);
+        }
+
+        Bookmark::create([
+            'id_user' => auth()->user()->id_user,
+            'id_ressource' => $request->ressourceId
+        ]);
+        return response()->json(['message' => 'Ressource ajoutée aux bookmarks'], 200);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/ressource/bookmark/remove",
+     *     tags={"Ressource"},
+     *     summary="Remove a bookmark from a resource",
+     *     description="Allows an authenticated user to remove a bookmark from a resource. Ensures the resource exists and is bookmarked by the user before removal.",
+     *     operationId="removeBookmark",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Provide the ID of the resource to remove from bookmarks",
+     *         @OA\JsonContent(
+     *             required={"ressourceId"},
+     *             @OA\Property(property="ressourceId", type="integer", description="The ID of the resource whose bookmark is to be removed")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Bookmark removed successfully or not found in bookmarks",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Ressource retirée des bookmarks or Ressource non trouvée dans les bookmarks")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Resource ID missing",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="ID de la ressource manquant")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Resource not found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Ressource non trouvée")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - User must be logged in",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Unauthorized - User must be logged in")
+     *         )
+     *     )
+     * )
+     */
+    public function removeBookmark(Request $request){
+        if (!$request->has('ressourceId')) {
+            return response()->json(['message' => 'ID de la ressource manquant'], 400);
+        }
+
+        $ressource = Ressource::find($request->ressourceId);
+        if (!$ressource) {
+            return response()->json(['message' => 'Ressource non trouvée'], 404);
+        }
+
+        $result = Bookmark::where('id_user', auth()->user()->id_user)
+            ->where('id_ressource', $request->ressourceId)
+            ->delete();
+
+        if($result){
+            return response()->json(['message' => 'Ressource retirée des bookmarks'], 200);
+        }else{
+            return response()->json(['message' => 'Ressource non trouvée dans les bookmarks'], 200);
+        }
     }
 }

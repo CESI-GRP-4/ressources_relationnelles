@@ -90,6 +90,13 @@ class User extends Authenticatable implements JWTSubject {
     public function postalCode() {
         return $this->belongsTo(PostalCode::class, 'id_postal_code');
     }
+
+    public function favorites() {
+        return $this->belongsToMany(Ressource::class, 'asso_user_favorite', 'id_user', 'id_ressource');
+    }
+    public function bookmarks() {
+        return $this->belongsToMany(Ressource::class, 'asso_user_bookmark', 'id_user', 'id_ressource');
+    }
     public function getJWTIdentifier() {
         return $this->getKey();
     }
