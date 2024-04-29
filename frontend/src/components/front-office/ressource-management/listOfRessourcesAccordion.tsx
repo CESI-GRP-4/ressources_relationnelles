@@ -26,7 +26,7 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
                      const response = await axios({
                             method: 'POST',
                             baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
-                            url: '/ressource/addToFavorite',
+                            url: '/ressource/favorite/add',
                             responseType: 'json',
                             timeout: 10000,
                             withCredentials: true,
@@ -67,7 +67,7 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
                      const response = await axios({
                             method: 'POST',
                             baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
-                            url: '/ressource/removeFromFavorite',
+                            url: '/ressource/favorite/remove',
                             responseType: 'json',
                             timeout: 10000,
                             withCredentials: true,
@@ -108,7 +108,7 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
                      const response = await axios({
                             method: 'POST',
                             baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
-                            url: '/ressource/addToBookmark',
+                            url: '/ressource/bookmark/add',
                             responseType: 'json',
                             timeout: 10000,
                             withCredentials: true,
@@ -149,7 +149,7 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
                      const response = await axios({
                             method: 'POST',
                             baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
-                            url: '/ressource/removeFromBookmark',
+                            url: '/ressource/bookmark/remove',
                             responseType: 'json',
                             timeout: 10000,
                             withCredentials: true,
@@ -184,9 +184,6 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
                      setLoading(false);
               }
        }
-
-
-       
 
        // Prepare items for the Collapse component
        const collapseItems = ressources.map((ressource) => ({
