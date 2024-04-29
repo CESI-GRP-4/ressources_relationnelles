@@ -4,6 +4,7 @@ import Ressource from '@/types/ressource';
 import { Icon } from '@iconify/react';
 const { Title, Text, Paragraph } = Typography;
 import axios, { AxiosError } from 'axios';
+import RessourceData from '@/components/front-office/ressource-management/ressourceData';
 
 export default function RessourcesAccordionAdmin({ ressources, refreshRessources, showAccept, showRefuse, showDelete, showBlock }: { ressources: Ressource[], refreshRessources: Function, showAccept: boolean, showRefuse: boolean, showDelete: boolean, showBlock: boolean }) {
        const [loading, setLoading] = useState(false); // Used for loading state of buttons, but the global loading of the list is handle throught the parent component from the refreshRessources function
@@ -11,7 +12,7 @@ export default function RessourcesAccordionAdmin({ ressources, refreshRessources
 
        if (ressources.length === 0) {
               return (
-                     <Card style={{backgroundColor: "#f5f5f5"}}>
+                     <Card style={{ backgroundColor: "#f5f5f5" }}>
                             <Empty></Empty>
                      </Card>
               )
@@ -277,6 +278,10 @@ export default function RessourcesAccordionAdmin({ ressources, refreshRessources
               ,
               children: (
                      <div className='flex flex-col gap-5'>
+                            <div className="mb-10">
+                                   <RessourceData ressource={ressource} />
+                            </div>
+
                             {(ressource.status === 'rejected' || ressource.status === 'blocked') && (
                                    <Badge.Ribbon text={"commentaire modérateur"} color="red">
                                           <div className="flex flex-row items-center border p-3 rounded-md">
