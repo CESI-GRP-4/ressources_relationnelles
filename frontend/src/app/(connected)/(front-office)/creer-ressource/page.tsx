@@ -1,8 +1,8 @@
 // /creer-ressource/page.tsx
 "use client"
 import { useState, useEffect } from "react";
-import { Form, Input, Select, Button, Upload, message, Typography, Checkbox, Tooltip } from "antd";
-import { InboxOutlined, SaveOutlined } from "@ant-design/icons";
+import { Form, Input, Select, Button, message, Typography, Checkbox, Tooltip } from "antd";
+import { SaveOutlined } from "@ant-design/icons";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import type Ressource from "@/types/ressource";
 import { useUser } from '@/providers/userProvider';
@@ -12,32 +12,31 @@ const { Title } = Typography;
 
 export default function CreateRessourceForm() {
        const [form] = Form.useForm();
-       const [isSubmitting, setSubmitting] = useState(false);
+       const [isLoading, setIsLoading] = useState(false);
        const [categories, setCategories] = useState<Category[]>([]);
-       const [categoriesLoaded, setCategoriesLoaded] = useState(false);
        const { user } = useUser();
+
        useEffect(() => {
               fetchCategories();
        }, []);
 
        const fetchCategories = async () => {
               try {
+                     setIsLoading(true);
                      const categoriesResponse = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/categories`);
                      setCategories(categoriesResponse.data.categories);
               } catch (error) {
                      console.error("Erreur lors de la récupération des catégories et des statuts:", error);
+              }finally {
+                     setIsLoading(false);
               }
        };
 
        const onFinish = async (ressourceForm: Ressource) => {
               const ressourceFormWithUserId = { ...ressourceForm};
 
-              console.log("Données du formulaire:", ressourceFormWithUserId); // Afficher les données dans la console
-
-              setSubmitting(true);
-
               try {
-                     // Envoi des données au backend avec axios
+                     setIsLoading(true);
                      const response: AxiosResponse = await axios({
                             method: 'post',
                             baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
@@ -47,9 +46,6 @@ export default function CreateRessourceForm() {
                             timeout: 10000,
                             withCredentials: true,
                      });
-
-                     // Traitement de la réponse (éventuellement)
-                     console.log(response.data);
 
                      message.success("La ressource a été créée avec succès");
                      form.resetFields();
@@ -72,7 +68,7 @@ export default function CreateRessourceForm() {
                             message.error("Erreur lors de la création de la ressource")
                      }
               } finally {
-                     setSubmitting(false);
+                     setIsLoading(false);
               }
        };
 
@@ -90,11 +86,11 @@ export default function CreateRessourceForm() {
                                           wrapperCol={{ span: 16 }}
                                    >
                                           <Form.Item label="Intitulé" name="label" rules={[{ required: true, message: "Saisissez un label" }]}>
-                                                 <Input style={{ width: "50%" }} />
+                                                 <Input disabled={isLoading} style={{ width: "50%" }} />
                                           </Form.Item>
 
                                           <Form.Item label="Description" name="description">
-                                                 <Input.TextArea style={{ width: "50%" }} />
+                                                 <Input.TextArea disabled={isLoading} style={{ width: "50%" }} />
                                           </Form.Item>
 
                                           <Form.Item
@@ -109,8 +105,9 @@ export default function CreateRessourceForm() {
                                                         filterOption={(input, option) =>
                                                                (option?.label as string).toLowerCase().indexOf(input.toLowerCase()) >= 0
                                                         }
+                                                        loading={isLoading}
                                                  >
-                                                        {(categoriesLoaded ? categories : categories).map((category) => (
+                                                        {(categories).map((category) => (
                                                                <Option key={category.id} value={category.id} label={category.title}>
                                                                       {category.title}
                                                                </Option>
@@ -123,11 +120,11 @@ export default function CreateRessourceForm() {
                                                  name="isPublic"
                                                  valuePropName="checked" // Pour gérer la valeur cochée
                                                  initialValue={true} // Valeur par défaut cochée
+                                                 
                                                  rules={[{ required: true}]}
                                           >
-                                                 <Checkbox />
+                                                 <Checkbox disabled={isLoading} />
                                           </Form.Item>
-
 
                                           {/* <Form.Item label="Fichiers" name="files" valuePropName="fileList" getValueFromEvent={(e) => e.fileList} >
                                                  <Dragger style={{ width: "50%" }}>
@@ -140,12 +137,12 @@ export default function CreateRessourceForm() {
 
                                           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                                                  {user?.isEmailVerified ? (
-                                                        <Button icon={<SaveOutlined />} type="primary" htmlType="submit" loading={isSubmitting}>
+                                                        <Button icon={<SaveOutlined />} type="primary" htmlType="submit" loading={isLoading}>
                                                                Enregistrer
                                                         </Button>
                                                  ) : (
                                                         <Tooltip title="Votre email n'est pas vérifié">
-                                                               <Button icon={<SaveOutlined />} type="primary" htmlType="submit" loading={isSubmitting} disabled>
+                                                               <Button icon={<SaveOutlined />} type="primary" htmlType="submit" loading={isLoading} disabled>
                                                                       Enregistrer
                                                                </Button>
                                                         </Tooltip>

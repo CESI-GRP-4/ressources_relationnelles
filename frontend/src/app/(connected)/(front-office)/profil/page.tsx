@@ -23,16 +23,11 @@ const UserProfilePage = () => {
        const { user } = useUser();
        const [form] = Form.useForm();
        const [selectedCountry, setSelectedCountry] = useState(null);
+
        useEffect(() => {
               const fetchUserData = async () => {
                      try {
-                            console.log('Fetching user data...');
-                            console.log('User before fetch:', user);
-
-                            // Mettez à jour le state avec les données utilisateur
                             setUserData(user);
-
-                            // Remplissez le formulaire avec les données de l'utilisateur
                             form.setFieldsValue({
                                    lastName: user?.lastName,
                                    firstName: user?.firstName,
@@ -62,8 +57,6 @@ const UserProfilePage = () => {
               let isFormValid = false;
 
               try {
-                     console.log('Entré dans le bloc try.');
-
                      // Forcer une validation manuelle du formulaire pour s'assurer que les règles de validation sont appliquées
                      await form.validateFields();
 

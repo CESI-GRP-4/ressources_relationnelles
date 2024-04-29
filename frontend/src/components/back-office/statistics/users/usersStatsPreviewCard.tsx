@@ -1,4 +1,4 @@
-import { Avatar, Badge, Button, Card, Collapse, List, Tag, message } from "antd";
+import { Avatar, Badge, Button, Card, Collapse, List, Spin, Tag, message } from "antd";
 import Link from "next/link";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import axios, { AxiosError } from "axios";
@@ -54,8 +54,8 @@ export default function UsersStatsPreviewCard() {
        })) || [];
 
        const otherDataSource = [
-              { title: "Utilisateurs bannis", count: usersStats?.bannedUsersCount, color: "red"},
-              { title: "Comptes non vérifiés", count: usersStats?.unverifiedEmailsCount, color: "orange"},
+              { title: "Utilisateurs bannis", count: usersStats?.bannedUsersCount, color: "red" },
+              { title: "Comptes non vérifiés", count: usersStats?.unverifiedEmailsCount, color: "orange" },
        ];
 
        return (
@@ -65,34 +65,44 @@ export default function UsersStatsPreviewCard() {
                             title="Utilisateurs"
                             extra={<Link className="mr-20" href="/gestion-utilisateurs"><Button type="text" shape="circle" icon={<PlusCircleOutlined style={{ color: "blue" }} />} /></Link>}
                      >
-                            <Collapse bordered>
-                                   <Panel header="Utilisateurs par rôle" key="1">
+                            {isLoading ?
+                            <div className="flex flex-row w-full justify-center">
+                                   <Spin/>
+                                   </div>
+                                   :
+                                   <>
+                                          <Collapse bordered>
+                                                 <Panel header="Utilisateurs par rôle" key="1">
+                                                        <List
+                                                               itemLayout="horizontal"
+                                                               dataSource={usersByRoleDataSource}
+                                                               renderItem={({ title, count }) => (
+                                                                      <List.Item>
+                                                                             <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                                                    <span>{title}</span>
+                                                                                    <Tag color="blue">{count}</Tag>
+                                                                             </div>
+                                                                      </List.Item>
+                                                               )}
+                                                        />
+                                                 </Panel>
+                                          </Collapse>
                                           <List
                                                  itemLayout="horizontal"
-                                                 dataSource={usersByRoleDataSource}
-                                                 renderItem={({ title, count }) => (
+                                                 dataSource={otherDataSource}
+                                                 renderItem={({ title, count, color }) => (
                                                         <List.Item>
                                                                <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                                                       <span>{title}</span>
-                                                                      <Tag color="blue">{count}</Tag>
+                                                                      <Tag color={color || "blue"}>{count}</Tag>
                                                                </div>
                                                         </List.Item>
                                                  )}
                                           />
-                                   </Panel>
-                            </Collapse>
-                            <List
-                                   itemLayout="horizontal"
-                                   dataSource={otherDataSource}
-                                   renderItem={({ title, count, color }) => (
-                                          <List.Item>
-                                                 <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                        <span>{title}</span>
-                                                        <Tag color={color || "blue"}>{count}</Tag>
-                                                 </div>
-                                          </List.Item>
-                                   )}
-                            />
+                                   </>
+
+                            }
+
                      </Card>
               </Badge.Ribbon>
        );

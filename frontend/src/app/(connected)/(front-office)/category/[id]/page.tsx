@@ -1,5 +1,5 @@
 "use client"
-import { Card, Empty } from "antd";
+import { Card, Empty, Skeleton } from "antd";
 import { Category } from "@/types/category";
 import { useState, useEffect } from "react";
 import axios from 'axios';
@@ -42,23 +42,30 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
        return (
               <div className="flex flex-col gap-5">
                      <PageSummary title={category?.title || "Page de la catégorie"} description={category?.description} />
-                     {ressources.length > 0 ? (
+                     {isLoading ?
+                            <Skeleton active />
+                            :
                             <div>
-                                   {/* <h3>Ressources liées à {category.title} :</h3> */}
-                                   {isLoading ? (
-                                          <p>Loading...</p>
-                                   ) : (
-                                          <div className="flex flex-row justify-center gap-3">
-                                                 <ListOfRessourcesAccordion ressources={filteredRessources[0]} refreshRessources={fetchResources} />
-                                                 <FilterRessources hideIsPublicFilter hideCategoryFilter acceptedRessources={ressources} setFilteredRessources={setFilteredRessources}></FilterRessources>
+                                   {(ressources.length > 0) ? (
+                                          <div>
+                                                 {isLoading ?
+                                                        <Skeleton active />
+                                                        :
+                                                        <div className="flex flex-row justify-center gap-3">
+                                                               <ListOfRessourcesAccordion ressources={filteredRessources[0]} refreshRessources={fetchResources} />
+                                                               <FilterRessources hideIsPublicFilter hideCategoryFilter acceptedRessources={ressources} setFilteredRessources={setFilteredRessources}></FilterRessources>
+                                                        </div>
+                                                 }
                                           </div>
-                                   )}
+                                   ) :
+                                          <Card className="h-fit w-full" style={{ backgroundColor: "#f5f5f5" }}>
+                                                 <Empty></Empty>
+                                          </Card>
+                                   }
                             </div>
-                     ) :
-                            <Card className="h-fit w-full" style={{ backgroundColor: "#f5f5f5" }}>
-                                   <Empty></Empty>
-                            </Card>
                      }
+
+
               </div>
        );
 }

@@ -47,7 +47,7 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
               {
                      label: <Link href={"/mes-favoris"}>{`Mes favoris`}</Link>,
                      icon: <StarOutlined />,
-                     key: 'my-favorites',
+                     key: 'mes-favoris',
               },
               // Ajouter le tableau de bord uniquement si l'utilisateur est un modérateur ou plus
               ...(user && (user.role === "Moderateur" || user.role === "Administrateur" || user.role === "SuperAdministrateur") ? [

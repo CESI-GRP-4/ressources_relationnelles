@@ -1,5 +1,5 @@
 "use client"
-import { Card, Input, Tabs, message, Checkbox, Form, Button, Select } from 'antd';
+import { Tabs, message, Skeleton } from 'antd';
 import type { TabsProps } from 'antd';
 import { useState, useEffect } from 'react';
 import Ressource from '@/types/ressource';
@@ -15,7 +15,6 @@ export default function MyRessources() {
        const [blockedRessources, setBlockedRessources] = useState<Ressource[]>([]);
 
        const [filteredRessources, setFilteredRessources] = useState<Ressource[][]>([[], [], [], []]);
-       console.log("🚀 ~ MyRessources ~ filteredRessources:", filteredRessources);
        const [loading, setLoading] = useState(false);
 
        useEffect(() => {
@@ -108,7 +107,11 @@ export default function MyRessources() {
               <div>
                      <PageSummary title={'Mes ressources'} description={undefined}></PageSummary>
                      <div className="flex flex-row justify-center gap-3">
-                            <Tabs className='w-full' defaultActiveKey="1" items={items} />
+                            {loading ?
+                                   <Skeleton active />
+                                   :
+                                   <Tabs className='w-full' defaultActiveKey="1" items={items} />
+                            }
                             <FilterRessources acceptedRessources={acceptedRessources} pendingRessources={pendingRessources} rejectedRessources={rejectedRessources} blockedRessources={blockedRessources} setFilteredRessources={setFilteredRessources}></FilterRessources>
                      </div>
               </div>

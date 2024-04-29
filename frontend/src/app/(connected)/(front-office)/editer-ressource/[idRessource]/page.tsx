@@ -28,6 +28,7 @@ export default function EditRessource({ params }: { params: { idRessource: numbe
 
        const fetchRessource = async () => {
               try {
+                     setLoading(true);
                      const response: AxiosResponse<{ ressource: Ressource }> = await axios(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/ressource/${params.idRessource}`, {
                             method: "GET",
                             withCredentials: true
@@ -139,7 +140,6 @@ export default function EditRessource({ params }: { params: { idRessource: numbe
                             throw new Error('Failed to update ressource');
                      }
               } catch (error) {
-                     setLoading(false);
                      console.error(error);
                      const axiosError = error as AxiosError;
 
@@ -160,6 +160,9 @@ export default function EditRessource({ params }: { params: { idRessource: numbe
                      } else {
                             message.error("Erreur lors de la mise à jour de la ressource");
                      }
+              }
+              finally {
+                     setLoading(false);
               }
        };
 
@@ -214,8 +217,6 @@ export default function EditRessource({ params }: { params: { idRessource: numbe
                                           ))}
                                    </Select>
                             </Form.Item>
-
-
 
                             <Form.Item
                                    name="isPublic"

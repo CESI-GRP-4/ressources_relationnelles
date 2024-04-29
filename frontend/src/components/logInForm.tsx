@@ -11,11 +11,9 @@ import { useConsent } from '@/contexts/CookiesConsentContext';
 
 export default function LogInForm() {
        const { consentStatus, setConsent } = useConsent();
-
        const router = useRouter();
        const { setUser } = useUser();
        const [isLoginLoading, setLoginLoading] = useState(false);
-
        const [form] = Form.useForm(); // Using useForm hook to create form instance
 
        type LogInForm = {

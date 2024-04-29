@@ -8,7 +8,7 @@ import axios from 'axios';
 export default function ARessourcePage({ params }: { params: { id: string } }) {
        const id = params.id;
        const [resource, setResource] = useState<Ressource>();
-
+       const [loading, setLoading] = useState<boolean>(false);
        useEffect(() => {
               console.log(id)
               fetchARessource();
@@ -16,6 +16,7 @@ export default function ARessourcePage({ params }: { params: { id: string } }) {
 
        const fetchARessource = async () => {
               try {
+                     setLoading(true);
                      const response = await axios({
                             method: 'GET',
                             baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
@@ -26,6 +27,9 @@ export default function ARessourcePage({ params }: { params: { id: string } }) {
                      setResource(response.data.ressource);
               } catch (error) {
                      console.error(error);
+              }finally{
+                     setLoading(false);
+              
               }
        };
 

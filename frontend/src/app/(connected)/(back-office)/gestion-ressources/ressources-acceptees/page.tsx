@@ -47,20 +47,15 @@ export default function AcceptedResources() {
               }
        };
 
-       if (loading) {
-              return (
-                     <div>
-                            <PageSummary title={"Ressources acceptées"} description={undefined}></PageSummary>
-                            <Skeleton active />
-                     </div>
-              )
-       }
-
        return (
               <div>
                      <PageSummary title={"Ressources acceptées"} description={undefined}></PageSummary>
                      <div className="flex flex-row justify-center gap-3">
-                            <RessourcesAccordionAdmin ressources={filteredRessources[0]} refreshRessources={fetchRessources} showAccept={false} showRefuse={true} showDelete={true} showBlock={true} />
+                            {loading ?
+                                   <Skeleton active />
+                                   :
+                                   <RessourcesAccordionAdmin ressources={filteredRessources[0]} refreshRessources={fetchRessources} showAccept={false} showRefuse={true} showDelete={true} showBlock={true} />
+                            }
                             <FilterRessources acceptedRessources={ressources} setFilteredRessources={setFilteredRessources}></FilterRessources>
                      </div>
               </div>

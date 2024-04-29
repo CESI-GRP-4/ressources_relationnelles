@@ -14,8 +14,7 @@ import { useEffect, useState } from 'react';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { message } from 'antd';
 import dayjs from 'dayjs';
-import { Card, Typography, Spin } from "antd";
-const { Paragraph } = Typography;
+import { Spin } from "antd";
 import AverageDisplay from './average';
 import AverageConnection from '@/types/averageConnection';
 ChartJS.register(

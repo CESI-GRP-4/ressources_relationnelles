@@ -1,4 +1,4 @@
-import { Avatar, Badge, Button, Card, Collapse, List, Tag, message } from "antd";
+import { Avatar, Badge, Button, Card, Collapse, List, Spin, Tag, message } from "antd";
 import Link from "next/link";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import axios, { AxiosError } from "axios";
@@ -56,8 +56,6 @@ export default function RessourceStatsPreviewCard() {
               { title: "Ressources bloquées", count: ressourcesStats?.blocked, color: "red", url: "/gestion-ressources/ressources-bloquees" },
               { title: "Ressources publiques", count: ressourcesStats?.public, color: "blue" },
               { title: "Ressources privées", count: ressourcesStats?.private, color: "blue" },
-
-              // { title: "Ressources désactivées", count: ressourcesStats?.disabled, color: "red"},
        ];
 
        return (
@@ -67,26 +65,26 @@ export default function RessourceStatsPreviewCard() {
                             title="Ressources"
                      // extra={<Link className="mr-20" href="/gestion-utilisateurs"><Button type="text" shape="circle" icon={<PlusCircleOutlined style={{ color: "blue" }} />} /></Link>}
                      >
+                            {isLoading ? <div className="flex flex-row w-full justify-center"><Spin></Spin></div> : 
+                            
                             <List
                                    itemLayout="horizontal"
                                    dataSource={otherDataSource}
                                    renderItem={({ title, count, color, url }) => (
                                           <List.Item>
-
                                                  <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                                         <div className="flex flex-row items-center gap-2">
                                                                <span>{title}</span>
                                                                {
                                                                       url && <Link href={url}><Icon style={{fontSize: "20px"}} icon={"lucide:link"}></Icon></Link>
                                                                }
-
-
                                                         </div>
                                                         <Tag color={color || "blue"}>{count}</Tag>
                                                  </div>
                                           </List.Item>
                                    )}
-                            />
+                            />}
+                            
                      </Card>
               </Badge.Ribbon>
        );

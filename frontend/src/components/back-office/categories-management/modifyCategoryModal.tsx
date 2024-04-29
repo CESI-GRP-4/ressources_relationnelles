@@ -1,7 +1,6 @@
 import { Category } from "@/types/category";
 import { Modal, Button, Form, Input, message, Switch } from "antd";
 import React, { useState } from "react";
-import { DeleteOutlined } from "@ant-design/icons";
 import axios, { AxiosError } from "axios";
 import DeleteCategory from "@/components/back-office/categories-management/deleteCategory";
 

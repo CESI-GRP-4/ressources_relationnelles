@@ -47,20 +47,15 @@ export default function BlockedResources() {
               }
        };
 
-       if (loading) {
-              return (
-                     <div>
-                            <PageSummary title={"Ressources bloquées"} description={undefined}></PageSummary>
-                            <Skeleton active />
-                     </div>
-              )
-       }
-
        return (
               <div>
                      <PageSummary title={"Ressources bloquées"} description={undefined}></PageSummary>
                      <div className="flex flex-row justify-center gap-3">
-                            <RessourcesAccordionAdmin ressources={filteredRessources[3]} refreshRessources={fetchRessources} showAccept={true} showRefuse={true} showDelete={true} showBlock={false} />
+                            {loading ?
+                                   <Skeleton active />
+                                   :
+                                   <RessourcesAccordionAdmin ressources={filteredRessources[3]} refreshRessources={fetchRessources} showAccept={true} showRefuse={true} showDelete={true} showBlock={false} />
+                            }
                             <FilterRessources blockedRessources={ressources} setFilteredRessources={setFilteredRessources}></FilterRessources>
                      </div>
               </div>
