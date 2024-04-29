@@ -29,7 +29,7 @@ export default function CategoriesPreview() {
                      setCategories(responseCategories.data.categories);
 
                      // Calculate stats
-                     const noIconCount = responseCategories.data.categories.filter((cat: Category) => !cat.icon).length;
+                     const noIconCount = responseCategories.data.categories.filter((cat: Category) => !cat.icon || cat.icon.trim() === '').length;
                      const inactiveCount = responseCategories.data.categories.filter((cat: Category) => !cat.isActive).length;
                      setStats({ noIconCount, inactiveCount });
               } catch (error) {
