@@ -3,6 +3,7 @@
 namespace App\Utils;
 
 use App\Models\Category;
+use App\Models\Comment;
 use App\Models\ProfilePicture;
 use App\Models\Ressource;
 use App\Models\StatusRessource;
@@ -223,7 +224,16 @@ class Utils{
      *         ref="#/components/schemas/UserData"
      *     ),
      *     @OA\Property(property="creationDate", type="string", format="date-time", description="The date and time when the resource was created"),
-     *     @OA\Property(property="lastModificationDate", type="string", format="date-time", description="The date and time when the resource was last updated")
+     *     @OA\Property(property="lastModificationDate", type="string", format="date-time", description="The date and time when the resource was last updated"),
+     *     @OA\Property(property="staffComment", type="string", description="Staff comments on the resource, if any"),
+     *     @OA\Property(property="isFavorite", type="boolean", description="Indicates whether the resource is marked as a favorite by the current user"),
+     *     @OA\Property(property="isBookmark", type="boolean", description="Indicates whether the resource is bookmarked by the current user"),
+     *     @OA\Property(
+     *         property="comments",
+     *         type="array",
+     *         description="List of comments associated with the resource",
+     *         @OA\Items(ref="#/components/schemas/CommentData")
+     *     )
      * )
      */
     public static function getRessourceDetail($ressource){
@@ -242,6 +252,7 @@ class Utils{
             'creationDate' => $ressource->created_at,
             'lastModificationDate' => $ressource->updated_at,
             'staffComment' => $ressource->staff_comment,
+            'comments' => self::getCommentCascade($ressource->id_ressource),
             'isFavorite' => self::isFavorite($ressource->id_ressource),
             'isBookmark' => self::isBookmark($ressource->id_ressource),
         ];
@@ -274,5 +285,43 @@ class Utils{
             return $user->bookmarks->contains($ressource);
         }
         return false;
+    }
+
+    // COMMENTS
+    /**
+     * @OA\Schema(
+     *     schema="CommentData",
+     *     type="object",
+     *     @OA\Property(property="id", type="integer", description="Comment ID"),
+     *     @OA\Property(property="user", type="object", ref="#/components/schemas/UserData"),
+     *     @OA\Property(property="comment", type="string", description="The comment text"),
+     *     @OA\Property(property="createAt", type="string", format="date-time", description="The date and time when the comment was created"),
+     *     @OA\Property(property="children", type="array", description="An array of child comments", @OA\Items(ref="#/components/schemas/CommentData"))
+     * )
+     */
+    public static function formatComment($comment){
+        return [
+            'id' => $comment->id_comment,
+            'user' => self::getUserData(User::find($comment->id_user)),
+            'comment' => $comment->comment,
+            'createAt' => $comment->created_at,
+            'children' => self::getCommentChildren($comment->id_comment),
+        ];
+    }
+
+    public static function getCommentCascade($ressourceId){
+        $rootComments = Comment::whereNull('id_parent')
+                        ->where('id_ressource', $ressourceId)
+                        ->get();
+        return $rootComments->map(function ($comment) {
+            return self::formatComment($comment);
+        });
+    }
+
+    private static function getCommentChildren($parentId) {
+        $children = Comment::where('id_parent', $parentId)->get();
+        return $children->map(function ($child) {
+            return self::formatComment($child);
+        });
     }
 }

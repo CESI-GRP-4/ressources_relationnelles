@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : lun. 29 avr. 2024 à 21:43
+-- Généré le : mar. 30 avr. 2024 à 00:20
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -155,9 +155,9 @@ CREATE TABLE `cities` (
 
 CREATE TABLE `comments` (
   `id_comment` int(11) NOT NULL,
-  `content` varchar(1000) NOT NULL,
-  `posting_date` datetime NOT NULL,
-  `id_parent_comment` int(11) DEFAULT NULL,
+  `comment` varchar(1000) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `id_parent` int(11) DEFAULT NULL,
   `id_ressource` int(11) NOT NULL,
   `id_user` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -755,9 +755,9 @@ ALTER TABLE `cities`
 --
 ALTER TABLE `comments`
   ADD PRIMARY KEY (`id_comment`),
-  ADD KEY `id_parent_comment` (`id_parent_comment`),
   ADD KEY `id_ressource` (`id_ressource`),
-  ADD KEY `id_user` (`id_user`);
+  ADD KEY `id_user` (`id_user`),
+  ADD KEY `fk_comments_parent` (`id_parent`);
 
 --
 -- Index pour la table `countries`
@@ -886,12 +886,6 @@ ALTER TABLE `categories`
 --
 ALTER TABLE `cities`
   MODIFY `id_city` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT pour la table `comments`
---
-ALTER TABLE `comments`
-  MODIFY `id_comment` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT pour la table `countries`
@@ -1039,9 +1033,9 @@ ALTER TABLE `blocked_users`
 -- Contraintes pour la table `comments`
 --
 ALTER TABLE `comments`
-  ADD CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`id_parent_comment`) REFERENCES `comments` (`id_comment`),
   ADD CONSTRAINT `comments_ibfk_2` FOREIGN KEY (`id_ressource`) REFERENCES `ressources` (`id_ressource`),
-  ADD CONSTRAINT `comments_ibfk_3` FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`);
+  ADD CONSTRAINT `comments_ibfk_3` FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`),
+  ADD CONSTRAINT `fk_comments_parent` FOREIGN KEY (`id_parent`) REFERENCES `comments` (`id_comment`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Contraintes pour la table `files`

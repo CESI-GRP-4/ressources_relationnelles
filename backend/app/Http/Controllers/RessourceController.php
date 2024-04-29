@@ -7,7 +7,6 @@ use App\Models\Favorite;
 use App\Models\Ressource;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 

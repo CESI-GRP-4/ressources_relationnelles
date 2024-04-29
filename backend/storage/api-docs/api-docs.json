@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "title": "(Re)Sources Relationnelles",
-        "version": "0.26.2"
+        "version": "0.26.3"
     },
     "servers": [
         {
@@ -827,6 +827,208 @@
                     },
                     "403": {
                         "description": "Forbidden - Admin access required"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/comment/create": {
+            "post": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Create a comment on a resource",
+                "description": "Allows an authenticated user to post a comment on a specific resource. Comments can optionally be replies to existing comments.",
+                "operationId": "createComment",
+                "requestBody": {
+                    "description": "Data needed to create a new comment",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "idRessource",
+                                    "comment"
+                                ],
+                                "properties": {
+                                    "idRessource": {
+                                        "description": "The ID of the resource to which the comment is posted",
+                                        "type": "integer"
+                                    },
+                                    "comment": {
+                                        "description": "The content of the comment",
+                                        "type": "string"
+                                    },
+                                    "idParent": {
+                                        "description": "Optional ID of the parent comment if this is a reply",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Comment posted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Comment posted successfully"
+                                        },
+                                        "comment": {
+                                            "$ref": "#/components/schemas/CommentData"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "Validation message",
+                                            "type": "string"
+                                        },
+                                        "errors": {
+                                            "description": "Detailed validation errors",
+                                            "type": "object",
+                                            "additionalProperties": [
+                                                {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "property": null
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Parent not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Parent not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/comment/delete/{id}": {
+            "delete": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Delete a comment",
+                "description": "Allows an authenticated user to delete their own comment or a moderator to delete any comment. If the comment has replies, it is not removed but marked as deleted.",
+                "operationId": "deleteComment",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the comment to be deleted",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Comment deleted successfully or marked as deleted if it has replies",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Comment deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User can only delete their own comments or requires moderator rights",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - You can only delete your own comments"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Comment not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Commentaire non trouvé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -3713,6 +3915,53 @@
                         "description": "The date and time when the resource was last updated",
                         "type": "string",
                         "format": "date-time"
+                    },
+                    "staffComment": {
+                        "description": "Staff comments on the resource, if any",
+                        "type": "string"
+                    },
+                    "isFavorite": {
+                        "description": "Indicates whether the resource is marked as a favorite by the current user",
+                        "type": "boolean"
+                    },
+                    "isBookmark": {
+                        "description": "Indicates whether the resource is bookmarked by the current user",
+                        "type": "boolean"
+                    },
+                    "comments": {
+                        "description": "List of comments associated with the resource",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CommentData"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "CommentData": {
+                "properties": {
+                    "id": {
+                        "description": "Comment ID",
+                        "type": "integer"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/UserData"
+                    },
+                    "comment": {
+                        "description": "The comment text",
+                        "type": "string"
+                    },
+                    "createAt": {
+                        "description": "The date and time when the comment was created",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "children": {
+                        "description": "An array of child comments",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CommentData"
+                        }
                     }
                 },
                 "type": "object"

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Statistics\ConnectionController;
@@ -35,6 +36,12 @@ Route::get('ressource/{id}', [RessourceController::class, 'getRessource']);
 Route::group(['middleware' => ['jwt.auth']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('verifyUser', [AuthController::class, 'verifyUser']);
+
+    // Comments
+    Route::group(['prefix' => 'comment'], function () {
+        Route::post('create', [CommentController::class, 'createComment']);
+        Route::delete('delete/{id}', [CommentController::class, 'deleteComment']);
+    });
 
     // Ressources
     Route::group(['prefix' => 'ressource'], function () {

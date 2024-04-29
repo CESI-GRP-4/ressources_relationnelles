@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : lun. 29 avr. 2024 à 21:41
+-- Généré le : mar. 30 avr. 2024 à 00:14
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -82,13 +82,6 @@ CREATE TABLE `asso_user_favorite` (
   `id_user` int(11) NOT NULL,
   `id_ressource` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Déchargement des données de la table `asso_user_favorite`
---
-
-INSERT INTO `asso_user_favorite` (`id_user`, `id_ressource`) VALUES
-(1, 5);
 
 -- --------------------------------------------------------
 
@@ -188,12 +181,20 @@ INSERT INTO `cities` (`id_city`, `name`) VALUES
 
 CREATE TABLE `comments` (
   `id_comment` int(11) NOT NULL,
-  `content` varchar(1000) NOT NULL,
-  `posting_date` datetime NOT NULL,
-  `id_parent_comment` int(11) DEFAULT NULL,
+  `comment` varchar(1000) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `id_parent` int(11) DEFAULT NULL,
   `id_ressource` int(11) NOT NULL,
   `id_user` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `comments`
+--
+
+INSERT INTO `comments` (`id_comment`, `comment`, `created_at`, `id_parent`, `id_ressource`, `id_user`) VALUES
+(8, 'ouai ouai', '2024-04-29 22:05:31', NULL, 5, 1),
+(9, 'ouai ouai', '2024-04-29 22:07:22', 8, 5, 1);
 
 -- --------------------------------------------------------
 
@@ -697,14 +698,15 @@ CREATE TABLE `ressources` (
 
 INSERT INTO `ressources` (`id_ressource`, `label`, `description`, `content`, `is_public`, `view_count`, `id_user`, `id_category`, `id_status`, `id_type`, `file`, `created_at`, `updated_at`, `staff_comment`) VALUES
 (4, 'A', 'Hello', NULL, 1, 7, 28, 3, 1, 1, NULL, '2024-04-10 11:10:06', '2024-04-27 10:35:58', NULL),
-(5, 'B', 'Hello', NULL, 0, 70, 1, 3, 1, 1, NULL, '2024-04-10 11:11:48', '2024-04-29 17:34:31', 'C\'est pas une ress'),
+(5, 'B', 'Hello', NULL, 0, 71, 1, 3, 1, 1, NULL, '2024-04-10 11:11:48', '2024-04-29 20:07:56', 'C\'est pas une ress'),
 (6, 'Wshee', 'Hello', NULL, 1, 150, 23, 3, 1, 1, NULL, '2024-04-10 11:13:44', '2024-04-11 08:29:57', NULL),
 (8, 'ON ARRIVE A 200', 'PLK ', NULL, 1, 2553, 1, 16, 1, 1, NULL, '2024-04-10 20:09:04', '2024-04-11 06:48:04', NULL),
 (9, 'TOUT ROULE POUR NOUS', 'PLK', NULL, 1, 17402, 30, 16, 1, 1, NULL, '2024-04-10 20:09:32', '2024-04-11 08:29:57', NULL),
 (10, 'IL PLEUT A PARIS', 'PLK', NULL, 1, 12245, 1, 16, 2, 1, NULL, '2024-04-10 20:29:27', '2024-04-11 08:29:57', NULL),
 (11, 'test', 'test', NULL, 1, 0, 1, 4, 3, 1, NULL, '2024-04-11 06:52:22', '2024-04-11 06:53:30', 'c\'est pas une ressource mon gars :('),
 (13, 'test', 'test\n\nzzz\n\nee', NULL, 1, 0, 1, 4, 2, 1, NULL, '2024-04-11 07:09:50', '2024-04-11 07:09:50', NULL),
-(14, 'test', 'test\n\nzzz\n\nee', NULL, 1, 0, 1, 4, 2, 1, NULL, '2024-04-27 09:11:25', '2024-04-27 09:11:25', NULL);
+(14, 'test', 'test\n\nzzz\n\nee', NULL, 1, 0, 1, 4, 2, 1, NULL, '2024-04-27 09:11:25', '2024-04-27 09:11:25', NULL),
+(15, 'test', 'test\n\nzzz\n\nee', NULL, 1, 0, 1, 4, 2, 1, NULL, '2024-04-29 18:05:29', '2024-04-29 18:05:29', NULL);
 
 -- --------------------------------------------------------
 
@@ -976,9 +978,9 @@ ALTER TABLE `cities`
 --
 ALTER TABLE `comments`
   ADD PRIMARY KEY (`id_comment`),
-  ADD KEY `id_parent_comment` (`id_parent_comment`),
   ADD KEY `id_ressource` (`id_ressource`),
-  ADD KEY `id_user` (`id_user`);
+  ADD KEY `id_user` (`id_user`),
+  ADD KEY `id_parent` (`id_parent`);
 
 --
 -- Index pour la table `countries`
@@ -1118,7 +1120,7 @@ ALTER TABLE `cities`
 -- AUTO_INCREMENT pour la table `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `id_comment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_comment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT pour la table `countries`
@@ -1172,7 +1174,7 @@ ALTER TABLE `profile_pictures`
 -- AUTO_INCREMENT pour la table `ressources`
 --
 ALTER TABLE `ressources`
-  MODIFY `id_ressource` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id_ressource` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT pour la table `rights`
@@ -1279,9 +1281,9 @@ ALTER TABLE `blocked_users`
 -- Contraintes pour la table `comments`
 --
 ALTER TABLE `comments`
-  ADD CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`id_parent_comment`) REFERENCES `comments` (`id_comment`),
   ADD CONSTRAINT `comments_ibfk_2` FOREIGN KEY (`id_ressource`) REFERENCES `ressources` (`id_ressource`),
-  ADD CONSTRAINT `comments_ibfk_3` FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`);
+  ADD CONSTRAINT `comments_ibfk_3` FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`),
+  ADD CONSTRAINT `fk_comments_parent` FOREIGN KEY (`id_parent`) REFERENCES `comments` (`id_comment`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Contraintes pour la table `files`
