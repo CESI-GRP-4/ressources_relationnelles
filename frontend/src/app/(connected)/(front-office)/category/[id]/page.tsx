@@ -1,15 +1,12 @@
 "use client"
-import { Card, Typography, Empty } from "antd";
-import { Icon } from '@iconify/react';
+import { Card, Empty } from "antd";
 import { Category } from "@/types/category";
 import { useState, useEffect } from "react";
 import axios from 'axios';
-import { useUser } from "@/providers/userProvider";
 import ListOfRessourcesAccordion from "@/components/front-office/ressource-management/listOfRessourcesAccordion";
 import PageSummary from "@/components/pageSummary";
 import FilterRessources from "@/components/filterRessources";
 import Ressource from "@/types/ressource";
-import RessourcePage from "../../ressources/page";
 
 export default function CategoryPage({ params }: { params: { id: string } }) {
        const [category, setCategory] = useState<Category>();
