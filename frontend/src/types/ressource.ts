@@ -17,5 +17,5 @@ export default interface Ressource {
        // content: string;
        // comments: Comment[];
        isFavorite?: boolean;
-       isBookmarked?: boolean;
+       isBookmark?: boolean;
 }

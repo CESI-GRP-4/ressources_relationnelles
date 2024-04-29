@@ -12,6 +12,7 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
        const [loading, setLoading] = useState(false); // Used for loading state of buttons, but the global loading of the list is handle throught the parent component from the refreshRessources function
        const { user } = useUser();
 
+       console.log(ressources)
        if (ressources.length === 0) {
               return (
                      <Card className='w-full h-fit' style={{ backgroundColor: "#f5f5f5" }}>
@@ -222,7 +223,7 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
                                           <div className='flex flex-row justify-end space-x-2'>
                                                  <Tooltip title={ressource.isFavorite ? "Enlever des favoris" : "Ajouter aux favoris"}>
                                                         {ressource.isFavorite ? (
-                                                               <Button loading={loading} onClick={() => {
+                                                               <Button size='large' loading={loading} onClick={() => {
                                                                       removeFromFavorites(ressource.id);
                                                                }}
                                                                       shape="circle" icon={<Icon style={{ fontSize: "1.7rem", color: "gold" }} icon={"emojione-monotone:star"}></Icon>} />
@@ -234,8 +235,8 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
                                                         )}
                                                  </Tooltip>
 
-                                                 <Tooltip title={ressource.isBookmarked ? `Enlever des "A regarder plus tard"` : `Ajouter à "A regarder plus tard"`}>
-                                                        {ressource.isBookmarked ? (
+                                                 <Tooltip title={ressource.isBookmark ? `Enlever des "A regarder plus tard"` : `Ajouter à "A regarder plus tard"`}>
+                                                        {ressource.isBookmark ? (
                                                                <Button
                                                                       loading={loading}
                                                                       onClick={() => {
