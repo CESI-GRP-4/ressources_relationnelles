@@ -19,6 +19,171 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
               )
        }
 
+       const addToFavorites = async (id: number) => {
+              try {
+                     setLoading(true);
+                     const response = await axios({
+                            method: 'POST',
+                            baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
+                            url: '/ressource/addToFavorite',
+                            responseType: 'json',
+                            timeout: 10000,
+                            withCredentials: true,
+                            data: {
+                                   ressourceId: id
+                            }
+                     });
+                     if (response.status === 200) {
+                            message.success("Ressource ajoutée aux favoris !");
+                            refreshRessources();
+                     }
+              } catch (error) {
+                     console.error(error);
+                     const axiosError = error as AxiosError
+
+                     if (axiosError.response) {
+                            switch (axiosError.response.status) {
+                                   case 403:
+                                          message.error("Vous n'êtes pas autorisé à ajouter cette ressource aux favoris")
+                                          break;
+                                   case 404:
+                                          message.error("Ressource introuvable")
+                                          break;
+                                   default:
+                                          message.error("Erreur lors de l'ajout de la ressource aux favoris")
+                            }
+                     } else {
+                            message.error("Erreur lors de l'ajout de la ressource aux favoris")
+                     }
+              }
+              finally {
+                     setLoading(false);
+              }
+       }
+       const removeFromFavorites = async (id: number) => {
+              try {
+                     setLoading(true);
+                     const response = await axios({
+                            method: 'POST',
+                            baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
+                            url: '/ressource/removeFromFavorite',
+                            responseType: 'json',
+                            timeout: 10000,
+                            withCredentials: true,
+                            data: {
+                                   ressourceId: id
+                            }
+                     });
+                     if (response.status === 200) {
+                            message.success("Ressource retirée des favoris !");
+                            refreshRessources();
+                     }
+              } catch (error) {
+                     console.error(error);
+                     const axiosError = error as AxiosError
+
+                     if (axiosError.response) {
+                            switch (axiosError.response.status) {
+                                   case 403:
+                                          message.error("Vous n'êtes pas autorisé à retirer cette ressource des favoris")
+                                          break;
+                                   case 404:
+                                          message.error("Ressource introuvable")
+                                          break;
+                                   default:
+                                          message.error("Erreur lors du retrait de la ressource des favoris")
+                            }
+                     } else {
+                            message.error("Erreur lors du retrait de la ressource des favoris")
+                     }
+              }
+              finally {
+                     setLoading(false);
+              }
+       }
+       const addToBookmarks = async (id: number) => {
+              try {
+                     setLoading(true);
+                     const response = await axios({
+                            method: 'POST',
+                            baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
+                            url: '/ressource/addToBookmark',
+                            responseType: 'json',
+                            timeout: 10000,
+                            withCredentials: true,
+                            data: {
+                                   ressourceId: id
+                            }
+                     });
+                     if (response.status === 200) {
+                            message.success("Ressource ajoutée à votre liste !");
+                            refreshRessources();
+                     }
+              } catch (error) {
+                     console.error(error);
+                     const axiosError = error as AxiosError
+
+                     if (axiosError.response) {
+                            switch (axiosError.response.status) {
+                                   case 403:
+                                          message.error("Vous n'êtes pas autorisé à ajouter cette ressource")
+                                          break;
+                                   case 404:
+                                          message.error("Ressource introuvable")
+                                          break;
+                                   default:
+                                          message.error("Erreur lors de l'ajout de la ressource")
+                            }
+                     } else {
+                            message.error("Erreur lors de l'ajout de la ressource")
+                     }
+              }
+              finally {
+                     setLoading(false);
+              }
+       }
+       const removeFromBookmarks = async (id: number) => {
+              try {
+                     setLoading(true);
+                     const response = await axios({
+                            method: 'POST',
+                            baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
+                            url: '/ressource/removeFromBookmark',
+                            responseType: 'json',
+                            timeout: 10000,
+                            withCredentials: true,
+                            data: {
+                                   ressourceId: id
+                            }
+                     });
+                     if (response.status === 200) {
+                            message.success("Ressource retirée de votre liste !");
+                            refreshRessources();
+                     }
+              } catch (error) {
+                     console.error(error);
+                     const axiosError = error as AxiosError
+
+                     if (axiosError.response) {
+                            switch (axiosError.response.status) {
+                                   case 403:
+                                          message.error("Vous n'êtes pas autorisé à retirer cette ressource")
+                                          break;
+                                   case 404:
+                                          message.error("Ressource introuvable")
+                                          break;
+                                   default:
+                                          message.error("Erreur lors du retrait de la ressource")
+                            }
+                     } else {
+                            message.error("Erreur lors du retrait de la ressource")
+                     }
+              }
+              finally {
+                     setLoading(false);
+              }
+       }
+
        // Prepare items for the Collapse component
        const collapseItems = ressources.map((ressource) => ({
               key: ressource.id?.toString() ?? 'unknown',
@@ -52,6 +217,40 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
               children: (
                      <>
                             <div className="flex flex-col gap-10">
+                                   <div className='flex flex-row justify-end space-x-2'>
+                                          <Tooltip title={ressource.isFavorite ? "Enlever des favoris" : "Ajouter aux favoris"}>
+                                                 {ressource.isFavorite ? (
+                                                        <Button loading={loading} onClick={() => {
+                                                               removeFromFavorites(ressource.id);
+                                                        }}
+                                                               shape="circle" icon={<Icon style={{ fontSize: "1.7rem", color: "gold" }} icon={"emojione-monotone:star"}></Icon>} />
+                                                 ) : (
+                                                        <Button loading={loading} onClick={() => {
+                                                               addToFavorites(ressource.id);
+                                                        }}
+                                                               size='large' shape="circle" icon={<Icon style={{ fontSize: "1.7rem" }} icon={"emojione-monotone:star"}></Icon>} />
+                                                 )}
+                                          </Tooltip>
+
+                                          <Tooltip title={ressource.isBookmarked ? `Enlever des "A regarder plus tard"` : `Ajouter à "A regarder plus tard"`}>
+                                                 {ressource.isBookmarked ? (
+                                                        <Button
+                                                               loading={loading}
+                                                               onClick={() => {
+                                                                      removeFromBookmarks(ressource.id);
+                                                               }}
+                                                               size='large' shape="circle" icon={<Icon style={{ fontSize: "1.7rem", color: "red" }} icon={"fluent:bookmark-off-24-regular"}></Icon>} />
+                                                 ) : (
+                                                        <Button
+                                                               loading={loading}
+                                                               onClick={() => {
+                                                                      addToBookmarks(ressource.id);
+                                                               }}
+                                                               size='large' shape="circle" icon={<Icon style={{ fontSize: "1.7rem", color: "blue" }} icon={"fluent:bookmark-add-24-regular"}></Icon>} />
+                                                 )}
+                                          </Tooltip>
+
+                                   </div>
                                    {(ressource.status === 'rejected' || ressource.status === 'blocked') && (
                                           <Badge.Ribbon text={"commentaire modérateur"} color="red">
                                                  <div className="flex flex-row items-center border p-3 rounded-md">

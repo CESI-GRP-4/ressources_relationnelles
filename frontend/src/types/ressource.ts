@@ -16,4 +16,6 @@ export default interface Ressource {
        staffComment: string;
        // content: string;
        // comments: Comment[];
+       isFavorite?: boolean;
+       isBookmarked?: boolean;
 }
