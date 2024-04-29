@@ -39,20 +39,19 @@ export default function OfflineHeader() {
                             }
                      }
                             className="w-fit h-full flex flex-row items-center">
-                            <Tooltip title="(Re)Sources Relationnelles - Ministère des solidarités et de la santé ">
-                                   <Image
-                                          draggable={false}
-                                          className='rounded-none pl-8 py-2'
-                                          src={logo}
-                                          alt="Logo du ministère des solidarités et de la santé"
-                                          width={95}
-                                          height={110}
-                                   />
-                            </Tooltip>
-
-                            <Link href={'/'} className="ml-5 text-lg font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-500">
-                            {`Bienvenue sur (Re)Sources Relationnelles`}
-                     </Link>
+                            <Link href={'/'} className="flex flex-row items-center" >
+                                   <Tooltip title="(Re)Sources Relationnelles - Ministère des solidarités et de la santé ">
+                                          <Image
+                                                 draggable={false}
+                                                 className='rounded-none pl-8 py-2'
+                                                 src={logo}
+                                                 alt="Logo du ministère des solidarités et de la santé"
+                                                 width={95}
+                                                 height={110}
+                                          />
+                                   </Tooltip>
+                                   <span className="ml-5 text-lg font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-500">{`Bienvenue sur (Re)Sources Relationnelles`}</span>
+                            </Link>
                      </div>
                      <Menu
                             mode="horizontal"
