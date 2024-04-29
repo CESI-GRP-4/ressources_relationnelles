@@ -17,7 +17,7 @@ export default function MesFavoris() {
        const fetchMyFavoriteRessources = async () => {
               try {
                      setLoading(true);
-                     const response: AxiosResponse<{ ressources: Ressource[] }> = await axios(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/myRessources`, {
+                     const response: AxiosResponse<{ ressources: Ressource[] }> = await axios(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/ressource/favorite/get`, {
                             method: "GET",
                             withCredentials: true
                      });
