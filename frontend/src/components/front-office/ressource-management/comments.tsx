@@ -81,8 +81,6 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
                                                         </Link>}
                                                         style={{ width: '100%' }}
                                                  >
-
-                                                        
                                                         <p>{comment.comment}</p>
                                                         <p style={{ color: 'rgba(0, 0, 0, 0.45)' }}>
                                                                {/* {moment(comment.createAt).format('MMMM Do YYYY, h:mm a')} Format date */}
@@ -93,13 +91,13 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
                                    )}
                                    loadMore={visibleComments < comments.length ? (
                                           <div style={{ textAlign: 'center', margin: 12 }}>
-                                                 <Button onClick={handleLoadMore}>Load More</Button>
+                                                 <Button onClick={handleLoadMore}>Chargre plus de commentaires</Button>
                                           </div>
                                    ) : null}
                             />
                      ) : (
                             <div>
-                                   {isFirstComponent && <Empty description="No comments" />}
+                                   {isFirstComponent && <Empty description="Aucun commentaire" />}
                             </div>
                      )}
 
@@ -110,7 +108,7 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
                                                  rows={4}
                                                  value={newComment}
                                                  onChange={e => setNewComment(e.target.value)}
-                                                 placeholder="Write a comment..."
+                                                 placeholder="Rédigez un commentaire..."
                                           />
                                    </Badge.Ribbon>
                                    :
@@ -118,11 +116,11 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
                                           rows={4}
                                           value={newComment}
                                           onChange={e => setNewComment(e.target.value)}
-                                          placeholder="Write a comment..."
+                                          placeholder="Rédigez un commentaire..."
                                    />
                             }
                             <Button onClick={handleAddComment} type="primary" style={{ marginTop: '10px' }}>
-                                   Add Comment
+                                   Commenter
                             </Button>
                      </div>}
               </div>
