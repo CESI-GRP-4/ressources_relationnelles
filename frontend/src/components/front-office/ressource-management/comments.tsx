@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Empty, Input, Button, List, message, Card, Badge } from 'antd';
 import { Comment as CommentType } from "@/types/comment";
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { Space, Typography } from 'antd';
+import { useCommentContext } from '@/contexts/CommentContext';
 
 const { Text, Link } = Typography;
 interface Props {
@@ -14,8 +15,12 @@ interface Props {
 export default function Comments({ comments, idRessource, isFirstComponent = true }: Props) {
        const [newComment, setNewComment] = useState('');
        const [visibleComments, setVisibleComments] = useState(5); // Initial number of comments to display
-       const [idParent, setIdParent] = useState<number>(); // Initial number of comments to display
-       const [replyingTo, setReplyingTo] = useState<string>();
+       const { idParent, replyingTo, handleSetReply, resetReply } = useCommentContext(); // Use context
+
+       useEffect(() => {
+              console.log(isFirstComponent)
+              console.log('idParent changed:', idParent); // Debugging state changes
+       }, [idParent]);
 
        const handleAddComment = async () => {
               if (newComment.trim()) {
@@ -28,7 +33,7 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
                                    url: '/comment/create',
                                    data: {
                                           comment: newComment,
-                                          idParent: idParent !== null ? idParent : undefined,
+                                          idParent: idParent,
                                           idRessource: idRessource, // TODO: Get the ressource ID from the URL
                                    },
                                    responseType: 'json',
@@ -37,6 +42,8 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
                             });
                             if (response.status === 201) {
                                    message.success("Commentaire envoyé");
+                                   setNewComment(''); // Clear the input after submitting
+                                   resetReply();  // Reset context state
                             }
                      } catch (error) {
                             console.error(error);
@@ -76,8 +83,8 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
                                           <List.Item key={comment.id}>
                                                  <Card
                                                         title={`${comment.user.firstName}`}
-                                                        extra={<Link onClick={() => { setIdParent(comment.id); setReplyingTo(comment.user.firstName); }} >
-                                                        Répondre
+                                                        extra={<Link onClick={() => { handleSetReply(comment.id, comment.user.firstName || "un monsieur") }} >
+                                                               Répondre
                                                         </Link>}
                                                         style={{ width: '100%' }}
                                                  >
