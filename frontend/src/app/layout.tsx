@@ -8,6 +8,7 @@ import Head from 'next/head'; // Import the Head component
 import CookiesNotification from '@/components/cookiesNotification';
 const inter = Inter({ subsets: ['latin'] });
 import MainLayout from '@/components/mainLayout';
+import BackToTop from '@/components/backToTop';
 
 export const metadata: Metadata = {
        title: '(Re)Sources Relationnelles',
@@ -48,6 +49,7 @@ export default function RootLayout({
                                           <>
                                                  <MainLayout>{children}</MainLayout>
                                                  <CookiesNotification></CookiesNotification>
+                                                 <BackToTop></BackToTop>
                                           </>
                                    </Providers>
                             </body>

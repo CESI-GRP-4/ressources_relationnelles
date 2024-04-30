@@ -86,7 +86,7 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
                                    renderItem={(comment) => (
                                           <List.Item key={comment.id}>
                                                  <Card
-                                                 bordered={false}
+                                                        bordered={false}
                                                         title={<div className='space-x-3'><Avatar src={comment.user.imgURL} style={{ height: 35, width: 35 }} icon={<UserOutlined />} /><Text>{comment.user.firstName}</Text><Text type='secondary'>{dayjs().to(dayjs(comment.createAt, "YYYY-MM-DD hh:mm:ss"))}</Text></div>}
                                                         extra={<Link onClick={() => { handleSetReply(comment.id, comment.user.firstName || "un monsieur") }} >
                                                                Répondre
@@ -99,7 +99,7 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
                                           </List.Item>
                                    )}
                                    loadMore={visibleComments < comments.length ? (
-                                          <div style={{ textAlign: 'center', margin: 12 }}>
+                                          <div style={{ textAlign: 'center', margin: 70 }}>
                                                  <Button type='primary' onClick={handleLoadMore}>Charger plus de commentaires</Button>
                                           </div>
                                    ) : null}
@@ -110,11 +110,14 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
                             </div>
                      )}
 
-                     {isFirstComponent && <div>
+                     {isFirstComponent && <div className='mt-10'>
                             {(idParent && replyingTo) ?
                                    <Badge.Ribbon text={`Réponse à ${replyingTo}`}>
                                           <Input.TextArea
                                                  rows={4}
+                                                 size='large'
+                                          autoSize={{ minRows: 4, maxRows: 10 }}
+                                                 
                                                  value={newComment}
                                                  onChange={e => setNewComment(e.target.value)}
                                                  placeholder="Rédigez un commentaire..."
@@ -123,6 +126,8 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
                                    :
                                    <Input.TextArea
                                           rows={4}
+                                          size='large'
+                                          autoSize={{ minRows: 4, maxRows: 10 }}
                                           value={newComment}
                                           onChange={e => setNewComment(e.target.value)}
                                           placeholder="Rédigez un commentaire..."
