@@ -48,15 +48,17 @@ export default function AcceptedResources() {
        };
 
        return (
-              <div>
-                     <PageSummary title={"Ressources acceptées"} description={undefined}></PageSummary>
+              <div className="flex flex-col gap-10">
+                     <div className="flex md:flex-row flex-col justify-between md:space-x-5 space-x-0 md:space-y-0 space-y-5">
+                            <PageSummary title={"Ressources acceptées"} description={undefined}></PageSummary>
+                            <FilterRessources acceptedRessources={ressources} setFilteredRessources={setFilteredRessources}></FilterRessources>
+                     </div>
                      <div className="flex flex-row justify-center gap-3">
                             {loading ?
                                    <Skeleton active />
                                    :
                                    <RessourcesAccordionAdmin ressources={filteredRessources[0]} refreshRessources={fetchRessources} showAccept={false} showRefuse={true} showDelete={true} showBlock={true} />
                             }
-                            <FilterRessources acceptedRessources={ressources} setFilteredRessources={setFilteredRessources}></FilterRessources>
                      </div>
               </div>
        )

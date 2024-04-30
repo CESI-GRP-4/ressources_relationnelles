@@ -104,8 +104,8 @@ export default function MyRessources() {
        ];
 
        return (
-              <div>
-                     <div className="flex flex-row justify-between">
+              <div className="flex flex-col gap-10">
+                     <div className="flex md:flex-row flex-col justify-between md:space-x-5 space-x-0 md:space-y-0 space-y-5">
                             <PageSummary title={'Mes ressources'} description={undefined}></PageSummary>
                             <FilterRessources acceptedRessources={acceptedRessources} pendingRessources={pendingRessources} rejectedRessources={rejectedRessources} blockedRessources={blockedRessources} setFilteredRessources={setFilteredRessources}></FilterRessources>
                      </div>

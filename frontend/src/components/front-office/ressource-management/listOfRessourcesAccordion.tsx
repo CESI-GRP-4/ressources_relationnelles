@@ -218,7 +218,7 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
               children: (
                      <>
                             <div className="flex flex-col gap-10">
-                                   <div className="flex flex-row w-full justify-between items-start">
+                                   <div className="flex md:flex-row flex-col-reverse w-full md:justify-between md:items-start gap-5">
                                           <RessourceData ressource={ressource}></RessourceData>
                                           <div className='flex flex-row justify-end space-x-2'>
                                                  <Tooltip title={ressource.isFavorite ? "Enlever des favoris" : "Ajouter aux favoris"}>
@@ -252,9 +252,7 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
                                                                       size='large' shape="circle" icon={<Icon style={{ fontSize: "1.7rem", color: "blue" }} icon={"fluent:bookmark-add-24-regular"}></Icon>} />
                                                         )}
                                                  </Tooltip>
-
                                           </div>
-
                                    </div>
                                    {(ressource.status === 'rejected' || ressource.status === 'blocked') && (
                                           <Badge.Ribbon text={"commentaire modérateur"} color="red">

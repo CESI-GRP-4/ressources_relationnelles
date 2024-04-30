@@ -12,7 +12,7 @@ export default function RessourcesAccordionAdmin({ ressources, refreshRessources
 
        if (ressources.length === 0) {
               return (
-                     <Card style={{ backgroundColor: "#f5f5f5" }}>
+                     <Card className='w-full' style={{ backgroundColor: "#f5f5f5" }}>
                             <Empty></Empty>
                      </Card>
               )
@@ -221,7 +221,7 @@ export default function RessourcesAccordionAdmin({ ressources, refreshRessources
               label: <div className='flex flex-row justify-between gap-5'>
                      <div className="flex flex-row gap-5 items-start w-3/4">
                             <Paragraph strong className='text-nowrap'>{ressource.label}</Paragraph>
-                            <Paragraph ellipsis={{ rows: 2, expandable: true }} type='secondary'>{ressource.description}</Paragraph>
+                            {/* <Paragraph ellipsis={{ rows: 2, expandable: true }} type='secondary'>{ressource.description}</Paragraph> */}
                      </div>
 
                      <div className='flex flex-row items-center gap-5'>

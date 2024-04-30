@@ -99,6 +99,7 @@ export default function FilterRessources({ acceptedRessources, pendingRessources
        return (
               <Card title="Filtres" size="small" className="">
                      <Form
+
                             form={form}
                             layout='inline'
                             onValuesChange={() => {
@@ -106,42 +107,61 @@ export default function FilterRessources({ acceptedRessources, pendingRessources
                             }
                             }
                      >
-                            <Form.Item label="Titre" name="label">
-                                   <Input />
-                            </Form.Item>
-                            <Form.Item label="Description" name="description">
-                                   <Input.TextArea rows={1} />
-                            </Form.Item>
+                            <div className="m-1">
+                                   <Form.Item label="Titre" name="label" >
+                                          <Input />
+                                   </Form.Item>
+                            </div>
+
+                            <div className="m-1">
+                                   <Form.Item label="Description" name="description">
+                                          <Input.TextArea rows={1} />
+                                   </Form.Item>
+                            </div>
+
                             {hideCategoryFilter ? null : ( // Hide category filter if specified
-                                   <Form.Item className="w-52" label="Catégorie" name="idCategory">
-                                          <Select
-                                          className="w-fit"
-                                                 showSearch
-                                                 optionFilterProp="label"
-                                                 filterOption={(input, option) =>
-                                                        (option?.label as string).toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                                 }
-                                          >
-                                                 {categories.map((category) => (
-                                                        <Option key={category.id} value={category.id} label={category.title}>
-                                                               {category.title}
-                                                        </Option>
-                                                 ))}
-                                          </Select>
-                                   </Form.Item>)}
+                                   <div className="m-1">
+
+                                          <Form.Item className="w-52" label="Catégorie" name="idCategory">
+                                                 <Select
+                                                        className="w-fit"
+                                                        showSearch
+                                                        optionFilterProp="label"
+                                                        filterOption={(input, option) =>
+                                                               (option?.label as string).toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                                        }
+                                                 >
+                                                        {categories.map((category) => (
+                                                               <Option key={category.id} value={category.id} label={category.title}>
+                                                                      {category.title}
+                                                               </Option>
+                                                        ))}
+                                                 </Select>
+                                          </Form.Item>
+                                   </div>
+
+                            )}
 
                             {hideIsPublicFilter ? null : ( // Hide isPublic filter if specified
-                                   <Form.Item label="Ressource publique" name="isPublic" valuePropName="checked">
-                                          <Checkbox />
-                                   </Form.Item>
+                                   <div className="m-1">
+
+                                          <Form.Item label="Ressource publique" name="isPublic" valuePropName="checked">
+                                                 <Checkbox />
+                                          </Form.Item>
+                                   </div>
+
                             )}
-                            <Form.Item>
-                                   {filterActive ? (
-                                          <Button onClick={resetFilter} >Réinitialiser les filtres</Button>
-                                   ) : (
-                                          <Button onClick={applyFilter} type="primary">Appliquer les filtres</Button>
-                                   )}
-                            </Form.Item>
+                            <div className="m-1">
+
+                                   <Form.Item>
+                                          {filterActive ? (
+                                                 <Button onClick={resetFilter} >Réinitialiser les filtres</Button>
+                                          ) : (
+                                                 <Button onClick={applyFilter} type="primary">Appliquer les filtres</Button>
+                                          )}
+                                   </Form.Item>
+                            </div>
+
                      </Form>
               </Card>
        );
