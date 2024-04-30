@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Empty, Input, Button, List, message, Card, Badge } from 'antd';
+import { Empty, Input, Button, List, message, Card, Badge, Avatar } from 'antd';
 import { Comment as CommentType } from "@/types/comment";
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { Space, Typography } from 'antd';
 import { useCommentContext } from '@/contexts/CommentContext';
-
+import { UserOutlined } from '@ant-design/icons';
+import dayjs from 'dayjs';
+import 'dayjs/locale/fr';
+dayjs.locale('fr');
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime)
 const { Text, Link } = Typography;
 interface Props {
        comments: CommentType[];
@@ -16,7 +21,6 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
        const [newComment, setNewComment] = useState('');
        const [visibleComments, setVisibleComments] = useState(5); // Initial number of comments to display
        const { idParent, replyingTo, handleSetReply, resetReply } = useCommentContext(); // Use context
-
        useEffect(() => {
               console.log(isFirstComponent)
               console.log('idParent changed:', idParent); // Debugging state changes
@@ -82,23 +86,21 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
                                    renderItem={(comment) => (
                                           <List.Item key={comment.id}>
                                                  <Card
-                                                        title={`${comment.user.firstName}`}
+                                                 bordered={false}
+                                                        title={<div className='space-x-3'><Avatar src={comment.user.imgURL} style={{ height: 35, width: 35 }} icon={<UserOutlined />} /><Text>{comment.user.firstName}</Text><Text type='secondary'>{dayjs().to(dayjs(comment.createAt, "YYYY-MM-DD hh:mm:ss"))}</Text></div>}
                                                         extra={<Link onClick={() => { handleSetReply(comment.id, comment.user.firstName || "un monsieur") }} >
                                                                Répondre
                                                         </Link>}
                                                         style={{ width: '100%' }}
                                                  >
                                                         <pre>{comment.comment}</pre>
-                                                        <p style={{ color: 'rgba(0, 0, 0, 0.45)' }}>
-                                                               {/* {moment(comment.createAt).format('MMMM Do YYYY, h:mm a')} Format date */}
-                                                        </p>
                                                         <Comments comments={comment.children} isFirstComponent={false} idRessource={idRessource} />
                                                  </Card>
                                           </List.Item>
                                    )}
                                    loadMore={visibleComments < comments.length ? (
                                           <div style={{ textAlign: 'center', margin: 12 }}>
-                                                 <Button onClick={handleLoadMore}>Chargre plus de commentaires</Button>
+                                                 <Button type='primary' onClick={handleLoadMore}>Charger plus de commentaires</Button>
                                           </div>
                                    ) : null}
                             />
