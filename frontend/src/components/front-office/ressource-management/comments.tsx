@@ -1,0 +1,130 @@
+import React, { useState } from 'react';
+import { Empty, Input, Button, List, message, Card, Badge } from 'antd';
+import { Comment as CommentType } from "@/types/comment";
+import axios, { AxiosError, AxiosResponse } from 'axios';
+import { Space, Typography } from 'antd';
+
+const { Text, Link } = Typography;
+interface Props {
+       comments: CommentType[];
+       idRessource: number;
+       isFirstComponent?: boolean;
+}
+
+export default function Comments({ comments, idRessource, isFirstComponent = true }: Props) {
+       const [newComment, setNewComment] = useState('');
+       const [visibleComments, setVisibleComments] = useState(5); // Initial number of comments to display
+       const [idParent, setIdParent] = useState<number>(); // Initial number of comments to display
+       const [replyingTo, setReplyingTo] = useState<string>();
+
+       const handleAddComment = async () => {
+              if (newComment.trim()) {
+                     // onAddComment(newComment);
+                     try {
+                            // setIsLoading(true);
+                            const response: AxiosResponse = await axios({
+                                   method: 'post',
+                                   baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
+                                   url: '/comment/create',
+                                   data: {
+                                          comment: newComment,
+                                          idParent: idParent !== null ? idParent : undefined,
+                                          idRessource: idRessource, // TODO: Get the ressource ID from the URL
+                                   },
+                                   responseType: 'json',
+                                   timeout: 10000,
+                                   withCredentials: true,
+                            });
+                            if (response.status === 201) {
+                                   message.success("La ressource a été créée avec succès");
+                            }
+                     } catch (error) {
+                            console.error(error);
+                            const axiosError = error as AxiosError
+
+                            if (axiosError.response) {
+                                   switch (axiosError.response.status) {
+                                          case 403:
+                                                 message.error("Vous n'êtes pas autorisé à créer un commentaire. Est-ce que votre mail est vérifié ?")
+                                                 break;
+                                          case 422:
+                                                 message.error("Erreur de validation des données")
+                                                 break;
+                                          default:
+                                                 message.error("Erreur lors de l'ajout du commentaire")
+                                   }
+                            } else {
+                                   message.error("Erreur lors de l'ajout du commentaire")
+                            }
+                     } finally {
+                            // setIsLoading(false);
+                     }
+                     setNewComment(''); // Clear the input after submitting
+              }
+       };
+
+       const handleLoadMore = () => {
+              setVisibleComments(prev => prev + 5); // Load 5 more comments on each trigger
+       };
+
+       return (
+              <div>
+                     {(comments.length) > 0 ? (
+                            <List
+                                   dataSource={comments.slice(0, visibleComments)}
+                                   renderItem={(comment) => (
+                                          <List.Item key={comment.id}>
+                                                 <Card
+                                                        title={`${comment.user.firstName}`}
+                                                        extra={<Link onClick={() => { setIdParent(comment.id); setReplyingTo(comment.user.firstName); }} >
+                                                        Répondre
+                                                        </Link>}
+                                                        style={{ width: '100%' }}
+                                                 >
+
+                                                        
+                                                        <p>{comment.comment}</p>
+                                                        <p style={{ color: 'rgba(0, 0, 0, 0.45)' }}>
+                                                               {/* {moment(comment.createAt).format('MMMM Do YYYY, h:mm a')} Format date */}
+                                                        </p>
+                                                        <Comments comments={comment.children} isFirstComponent={false} idRessource={idRessource} />
+                                                 </Card>
+                                          </List.Item>
+                                   )}
+                                   loadMore={visibleComments < comments.length ? (
+                                          <div style={{ textAlign: 'center', margin: 12 }}>
+                                                 <Button onClick={handleLoadMore}>Load More</Button>
+                                          </div>
+                                   ) : null}
+                            />
+                     ) : (
+                            <div>
+                                   {isFirstComponent && <Empty description="No comments" />}
+                            </div>
+                     )}
+
+                     {isFirstComponent && <div>
+                            {(idParent && replyingTo) ?
+                                   <Badge.Ribbon text={`Réponse à ${replyingTo}`}>
+                                          <Input.TextArea
+                                                 rows={4}
+                                                 value={newComment}
+                                                 onChange={e => setNewComment(e.target.value)}
+                                                 placeholder="Write a comment..."
+                                          />
+                                   </Badge.Ribbon>
+                                   :
+                                   <Input.TextArea
+                                          rows={4}
+                                          value={newComment}
+                                          onChange={e => setNewComment(e.target.value)}
+                                          placeholder="Write a comment..."
+                                   />
+                            }
+                            <Button onClick={handleAddComment} type="primary" style={{ marginTop: '10px' }}>
+                                   Add Comment
+                            </Button>
+                     </div>}
+              </div>
+       );
+}

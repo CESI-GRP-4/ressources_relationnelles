@@ -97,10 +97,10 @@ export default function FilterRessources({ acceptedRessources, pendingRessources
        };
 
        return (
-              <Card title="Filtres">
+              <Card title="Filtres" size="small" className="">
                      <Form
                             form={form}
-                            layout='vertical'
+                            layout='inline'
                             onValuesChange={() => {
                                    if (filterActive) applyFilter()
                             }
@@ -110,11 +110,12 @@ export default function FilterRessources({ acceptedRessources, pendingRessources
                                    <Input />
                             </Form.Item>
                             <Form.Item label="Description" name="description">
-                                   <Input.TextArea />
+                                   <Input.TextArea rows={1} />
                             </Form.Item>
                             {hideCategoryFilter ? null : ( // Hide category filter if specified
-                                   <Form.Item label="Catégorie" name="idCategory">
+                                   <Form.Item className="w-52" label="Catégorie" name="idCategory">
                                           <Select
+                                          className="w-fit"
                                                  showSearch
                                                  optionFilterProp="label"
                                                  filterOption={(input, option) =>
@@ -136,9 +137,9 @@ export default function FilterRessources({ acceptedRessources, pendingRessources
                             )}
                             <Form.Item>
                                    {filterActive ? (
-                                          <Button className='mt-10' onClick={resetFilter} >Réinitialiser les filtres</Button>
+                                          <Button onClick={resetFilter} >Réinitialiser les filtres</Button>
                                    ) : (
-                                          <Button className='mt-10' onClick={applyFilter} type="primary">Appliquer les filtres</Button>
+                                          <Button onClick={applyFilter} type="primary">Appliquer les filtres</Button>
                                    )}
                             </Form.Item>
                      </Form>

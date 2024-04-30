@@ -2,6 +2,7 @@ import { Tabs } from 'antd';
 import type { TabsProps } from 'antd';
 import { Icon } from '@iconify/react';
 import Ressource from '@/types/ressource';
+import Comments from './comments';
 
 export default function RessourceData({props, ressource} : { props? : TabsProps, ressource: Ressource}) {
        const items: TabsProps["items"] = [
@@ -17,10 +18,11 @@ export default function RessourceData({props, ressource} : { props? : TabsProps,
               {
                      label: <div className="flex flex-row items-center space-x-2"><Icon style={{fontSize: "2rem"}} icon={"typcn:messages"} /> <span>{`Discussion`}</span></div>,
                      key: 'discussion',
+                     children: <Comments comments={ressource.comments} idRessource={ressource.id} />
               },
        ];
 
        return (
-              <Tabs defaultActiveKey="content" items={items} {...props} />
+              <Tabs className='w-full' defaultActiveKey="content" items={items} {...props} />
        );
 }

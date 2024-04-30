@@ -41,7 +41,11 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
 
        return (
               <div className="flex flex-col gap-5">
-                     <PageSummary title={category?.title || "Page de la catégorie"} description={category?.description} />
+                     <div className="flex flex-row justify-between">
+                            <PageSummary title={category?.title || "Page de la catégorie"} description={category?.description} />
+                            <FilterRessources hideIsPublicFilter hideCategoryFilter acceptedRessources={ressources} setFilteredRessources={setFilteredRessources}></FilterRessources>
+                     </div>
+
                      {isLoading ?
                             <Skeleton active />
                             :
@@ -53,7 +57,6 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
                                                         :
                                                         <div className="flex flex-row justify-center gap-3">
                                                                <ListOfRessourcesAccordion ressources={filteredRessources[0]} refreshRessources={fetchResources} />
-                                                               <FilterRessources hideIsPublicFilter hideCategoryFilter acceptedRessources={ressources} setFilteredRessources={setFilteredRessources}></FilterRessources>
                                                         </div>
                                                  }
                                           </div>

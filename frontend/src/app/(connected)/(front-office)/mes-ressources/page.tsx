@@ -105,14 +105,17 @@ export default function MyRessources() {
 
        return (
               <div>
-                     <PageSummary title={'Mes ressources'} description={undefined}></PageSummary>
+                     <div className="flex flex-row justify-between">
+                            <PageSummary title={'Mes ressources'} description={undefined}></PageSummary>
+                            <FilterRessources acceptedRessources={acceptedRessources} pendingRessources={pendingRessources} rejectedRessources={rejectedRessources} blockedRessources={blockedRessources} setFilteredRessources={setFilteredRessources}></FilterRessources>
+                     </div>
+
                      <div className="flex flex-row justify-center gap-3">
                             {loading ?
                                    <Skeleton active />
                                    :
                                    <Tabs className='w-full' defaultActiveKey="1" items={items} />
                             }
-                            <FilterRessources acceptedRessources={acceptedRessources} pendingRessources={pendingRessources} rejectedRessources={rejectedRessources} blockedRessources={blockedRessources} setFilteredRessources={setFilteredRessources}></FilterRessources>
                      </div>
               </div>
        );
