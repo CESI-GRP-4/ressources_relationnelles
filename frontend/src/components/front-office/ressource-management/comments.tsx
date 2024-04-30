@@ -36,7 +36,7 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
                                    withCredentials: true,
                             });
                             if (response.status === 201) {
-                                   message.success("La ressource a été créée avec succès");
+                                   message.success("Commentaire envoyé");
                             }
                      } catch (error) {
                             console.error(error);
@@ -81,7 +81,7 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
                                                         </Link>}
                                                         style={{ width: '100%' }}
                                                  >
-                                                        <p>{comment.comment}</p>
+                                                        <pre>{comment.comment}</pre>
                                                         <p style={{ color: 'rgba(0, 0, 0, 0.45)' }}>
                                                                {/* {moment(comment.createAt).format('MMMM Do YYYY, h:mm a')} Format date */}
                                                         </p>
