@@ -9,6 +9,7 @@ import { useUser } from '@/providers/userProvider';
 import { Category } from "@/types/category";
 const { Option } = Select;
 const { Title } = Typography;
+import PageSummary from "@/components/pageSummary";
 
 export default function CreateRessourceForm() {
        const [form] = Form.useForm();
@@ -27,13 +28,13 @@ export default function CreateRessourceForm() {
                      setCategories(categoriesResponse.data.categories);
               } catch (error) {
                      console.error("Erreur lors de la récupération des catégories et des statuts:", error);
-              }finally {
+              } finally {
                      setIsLoading(false);
               }
        };
 
        const onFinish = async (ressourceForm: Ressource) => {
-              const ressourceFormWithUserId = { ...ressourceForm};
+              const ressourceFormWithUserId = { ...ressourceForm };
 
               try {
                      setIsLoading(true);
@@ -74,59 +75,58 @@ export default function CreateRessourceForm() {
 
        return (
               <div>
-                     <Title style={{ textAlign: 'center', marginTop: '2%', marginBottom: '2%' }}>Créer une ressource</Title>
-                     <div className="row justify-content-center">
-                            <div className="col-md-6">
-                                   <Form
-                                          form={form}
-                                          name="createRessourceForm"
-                                          onFinish={onFinish}
-                                          autoComplete="off"
-                                          labelCol={{ span: 8 }}
-                                          wrapperCol={{ span: 16 }}
+                     <PageSummary title={"Créer une ressource"} description={"Créez une ressource pour la partager avec la communauté. Vous pouvez choisir de la rendre publique ou privée. Avant publication, un modérateur vérifiera le contenu de votre ressource."}></PageSummary>
+                     <div className="flex flex-row justify-center w-full mt-10">
+                            <Form
+                                   form={form}
+                                   name="createRessourceForm"
+                                   onFinish={onFinish}
+                                   autoComplete="off"
+                                   layout="vertical"
+                                   className="xl:w-1/2 lg:w-2/3 md:w-3/4 sm:w-4/5 w-full"
+                                   size="large"
+                            >
+                                   <Form.Item label="Intitulé" name="label" rules={[{ required: true, message: "Saisissez un label" }]}>
+                                          <Input disabled={isLoading} />
+                                   </Form.Item>
+
+                                   <Form.Item label="Description" name="description">
+                                          <Input.TextArea disabled={isLoading} />
+                                   </Form.Item>
+
+                                   <Form.Item
+                                          label="Catégorie"
+                                          name="idCategory"
+                                          rules={[{ required: true, message: "Sélectionnez une catégorie" }]}
                                    >
-                                          <Form.Item label="Intitulé" name="label" rules={[{ required: true, message: "Saisissez un label" }]}>
-                                                 <Input disabled={isLoading} style={{ width: "50%" }} />
-                                          </Form.Item>
-
-                                          <Form.Item label="Description" name="description">
-                                                 <Input.TextArea disabled={isLoading} style={{ width: "50%" }} />
-                                          </Form.Item>
-
-                                          <Form.Item
-                                                 label="Catégorie"
-                                                 name="idCategory"
-                                                 rules={[{ required: true, message: "Sélectionnez une catégorie" }]}
+                                          <Select
+                                                 showSearch
+                                                 optionFilterProp="label"
+                                                 filterOption={(input, option) =>
+                                                        (option?.label as string).toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                                 }
+                                                 loading={isLoading}
                                           >
-                                                 <Select
-                                                        style={{ width: "50%" }}
-                                                        showSearch
-                                                        optionFilterProp="label"
-                                                        filterOption={(input, option) =>
-                                                               (option?.label as string).toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                                        }
-                                                        loading={isLoading}
-                                                 >
-                                                        {(categories).map((category) => (
-                                                               <Option key={category.id} value={category.id} label={category.title}>
-                                                                      {category.title}
-                                                               </Option>
-                                                        ))}
-                                                 </Select>
-                                          </Form.Item>
+                                                 {(categories).map((category) => (
+                                                        <Option key={category.id} value={category.id} label={category.title}>
+                                                               {category.title}
+                                                        </Option>
+                                                 ))}
+                                          </Select>
+                                   </Form.Item>
 
-                                          <Form.Item
-                                                 label="Ressource publique"
-                                                 name="isPublic"
-                                                 valuePropName="checked" // Pour gérer la valeur cochée
-                                                 initialValue={true} // Valeur par défaut cochée
-                                                 
-                                                 rules={[{ required: true}]}
-                                          >
-                                                 <Checkbox disabled={isLoading} />
-                                          </Form.Item>
+                                   <Form.Item
+                                          label="Ressource publique"
+                                          name="isPublic"
+                                          valuePropName="checked" // This sets the checkbox state
+                                          initialValue={true} // Default checked
+                                          rules={[{ required: true }]}
+                                          style={{ display: 'flex', alignItems: 'center', marginBottom: '24px' }} // Ensures label and checkbox are on the same row
+                                   >
+                                          <Checkbox disabled={isLoading} />
+                                   </Form.Item>
 
-                                          {/* <Form.Item label="Fichiers" name="files" valuePropName="fileList" getValueFromEvent={(e) => e.fileList} >
+                                   {/* <Form.Item label="Fichiers" name="files" valuePropName="fileList" getValueFromEvent={(e) => e.fileList} >
                                                  <Dragger style={{ width: "50%" }}>
                                                         <p className="ant-upload-drag-icon">
                                                                <InboxOutlined />
@@ -135,21 +135,20 @@ export default function CreateRessourceForm() {
                                                  </Dragger>
                                           </Form.Item> */}
 
-                                          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                                                 {user?.isEmailVerified ? (
-                                                        <Button icon={<SaveOutlined />} type="primary" htmlType="submit" loading={isLoading}>
+                                   <Form.Item>
+                                          {user?.isEmailVerified ? (
+                                                 <Button icon={<SaveOutlined />} type="primary" htmlType="submit" loading={isLoading}>
+                                                        Enregistrer
+                                                 </Button>
+                                          ) : (
+                                                 <Tooltip title="Votre email n'est pas vérifié">
+                                                        <Button icon={<SaveOutlined />} type="primary" htmlType="submit" loading={isLoading} disabled>
                                                                Enregistrer
                                                         </Button>
-                                                 ) : (
-                                                        <Tooltip title="Votre email n'est pas vérifié">
-                                                               <Button icon={<SaveOutlined />} type="primary" htmlType="submit" loading={isLoading} disabled>
-                                                                      Enregistrer
-                                                               </Button>
-                                                        </Tooltip>
-                                                 )}
-                                          </Form.Item>
-                                   </Form>
-                            </div>
+                                                 </Tooltip>
+                                          )}
+                                   </Form.Item>
+                            </Form>
                      </div>
               </div>
        );
