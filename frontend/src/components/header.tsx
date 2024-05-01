@@ -117,7 +117,7 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
 
               }}>
                      {collapsed && (
-                            <div style={
+                            <Link href={"/"} style={
                                    {
                                           borderBottomWidth: 1,
                                           borderBottomStyle: 'solid',
@@ -135,7 +135,7 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                                                  height={110}
                                           />
                                    </Tooltip>
-                            </div>)}
+                            </Link>)}
                      <Menu
                             mode="horizontal"
                             items={headerItems.slice(0, -2)} // Tous les éléments sauf les deux derniers

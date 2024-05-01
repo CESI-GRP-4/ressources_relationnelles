@@ -259,7 +259,7 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                             }}
                             style={{ height: '100vh', position: 'fixed', left: 0, top: 0 }}
                      >
-                            <div className="flex justify-center">
+                            <Link href={'/'} className="flex flex-row items-center justify-center" >
                                    <Tooltip title="(Re)Sources Relationnelles - Ministère des solidarités et de la santé ">
                                           <Image
                                                  draggable={false}
@@ -270,7 +270,7 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                                                  height={150}
                                           />
                                    </Tooltip>
-                            </div>
+                            </Link>
                             <div className="custom-scrollbar">
                                    <Menu
                                           mode="inline"
