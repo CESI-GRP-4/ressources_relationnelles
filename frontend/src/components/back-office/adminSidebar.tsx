@@ -139,18 +139,18 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                             //        title: 'ressources-desactivees',
                             // },
                             // History of actions on resources:
-                            {
-                                   icon: <Icon icon={"line-md:backup-restore"}
-                                          style={{ fontSize: '20px' }}
-                                   />,
-                                   label: (
-                                          <ConditionalTooltip title="Historique">
-                                                 <Link href={'/gestion-ressources/historique'}>Historique</Link>
-                                          </ConditionalTooltip>
-                                   ),
-                                   key: 'historique',
-                                   title: 'historique',
-                            },
+                            // {
+                            //        icon: <Icon icon={"line-md:backup-restore"}
+                            //               style={{ fontSize: '20px' }}
+                            //        />,
+                            //        label: (
+                            //               <ConditionalTooltip title="Historique">
+                            //                      <Link href={'/gestion-ressources/historique'}>Historique</Link>
+                            //               </ConditionalTooltip>
+                            //        ),
+                            //        key: 'historique',
+                            //        title: 'historique',
+                            // },
                      ]
               }
        ]
