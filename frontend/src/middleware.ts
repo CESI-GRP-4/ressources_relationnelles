@@ -15,6 +15,7 @@ const routeWithUserAuth = [
        '/categories',
        '/mes-ressources',
        '/profil',
+       '/creer-ressource',
        /^\/editer-ressource\/\d+$/
 ];
 
