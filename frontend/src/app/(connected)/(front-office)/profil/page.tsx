@@ -73,21 +73,21 @@ const UserProfilePage = () => {
                      }
 
                      // Temporairement retiré pour tester les champs sans connexion à l'API
-                     // const response: any = await axios({
-                     //   method: 'post',
-                     //   baseURL: 'http://localhost/api',
-                     //   url: "/saveUserData",
-                     //   data: {
-                     //     userId: id,
-                     //     updatedData: values,
-                     //   },
-                     //   withCredentials: true,
-                     //   responseType: 'json',
-                     //   timeout: 10000,
-                     // });
+                     const response: any = await axios({
+                       method: 'post',
+                       baseURL: 'http://localhost/api',
+                       url: '/edit/${userData.id}',
+                       data: {
+                            // id_user: userData.id,
+                         updatedData: values,
+                       },
+                       withCredentials: true,
+                       responseType: 'json',
+                       timeout: 10000,
+                     });
 
                      // Temporairement utilisé pour simuler une réponse du serveur
-                     const response = { data: { ...values, isEmailVerified: values.isEmailVerified } };
+                     // const response = { data: { ...values, isEmailVerified: values.isEmailVerified } };
 
                      setUserData(response.data);
                      message.success('Data saved successfully!');
@@ -124,7 +124,7 @@ const UserProfilePage = () => {
                                           icon={editing ? <LeftOutlined /> : <EditOutlined />}
                                           onClick={editing ? handleCancel : handleEdit}
                                           key="edit"
-                                          disabled={true}
+                                          disabled={false}
                                    >
                                           {editing ? 'Retour' : 'Modifier'}
                                    </Button>
