@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const routeForEveryone = ['/', '/ressources', '/creer-ressource', '/^\/une-ressource(?:\/\d+)?$/', '/verification-mail'];
+const routeForEveryone = ['/', '/ressources', '/^\/une-ressource(?:\/\d+)?$/', '/verification-mail'];
 
 // Routes accessible without authentication
 const routeWithoutAuth = [
