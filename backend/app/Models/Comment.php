@@ -13,7 +13,8 @@ class Comment extends Model
         'created_at',
         'id_parent',
         'id_ressource',
-        'id_user'
+        'id_user',
+        'id_status'
     ];
 
     public $timestamps = false;

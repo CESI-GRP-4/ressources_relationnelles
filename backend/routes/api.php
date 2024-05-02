@@ -75,16 +75,26 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     // Moderator +
     Route::group(['middleware' => 'isModerator'], function () {
 
+        // Comments
+        Route::group(['prefix' => 'comment'], function () {
+            Route::get('pending', [CommentController::class, 'pending']);
+            Route::get('accepted', [CommentController::class, 'accepted']);
+            Route::get('rejected', [CommentController::class, 'rejected']);
+
+            Route::patch('accept/{id}', [CommentController::class, 'accept']);
+            Route::patch('reject/{id}', [CommentController::class, 'reject']);
+        });
+
         // Resources
         Route::group(['prefix' => 'ressources'], function () {
             Route::get('pending', [RessourceController::class, 'pending']);
-            Route::patch('accept/{id}', [RessourceController::class, 'accept']);
-            Route::post('reject/{id}', [RessourceController::class, 'reject']);
-            Route::post('block/{id}', [RessourceController::class, 'block']);
-
             Route::get('accepted', [RessourceController::class, 'accepted']);
             Route::get('rejected', [RessourceController::class, 'rejected']);
             Route::get('blocked', [RessourceController::class, 'blocked']);
+
+            Route::patch('accept/{id}', [RessourceController::class, 'accept']);
+            Route::post('reject/{id}', [RessourceController::class, 'reject']);
+            Route::post('block/{id}', [RessourceController::class, 'block']);
         });
 
         // Statistics

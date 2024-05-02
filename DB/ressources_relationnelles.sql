@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : mar. 30 avr. 2024 à 00:14
+-- Généré le : jeu. 02 mai 2024 à 22:08
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -82,6 +82,13 @@ CREATE TABLE `asso_user_favorite` (
   `id_user` int(11) NOT NULL,
   `id_ressource` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `asso_user_favorite`
+--
+
+INSERT INTO `asso_user_favorite` (`id_user`, `id_ressource`) VALUES
+(28, 4);
 
 -- --------------------------------------------------------
 
@@ -185,16 +192,23 @@ CREATE TABLE `comments` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `id_parent` int(11) DEFAULT NULL,
   `id_ressource` int(11) NOT NULL,
-  `id_user` int(11) NOT NULL
+  `id_user` int(11) NOT NULL,
+  `id_status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `comments`
 --
 
-INSERT INTO `comments` (`id_comment`, `comment`, `created_at`, `id_parent`, `id_ressource`, `id_user`) VALUES
-(8, 'ouai ouai', '2024-04-29 22:05:31', NULL, 5, 1),
-(9, 'ouai ouai', '2024-04-29 22:07:22', 8, 5, 1);
+INSERT INTO `comments` (`id_comment`, `comment`, `created_at`, `id_parent`, `id_ressource`, `id_user`, `id_status`) VALUES
+(8, 'ouai ouai', '2024-04-29 22:05:31', NULL, 5, 1, 3),
+(9, 'ouai ouai', '2024-04-29 22:07:22', 8, 5, 1, 2),
+(10, 'cc', '2024-04-30 17:37:47', NULL, 4, 1, 2),
+(11, 'mais naaaann', '2024-04-30 17:38:07', 10, 4, 1, 2),
+(12, 'aze', '2024-04-30 17:38:44', NULL, 4, 1, 2),
+(13, 'Oh le SSSSS', '2024-04-30 17:40:38', 10, 4, 28, 2),
+(14, 'aaaa', '2024-04-30 18:35:53', 13, 4, 1, 2),
+(15, 'sss', '2024-04-30 18:36:05', 14, 4, 1, 2);
 
 -- --------------------------------------------------------
 
@@ -596,7 +610,10 @@ INSERT INTO `login_logs` (`id`, `id_user`, `login_datetime`) VALUES
 (94, 39, '2024-04-11 13:08:45'),
 (95, 40, '2024-04-11 13:09:53'),
 (96, 1, '2024-04-17 23:02:58'),
-(97, 1, '2024-04-25 19:02:59');
+(97, 1, '2024-04-25 19:02:59'),
+(98, 1, '2024-04-30 19:36:16'),
+(99, 28, '2024-04-30 19:40:12'),
+(100, 1, '2024-05-02 20:09:10');
 
 -- --------------------------------------------------------
 
@@ -698,7 +715,7 @@ CREATE TABLE `ressources` (
 
 INSERT INTO `ressources` (`id_ressource`, `label`, `description`, `content`, `is_public`, `view_count`, `id_user`, `id_category`, `id_status`, `id_type`, `file`, `created_at`, `updated_at`, `staff_comment`) VALUES
 (4, 'A', 'Hello', NULL, 1, 7, 28, 3, 1, 1, NULL, '2024-04-10 11:10:06', '2024-04-27 10:35:58', NULL),
-(5, 'B', 'Hello', NULL, 0, 71, 1, 3, 1, 1, NULL, '2024-04-10 11:11:48', '2024-04-29 20:07:56', 'C\'est pas une ress'),
+(5, 'B', 'Hello', NULL, 0, 72, 1, 3, 1, 1, NULL, '2024-04-10 11:11:48', '2024-04-30 15:48:48', 'C\'est pas une ress'),
 (6, 'Wshee', 'Hello', NULL, 1, 150, 23, 3, 1, 1, NULL, '2024-04-10 11:13:44', '2024-04-11 08:29:57', NULL),
 (8, 'ON ARRIVE A 200', 'PLK ', NULL, 1, 2553, 1, 16, 1, 1, NULL, '2024-04-10 20:09:04', '2024-04-11 06:48:04', NULL),
 (9, 'TOUT ROULE POUR NOUS', 'PLK', NULL, 1, 17402, 30, 16, 1, 1, NULL, '2024-04-10 20:09:32', '2024-04-11 08:29:57', NULL),
@@ -769,6 +786,26 @@ CREATE TABLE `statistics_archive` (
 
 INSERT INTO `statistics_archive` (`id_statistic_archive`, `archive_date`, `bookmarks_count`, `views_count`, `total_download_count`) VALUES
 (1, '2024-01-18 22:38:55', 10, 150, 5);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `status_comments`
+--
+
+CREATE TABLE `status_comments` (
+  `id_status` int(11) NOT NULL,
+  `label` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `status_comments`
+--
+
+INSERT INTO `status_comments` (`id_status`, `label`) VALUES
+(1, 'accepted'),
+(2, 'pending'),
+(3, 'rejected');
 
 -- --------------------------------------------------------
 
@@ -980,7 +1017,8 @@ ALTER TABLE `comments`
   ADD PRIMARY KEY (`id_comment`),
   ADD KEY `id_ressource` (`id_ressource`),
   ADD KEY `id_user` (`id_user`),
-  ADD KEY `id_parent` (`id_parent`);
+  ADD KEY `id_parent` (`id_parent`),
+  ADD KEY `id_status` (`id_status`);
 
 --
 -- Index pour la table `countries`
@@ -1064,6 +1102,12 @@ ALTER TABLE `statistics_archive`
   ADD PRIMARY KEY (`id_statistic_archive`);
 
 --
+-- Index pour la table `status_comments`
+--
+ALTER TABLE `status_comments`
+  ADD PRIMARY KEY (`id_status`);
+
+--
 -- Index pour la table `status_ressources`
 --
 ALTER TABLE `status_ressources`
@@ -1120,7 +1164,7 @@ ALTER TABLE `cities`
 -- AUTO_INCREMENT pour la table `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `id_comment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id_comment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT pour la table `countries`
@@ -1150,7 +1194,7 @@ ALTER TABLE `invitations`
 -- AUTO_INCREMENT pour la table `login_logs`
 --
 ALTER TABLE `login_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=98;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=101;
 
 --
 -- AUTO_INCREMENT pour la table `migrations`
@@ -1193,6 +1237,12 @@ ALTER TABLE `roles`
 --
 ALTER TABLE `statistics_archive`
   MODIFY `id_statistic_archive` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT pour la table `status_comments`
+--
+ALTER TABLE `status_comments`
+  MODIFY `id_status` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT pour la table `status_ressources`
@@ -1283,7 +1333,8 @@ ALTER TABLE `blocked_users`
 ALTER TABLE `comments`
   ADD CONSTRAINT `comments_ibfk_2` FOREIGN KEY (`id_ressource`) REFERENCES `ressources` (`id_ressource`),
   ADD CONSTRAINT `comments_ibfk_3` FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`),
-  ADD CONSTRAINT `fk_comments_parent` FOREIGN KEY (`id_parent`) REFERENCES `comments` (`id_comment`) ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_comments_parent` FOREIGN KEY (`id_parent`) REFERENCES `comments` (`id_comment`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_comments_status` FOREIGN KEY (`id_status`) REFERENCES `status_comments` (`id_status`);
 
 --
 -- Contraintes pour la table `files`

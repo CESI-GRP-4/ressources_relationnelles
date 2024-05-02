@@ -4,11 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Comment;
 use App\Models\Ressource;
+use App\Models\User;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class CommentController extends Controller {
+class CommentController extends Controller
+{
+    const ACCEPTED = 1;
+    const PENDING = 2;
+    const REJECTED = 3;
 
     /**
      * @OA\Post(
@@ -71,7 +76,8 @@ class CommentController extends Controller {
      *     )
      * )
      */
-    public function createComment(Request $request) {
+    public function createComment(Request $request)
+    {
         $validatedData = Validator::make($request->all(), [
             'idRessource' => 'required|integer',
             'comment' => 'required|string',
@@ -94,8 +100,7 @@ class CommentController extends Controller {
 
             if ($parent) {
                 $parentId = $request->idParent;
-            }
-            else{
+            } else {
                 return response()->json(['message' => 'Parent not found'], 404);
             }
         }
@@ -104,13 +109,38 @@ class CommentController extends Controller {
         $comment->id_user = auth()->user()->id_user;
         $comment->id_ressource = $request->idRessource;
         $comment->comment = $request->comment;
-        if ($parentId){
+        if ($parentId) {
             $comment->id_parent = $parentId;
         }
         $comment->save();
         return response()->json(['message' => 'Comment posted successfully', 'comment' => Utils::formatComment($comment)], 201);
     }
 
+    /**
+     * @OA\Schema(
+     *     schema="FormattedComment",
+     *     type="object",
+     *     description="Formatted information about a comment",
+     *     @OA\Property(property="id", type="integer", description="The unique identifier of the comment"),
+     *     @OA\Property(
+     *         property="user",
+     *         type="object",
+     *         description="Details about the user who made the comment",
+     *         ref="#/components/schemas/UserData"
+     *     ),
+     *     @OA\Property(property="comment", type="string", description="The content of the comment"),
+     *     @OA\Property(property="createAt", type="string", format="date-time", description="The date and time when the comment was created")
+     * )
+     */
+    public function formatComment($comment)
+    {
+        return [
+            'id' => $comment->id_comment,
+            'user' => Utils::getUserData(User::find($comment->id_user)),
+            'comment' => $comment->comment,
+            'createAt' => $comment->created_at,
+        ];
+    }
 
     /**
      * @OA\Delete(
@@ -155,18 +185,19 @@ class CommentController extends Controller {
      *     )
      * )
      */
-    public function deleteComment($id) {
+    public function deleteComment($id)
+    {
         $comment = Comment::find($id);
 
         if (!$comment) {
             return response()->json(['message' => 'Commentaire non trouvé'], 404);
         }
 
-        if(auth()->user()->id_role == 4 AND $comment->id_user != auth()->user()->id_user){
+        if (auth()->user()->id_role == 4 and $comment->id_user != auth()->user()->id_user) {
             return response()->json(['message' => 'Unauthorized - You can only delete your own comments'], 401);
         }
 
-        if($comment->replies){
+        if ($comment->replies) {
             $comment->comment = "Commentaire supprimé";
             $comment->save();
             return response()->json(['message' => 'Comment deleted successfully']);
@@ -174,5 +205,247 @@ class CommentController extends Controller {
 
         $comment->delete();
         return response()->json(['message' => 'Comment deleted successfully']);
+    }
+
+    /**
+     * @OA\Patch(
+     *     path="/comment/accept/{id}",
+     *     tags={"Comments"},
+     *     summary="Accept a comment",
+     *     description="Allows a moderator to accept a comment that is currently in a pending state. The comment can only be accepted if it is pending and, if it has a parent comment, the parent must also be accepted.",
+     *     operationId="acceptComment",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID of the comment to be accepted",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Comment accepted successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Commentaire accepté")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Comment not in pending state or parent comment not accepted",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Commentaire n'est pas en attente or Le commentaire parent n'est pas accepté")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Comment not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Commentaire non trouvé")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - User must be logged in and have moderator privileges",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthorized - User must be logged in and have moderator privileges")
+     *         )
+     *     )
+     * )
+     */
+    public function accept($id)
+    {
+        $comment = Comment::find($id);
+        if (!$comment) {
+            return response()->json(['message' => 'Commentaire non trouvé'], 404);
+        }
+
+        if ($comment->id_status != self::PENDING) {
+            return response()->json(['message' => 'Commentaire n\'est pas en attente'], 400);
+        }
+
+
+        if ($comment->id_parent) {
+            $parent = Comment::find($comment->id_parent);
+            if ($parent->id_status != self::ACCEPTED) {
+                return response()->json(['message' => 'Le commentaire parent n\'est pas accepté'], 400);
+            }
+        }
+
+        $comment->id_status = self::ACCEPTED;
+        $comment->save();
+        return response()->json(['message' => 'Commentaire accepté']);
+    }
+
+    /**
+     * @OA\Patch(
+     *     path="/comment/reject/{id}",
+     *     tags={"Comments"},
+     *     summary="Reject a comment",
+     *     description="Allows a moderator to reject a comment that is currently in a pending state. Only comments that are pending can be rejected.",
+     *     operationId="rejectComment",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID of the comment to be rejected",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Comment rejected successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Commentaire rejeté")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Comment not in pending state",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Commentaire n'est pas en attente")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Comment not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Commentaire non trouvé")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - User must be logged in and have moderator privileges",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthorized - User must be logged in and have moderator privileges")
+     *         )
+     *     )
+     * )
+     */
+    public function reject($id)
+    {
+        $comment = Comment::find($id);
+        if (!$comment) {
+            return response()->json(['message' => 'Commentaire non trouvé'], 404);
+        }
+
+        if ($comment->id_status != self::PENDING) {
+            return response()->json(['message' => 'Commentaire n\'est pas en attente'], 400);
+        }
+
+        $comment->id_status = self::REJECTED;
+        $comment->save();
+        return response()->json(['message' => 'Commentaire accepté']);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/comment/pending",
+     *     tags={"Comments"},
+     *     summary="Retrieve all pending comments",
+     *     description="Fetches a list of all comments that are currently in a pending state, formatted for display.",
+     *     operationId="getPendingComments",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Response(
+     *         response=200,
+     *         description="A list of pending comments",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="comments",
+     *                 type="array",
+     *                 description="An array of formatted comments",
+     *                 @OA\Items(ref="#/components/schemas/FormattedComment")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - User must be logged in and have the appropriate privileges (e.g., moderator)",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthorized - User must be logged in and have the appropriate privileges")
+     *         )
+     *     )
+     * )
+     */
+    public function pending()
+    {
+        $comments = Comment::where('id_status', self::PENDING)->get();
+        return response()->json(['comments' => $comments->map(fn($comment) => self::formatComment($comment))]);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/comment/accepted",
+     *     tags={"Comments"},
+     *     summary="Retrieve all accepted comments",
+     *     description="Fetches a list of all comments that are currently in an accepted state, formatted for display.",
+     *     operationId="getAcceptedComments",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Response(
+     *         response=200,
+     *         description="A list of accepted comments",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="comments",
+     *                 type="array",
+     *                 description="An array of formatted comments",
+     *                 @OA\Items(ref="#/components/schemas/FormattedComment")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - User must be logged in and have the appropriate privileges (e.g., moderator)",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthorized - User must be logged in and have the appropriate privileges")
+     *         )
+     *     )
+     * )
+     */
+    public function accepted()
+    {
+        $comments = Comment::where('id_status', self::ACCEPTED)->get();
+        return response()->json(['comments' => $comments->map(fn($comment) => self::formatComment($comment))]);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/comment/rejected",
+     *     tags={"Comments"},
+     *     summary="Retrieve all rejected comments",
+     *     description="Fetches a list of all comments that are currently in a rejected state, formatted for display.",
+     *     operationId="getRejectedComments",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Response(
+     *         response=200,
+     *         description="A list of rejected comments",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="comments",
+     *                 type="array",
+     *                 description="An array of formatted comments",
+     *                 @OA\Items(ref="#/components/schemas/FormattedComment")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - User must be logged in and have the appropriate privileges (e.g., moderator)",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthorized - User must be logged in and have the appropriate privileges")
+     *         )
+     *     )
+     * )
+     */
+    public function rejected()
+    {
+        $comments = Comment::where('id_status', self::REJECTED)->get();
+        return response()->json(['comments' => $comments->map(fn($comment) => self::formatComment($comment))]);
     }
 }

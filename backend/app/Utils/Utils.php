@@ -312,6 +312,7 @@ class Utils{
     public static function getCommentCascade($ressourceId){
         $rootComments = Comment::whereNull('id_parent')
                         ->where('id_ressource', $ressourceId)
+                        ->where('id_status', 2) // pending
                         ->get();
         return $rootComments->map(function ($comment) {
             return self::formatComment($comment);
@@ -319,7 +320,9 @@ class Utils{
     }
 
     private static function getCommentChildren($parentId) {
-        $children = Comment::where('id_parent', $parentId)->get();
+        $children = Comment::where('id_parent', $parentId)
+            ->where('id_status', 2) // pending
+            ->get();
         return $children->map(function ($child) {
             return self::formatComment($child);
         });

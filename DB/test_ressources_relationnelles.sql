@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : mar. 30 avr. 2024 à 00:20
+-- Généré le : jeu. 02 mai 2024 à 22:08
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -596,6 +596,26 @@ CREATE TABLE `statistics_archive` (
 -- --------------------------------------------------------
 
 --
+-- Structure de la table `status_comments`
+--
+
+CREATE TABLE `status_comments` (
+  `id_status` int(11) NOT NULL,
+  `label` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `status_comments`
+--
+
+INSERT INTO `status_comments` (`id_status`, `label`) VALUES
+(1, 'accepted'),
+(2, 'pending'),
+(3, 'rejected');
+
+-- --------------------------------------------------------
+
+--
 -- Structure de la table `status_ressources`
 --
 
@@ -835,6 +855,12 @@ ALTER TABLE `statistics_archive`
   ADD PRIMARY KEY (`id_statistic_archive`);
 
 --
+-- Index pour la table `status_comments`
+--
+ALTER TABLE `status_comments`
+  ADD PRIMARY KEY (`id_status`);
+
+--
 -- Index pour la table `status_ressources`
 --
 ALTER TABLE `status_ressources`
@@ -952,6 +978,12 @@ ALTER TABLE `roles`
 --
 ALTER TABLE `statistics_archive`
   MODIFY `id_statistic_archive` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `status_comments`
+--
+ALTER TABLE `status_comments`
+  MODIFY `id_status` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT pour la table `status_ressources`

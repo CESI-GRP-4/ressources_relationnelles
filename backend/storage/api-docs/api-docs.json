@@ -1038,6 +1038,346 @@
                 ]
             }
         },
+        "/comment/accept/{id}": {
+            "patch": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Accept a comment",
+                "description": "Allows a moderator to accept a comment that is currently in a pending state. The comment can only be accepted if it is pending and, if it has a parent comment, the parent must also be accepted.",
+                "operationId": "acceptComment",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the comment to be accepted",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Comment accepted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Commentaire accepté"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Comment not in pending state or parent comment not accepted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Commentaire n'est pas en attente or Le commentaire parent n'est pas accepté"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Comment not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Commentaire non trouvé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in and have moderator privileges",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in and have moderator privileges"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/comment/reject/{id}": {
+            "patch": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Reject a comment",
+                "description": "Allows a moderator to reject a comment that is currently in a pending state. Only comments that are pending can be rejected.",
+                "operationId": "rejectComment",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the comment to be rejected",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Comment rejected successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Commentaire rejeté"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Comment not in pending state",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Commentaire n'est pas en attente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Comment not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Commentaire non trouvé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in and have moderator privileges",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in and have moderator privileges"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/comment/pending": {
+            "get": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Retrieve all pending comments",
+                "description": "Fetches a list of all comments that are currently in a pending state, formatted for display.",
+                "operationId": "getPendingComments",
+                "responses": {
+                    "200": {
+                        "description": "A list of pending comments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "comments": {
+                                            "description": "An array of formatted comments",
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/FormattedComment"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in and have the appropriate privileges (e.g., moderator)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in and have the appropriate privileges"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/comment/accepted": {
+            "get": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Retrieve all accepted comments",
+                "description": "Fetches a list of all comments that are currently in an accepted state, formatted for display.",
+                "operationId": "getAcceptedComments",
+                "responses": {
+                    "200": {
+                        "description": "A list of accepted comments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "comments": {
+                                            "description": "An array of formatted comments",
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/FormattedComment"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in and have the appropriate privileges (e.g., moderator)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in and have the appropriate privileges"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/comment/rejected": {
+            "get": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Retrieve all rejected comments",
+                "description": "Fetches a list of all comments that are currently in a rejected state, formatted for display.",
+                "operationId": "getRejectedComments",
+                "responses": {
+                    "200": {
+                        "description": "A list of rejected comments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "comments": {
+                                            "description": "An array of formatted comments",
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/FormattedComment"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in and have the appropriate privileges (e.g., moderator)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in and have the appropriate privileges"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
         "/countries": {
             "get": {
                 "tags": [
@@ -3627,6 +3967,28 @@
                     },
                     "updatedAt": {
                         "description": "Last update date of the category",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "FormattedComment": {
+                "description": "Formatted information about a comment",
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier of the comment",
+                        "type": "integer"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/UserData"
+                    },
+                    "comment": {
+                        "description": "The content of the comment",
+                        "type": "string"
+                    },
+                    "createAt": {
+                        "description": "The date and time when the comment was created",
                         "type": "string",
                         "format": "date-time"
                     }
