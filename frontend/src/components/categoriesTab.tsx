@@ -17,8 +17,8 @@ export default function CategoriesTab() {
                             key: String(index + 1),
                             label: category.title,
                             children:
-                            <div className="w-full flex flex-row justify-center">
-                                   <RessourcesCaroussel categoryId={category.id} />
+                                   <div className="w-full flex flex-row justify-center">
+                                          <RessourcesCaroussel categoryId={category.id} />
                                    </div>,
                      }));
                      setTabs(items);
@@ -36,6 +36,6 @@ export default function CategoriesTab() {
        }, []);
 
        return (
-              <Tabs className="w-full" size="large" defaultActiveKey="1" items={tabs} />
+              <Tabs type="card" className="w-full" size="large" defaultActiveKey="1" items={tabs} />
        )
 }
