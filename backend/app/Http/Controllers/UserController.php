@@ -432,7 +432,7 @@ class UserController extends Controller
             $user = User::findOrFail($id);
             $isSuperAdmin = auth()->user()->role->name === 'SuperAdministrateur';
             $authUserId = auth()->user()->id_user;
-            
+
             $rules = [
                 'firstName' => 'string|nullable',
                 'lastName' => 'string|nullable',
@@ -441,11 +441,7 @@ class UserController extends Controller
                 'country' => 'string|nullable',
                 'city' => 'string|nullable',
                 'postalCode' => 'string|nullable',
-                'user' => 'string|nullable',
-                'role' => 'string|nullable',
-
             ];
-            // var_dump($rules);
 
             if ($isSuperAdmin) {
                 $rules['role'] = 'string|nullable';
