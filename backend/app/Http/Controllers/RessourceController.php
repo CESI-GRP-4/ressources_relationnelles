@@ -233,8 +233,6 @@ class RessourceController extends Controller {
      * )
      */
     public function edit($id,Request $request){
-        // TODO : ressource bloqué
-
         if (auth()->user()->is_verified == 0) {
             return response()->json(['message' => 'Vous devez vérifier votre compte avant de pouvoir éditer une ressource'], 403);
         }
@@ -245,6 +243,10 @@ class RessourceController extends Controller {
 
         if ($ressource->id_user != auth()->user()->id_user) {
             return response()->json(['message' => 'Vous n\'avez pas les droits pour modifier cette ressource'], 403);
+        }
+
+        if($ressource->id_status == 4){
+            return response()->json(['message' => 'Ressource bloquée'], 403);
         }
 
         if ($request->has('isPublic')) {
