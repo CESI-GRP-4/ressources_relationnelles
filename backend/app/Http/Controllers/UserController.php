@@ -850,4 +850,50 @@ class UserController extends Controller
     protected function getUnverifiedEmailsCount() {
         return User::where('is_verified', false)->count();
     }
+
+
+    public function editUserData(Request $request)
+    {
+        // Validation des données entrantes
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|string', // Assurez-vous que l'ID de l'utilisateur est présent et est un entier
+            'lastName' => 'nullable|string',
+            'firstName' => 'nullable|string',
+            'email' => 'nullable|string|email',
+            'isEmailVerified' => 'nullable|boolean',
+            'country' => 'nullable|string',
+            'city' => 'nullable|string',
+            'postalCode' => 'nullable|string',
+            // Ajoutez d'autres règles de validation au besoin
+        ]);
+
+        // Vérifiez si la validation a échoué
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // Récupérez l'ID de l'utilisateur à partir de la requête
+            $userId = $request->input('id');
+
+            // Récupérez l'utilisateur à partir de l'ID
+            $user = User::findOrFail($userId);
+
+            // Mettez à jour les champs modifiables de l'utilisateur avec les nouvelles valeurs
+            $user->update($request->only([
+                'lastName', 'firstName', 'email', 'isEmailVerified', 'country', 'city', 'postalCode'
+            ]));
+
+            DB::commit();
+
+            // Retournez une réponse JSON avec un message de succès et les données utilisateur mises à jour
+            return response()->json(['message' => 'Données utilisateur mises à jour avec succès', 'user' => $user], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // En cas d'erreur, retournez une réponse JSON avec un message d'erreur
+            return response()->json(['error' => 'Une erreur est survenue lors de la mise à jour des données utilisateur.'], 500);
+        }
+    }
 }

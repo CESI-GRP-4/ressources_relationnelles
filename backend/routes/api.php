@@ -144,4 +144,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
         Route::post('user/create', [UserController::class, 'create']);
     });
 
+    // Profile
+    Route::poste('saveUserData', [UserController::class, 'editUserData']);
+
 });

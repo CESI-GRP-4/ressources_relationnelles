@@ -29,6 +29,7 @@ const UserProfilePage = () => {
                      try {
                             setUserData(user);
                             form.setFieldsValue({
+                                   id: user?.id,
                                    lastName: user?.lastName,
                                    firstName: user?.firstName,
                                    email: user?.email,
@@ -63,6 +64,7 @@ const UserProfilePage = () => {
                      // Si la validation réussit, les valeurs dans le formulaire sont récupérées avec getFieldsValue
                      const values = form.getFieldsValue();
                      console.log('Form values:', values);
+                     var id = user?.id;
 
                      // Vérifiez si l'email a été modifié
                      const emailChanged = values.email !== userData?.email;
@@ -73,21 +75,21 @@ const UserProfilePage = () => {
                      }
 
                      // Temporairement retiré pour tester les champs sans connexion à l'API
-                     const response: any = await axios({
-                       method: 'post',
-                       baseURL: 'http://localhost/api',
-                       url: '/edit/${userData.id}',
-                       data: {
-                            // id_user: userData.id,
-                         updatedData: values,
-                       },
-                       withCredentials: true,
-                       responseType: 'json',
-                       timeout: 10000,
-                     });
+                      const response: any = await axios({
+                        method: 'post',
+                        baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
+                        url: "/saveUserData",
+                        data: {
+                          userId: id,
+                          updatedData: values,
+                        },
+                        withCredentials: true,
+                        responseType: 'json',
+                        timeout: 10000,
+                      });
 
                      // Temporairement utilisé pour simuler une réponse du serveur
-                     // const response = { data: { ...values, isEmailVerified: values.isEmailVerified } };
+                    // const response = { data: { ...values, isEmailVerified: values.isEmailVerified } };
 
                      setUserData(response.data);
                      message.success('Data saved successfully!');
@@ -124,7 +126,6 @@ const UserProfilePage = () => {
                                           icon={editing ? <LeftOutlined /> : <EditOutlined />}
                                           onClick={editing ? handleCancel : handleEdit}
                                           key="edit"
-                                          disabled={false}
                                    >
                                           {editing ? 'Retour' : 'Modifier'}
                                    </Button>
