@@ -56,53 +56,43 @@ const UserProfilePage = () => {
 
        const handleSave = async () => {
               let isFormValid = false;
-
+          
               try {
-                     // Forcer une validation manuelle du formulaire pour s'assurer que les règles de validation sont appliquées
-                     await form.validateFields();
-
-                     // Si la validation réussit, les valeurs dans le formulaire sont récupérées avec getFieldsValue
-                     const values = form.getFieldsValue();
-                     console.log('Form values:', values);
-                     var id = user?.id;
-
-                     // Vérifiez si l'email a été modifié
-                     const emailChanged = values.email !== userData?.email;
-                     if (emailChanged) {
-                            values.isEmailVerified = false; // Met isEmailVerified à false si l'email a changé
-                     } else {
-                            values.isEmailVerified = userData?.isEmailVerified; // Conserve la valeur actuelle si l'email n'a pas changé
-                     }
-
-                     // Temporairement retiré pour tester les champs sans connexion à l'API
-                      const response: any = await axios({
-                        method: 'post',
-                        baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
-                        url: "/saveUserData",
-                        data: {
-                          userId: id,
-                          updatedData: values,
-                        },
-                        withCredentials: true,
-                        responseType: 'json',
-                        timeout: 10000,
-                      });
-
-                     // Temporairement utilisé pour simuler une réponse du serveur
-                    // const response = { data: { ...values, isEmailVerified: values.isEmailVerified } };
-
-                     setUserData(response.data);
-                     message.success('Data saved successfully!');
-
-                     isFormValid = true;
+                  await form.validateFields();
+          
+                  const values = form.getFieldsValue();
+                  const id = { id: user?.id }; // Créez un objet contenant uniquement la clé 'id'
+          
+                  console.log('Données envoyées :', {
+                     ...id,
+                     ...values,
+                 }); 
+                  const response = await axios({
+                      method: 'post',
+                      baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
+                      url: "/saveUserData",
+                      data: {
+                          ...id,
+                          ...values,
+                      },
+                      withCredentials: true,
+                      responseType: 'json',
+                      timeout: 10000,
+                  });
+          
+                  setUserData(response.data);
+                  message.success('Data saved successfully!');
+          
+                  isFormValid = true;
               } catch (error) {
-                     console.error('Error saving user data:', error);
+                  console.error('Error saving user data:', error);
               } finally {
-                     if (isFormValid) {
-                            setEditing(false);
-                     }
+                  if (isFormValid) {
+                      setEditing(false);
+                  }
               }
-       };
+          };
+          
 
        const handleCancel = () => {
               // Désactiver le mode édition lors du clic sur le bouton "Retour"

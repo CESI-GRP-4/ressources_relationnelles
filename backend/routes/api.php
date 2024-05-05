@@ -145,6 +145,6 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     });
 
     // Profile
-    Route::poste('saveUserData', [UserController::class, 'editUserData']);
+    Route::post('saveUserData', [UserController::class, 'editUserData']);
 
 });

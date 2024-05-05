@@ -854,46 +854,50 @@ class UserController extends Controller
 
     public function editUserData(Request $request)
     {
-        // Validation des données entrantes
-        $validator = Validator::make($request->all(), [
-            'id' => 'required|string', // Assurez-vous que l'ID de l'utilisateur est présent et est un entier
-            'lastName' => 'nullable|string',
-            'firstName' => 'nullable|string',
-            'email' => 'nullable|string|email',
-            'isEmailVerified' => 'nullable|boolean',
-            'country' => 'nullable|string',
-            'city' => 'nullable|string',
-            'postalCode' => 'nullable|string',
-            // Ajoutez d'autres règles de validation au besoin
-        ]);
-
-        // Vérifiez si la validation a échoué
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
-        }
-
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
-
-            // Récupérez l'ID de l'utilisateur à partir de la requête
+            // Récupérer l'ID de l'utilisateur à partir de la requête
             $userId = $request->input('id');
-
-            // Récupérez l'utilisateur à partir de l'ID
+            // Récupérer l'utilisateur à partir de l'ID
             $user = User::findOrFail($userId);
 
-            // Mettez à jour les champs modifiables de l'utilisateur avec les nouvelles valeurs
-            $user->update($request->only([
+            // Définir les règles de validation
+            $rules = [
+                'lastName' => 'nullable|string',
+                'firstName' => 'nullable|string',
+                'email' => 'nullable|string|email',
+                'isEmailVerified' => 'nullable|boolean',
+                'country' => 'nullable|string',
+                'city' => 'nullable|string',
+                'postalCode' => 'nullable|string',
+            ];
+
+            // Créer le validateur
+            $validator = Validator::make($request->all(), $rules);
+
+            // Vérifier si la validation a échoué
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), 400);
+            }
+
+            // Mettre à jour les champs modifiables de l'utilisateur avec les nouvelles valeurs
+            $user->fill($request->only([
                 'lastName', 'firstName', 'email', 'isEmailVerified', 'country', 'city', 'postalCode'
             ]));
 
+            // Sauvegarder les modifications de l'utilisateur
+            $user->save();
+
             DB::commit();
 
-            // Retournez une réponse JSON avec un message de succès et les données utilisateur mises à jour
+            // Retourner une réponse JSON avec un message de succès et les données utilisateur mises à jour
             return response()->json(['message' => 'Données utilisateur mises à jour avec succès', 'user' => $user], 200);
         } catch (\Exception $e) {
             DB::rollBack();
-            // En cas d'erreur, retournez une réponse JSON avec un message d'erreur
+            // En cas d'erreur, retourner une réponse JSON avec un message d'erreur
             return response()->json(['error' => 'Une erreur est survenue lors de la mise à jour des données utilisateur.'], 500);
         }
     }
+
+
 }
