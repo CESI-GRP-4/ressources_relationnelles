@@ -125,32 +125,62 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                                    key: 'ressources-bloquees',
                                    title: 'ressources-bloquees',
                             },
-                            // Ressources disabled (by the user, it can be then re-activated by the user):
-                            // {
-                            //        icon: <Icon icon={"line-md:switch-off"}
-                            //               style={{ fontSize: '20px' }}
-                            //        />,
-                            //        label: (
-                            //               <ConditionalTooltip title={`Ressources désactivées (par l'auteur)`}>
-                            //                      <Link href={'/gestion-ressources/ressources-desactivees'}>{`Désactivées`}</Link>
-                            //               </ConditionalTooltip>
-                            //        ),
-                            //        key: 'ressources-desactivees',
-                            //        title: 'ressources-desactivees',
-                            // },
-                            // History of actions on resources:
-                            // {
-                            //        icon: <Icon icon={"line-md:backup-restore"}
-                            //               style={{ fontSize: '20px' }}
-                            //        />,
-                            //        label: (
-                            //               <ConditionalTooltip title="Historique">
-                            //                      <Link href={'/gestion-ressources/historique'}>Historique</Link>
-                            //               </ConditionalTooltip>
-                            //        ),
-                            //        key: 'historique',
-                            //        title: 'historique',
-                            // },
+                     ]
+              },
+              {
+                     key: "comments",
+                     icon: <Icon icon={"typcn:messages"}
+                            style={{ fontSize: '20px' }}
+
+                     />,
+                     label: (
+                            <ConditionalTooltip title="Commentaires">
+                                   {`Commentaires`}
+                            </ConditionalTooltip>
+                     ),
+                     title: 'Commentaires',
+                     children: [
+                            // Ressources accepted:
+                            {
+                                   icon: <Icon icon={"line-md:circle-to-confirm-circle-transition"}
+                                          style={{ fontSize: '20px' }}
+
+                                   />,
+                                   label: (
+                                          <ConditionalTooltip title="Commentaires acceptés">
+                                                 <Link href={'/gestion-commentaires/commentaires-acceptees'}>Acceptées</Link>
+                                          </ConditionalTooltip>
+                                   ),
+                                   key: 'commentaires-acceptes',
+                                   title: 'commentaires-acceptes',
+                            },
+                            // Ressources waiting for validation:
+                            {
+                                   icon: <Icon icon={"line-md:loading-twotone-loop"}
+                                          style={{ fontSize: '20px' }}
+                                   />,
+                                   label: (
+                                          <ConditionalTooltip title="Commentaires en attente">
+                                                 <Link href={'/gestion-commentaires/commentaire-en-attente'}>En attente</Link>
+                                          </ConditionalTooltip>
+                                   ),
+                                   key: 'commentaires-en-attente',
+                                   title: 'commentaires-en-attente',
+                            },
+                            // Ressources refused (waiting for modifications from the user, it will be then re-submitted for validation):
+                            {
+                                   icon: <Icon icon={"line-md:close-circle"}
+                                          style={{ fontSize: '20px' }}
+                                   />,
+                                   label: (
+                                          <ConditionalTooltip title={`Commenaires refusés`}>
+                                                 <Link href={'/gestion-commentaires/commentaires-refuses'}>{`Refusés`}</Link>
+                                          </ConditionalTooltip>
+                                   ),
+                                   key: 'commentaires-refuses',
+                                   title: 'commentaires-refuses',
+                            },
+                            // Ressources blocked (by an admin, it can be then re-activated by an admin):
                      ]
               }
        ]
