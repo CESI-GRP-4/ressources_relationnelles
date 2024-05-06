@@ -109,6 +109,7 @@ class CommentController extends Controller
         $comment->id_user = auth()->user()->id_user;
         $comment->id_ressource = $request->idRessource;
         $comment->comment = $request->comment;
+        $comment->id_status = self::PENDING;
         if ($parentId) {
             $comment->id_parent = $parentId;
         }
