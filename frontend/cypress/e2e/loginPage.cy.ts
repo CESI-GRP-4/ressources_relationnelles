@@ -1,8 +1,10 @@
+import { loginAsSuperAdmin } from "./utils";
+
 describe('Login page', () => {
        it('Login with empty email and password', () => {
 
               cy.visit('http://localhost:3000/connexion');
-              cy.contains('button', 'Se connecter').click();
+              cy.get(':nth-child(4) > .ant-row > .ant-col > .ant-form-item-control-input > .ant-form-item-control-input-content > .ant-btn').should('be.visible').click();
 
               // Check if error messages are displayed
               cy.get('#logInForm_email_help > .ant-form-item-explain-error').and('contain', 'Veuillez entrer votre adresse e-mail');
@@ -10,18 +12,14 @@ describe('Login page', () => {
        });
 
        it('Login with right credentials', () => {
-              cy.visit('http://localhost:3000/connexion');
-              cy.get('#logInForm_email').type('john.doe@example.com');
-              cy.get('#logInForm_password').type('aze');
-              cy.contains('button', 'Se connecter').click();
-              cy.url().should('eq', 'http://localhost:3000/');
+              loginAsSuperAdmin();
        });
 
        it('Login with wrong credentials', () => {
               cy.visit('http://localhost:3000/connexion');
               cy.get('#logInForm_email').type('ee');
               cy.get('#logInForm_password').type('ee');
-              cy.contains('button', 'Se connecter').click();
+              cy.get(':nth-child(4) > .ant-row > .ant-col > .ant-form-item-control-input > .ant-form-item-control-input-content > .ant-btn').should('be.visible').click();
               cy.url().should('eq', 'http://localhost:3000/connexion');
 
               // input fields should be empty

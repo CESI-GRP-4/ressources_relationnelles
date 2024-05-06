@@ -13,6 +13,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "types": ["cypress"],
     "plugins": [
       {
         "name": "next"
@@ -22,6 +23,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/back-office/user-management", "src/contexts/CommentContext.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/back-office/user-management", "src/contexts/CommentContext.tsx", "cypress/support/commands.js"],
   "exclude": ["node_modules"]
 }

@@ -2,7 +2,7 @@ describe('Signup page', () => {
        it('Signup with empty email and password', () => {
               cy.visit('http://localhost:3000/connexion');
               cy.get('[style="opacity:1;order:1"] > .ant-menu-title-content > .ant-typography').click();
-              cy.contains('button', 'S\'inscrire').click();
+              cy.get(':nth-child(5) > .ant-row > .ant-col > .ant-form-item-control-input > .ant-form-item-control-input-content > .ant-btn > span').should('be.visible').click();
 
               // Check if error messages are displayed
               cy.get('#signUpForm_email_help > .ant-form-item-explain-error').should('be.visible').and('contain', 'Veuillez entrer votre adresse e-mail');
