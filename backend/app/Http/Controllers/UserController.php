@@ -881,13 +881,20 @@ class UserController extends Controller
             }
 
             // Mettre à jour les champs modifiables de l'utilisateur avec les nouvelles valeurs
-            $user->fill($request->only([
-                'lastName', 'firstName', 'email', 'isEmailVerified', 'country', 'city', 'postalCode'
-            ]));
 
-            // Sauvegarder les modifications de l'utilisateur
+            //! Ce code ne marche pas, probablement car les noms ne matchent pas avec la DB. Le client envoie un champ "lastName" mais le champs de la DB est last_name
+       //      $user->fill($request->only([
+       //          'lastName', 'firstName', 'email', 'isEmailVerified', 'country', 'city', 'postalCode'
+       //      ]));
+
+
+            // * Exemple de code
+            $user->last_name = $request->input('lastName', $user->last_name);
+            $user->first_name = $request->input('firstName', $user->first_name);
+            $user->email = $request->input('email', $user->email);
+            
+            // TODO: Do all the other fields
             $user->save();
-
             DB::commit();
 
             // Retourner une réponse JSON avec un message de succès et les données utilisateur mises à jour
