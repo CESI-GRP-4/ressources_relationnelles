@@ -882,18 +882,57 @@ class UserController extends Controller
 
             // Mettre à jour les champs modifiables de l'utilisateur avec les nouvelles valeurs
 
-            //! Ce code ne marche pas, probablement car les noms ne matchent pas avec la DB. Le client envoie un champ "lastName" mais le champs de la DB est last_name
-       //      $user->fill($request->only([
-       //          'lastName', 'firstName', 'email', 'isEmailVerified', 'country', 'city', 'postalCode'
-       //      ]));
-
-
-            // * Exemple de code
             $user->last_name = $request->input('lastName', $user->last_name);
             $user->first_name = $request->input('firstName', $user->first_name);
-            $user->email = $request->input('email', $user->email);
-            
-            // TODO: Do all the other fields
+            // Vérifier si l'adresse e-mail a été modifiée
+            $newEmail = $request->input('email', $user->email);
+            if ($newEmail !== $user->email) {
+                $user->email = $newEmail;
+                // Si l'adresse e-mail est modifiée, réinitialiser le statut de vérification
+                $user->is_verified = false;
+            } else {
+                // Si l'adresse e-mail n'est pas modifiée, prendre en compte le statut de vérification de la demande
+                $user->is_verified = $request->input('isEmailVerified', $user->is_verified);
+            }
+
+
+                // Mettre à jour l'identifiant du pays si le champ country est fourni dans la requête
+            if ($request->filled('country')) {
+                $countryName = $request->input('country');
+                $countryId = Country::getIdByName($countryName);
+                if ($countryId !== null) {
+                    $user->id_country = $countryId;
+                } else {
+                    // Gérer le cas où le pays n'est pas trouvé
+                    return response()->json(['error' => 'Pays non trouvé.'], 404);
+                }
+            }
+
+            // Mettre à jour l'identifiant de la ville si le champ city est fourni dans la requête
+            if ($request->filled('city')) {
+                $cityName = $request->input('city');
+                $cityId = City::getIdByName($cityName);
+                if ($cityId !== null) {
+                    $user->id_city = $cityId;
+                } else {
+                    // Gérer le cas où la ville n'est pas trouvée
+                    return response()->json(['error' => 'Ville non trouvée.'], 404);
+                }
+            }
+
+            // Mettre à jour l'identifiant du code postal si le champ postalCode est fourni dans la requête
+            if ($request->filled('postalCode')) {
+                $postalCodeValue = $request->input('postalCode');
+                $postalCodeId = PostalCode::getIdByPostalCode($postalCodeValue);
+                if ($postalCodeId !== null) {
+                    $user->id_postal_code = $postalCodeId;
+                } else {
+                    // Gérer le cas où le code postal n'est pas trouvé
+                    return response()->json(['error' => 'Code postal non trouvé.'], 404);
+                }
+            }
+
+
             $user->save();
             DB::commit();
 
