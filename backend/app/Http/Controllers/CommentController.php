@@ -387,8 +387,18 @@ class CommentController extends Controller
      */
     public function pending()
     {
-        $comments = Comment::where('id_status', self::PENDING)->get();
-        return response()->json(['comments' => $comments->map(fn($comment) => self::formatComment($comment))]);
+        $comments = Comment::where('id_status', self::PENDING)
+            ->where(function ($query) {
+                $query->whereNull('id_parent')
+                ->orWhereIn('id_parent', function ($query) {
+                    $query->select('id_comment')
+                        ->from('comments')
+                        ->where('id_status', self::ACCEPTED);
+                });
+            })
+            ->get();
+
+        return response()->json(['comments' => $comments->map(fn($comment) => $this->formatComment($comment))]);
     }
 
     /**
