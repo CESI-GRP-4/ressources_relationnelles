@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Empty, Input, Button, List, message, Card, Badge, Avatar, Popconfirm, Tooltip } from 'antd';
+import { Empty, Input, Button, List, message, Card, Badge, Avatar, Popconfirm, Tooltip, Typography } from 'antd';
 import { Comment as CommentType } from "@/types/comment";
 import axios, { AxiosError, AxiosResponse } from 'axios';
-import { Space, Typography } from 'antd';
 import { useCommentContext } from '@/contexts/CommentContext';
 import { UserOutlined, DeleteOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
