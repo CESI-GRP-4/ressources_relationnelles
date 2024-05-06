@@ -33,7 +33,7 @@ class Comment extends Model
      * Cela permet de récupérer tous les commentaires qui sont des réponses à ce commentaire.
      */
     public function replies() {
-        return $this->hasMany(Comment::class, 'id_parent_comment', 'id_comment');
+        return $this->hasMany(Comment::class, 'id_parent', 'id_comment');
     }
 
     /**
