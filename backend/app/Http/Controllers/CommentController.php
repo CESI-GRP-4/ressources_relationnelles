@@ -198,15 +198,28 @@ class CommentController extends Controller
             return response()->json(['message' => 'Unauthorized - You can only delete your own comments'], 401);
         }
 
-        if ($comment->replies) {
+        if ($comment->replies()->count() > 0){
             $comment->comment = "Commentaire supprimé";
             $comment->save();
-            return response()->json(['message' => 'Comment deleted successfully']);
+        }else{
+            $comment->delete();
+            $this->tryDeleteParents($comment->id_parent);
         }
-
-        $comment->delete();
         return response()->json(['message' => 'Comment deleted successfully']);
     }
+
+    private function tryDeleteParents($parentId)
+    {
+        if (!$parentId) { return; }
+
+        $parent = Comment::find($parentId);
+        if ($parent && $parent->comment == "Commentaire supprimé" && $parent->replies()->count() == 0) {
+            $parentCommentId = $parent->id_parent;
+            $parent->delete();
+            $this->tryDeleteParent($parentCommentId);
+        }
+    }
+
 
     /**
      * @OA\Patch(
