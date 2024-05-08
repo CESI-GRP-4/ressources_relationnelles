@@ -13,6 +13,16 @@ use App\Models\UserHistory;
 class Utils{
 
     // USERS
+
+    public static function getUserPublicData($user){
+        return [
+            'firstName' => $user->first_name,
+            'imgURL' => $user->path_picture,
+            'id' => $user->id_user,
+            'role' => $user->role->name,
+        ];
+    }
+
     /**
      * @OA\Schema(
      *     schema="UserData",
@@ -239,6 +249,11 @@ class Utils{
     public static function getRessourceDetail($ressource){
         $category = Category::find($ressource->id_category);
         $user = User::find($ressource->id_user);
+        if(auth()->user()->role_id == 4){
+            $user = self::getUserPublicData($user);
+        }else{
+            $user = self::getUserData($user);
+        }
         $status = StatusRessource::find($ressource->id_status);
         return [
             'id' => $ressource->id_ressource,
@@ -248,7 +263,7 @@ class Utils{
             'status' => $status->label,
             'category' => self::getCategoryData($category),
             'viewCount' => $ressource->view_count,
-            'user' => self::getUserData($user),
+            'user' => $user,
             'creationDate' => $ressource->created_at,
             'lastModificationDate' => $ressource->updated_at,
             'staffComment' => $ressource->staff_comment,
@@ -300,9 +315,15 @@ class Utils{
      * )
      */
     public static function formatComment($comment){
+        $user = User::find($comment->id_user);
+        if(auth()->user()->role_id == 4){
+            $user = self::getUserPublicData($user);
+        }else{
+            $user = self::getUserData($user);
+        }
         return [
             'id' => $comment->id_comment,
-            'user' => self::getUserData(User::find($comment->id_user)),
+            'user' => $user,
             'comment' => $comment->comment,
             'createAt' => $comment->created_at,
             'children' => self::getCommentChildren($comment->id_comment),
