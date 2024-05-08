@@ -37,6 +37,12 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('verifyUser', [AuthController::class, 'verifyUser']);
 
+    // Profil
+    Route::group(['prefix' => 'profil'], function () {
+        Route::post('update', [UserController::class, 'editUser']);
+    });
+
+
     // Comments
     Route::group(['prefix' => 'comment'], function () {
         Route::post('create', [CommentController::class, 'createComment']);
@@ -143,8 +149,5 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::group(['middleware' => 'isSuperAdmin'], function () {
         Route::post('user/create', [UserController::class, 'create']);
     });
-
-    // Profile
-    Route::post('saveUserData', [UserController::class, 'editUserData']);
 
 });

@@ -426,9 +426,12 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function editUser(Request $request, $id) {
+    public function editUser(Request $request, $id = null) {
         DB::beginTransaction();
         try {
+            if ($id === null) {
+                $id = auth()->user()->id_user;
+            }
             $user = User::findOrFail($id);
             $isSuperAdmin = auth()->user()->role->name === 'SuperAdministrateur';
             $authUserId = auth()->user()->id_user;
@@ -456,72 +459,34 @@ class UserController extends Controller
             $fieldMapping = $this->getFieldMapping();
             foreach ($validator->validated() as $key => $value) {
                 $dbKey = $fieldMapping[$key] ?? $key;
-                if (isset($user->$dbKey) && $user->$dbKey != $value) {
-                    Utils::addUserHistoryEntry($authUserId, $user->id_user, 'Modify', $dbKey, $user->$dbKey, $value);
-                    $user->$dbKey = $value !== null ? $value : $user->$dbKey;
+
+                // Vérifiez si le dbKey contient une liaison
+                if (strpos($dbKey, '.') !== false) {
+                    list($relationName, $property) = explode('.', $dbKey, 2);
+                    $relation = $user->$relationName;
+
+                    if ($relation && $relation->$property != $value) {
+                        Utils::addUserHistoryEntry($authUserId, $user->id_user, 'Modify', $relationName, $relation->$property, $value);
+                        $id = $relation->getIdByName($value);
+                        $primaryKey = $relation->getKeyName();
+                        $user->$primaryKey = $id;
+                        $user->save();
+                    }
+
+                } else {
+                    if (isset($user->$dbKey) && $user->$dbKey != $value) {
+                        Utils::addUserHistoryEntry($authUserId, $user->id_user, 'Modify', $dbKey, $user->$dbKey, $value);
+                        $user->$dbKey = $value;
+
+                        // Envoyer un email si l'email est mis à jour
+                        if($dbKey === 'email') {
+                            $user->is_verified = self::EMAIL_NOT_VERIFIED;
+                            $user->verification_token = Str::random(100);
+                            $user->notify(new VerifyEmail());
+                        }
+                    }
                 }
             }
-
-            if ($request->filled('country')) {
-                $country = Country::where('name', $request->country)->firstOrFail();
-                if ($user->id_country !== $country->id_country) {
-                    Utils::addUserHistoryEntry(
-                        $authUserId,
-                        $user->id_user,
-                        'Modify',
-                        'country',
-                        $user->country ? $user->country->name : null,
-                        $country->name
-                    );
-                    $user->id_country = $country->id_country;
-                }
-            }
-
-            if ($request->filled('city')) {
-                $city = City::firstOrCreate(['name' => $request->city]);
-                if ($user->id_city !== $city->id_city) {
-                    Utils::addUserHistoryEntry(
-                        $authUserId,
-                        $user->id_user,
-                        'Modify',
-                        'city',
-                        $user->city ? $user->city->name : null,
-                        $city->name
-                    );
-                    $user->id_city = $city->id_city;
-                }
-            }
-
-            if ($request->filled('postalCode')) {
-                $postalCode = PostalCode::firstOrCreate(['postal_code' => $request->postalCode]);
-                if ($user->id_postal_code !== $postalCode->id_postal_code) {
-                    Utils::addUserHistoryEntry(
-                        $authUserId,
-                        $user->id_user,
-                        'Modify',
-                        'postal_code',
-                        $user->postalCode ? $user->postalCode->postal_code : null,
-                        $postalCode->postal_code
-                    );
-                    $user->id_postal_code = $postalCode->id_postal_code;
-                }
-            }
-
-            if ($isSuperAdmin && $request->filled('role')) {
-                $role = Role::where('name', $request->role)->firstOrFail();
-                if ($user->id_role !== $role->id_role) {
-                    Utils::addUserHistoryEntry(
-                        $authUserId,
-                        $user->id_user,
-                        'Modify',
-                        'role',
-                        $user->role->name,
-                        $role->name
-                    );
-                    $user->id_role = $role->id_role;
-                }
-            }
-
             $user->save();
             DB::commit();
 
@@ -850,100 +815,5 @@ class UserController extends Controller
     protected function getUnverifiedEmailsCount() {
         return User::where('is_verified', false)->count();
     }
-
-
-    public function editUserData(Request $request)
-    {
-        DB::beginTransaction();
-        try {
-            // Récupérer l'ID de l'utilisateur à partir de la requête
-            $userId = $request->input('id');
-            // Récupérer l'utilisateur à partir de l'ID
-            $user = User::findOrFail($userId);
-
-            // Définir les règles de validation
-            $rules = [
-                'lastName' => 'nullable|string',
-                'firstName' => 'nullable|string',
-                'email' => 'nullable|string|email',
-                'isEmailVerified' => 'nullable|boolean',
-                'country' => 'nullable|string',
-                'city' => 'nullable|string',
-                'postalCode' => 'nullable|string',
-            ];
-
-            // Créer le validateur
-            $validator = Validator::make($request->all(), $rules);
-
-            // Vérifier si la validation a échoué
-            if ($validator->fails()) {
-                return response()->json($validator->errors(), 400);
-            }
-
-            // Mettre à jour les champs modifiables de l'utilisateur avec les nouvelles valeurs
-
-            $user->last_name = $request->input('lastName', $user->last_name);
-            $user->first_name = $request->input('firstName', $user->first_name);
-            // Vérifier si l'adresse e-mail a été modifiée
-            $newEmail = $request->input('email', $user->email);
-            if ($newEmail !== $user->email) {
-                $user->email = $newEmail;
-                // Si l'adresse e-mail est modifiée, réinitialiser le statut de vérification
-                $user->is_verified = false;
-            } else {
-                // Si l'adresse e-mail n'est pas modifiée, prendre en compte le statut de vérification de la demande
-                $user->is_verified = $request->input('isEmailVerified', $user->is_verified);
-            }
-
-
-                // Mettre à jour l'identifiant du pays si le champ country est fourni dans la requête
-            if ($request->filled('country')) {
-                $countryName = $request->input('country');
-                $countryId = Country::getIdByName($countryName);
-                if ($countryId !== null) {
-                    $user->id_country = $countryId;
-                } else {
-                    // Gérer le cas où le pays n'est pas trouvé
-                    return response()->json(['error' => 'Pays non trouvé.'], 404);
-                }
-            }
-
-            // Mettre à jour l'identifiant de la ville si le champ city est fourni dans la requête
-            if ($request->filled('city')) {
-                $cityName = $request->input('city');
-                $cityId = City::getIdByName($cityName);
-                if ($cityId !== null) {
-                    $user->id_city = $cityId;
-                } else {
-                    // Gérer le cas où la ville n'est pas trouvée
-                    return response()->json(['error' => 'Ville non trouvée.'], 404);
-                }
-            }
-
-            // Mettre à jour l'identifiant du code postal si le champ postalCode est fourni dans la requête
-            if ($request->filled('postalCode')) {
-                $postalCodeValue = $request->input('postalCode');
-                $postalCodeId = PostalCode::getIdByPostalCode($postalCodeValue);
-                if ($postalCodeId !== null) {
-                    $user->id_postal_code = $postalCodeId;
-                } else {
-                    // Gérer le cas où le code postal n'est pas trouvé
-                    return response()->json(['error' => 'Code postal non trouvé.'], 404);
-                }
-            }
-
-
-            $user->save();
-            DB::commit();
-
-            // Retourner une réponse JSON avec un message de succès et les données utilisateur mises à jour
-            return response()->json(['message' => 'Données utilisateur mises à jour avec succès', 'user' => $user], 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            // En cas d'erreur, retourner une réponse JSON avec un message d'erreur
-            return response()->json(['error' => 'Une erreur est survenue lors de la mise à jour des données utilisateur.'], 500);
-        }
-    }
-
 
 }

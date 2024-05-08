@@ -18,7 +18,7 @@ class City extends Model {
      * @param string $name Le nom de la ville.
      * @return int|null L'ID de la ville s'il est trouvé, sinon null.
      */
-    public static function getIdByName(string $name): ?int
+    public function getIdByName(string $name): ?int
     {
         $city = self::where('name', $name)->first();
         return $city ? $city->id_city : null;

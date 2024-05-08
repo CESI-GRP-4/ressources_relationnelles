@@ -19,7 +19,7 @@ class PostalCode extends Model {
      * @param string $postalCode La valeur du code postal.
      * @return int|null L'ID du code postal s'il est trouvé, sinon null.
      */
-    public static function getIdByPostalCode(string $postalCode): ?int
+    public function getIdByName(string $postalCode): ?int
     {
         $postalCodeEntry = self::where('postal_code', $postalCode)->first();
         return $postalCodeEntry ? $postalCodeEntry->id_postal_code : null;

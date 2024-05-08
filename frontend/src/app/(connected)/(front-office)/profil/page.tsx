@@ -61,18 +61,15 @@ const UserProfilePage = () => {
                   await form.validateFields();
           
                   const values = form.getFieldsValue();
-                  const id = { id: user?.id }; // Créez un objet contenant uniquement la clé 'id'
-          
+
                   console.log('Données envoyées :', {
-                     ...id,
                      ...values,
                  }); 
                   const response = await axios({
                       method: 'post',
                       baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
-                      url: "/saveUserData",
+                      url: "/profil/update",
                       data: {
-                          ...id,
                           ...values,
                       },
                       withCredentials: true,

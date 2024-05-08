@@ -39,7 +39,7 @@ class Country extends Model {
      * @param string $name Le nom du pays.
      * @return int|null L'ID du pays s'il est trouvé, sinon null.
      */
-    public static function getIdByName(string $name): ?int
+    public function getIdByName(string $name): ?int
     {
         $country = self::where('name', $name)->first();
         return $country ? $country->id_country : null;
