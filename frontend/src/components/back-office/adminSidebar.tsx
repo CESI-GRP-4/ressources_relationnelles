@@ -148,7 +148,7 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                                    />,
                                    label: (
                                           <ConditionalTooltip title="Commentaires acceptés">
-                                                 <Link href={'/gestion-commentaires/commentaires-acceptees'}>Acceptées</Link>
+                                                 <Link href={'/gestion-commentaires/commentaires-acceptes'}>Acceptées</Link>
                                           </ConditionalTooltip>
                                    ),
                                    key: 'commentaires-acceptes',
@@ -161,7 +161,7 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                                    />,
                                    label: (
                                           <ConditionalTooltip title="Commentaires en attente">
-                                                 <Link href={'/gestion-commentaires/commentaire-en-attente'}>En attente</Link>
+                                                 <Link href={'/gestion-commentaires/commentaires-en-attente'}>En attente</Link>
                                           </ConditionalTooltip>
                                    ),
                                    key: 'commentaires-en-attente',
