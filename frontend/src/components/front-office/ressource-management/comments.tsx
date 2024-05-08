@@ -23,17 +23,12 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
        const [visibleComments, setVisibleComments] = useState(5); // Initial number of comments to display
        const { idParent, replyingTo, handleSetReply, resetReply } = useCommentContext(); // Use context
        const { user } = useUser()
-       useEffect(() => {
-              console.log(isFirstComponent)
-              console.log('idParent changed:', idParent); // Debugging state changes
-       }, [idParent]);
+       const [isLoading, setIsLoading] = useState<boolean>();
 
        const handleAddComment = async () => {
               if (newComment.trim()) {
-                     console.log(newComment, idParent, idRessource)
-                     // onAddComment(newComment);
+                     setIsLoading(true);
                      try {
-                            // setIsLoading(true);
                             const response: AxiosResponse = await axios({
                                    method: 'post',
                                    baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
@@ -71,7 +66,7 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
                                    message.error("Erreur lors de l'ajout du commentaire")
                             }
                      } finally {
-                            // setIsLoading(false);
+                            setIsLoading(false);
                      }
                      setNewComment(''); // Clear the input after submitting
               }
@@ -82,8 +77,8 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
        };
 
        const handleDeleteComment = async (id: number) => {
+              setIsLoading(true);
               try {
-                     // setIsLoading(true);
                      const response: AxiosResponse = await axios({
                             method: 'delete',
                             baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
@@ -114,7 +109,7 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
                             message.error("Erreur lors de la suppression du commentaire")
                      }
               } finally {
-                     // setIsLoading(false);
+                     setIsLoading(false);
               }
        }
 
@@ -137,10 +132,11 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
                                                                              title="Êtes-vous sûr de vouloir supprimer ce commentaire ?"
                                                                              onConfirm={() => { handleDeleteComment(comment.id) }}
                                                                              okText="Oui"
+                                                                             disabled={isLoading}
                                                                              cancelText="Non"
                                                                       >
                                                                              <Tooltip title="Supprimer">
-                                                                                    <Button icon={<DeleteOutlined />} type="primary" danger></Button>
+                                                                                    <Button loading={isLoading} icon={<DeleteOutlined />} type="primary" danger></Button>
                                                                              </Tooltip>
                                                                       </Popconfirm>
                                                                )}
@@ -169,10 +165,10 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
                             {(idParent && replyingTo) ?
                                    <Badge.Ribbon text={<div className='flex flex-row items-center gap-3'>{`Réponse à ${replyingTo}`} <div><CloseCircleOutlined onClick={resetReply} /></div></div>}>
                                           <Input.TextArea
+                                                 disabled={isLoading}
                                                  rows={4}
                                                  size='large'
                                                  autoSize={{ minRows: 4, maxRows: 10 }}
-
                                                  value={newComment}
                                                  onChange={e => setNewComment(e.target.value)}
                                                  placeholder="Rédigez un commentaire..."
@@ -180,6 +176,7 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
                                    </Badge.Ribbon>
                                    :
                                    <Input.TextArea
+                                          disabled={isLoading}
                                           rows={4}
                                           size='large'
                                           autoSize={{ minRows: 4, maxRows: 10 }}
@@ -188,7 +185,7 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
                                           placeholder="Rédigez un commentaire..."
                                    />
                             }
-                            <Button onClick={handleAddComment} type="primary" style={{ marginTop: '10px' }}>
+                            <Button onClick={handleAddComment} type="primary" style={{ marginTop: '10px' }} loading={isLoading}>
                                    Commenter
                             </Button>
                      </div>}
