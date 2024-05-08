@@ -57,7 +57,7 @@ export default function AcceptedComments() {
                                    <Skeleton active />
                                    :
                                    comments.map((comment) => (
-                                          <Comment displayRefuse displayAccept={false} key={comment.id} comment={comment}></Comment>
+                                          <Comment fetchComments={fetchAcceptedComments} displayDelete displayRefuse={false} displayAccept={false} key={comment.id} comment={comment}></Comment>
                                    ))
                             }
                      </div>

@@ -9,8 +9,9 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime)
 import { Icon } from '@iconify/react';
 import axios, { AxiosError, AxiosResponse } from "axios";
+import { DeleteOutlined, CloseCircleOutlined } from '@ant-design/icons';
 
-export default function Comment({ comment, displayAccept, displayRefuse }: { comment: CommentType, displayAccept: boolean, displayRefuse: boolean }) {
+export default function Comment({ comment, displayAccept, displayRefuse, displayDelete, fetchComments }: { comment: CommentType, displayAccept: boolean, displayRefuse: boolean, displayDelete: boolean, fetchComments: () => void }) {
 
        const handleRefuseComment = async ({ id }: { id: number }) => {
               try {
@@ -25,6 +26,7 @@ export default function Comment({ comment, displayAccept, displayRefuse }: { com
                      });
                      if (response.status === 200) {
                             message.success("Commentaire refusé");
+                            fetchComments();
                      }
               } catch (error) {
                      console.error(error);
@@ -63,6 +65,7 @@ export default function Comment({ comment, displayAccept, displayRefuse }: { com
                      });
                      if (response.status === 200) {
                             message.success("Commentaire accepté");
+                            fetchComments();
                      }
               } catch (error) {
                      console.error(error);
@@ -81,6 +84,44 @@ export default function Comment({ comment, displayAccept, displayRefuse }: { com
                             }
                      } else {
                             message.error("Erreur lors de l'acceptation du commentaire")
+                     }
+              } finally {
+                     // setIsLoading(false);
+              }
+       }
+
+       const handleDeleteComment = async (id: number) => {
+              try {
+                     // setIsLoading(true);
+                     const response: AxiosResponse = await axios({
+                            method: 'delete',
+                            baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
+                            url: `/comment/delete/${id}`,
+                            responseType: 'json',
+                            timeout: 10000,
+                            withCredentials: true,
+                     });
+                     if (response.status === 200) {
+                            message.success("Commentaire supprimé");
+                            fetchComments();
+                     }
+              } catch (error) {
+                     console.error(error);
+                     const axiosError = error as AxiosError
+
+                     if (axiosError.response) {
+                            switch (axiosError.response.status) {
+                                   case 403 | 401:
+                                          message.error("Vous n'êtes pas autorisé à supprimer ce commentaire.")
+                                          break;
+                                   case 422:
+                                          message.error("Erreur de validation des données")
+                                          break;
+                                   default:
+                                          message.error("Erreur lors de la suppression du commentaire")
+                            }
+                     } else {
+                            message.error("Erreur lors de la suppression du commentaire")
                      }
               } finally {
                      // setIsLoading(false);
@@ -117,6 +158,24 @@ export default function Comment({ comment, displayAccept, displayRefuse }: { com
                             >
                                    <Tooltip title="Accepter">
                                           <Button icon={<Icon icon={"line-md:circle-to-confirm-circle-transition"} style={{ fontSize: '20px' }} />} type="primary"></Button>
+                                   </Tooltip>
+                            </Popconfirm>
+                     </div>
+              );
+       }
+
+       if (displayDelete) {
+              actions.push(
+                     <div className='flex flex-row justify-center'>
+                            <Popconfirm
+                                   title="Êtes-vous sûr de vouloir supprimer ce commentaire ?"
+                                   onConfirm={() => { handleDeleteComment(comment.id) }}
+                                   okText="Oui"
+                                   cancelText="Non"
+                            >
+                                   <Tooltip title="Supprimer">
+                                   <Button icon={<DeleteOutlined />} type="primary" danger></Button>
+                                          {/* <Button icon={<Icon icon={"line-md:circle-to-confirm-circle-transition"} style={{ fontSize: '20px' }} />} type="primary"></Button> */}
                                    </Tooltip>
                             </Popconfirm>
                      </div>

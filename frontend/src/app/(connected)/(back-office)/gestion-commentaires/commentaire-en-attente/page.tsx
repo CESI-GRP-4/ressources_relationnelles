@@ -24,7 +24,6 @@ export default function PendingComments() {
                             withCredentials: true
                      });
                      setComments(response.data.comments);
-                     console.log("🚀 ~ fetchAcceptedComments ~ response.data.comments:", response.data.comments);
               } catch (error) {
                      console.error(error);
                      const axiosError = error as AxiosError;
@@ -52,12 +51,11 @@ export default function PendingComments() {
                             <PageSummary title={"Commentaires en attente"} description={undefined}></PageSummary>
                      </div>
                      <div className="flex-wrap flex mt-5 gap-5">
-
                             {loading ?
                                    <Skeleton active />
                                    :
                                    comments.map((comment) => (
-                                          <Comment displayRefuse displayAccept key={comment.id} comment={comment}></Comment>
+                                          <Comment fetchComments={fetchPendingComments} displayDelete displayRefuse displayAccept key={comment.id} comment={comment}></Comment>
                                    ))
                             }
                      </div>
