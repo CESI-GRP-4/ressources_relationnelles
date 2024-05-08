@@ -10,8 +10,8 @@ dayjs.extend(relativeTime)
 import { Icon } from '@iconify/react';
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { DeleteOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import Link from "next/link";
 import { useState } from "react";
+import Link from "next/link";
 
 export default function Comment({ comment, displayAccept, displayRefuse, displayDelete, fetchComments }: { comment: CommentType, displayAccept: boolean, displayRefuse: boolean, displayDelete: boolean, fetchComments: () => void }) {
        const [isLoading, setIsLoading] = useState<boolean>();
@@ -177,7 +177,6 @@ export default function Comment({ comment, displayAccept, displayRefuse, display
                             >
                                    <Tooltip title="Supprimer">
                                           <Button icon={<DeleteOutlined />} type="primary" danger></Button>
-                                          {/* <Button icon={<Icon icon={"line-md:circle-to-confirm-circle-transition"} style={{ fontSize: '20px' }} />} type="primary"></Button> */}
                                    </Tooltip>
                             </Popconfirm>
                      </div>
@@ -190,8 +189,11 @@ export default function Comment({ comment, displayAccept, displayRefuse, display
                      title={<div className='space-x-3'><Avatar src={comment.user.imgURL} style={{ height: 35, width: 35 }} icon={<UserOutlined />} /><Text>{comment.user.firstName}</Text><Text type='secondary'>{dayjs().to(dayjs(comment.createAt, "YYYY-MM-DD hh:mm:ss"))}</Text></div>}
                      className="w-fit max-w-full"
                      extra={<Tooltip title="Ouvrir la ressource" className="cursor-pointer">
-                            {/* <Link href={"/ressource/${}}></Link> */}
-                            <Icon className="ml-3" style={{ fontSize: "1.3rem" }} icon={"ion:open-outline"}></Icon></Tooltip>}
+                            <Link target="_blank" href={`/ressource/${comment.ressourceId}`}>
+                                   <Icon className="ml-3" style={{ fontSize: "1.3rem" }} icon={"ion:open-outline"}></Icon>
+                            </Link>
+                     </Tooltip>
+                     }
                      actions={actions}
               >
                      <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{comment.comment}</pre>
