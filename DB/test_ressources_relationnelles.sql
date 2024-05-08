@@ -1065,8 +1065,8 @@ ALTER TABLE `blocked_users`
 -- Contraintes pour la table `comments`
 --
 ALTER TABLE `comments`
-  ADD CONSTRAINT `comments_ibfk_2` FOREIGN KEY (`id_ressource`) REFERENCES `ressources` (`id_ressource`),
   ADD CONSTRAINT `comments_ibfk_3` FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`),
+    ADD CONSTRAINT `fk_comments_ressource` FOREIGN KEY (`id_ressource`) REFERENCES `ressources` (`id_ressource`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_comments_parent` FOREIGN KEY (`id_parent`) REFERENCES `comments` (`id_comment`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
