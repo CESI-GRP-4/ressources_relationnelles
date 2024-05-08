@@ -132,7 +132,7 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
                                                                <Link onClick={() => { handleSetReply(comment.id, comment.user.firstName || "un monsieur") }} >
                                                                       Répondre
                                                                </Link>
-                                                               {comment.user.id == user?.id && (
+                                                               {(comment.user.id == user?.id || user?.role !== "Utilisateur") && (
                                                                       <Popconfirm
                                                                              title="Êtes-vous sûr de vouloir supprimer ce commentaire ?"
                                                                              onConfirm={() => { handleDeleteComment(comment.id) }}
