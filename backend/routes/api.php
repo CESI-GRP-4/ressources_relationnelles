@@ -106,6 +106,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
         // Statistics
         Route::group(['prefix' => 'stats'], function () {
             Route::get('ressources', [RessourceController::class, 'getRessourcesStats']);
+            Route::get('comments', [CommentController::class, 'getCommentsStats']);
         });
     });
 

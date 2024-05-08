@@ -1378,6 +1378,76 @@
                 ]
             }
         },
+        "/stats/comments": {
+            "get": {
+                "tags": [
+                    "Statistics"
+                ],
+                "summary": "Retrieve statistics about comments",
+                "description": "Fetches statistics about comments, including the total number of comments, the number of comments that are pending, accepted, and rejected, and the number of comments posted in the last week.",
+                "operationId": "getCommentsStats",
+                "responses": {
+                    "200": {
+                        "description": "Statistics about comments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "comments": {
+                                            "properties": {
+                                                "total": {
+                                                    "description": "The total number of comments",
+                                                    "type": "integer"
+                                                },
+                                                "pending": {
+                                                    "description": "The number of comments that are pending",
+                                                    "type": "integer"
+                                                },
+                                                "accepted": {
+                                                    "description": "The number of comments that are accepted",
+                                                    "type": "integer"
+                                                },
+                                                "rejected": {
+                                                    "description": "The number of comments that are rejected",
+                                                    "type": "integer"
+                                                },
+                                                "lastWeek": {
+                                                    "description": "The number of comments posted in the last week",
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in and have the appropriate privileges (e.g., moderator)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in and have the appropriate privileges"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
         "/countries": {
             "get": {
                 "tags": [

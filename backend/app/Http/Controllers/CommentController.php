@@ -6,6 +6,7 @@ use App\Models\Comment;
 use App\Models\Ressource;
 use App\Models\User;
 use App\Utils\Utils;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -474,4 +475,49 @@ class CommentController extends Controller
         $comments = Comment::where('id_status', self::REJECTED)->get();
         return response()->json(['comments' => $comments->map(fn($comment) => self::formatComment($comment))]);
     }
+
+    /**
+     * @OA\Get(
+     *     path="/stats/comments",
+     *     tags={"Statistics"},
+     *     summary="Retrieve statistics about comments",
+     *     description="Fetches statistics about comments, including the total number of comments, the number of comments that are pending, accepted, and rejected, and the number of comments posted in the last week.",
+     *     operationId="getCommentsStats",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Statistics about comments",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="comments", type="object",
+     *                 @OA\Property(property="total", type="integer", description="The total number of comments"),
+     *                 @OA\Property(property="pending", type="integer", description="The number of comments that are pending"),
+     *                 @OA\Property(property="accepted", type="integer", description="The number of comments that are accepted"),
+     *                 @OA\Property(property="rejected", type="integer", description="The number of comments that are rejected"),
+     *                 @OA\Property(property="lastWeek", type="integer", description="The number of comments posted in the last week")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - User must be logged in and have the appropriate privileges (e.g., moderator)",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthorized - User must be logged in and have the appropriate privileges")
+     *         )
+     *     )
+     * )
+     */
+    public function getCommentsStats(){
+        $comments = Comment::all();
+        $commentsStats = [
+            'total' => $comments->count(),
+            'pending' => $comments->where('id_status', self::PENDING)->count(),
+            'accepted' => $comments->where('id_status', self::ACCEPTED)->count(),
+            'rejected' => $comments->where('id_status', self::REJECTED)->count(),
+            'lastWeek' => $comments->where('created_at', '>=', Carbon::now()->subWeek())->count(),
+        ];
+
+        return response()->json(['comments' => $commentsStats], 200);
+    }
+
 }
