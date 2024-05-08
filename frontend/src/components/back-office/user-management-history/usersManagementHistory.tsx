@@ -128,6 +128,7 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
               return (
                      <div>
                             <Card
+                                   loading={isTableLoading}
                                    title="Actions récentes sur les utilisateurs"
                                    extra={<Link href="/gestion-utilisateurs-historique"><Button type="text" shape="circle" icon={<PlusCircleOutlined style={{ color: "blue" }} />} /></Link>}
                             >
