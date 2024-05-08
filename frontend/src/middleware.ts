@@ -32,8 +32,8 @@ const routeForModerator = [
        '/gestion-ressources/ressources-bloquees',
        '/gestion-ressources/ressources-desactivees',
 
-       '/gestion-commentaires/commentaire-en-attente',
-       '/gestion-commentaires/commentaires-acceptees',
+       '/gestion-commentaires/commentaires-en-attente',
+       '/gestion-commentaires/commentaires-acceptes',
        '/gestion-commentaires/commentaires-refuses'
 ];
 
