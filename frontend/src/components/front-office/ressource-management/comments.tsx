@@ -3,12 +3,13 @@ import { Empty, Input, Button, List, message, Card, Badge, Avatar, Popconfirm, T
 import { Comment as CommentType } from "@/types/comment";
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { useCommentContext } from '@/contexts/CommentContext';
-import { UserOutlined, DeleteOutlined } from '@ant-design/icons';
+import { UserOutlined, DeleteOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import 'dayjs/locale/fr';
 import { useUser } from '@/providers/userProvider';
 dayjs.locale('fr');
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { Icon } from '@iconify/react/dist/iconify.js';
 dayjs.extend(relativeTime)
 const { Text, Link } = Typography;
 interface Props {
@@ -47,7 +48,7 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
                                    withCredentials: true,
                             });
                             if (response.status === 201) {
-                                   message.success("Commentaire envoyé");
+                                   message.success("Commentaire envoyé. Avant d'être visible par la communauté, il doit être accepté par un modérateur.");
                                    setNewComment(''); // Clear the input after submitting
                                    resetReply();  // Reset context state
                             }
@@ -166,7 +167,7 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
 
                      {isFirstComponent && <div className='mt-10'>
                             {(idParent && replyingTo) ?
-                                   <Badge.Ribbon text={`Réponse à ${replyingTo}`}>
+                                   <Badge.Ribbon text={<div className='flex flex-row items-center gap-3'>{`Réponse à ${replyingTo}`} <div><CloseCircleOutlined onClick={resetReply} /></div></div>}>
                                           <Input.TextArea
                                                  rows={4}
                                                  size='large'
