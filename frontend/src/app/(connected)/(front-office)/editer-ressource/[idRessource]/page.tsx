@@ -18,10 +18,9 @@ export default function EditRessource({ params }: { params: { idRessource: numbe
        const router = useRouter();
        const { user: currentUser } = useUser();
        const [ressource, setRessource] = useState<Ressource>();
-       console.log(ressource?.status)
+
        useEffect(() => {
               if (currentUser?.id != undefined && currentUser?.id != null) {
-
                      fetchRessource();
                      fetchCategories();
               }
@@ -186,7 +185,6 @@ export default function EditRessource({ params }: { params: { idRessource: numbe
                                                         ? <Text>La ressource a été bloquée pour la raison suivante : <Text strong>{ressource.staffComment}</Text></Text>
                                                         : 'Aucun commentaire supplémentaire fourni par le staff.'}
                                           </Text>
-
                                    }
                                    type="error"
                                    showIcon
