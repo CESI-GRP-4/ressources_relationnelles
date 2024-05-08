@@ -106,7 +106,7 @@ export default function ConnectionsChart({ dateRange, isPreview = false }: { dat
                             throw new Error('Invalid status code')
                      }
               } catch (error) {
-                     console.log("🚀 ~ fetchData ~ error", error);
+                     console.error("🚀 ~ fetchData ~ error", error);
                      const axiosError = error as AxiosError;
                      if (axiosError.response) {
                             switch (axiosError.response.status) {

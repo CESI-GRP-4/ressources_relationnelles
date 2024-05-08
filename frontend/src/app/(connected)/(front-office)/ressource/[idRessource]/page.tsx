@@ -13,10 +13,7 @@ import Comments from "@/components/front-office/ressource-management/comments";
 
 export default function Ressource({ params }: { params: { idRessource: number } }) {
        const [ressource, setRessource] = useState<RessourceType>();
-       console.log("🚀 ~ Ressource ~ ressource:", ressource);
        const [loading, setLoading] = useState<boolean>(true);
-
-       const { user: currentUser } = useUser();
 
        useEffect(() => {
               fetchRessource();
@@ -29,8 +26,6 @@ export default function Ressource({ params }: { params: { idRessource: number } 
                             method: "GET",
                             withCredentials: true
                      });
-
-                     console.log(response)
 
                      if (response.status === 200) {
                             setRessource(response.data.ressource);

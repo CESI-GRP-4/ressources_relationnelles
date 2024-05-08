@@ -28,7 +28,6 @@ export default function RessourcesAccordionAdmin({ ressources, refreshRessources
                      });
 
                      if (response.status === 200) {
-                            console.log(response.data);
                             message.success("Ressource rejetée avec succès");
                             refreshRessources();
                      }
@@ -81,7 +80,6 @@ export default function RessourcesAccordionAdmin({ ressources, refreshRessources
                      });
 
                      if (response.status === 200) {
-                            console.log(response.data);
                             message.success("Ressource bloquée avec succès");
                             refreshRessources();
                      } else {
@@ -175,7 +173,6 @@ export default function RessourcesAccordionAdmin({ ressources, refreshRessources
                      })
 
                      if (response.status === 200) {
-                            console.log(response.data);
                             message.success("Ressource acceptée avec succès");
                             refreshRessources();
                      }

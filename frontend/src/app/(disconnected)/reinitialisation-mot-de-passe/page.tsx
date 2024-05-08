@@ -82,7 +82,7 @@ export default function ReinitialisationMotDePasse() {
        }
 
        const onResetPasswordFailed = (errorInfo: any) => {
-              console.log('Failed:', errorInfo);
+              console.error('Failed:', errorInfo);
        }
        return (
               <div className="flex items-center flex-col">

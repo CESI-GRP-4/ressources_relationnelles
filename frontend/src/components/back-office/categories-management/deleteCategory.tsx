@@ -18,7 +18,6 @@ export default function DeleteCategory({category, refreshCategories} : {category
                      });
                      if (response.status === 200) {
                             message.success("Catégorie supprimée avec succès")
-                            console.log(response.data)
                             refreshCategories();
                      }
               } catch (error) {

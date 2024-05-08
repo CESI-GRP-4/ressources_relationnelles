@@ -90,7 +90,6 @@ export const config = {
 export function middleware(request: NextRequest) {
        const path = request.nextUrl.pathname;
        const userRole = getUserRole(request);
-       console.log("🚀 ~ middleware ~ userRole:", userRole);
 
        // Redirect authenticated users trying to access routeWithoutAuth paths
        if (userRole && routeWithoutAuth.includes(path)) {

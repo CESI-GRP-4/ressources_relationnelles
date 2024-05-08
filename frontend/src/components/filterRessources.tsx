@@ -29,7 +29,6 @@ export default function FilterRessources({ acceptedRessources, pendingRessources
 
        useEffect(() => {
               fetchCategories();
-              console.log(acceptedRessources, pendingRessources, rejectedRessources, blockedRessources)
               setFilteredRessources([
                      acceptedRessources ?? [],
                      pendingRessources ?? [],

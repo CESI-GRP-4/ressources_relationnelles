@@ -24,7 +24,6 @@ export default function PendingRessources() {
                             withCredentials: true
                      });
                      setRessources(response.data.ressources);
-                     console.log("🚀 ~ fetchPendingRessources ~ response.data.ressources:", response.data.ressources);
               } catch (error) {
                      console.error(error);
                      const axiosError = error as AxiosError;

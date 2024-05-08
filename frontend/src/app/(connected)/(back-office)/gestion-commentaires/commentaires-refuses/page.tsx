@@ -24,7 +24,6 @@ export default function RefusedComments() {
                             withCredentials: true
                      });
                      setComments(response.data.comments);
-                     console.log("🚀 ~ fetchAcceptedComments ~ response.data.comments:", response.data.comments);
               } catch (error) {
                      console.error(error);
                      const axiosError = error as AxiosError;

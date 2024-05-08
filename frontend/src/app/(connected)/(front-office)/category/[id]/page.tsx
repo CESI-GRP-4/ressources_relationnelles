@@ -29,7 +29,6 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
                             timeout: 10000,
                             withCredentials: true,
                      });
-                     console.log(response.data.category.ressources);
                      setRessources(response.data.category.ressources);
                      setCategory(response.data.category);
               } catch (error) {
