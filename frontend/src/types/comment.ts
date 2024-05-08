@@ -6,4 +6,5 @@ export interface Comment {
        comment: string;
        createAt: string;
        children: Comment[];
+       ressourceId?: number;
 }
