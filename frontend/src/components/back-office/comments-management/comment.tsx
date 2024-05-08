@@ -1,7 +1,7 @@
 import { Comment as CommentType } from "@/types/comment"
-import { Empty, Input, Button, List, message, Card, Badge, Avatar, Popconfirm, Tooltip, Typography, Popover } from 'antd';
-const { Text, Link } = Typography;
-import { UserOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Button, message, Card, Avatar, Popconfirm, Tooltip, Typography } from 'antd';
+const { Text } = Typography;
+import { UserOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import 'dayjs/locale/fr';
 dayjs.locale('fr');
@@ -125,12 +125,12 @@ export default function Comment({ comment, displayAccept, displayRefuse }: { com
 
        return (
               <Card
-            title={<div className='space-x-3'><Avatar src={comment.user.imgURL} style={{ height: 35, width: 35 }} icon={<UserOutlined />} /><Text>{comment.user.firstName}</Text><Text type='secondary'>{dayjs().to(dayjs(comment.createAt, "YYYY-MM-DD hh:mm:ss"))}</Text></div>}
-            className="w-fit max-w-full"
-            actions={actions}
-        >
-            <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{comment.comment}</pre>
-        </Card>
+                     title={<div className='space-x-3'><Avatar src={comment.user.imgURL} style={{ height: 35, width: 35 }} icon={<UserOutlined />} /><Text>{comment.user.firstName}</Text><Text type='secondary'>{dayjs().to(dayjs(comment.createAt, "YYYY-MM-DD hh:mm:ss"))}</Text></div>}
+                     className="w-fit max-w-full"
+                     actions={actions}
+              >
+                     <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{comment.comment}</pre>
+              </Card>
        )
 }
 
