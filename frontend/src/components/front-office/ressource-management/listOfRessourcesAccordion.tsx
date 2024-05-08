@@ -12,7 +12,6 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
        const [loading, setLoading] = useState(false); // Used for loading state of buttons, but the global loading of the list is handle throught the parent component from the refreshRessources function
        const { user } = useUser();
 
-       console.log(ressources)
        if (ressources.length === 0) {
               return (
                      <Card className='w-full h-fit' style={{ backgroundColor: "#f5f5f5" }}>
@@ -280,7 +279,6 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
                                                                       });
                                                                       if (response.status === 200) {
                                                                              message.success("Ressource supprimée avec succès")
-                                                                             console.log(response.data)
                                                                              refreshRessources();
                                                                       }
                                                                } catch (error) {
