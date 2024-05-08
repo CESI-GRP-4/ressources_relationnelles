@@ -14,9 +14,12 @@ const routeWithUserAuth = [
        ...routeForEveryone,
        '/categories',
        '/mes-ressources',
+       '/mes-favoris',
        '/profil',
        '/creer-ressource',
-       /^\/editer-ressource\/\d+$/
+       '/a-regarder-plus-tard',
+       /^\/editer-ressource\/\d+$/,
+       /^\/category\/\d+$/
 ];
 
 // Routes accessible to Moderators (Moderateur)
@@ -28,6 +31,10 @@ const routeForModerator = [
        '/gestion-ressources/ressources-refusees',
        '/gestion-ressources/ressources-bloquees',
        '/gestion-ressources/ressources-desactivees',
+
+       '/gestion-commentaires/commentaire-en-attente',
+       '/gestion-commentaires/commentaires-acceptees',
+       '/gestion-commentaires/commentaires-refuses'
 ];
 
 // Routes accessible to Admins (Administrateur)
