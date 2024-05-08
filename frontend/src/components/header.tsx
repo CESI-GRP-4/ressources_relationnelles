@@ -1,6 +1,6 @@
 
 import { Layout, Menu, Avatar, Spin, Tooltip } from "antd"
-import { FileDoneOutlined, FolderOpenOutlined, StarOutlined, PlusCircleOutlined, UserOutlined, LogoutOutlined, DashboardOutlined } from '@ant-design/icons';
+import { FileDoneOutlined, FolderOpenOutlined, StarOutlined, PlusCircleOutlined, UserOutlined, LogoutOutlined, DashboardOutlined, BookOutlined } from '@ant-design/icons';
 import { useUser } from "@/providers/userProvider";
 import { useState, useEffect } from "react";
 import useLogout from "@/utils/logout";
@@ -48,6 +48,11 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                      label: <Link href={"/mes-favoris"}>{`Mes favoris`}</Link>,
                      icon: <StarOutlined />,
                      key: 'mes-favoris',
+              },
+              {
+                     label: <Link href={"/a-regarder-plus-tard"}>{`A regarder plus tard`}</Link>,
+                     icon: <BookOutlined />,
+                     key: 'a-regarder-plus-tard',
               },
               // Ajouter le tableau de bord uniquement si l'utilisateur est un modérateur ou plus
               ...(user && (user.role === "Moderateur" || user.role === "Administrateur" || user.role === "SuperAdministrateur") ? [
