@@ -130,7 +130,8 @@ class CommentController extends Controller
      *         ref="#/components/schemas/UserData"
      *     ),
      *     @OA\Property(property="comment", type="string", description="The content of the comment"),
-     *     @OA\Property(property="createAt", type="string", format="date-time", description="The date and time when the comment was created")
+     *     @OA\Property(property="createAt", type="string", format="date-time", description="The date and time when the comment was created"),
+     *     @OA\Property(property="ressourceId", type="integer",description="Ressource Id of the comment")
      * )
      */
     public function formatComment($comment)
@@ -140,6 +141,7 @@ class CommentController extends Controller
             'user' => Utils::getUserData(User::find($comment->id_user)),
             'comment' => $comment->comment,
             'createAt' => $comment->created_at,
+            'ressourceId' => $comment->id_ressource,
         ];
     }
 

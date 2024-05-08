@@ -3991,6 +3991,10 @@
                         "description": "The date and time when the comment was created",
                         "type": "string",
                         "format": "date-time"
+                    },
+                    "ressourceId": {
+                        "description": "Ressource Id of the comment",
+                        "type": "integer"
                     }
                 },
                 "type": "object"
