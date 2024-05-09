@@ -7,6 +7,8 @@ use App\Http\Controllers\CountryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Statistics\ConnectionController;
 use App\Http\Controllers\UserHistoryController;
+use App\Http\Controllers\CityController;
+use App\Http\Controllers\PostalCodeController;
 use App\Http\Controllers\RessourceController;
 use Illuminate\Support\Facades\Route;
 
@@ -31,6 +33,11 @@ Route::get('category/{id}', [CategoryController::class, 'getCategory']);
 // Ressources
 Route::get('ressource/{id}', [RessourceController::class, 'getRessource']);
 
+// Cities
+Route::get('cities', [CityController::class, 'getAllCities']);
+
+// Postal Codes
+Route::get('postalCodes', [PostalCodeController::class, 'getAllPostalCodes']);
 
 // Connected access
 Route::group(['middleware' => ['jwt.auth']], function () {

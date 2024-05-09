@@ -1,9 +1,11 @@
 "use client"
-import React, { useEffect, useState } from 'react';
-import { Card, Avatar, Typography, Spin, Button, message, Form, Space, Input } from 'antd';
+import React, { useEffect, useState, useCallback } from 'react';
+import { Card, Avatar, Typography, Spin, Button, message, Form, Space, Input, Select } from 'antd';
 import { EditOutlined, SaveOutlined, LeftOutlined } from '@ant-design/icons';
 import { UserOutlined } from '@ant-design/icons';
 import type User from '@/types/user';
+import type City from '@/types/city';
+import type PostalCode from '@/types/postalCode';
 import { useUser } from '@/providers/userProvider';
 import { Row, Col } from 'antd';
 import axios from 'axios';
@@ -15,6 +17,8 @@ import { Span } from 'next/dist/trace';
 
 const { Meta } = Card;
 const { Title } = Typography;
+const { Option } = Select;
+
 
 const UserProfilePage = () => {
        const [userData, setUserData] = useState<User | null>(null);
@@ -23,73 +27,122 @@ const UserProfilePage = () => {
        const { user } = useUser();
        const [form] = Form.useForm();
        const [selectedCountry, setSelectedCountry] = useState(null);
+       const [cities, setCities] = useState<City[]>([]);
+       const [postalCodes, setPostalCodes] = useState<PostalCode[]>([]);
+
+
+       // Déclarez fetchUserData en dehors de l'effet useEffect
+       const fetchUserData = useCallback(async () => {
+              try {
+                     setUserData(user);
+                     form.setFieldsValue({
+                            id: user?.id,
+                            lastName: user?.lastName,
+                            firstName: user?.firstName,
+                            email: user?.email,
+                            city: user?.city,
+                            postalCode: user?.postalCode,
+                            country: user?.country,
+                            role: user?.role,
+                     });
+              } catch (error) {
+                     console.error('Error fetching user data:', error);
+                     throw new Error('Utilisateur non connecté ou non trouvé');
+              } finally {
+                     setLoading(false);
+              }
+       }, [form, user]);
+
+
+       const fetchCities = async () => {
+              try {
+                     // Appel API pour récupérer la liste des villes depuis la base de données
+                     const response = await axios({
+                            method: 'GET',
+                            baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
+                            url: '/cities',
+                            responseType: 'json',
+                            timeout: 10000,
+                            withCredentials: true,
+                     });
+                     setCities(response.data); // Stockez les villes dans l'état cities
+              } catch (error) {
+                     console.error('Error fetching cities:', error);
+                     message.error('Une erreur est survenue lors du chargement des villes.');
+              }
+       };
+
+       const fetchPostalCode = async () => {
+              try {
+                     // Appel API pour récupérer la liste des codes postaux depuis la base de données
+                     const response = await axios({
+                            method: 'GET',
+                            baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
+                            url: '/postalCodes',
+                            responseType: 'json',
+                            timeout: 10000,
+                            withCredentials: true,
+                     });
+                     setPostalCodes(response.data); // Mettre à jour l'état des codes postaux avec la réponse de l'API
+              } catch (error) {
+                     console.error('Error fetching postal code:', error);
+                     message.error('Une erreur est survenue lors du chargement des codes postaux.');
+              }
+       };
 
        useEffect(() => {
-              const fetchUserData = async () => {
-                     try {
-                            setUserData(user);
-                            form.setFieldsValue({
-                                   id: user?.id,
-                                   lastName: user?.lastName,
-                                   firstName: user?.firstName,
-                                   email: user?.email,
-                                   city: user?.city,
-                                   postalCode: user?.postalCode,
-                                   country: user?.country,
-                                   role: user?.role,
-                            });
-                     } catch (error) {
-                            console.error('Error fetching user data:', error);
-                            throw new Error('Utilisateur non connecté ou non trouvé');
-                     } finally {
-                            setLoading(false);
-                     }
-              };
-
               fetchUserData();
-       }, [form, user]);
+              fetchCities();
+              fetchPostalCode();
+       }, [form, user, fetchUserData]);
+
+       // Fonction pour gérer l'enregistrement des modifications de l'utilisateur
+       const handleSave = async () => {
+              let isFormValid = false;
+
+              try {
+                     await form.validateFields();
+
+                     const values = form.getFieldsValue();
+
+                     console.log('Données envoyées :', {
+                            ...values,
+                     });
+
+                     // Appel à l'API pour enregistrer les modifications de l'utilisateur
+                     const response = await axios({
+                            method: 'post',
+                            baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
+                            url: "/profil/update",
+                            data: {
+                                   ...values,
+                            },
+                            withCredentials: true,
+                            responseType: 'json',
+                            timeout: 10000,
+                     });
+
+                     // Si la mise à jour est réussie, actualisez les données de l'utilisateur
+                     fetchUserData();
+
+                     message.success('Data saved successfully!');
+
+                     isFormValid = true;
+              } catch (error) {
+                     console.error('Error saving user data:', error);
+              } finally {
+                     if (isFormValid) {
+                            setEditing(false);
+                     }
+              }
+       };
+
 
        const handleEdit = () => {
               // Activer le mode d'édition lors du clic sur le bouton "Modifier"
               setEditing(true);
        };
 
-       const handleSave = async () => {
-              let isFormValid = false;
-          
-              try {
-                  await form.validateFields();
-          
-                  const values = form.getFieldsValue();
-
-                  console.log('Données envoyées :', {
-                     ...values,
-                 }); 
-                  const response = await axios({
-                      method: 'post',
-                      baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
-                      url: "/profil/update",
-                      data: {
-                          ...values,
-                      },
-                      withCredentials: true,
-                      responseType: 'json',
-                      timeout: 10000,
-                  });
-          
-                  setUserData(response.data);
-                  message.success('Data saved successfully!');
-          
-                  isFormValid = true;
-              } catch (error) {
-                  console.error('Error saving user data:', error);
-              } finally {
-                  if (isFormValid) {
-                      setEditing(false);
-                  }
-              }
-          };
-          
 
        const handleCancel = () => {
               // Désactiver le mode édition lors du clic sur le bouton "Retour"
@@ -213,7 +266,16 @@ const UserProfilePage = () => {
                                                                       }
                                                                ]}
                                                         >
-                                                               {editing ? <Input /> : <span>{userData?.city}</span>}
+                                                               {editing ? (
+                                                                      <Select>
+                                                                             {cities.map(city => (
+                                                                                    <Option key={city.id} value={city.name}>{city.name}</Option>
+                                                                             ))}
+                                                                      </Select>
+
+                                                               ) : (
+                                                                      <span>{userData?.city}</span>
+                                                               )}
                                                         </Form.Item>
 
                                                         <Form.Item
@@ -225,14 +287,18 @@ const UserProfilePage = () => {
                                                                              required: editing,
                                                                              message: 'Veuillez renseigner un code postal',
                                                                       },
-                                                                      {
-                                                                             pattern: postalCodeRegex,
-                                                                             len: 5,
-                                                                             message: 'Le code postal doit contenir uniquement des chiffres et doit avoir une longueur de 5',
-                                                                      }
                                                                ]}
                                                         >
-                                                               {editing ? <Input /> : <span>{userData?.postalCode}</span>}
+                                                               {editing ? (
+                                                                      <Select>
+                                                                             {postalCodes.map(postalCode => (
+                                                                                    <Option key={postalCode.id} value={postalCode.postal_code}>{postalCode.postal_code}</Option>
+                                                                             ))}
+                                                                      </Select>
+
+                                                               ) : (
+                                                                      <span>{userData?.postalCode}</span>
+                                                               )}
                                                         </Form.Item>
 
                                                         <Form.Item
@@ -275,15 +341,15 @@ const UserProfilePage = () => {
                                                                <span>{userData?.role}</span>
                                                         </Form.Item>
 
-                                                        { userData?.isEmailVerified ? (
+                                                        {userData?.isEmailVerified ? (
                                                                <span>
                                                                       {`Email vérifié, vous avez accès à toutes les fonctionnalités`}
                                                                </span>)
-                                                        : (
-                                                               <span>
-                                                                      {`Email non vérifié, vous n'avez pas accès à toutes les fonctionnalités`}
-                                                               </span>
-                                                        )       
+                                                               : (
+                                                                      <span>
+                                                                             {`Email non vérifié, vous n'avez pas accès à toutes les fonctionnalités`}
+                                                                      </span>
+                                                               )
                                                         }
                                                  </Card>
                                           </Col>
