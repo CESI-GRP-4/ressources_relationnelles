@@ -97,7 +97,8 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function getUsers(Request $request) {
+    public function getUsers(Request $request)
+    {
 
         $validator = Validator::make($request->all(), [
             'perPage' => 'integer|min:1',
@@ -322,7 +323,8 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function create(Request $request) {
+    public function create(Request $request)
+    {
 
         $validator = Validator::make($request->all(), [
             'firstName' => 'required|string|max:255',
@@ -426,7 +428,8 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function editUser(Request $request, $id = null) {
+    public function editUser(Request $request, $id = null)
+    {
         DB::beginTransaction();
         try {
             if ($id === null) {
@@ -472,14 +475,13 @@ class UserController extends Controller
                         $user->$primaryKey = $id;
                         $user->save();
                     }
-
                 } else {
                     if (isset($user->$dbKey) && $user->$dbKey != $value) {
                         Utils::addUserHistoryEntry($authUserId, $user->id_user, 'Modify', $dbKey, $user->$dbKey, $value);
                         $user->$dbKey = $value;
 
                         // Envoyer un email si l'email est mis à jour
-                        if($dbKey === 'email') {
+                        if ($dbKey === 'email') {
                             $user->is_verified = self::EMAIL_NOT_VERIFIED;
                             $user->verification_token = Str::random(100);
                             $user->notify(new VerifyEmail());
@@ -496,12 +498,15 @@ class UserController extends Controller
             return response()->json(['error' => 'Une erreur est survenue lors de la mise à jour de l\'utilisateur.'], 500);
         }
     }
+
     public function editUserPassword(Request $request)
     {
         DB::beginTransaction();
         try {
             $validator = Validator::make($request->all(), [
                 'password' => 'required|string|min:8',
+                'confirmPassword' => 'required|string|min:8',
+                'oldPassword' => 'required|string|min:8',
             ]);
 
             if ($validator->fails()) {
@@ -510,18 +515,33 @@ class UserController extends Controller
 
             $user = User::findOrFail(auth()->id());
 
-            // Mettre à jour le mot de passe
-            $user->password = Hash::make($request->password);
-            $user->save();
+            // Vérifier si l'ancien mot de passe est correct
+            if (!Hash::check($request->oldPassword, $user->password)) {
+                throw new \Exception('Ancien mot de passe incorrect');
+            }
 
+            // Vérifier si le nouveau mot de passe est différent du mot de passe actuel
+            if (Hash::check($request->password, $user->password)) {
+                throw new \Exception('Le nouveau mot de passe doit être différent du mot de passe actuel');
+            }
+
+            // Mettre à jour le mot de passe
+            if ($request->password === $request->confirmPassword) {
+                $user->password = Hash::make($request->password);
+                $user->save();
+            } else {
+                return response()->json(['message' => 'Les mots de passe ne correspondent pas'], 400);
+            }
             DB::commit();
 
             return response()->json(['message' => 'Mot de passe mis à jour avec succès'], 200);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['error' => 'Une erreur est survenue lors de la mise à jour du mot de passe'], 500);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
+
 
 
 
@@ -658,7 +678,8 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function banUser(Request $request, $id) {
+    public function banUser(Request $request, $id)
+    {
 
         $rules = [
             'isPermanent' => 'boolean',
@@ -688,7 +709,7 @@ class UserController extends Controller
         } else if ($request->filled('banTimestamp')) {
 
             // unix timestamp milliseconds
-            if ($request->banTimestamp < Carbon::now()->getTimestamp()*1000) {
+            if ($request->banTimestamp < Carbon::now()->getTimestamp() * 1000) {
                 return response()->json(['message' => 'La date de fin de bannissement doit être dans le futur.'], 422);
             } else {
                 $user->ban_until = $request->banTimestamp;
@@ -811,7 +832,8 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function getUsersInformation(){
+    public function getUsersInformation()
+    {
         $totalUsers = $this->getTotalUsers();
         $usersByRole = $this->getUsersByRole();
         $bannedUsersCount = $this->getBannedUsersCount();
@@ -825,23 +847,26 @@ class UserController extends Controller
         ]);
     }
 
-    protected function getTotalUsers() {
+    protected function getTotalUsers()
+    {
         return User::count();
     }
 
-    protected function getUsersByRole() {
+    protected function getUsersByRole()
+    {
         return User::select('roles.name', DB::raw('count(users.id_user) as userCount'))
             ->join('roles', 'users.id_role', '=', 'roles.id_role')
             ->groupBy('roles.name')
             ->get();
     }
 
-    protected function getBannedUsersCount() {
+    protected function getBannedUsersCount()
+    {
         return User::where('ban_until', '>', now())->count();
     }
 
-    protected function getUnverifiedEmailsCount() {
+    protected function getUnverifiedEmailsCount()
+    {
         return User::where('is_verified', false)->count();
     }
-
 }
