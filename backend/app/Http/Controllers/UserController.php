@@ -496,6 +496,34 @@ class UserController extends Controller
             return response()->json(['error' => 'Une erreur est survenue lors de la mise à jour de l\'utilisateur.'], 500);
         }
     }
+    public function editUserPassword(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $validator = Validator::make($request->all(), [
+                'password' => 'required|string|min:8',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), 400);
+            }
+
+            $user = User::findOrFail(auth()->id());
+
+            // Mettre à jour le mot de passe
+            $user->password = Hash::make($request->password);
+            $user->save();
+
+            DB::commit();
+
+            return response()->json(['message' => 'Mot de passe mis à jour avec succès'], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Une erreur est survenue lors de la mise à jour du mot de passe'], 500);
+        }
+    }
+
+
 
     /**
      * @OA\Delete(

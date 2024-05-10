@@ -13,20 +13,17 @@ const ChangeUserPassword = () => {
 
     const onFinish = async (values: any) => {
         try {
-            /*const response = await axios({
+            console.log('Données envoyées:', values);
+    
+            const response = await axios({
                        method: 'post',
-                       baseURL: 'http://localhost/api',
-                       url: "/changeUserPassword",
-                       data: {
-                        values: values
-                       },
+                       baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
+                       url: "/profil/updatePassword",
+                       data: values, // Envoyer directement les valeurs, pas besoin de les encapsuler dans un objet 'values'
                        withCredentials: true,
-                      responseType: 'json',
+                       responseType: 'json',
                        timeout: 10000,
-                     });*/
-            const response = { data: { ...values } };
-            console.error('LES DONNEEEEEESSSSS:', response);
-
+                     });
             // Mise à jour des données utilisateur si nécessaire
             if (setUserData) {
                 setUserData(response.data);
@@ -38,6 +35,7 @@ const ChangeUserPassword = () => {
             message.error('Une erreur est survenue lors de l\'enregistrement du mot de passe');
         }
     };
+    
 
     return (
         <Card title="Modification de votre mot de passe" bordered={true} style={{ marginBottom: 16, maxWidth: '1000px', borderColor: '#aeaeaecc' }} headStyle={{ borderBottomColor: '#aeaeaecc' }}>
@@ -48,8 +46,8 @@ const ChangeUserPassword = () => {
                 labelCol={{ span: 6 }}
                 wrapperCol={{ span: 18 }}
             >
-                <Row gutter={[16, 16]}> {/* Utilisation de Row pour créer une ligne */}
-                    <Col span={24}> {/* Utilisation de Col pour définir la largeur de la colonne */}
+                <Row gutter={[16, 16]}>
+                    <Col span={24}>
                         <PasswordInputComponent
                             useRegex={false}
                             label="Ancien mot de passe"
@@ -64,7 +62,7 @@ const ChangeUserPassword = () => {
                         <PasswordInputComponent
                             useRegex={true}
                             label="Nouveau mot de passe"
-                            name="newPassword"
+                            name="password"
                             required={true}
                             style={{ width: '100%' }}
                         />

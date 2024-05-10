@@ -105,9 +105,10 @@ const UserProfilePage = () => {
 
                      const values = form.getFieldsValue();
 
+                     /*Donnée envoyées
                      console.log('Données envoyées :', {
                             ...values,
-                     });
+                     });*/
 
                      // Appel à l'API pour enregistrer les modifications de l'utilisateur
                      const response = await axios({

@@ -47,6 +47,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     // Profil
     Route::group(['prefix' => 'profil'], function () {
         Route::post('update', [UserController::class, 'editUser']);
+        Route::post('updatePassword', [UserController::class, 'editUserPassword']);
     });
 
 
