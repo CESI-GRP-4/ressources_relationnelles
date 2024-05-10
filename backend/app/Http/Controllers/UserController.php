@@ -541,10 +541,6 @@ class UserController extends Controller
         }
     }
 
-
-
-
-
     /**
      * @OA\Delete(
      *     path="/user/delete/{id}",
