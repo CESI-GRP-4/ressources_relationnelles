@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -470,9 +471,9 @@ class UserController extends Controller
 
                     if ($relation && $relation->$property != $value) {
                         Utils::addUserHistoryEntry($authUserId, $user->id_user, 'Modify', $relationName, $relation->$property, $value);
-                        $id = $relation->getIdByName($value);
+                        $idItem = $relation->getIdByName($value);
                         $primaryKey = $relation->getKeyName();
-                        $user->$primaryKey = $id;
+                        $user->$primaryKey = $idItem;
                         $user->save();
                     }
                 } else {
@@ -491,9 +492,12 @@ class UserController extends Controller
             }
             $user->save();
             DB::commit();
+            $user = null;
+            $user = User::findOrFail($id);
 
             return response()->json(['message' => 'Utilisateur mis à jour avec succès', 'user' => Utils::getAllUserData($user)], 200);
         } catch (\Exception $e) {
+            Log::alert($e->getMessage());
             DB::rollBack();
             return response()->json(['error' => 'Une erreur est survenue lors de la mise à jour de l\'utilisateur.'], 500);
         }
