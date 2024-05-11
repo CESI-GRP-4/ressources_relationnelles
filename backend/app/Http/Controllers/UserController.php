@@ -429,8 +429,7 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function editUser(Request $request, $id = null)
-    {
+    public function editUser(Request $request, $id = null) {
         DB::beginTransaction();
         try {
             if ($id === null) {
@@ -463,41 +462,78 @@ class UserController extends Controller
             $fieldMapping = $this->getFieldMapping();
             foreach ($validator->validated() as $key => $value) {
                 $dbKey = $fieldMapping[$key] ?? $key;
-
-                // Vérifiez si le dbKey contient une liaison
-                if (strpos($dbKey, '.') !== false) {
-                    list($relationName, $property) = explode('.', $dbKey, 2);
-                    $relation = $user->$relationName;
-
-                    if ($relation && $relation->$property != $value) {
-                        Utils::addUserHistoryEntry($authUserId, $user->id_user, 'Modify', $relationName, $relation->$property, $value);
-                        $idItem = $relation->getIdByName($value);
-                        $primaryKey = $relation->getKeyName();
-                        $user->$primaryKey = $idItem;
-                        $user->save();
-                    }
-                } else {
-                    if (isset($user->$dbKey) && $user->$dbKey != $value) {
-                        Utils::addUserHistoryEntry($authUserId, $user->id_user, 'Modify', $dbKey, $user->$dbKey, $value);
-                        $user->$dbKey = $value;
-
-                        // Envoyer un email si l'email est mis à jour
-                        if ($dbKey === 'email') {
-                            $user->is_verified = self::EMAIL_NOT_VERIFIED;
-                            $user->verification_token = Str::random(100);
-                            $user->notify(new VerifyEmail());
-                        }
-                    }
+                if (isset($user->$dbKey) && $user->$dbKey != $value) {
+                    Utils::addUserHistoryEntry($authUserId, $user->id_user, 'Modify', $dbKey, $user->$dbKey, $value);
+                    $user->$dbKey = $value !== null ? $value : $user->$dbKey;
                 }
             }
+
+            if ($request->filled('country')) {
+                $country = Country::where('name', $request->country)->firstOrFail();
+                if ($user->id_country !== $country->id_country) {
+                    Utils::addUserHistoryEntry(
+                        $authUserId,
+                        $user->id_user,
+                        'Modify',
+                        'country',
+                        $user->country ? $user->country->name : null,
+                        $country->name
+                    );
+                    $user->id_country = $country->id_country;
+                }
+            }
+
+            if ($request->filled('city')) {
+                $city = City::firstOrCreate(['name' => $request->city]);
+                if ($user->id_city !== $city->id_city) {
+                    Utils::addUserHistoryEntry(
+                        $authUserId,
+                        $user->id_user,
+                        'Modify',
+                        'city',
+                        $user->city ? $user->city->name : null,
+                        $city->name
+                    );
+                    $user->id_city = $city->id_city;
+                }
+            }
+
+            if ($request->filled('postalCode')) {
+                $postalCode = PostalCode::firstOrCreate(['postal_code' => $request->postalCode]);
+                if ($user->id_postal_code !== $postalCode->id_postal_code) {
+                    Utils::addUserHistoryEntry(
+                        $authUserId,
+                        $user->id_user,
+                        'Modify',
+                        'postal_code',
+                        $user->postalCode ? $user->postalCode->postal_code : null,
+                        $postalCode->postal_code
+                    );
+                    $user->id_postal_code = $postalCode->id_postal_code;
+                }
+            }
+
+            if ($isSuperAdmin && $request->filled('role')) {
+                $role = Role::where('name', $request->role)->firstOrFail();
+                if ($user->id_role !== $role->id_role) {
+                    Utils::addUserHistoryEntry(
+                        $authUserId,
+                        $user->id_user,
+                        'Modify',
+                        'role',
+                        $user->role->name,
+                        $role->name
+                    );
+                    $user->id_role = $role->id_role;
+                }
+            }
+
             $user->save();
             DB::commit();
-            $user = null;
             $user = User::findOrFail($id);
 
             return response()->json(['message' => 'Utilisateur mis à jour avec succès', 'user' => Utils::getAllUserData($user)], 200);
         } catch (\Exception $e) {
-            Log::alert($e->getMessage());
             DB::rollBack();
             return response()->json(['error' => 'Une erreur est survenue lors de la mise à jour de l\'utilisateur.'], 500);
         }
