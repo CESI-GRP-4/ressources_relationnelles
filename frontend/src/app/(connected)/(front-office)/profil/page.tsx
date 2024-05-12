@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState, useCallback } from 'react';
-import { Card, Avatar, Typography, Spin, Button, message, Form, Space, Input, Select, Empty } from 'antd';
+import { Card, Avatar, Typography, Spin, Button, message, Form, Space, Input, Select, Empty, Tooltip } from 'antd';
 import { EditOutlined, SaveOutlined, LeftOutlined } from '@ant-design/icons';
 import { UserOutlined } from '@ant-design/icons';
 import type User from '@/types/user';
@@ -22,7 +22,7 @@ const UserProfilePage = () => {
        const { user, setUser } = useUser();
        const [form] = Form.useForm();
        const [selectedCountry, setSelectedCountry] = useState(null);
-       
+
        const [cities, setCities] = useState<City[]>([]);
        const [postalCodes, setPostalCodes] = useState<PostalCode[]>([]);
 
@@ -92,7 +92,7 @@ const UserProfilePage = () => {
        // Fonction pour gérer l'enregistrement des modifications de l'utilisateur
        const handleSave = async () => {
               let isFormValid = false;
-
+              setLoading(true)
               try {
                      await form.validateFields();
                      const values = form.getFieldsValue();
@@ -109,12 +109,11 @@ const UserProfilePage = () => {
                             responseType: 'json',
                             timeout: 10000,
                      });
-                     console.log("🚀 ~ handleSave ~ response.data.user:", response.data.user);
                      setUser(response.data.user)
 
                      // Si la mise à jour est réussie, actualisez les données de l'utilisateur
                      setFormData();
-                     message.success('Data saved successfully!');
+                     message.success('Informations mises à jour avec succès !');
                      isFormValid = true;
               } catch (error) {
                      console.error('Error saving user data:', error);
@@ -123,6 +122,8 @@ const UserProfilePage = () => {
                      if (isFormValid) {
                             setEditing(false);
                      }
+              setLoading(false)
+
               }
        };
 
@@ -148,7 +149,8 @@ const UserProfilePage = () => {
                                           style={{ width: '100%', maxWidth: '1000px', margin: 'auto', marginTop: '2%', marginBottom: '2%', borderColor: '#aeaeaecc' }}
                                           actions={[
                                                  <Button
-                                                 size='large'
+                                                        loading={loading}
+                                                        size='large'
                                                         icon={editing ? <LeftOutlined /> : <EditOutlined />}
                                                         onClick={editing ? handleCancel : handleEdit}
                                                         key="edit"
@@ -177,6 +179,7 @@ const UserProfilePage = () => {
                                                  }}
                                                  labelCol={{ span: 8 }}
                                                  wrapperCol={{ span: 16 }}
+                                                 disabled={loading}
                                           >
                                                  <Row gutter={16}>
                                                         <Col span={12}>
@@ -253,7 +256,7 @@ const UserProfilePage = () => {
                                                                              ]}
                                                                       >
                                                                              {editing ? (
-                                                                                    <Select>
+                                                                                    <Select loading={loading}>
                                                                                            {cities.map(city => (
                                                                                                   <Option key={city.id} value={city.name}>{city.name}</Option>
                                                                                            ))}
@@ -346,18 +349,16 @@ const UserProfilePage = () => {
                                                                       style={{ marginBottom: 16, borderColor: '#aeaeaecc' }}
                                                                       headStyle={{ borderBottomColor: '#aeaeaecc' }}
                                                                >
-                                                                      <Button 
-                                                 size='large'
-                                                                      
-                                                                      type="primary" disabled={true} style={{ marginBottom: '8px', display: 'block' }}>Récupérer mes informations</Button>
-                                                                      <Button 
-                                                 size='large'
-                                                                      
-                                                                      type="primary" disabled={true} style={{ marginBottom: '8px', display: 'block' }}>Supprimer mes informations</Button>
-                                                                      <Button 
-                                                 size='large'
-                                                                      
-                                                                      type="primary" disabled={true} style={{ display: 'block' }}>Supprimer mon profil</Button>
+                                                                      <Tooltip title="Fonctionnalité bientôt disponible">
+                                                                             <Button size='large' type="primary" disabled={true} style={{ marginBottom: '8px', display: 'block' }}>Récupérer mes informations</Button>
+                                                                      </Tooltip>
+                                                                      <Tooltip title="Fonctionnalité bientôt disponible">
+                                                                             <Button size='large' type="primary" disabled={true} style={{ marginBottom: '8px', display: 'block' }}>Supprimer mes informations</Button>
+                                                                      </Tooltip>
+
+                                                                      <Tooltip title="Fonctionnalité bientôt disponible">
+                                                                             <Button size='large' type="primary" disabled={true} style={{ display: 'block' }}>Supprimer mon profil</Button>
+                                                                      </Tooltip>
                                                                </Card>
                                                         </Col>
                                                  </Row>
@@ -366,10 +367,7 @@ const UserProfilePage = () => {
                                           {editing && <PasswordForm />}
                                           {editing && (
                                                  <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '1%' }}>
-                                                        <Button
-                                                 size='large'
-                                                        
-                                                        type="primary" onClick={handleSave} icon={<SaveOutlined />}>
+                                                        <Button loading={loading} size='large' type="primary" onClick={handleSave} icon={<SaveOutlined />}>
                                                                Enregistrer
                                                         </Button>
                                                  </div>
