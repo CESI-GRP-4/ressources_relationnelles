@@ -178,6 +178,7 @@ const UserProfilePage = () => {
                                                         country: user?.country,
                                                         role: user?.role,
                                                  }}
+                                                 onFinish={handleSave}
                                                  disabled={loading}
                                           >
                                                  <div className='flex flex-col mt-10 md:flex-row gap-5 md:justify-center justify-normal items-center md:items-start'>
@@ -216,12 +217,7 @@ const UserProfilePage = () => {
                                                                       label="Email"
                                                                       name="email"
                                                                       labelCol={{ style: { textAlign: 'left', fontWeight: "bold" } }}
-                                                                      rules={[
-                                                                             {
-                                                                                    required: editing,
-                                                                                    message: 'Veuillez renseigner une adresse mail',
-                                                                             },
-                                                                             {
+                                                                      rules={[{     required: editing,
                                                                                     min: 5,
                                                                                     max: 100,
                                                                                     type: 'email',
@@ -354,16 +350,16 @@ const UserProfilePage = () => {
                                                                </Tooltip>
                                                         </Card>
                                                  </div>
-
-                                          </Form>
-                                          {editing && <PasswordForm />}
-                                          {editing && (
-                                                 <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '1%' }}>
-                                                        <Button loading={loading} size='large' type="primary" onClick={handleSave} icon={<SaveOutlined />}>
+                                                 {editing && (
+                                                 <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '1%' }} className='mb-5'>
+                                                        <Button loading={loading} size='large' type="primary" htmlType="submit" icon={<SaveOutlined />}>
                                                                Enregistrer
                                                         </Button>
                                                  </div>
                                           )}
+                                          </Form>
+                                          {editing && <PasswordForm />}
+                                          
                                    </Card>
                             )
                             : (
