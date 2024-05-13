@@ -1,8 +1,8 @@
-import { Carousel, Spin, Empty } from "antd";
+import { Carousel, Spin, Empty, Typography } from "antd";
 import Ressource from "@/types/ressource";
 import { useEffect, useState } from "react";
 import axios from "axios";
-
+const {Paragraph} = Typography
 export default function RessourcesCaroussel({ categoryId }: { categoryId: number }) {
        const [ressources, setRessources] = useState<Ressource[]>([])
        const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -45,7 +45,7 @@ export default function RessourcesCaroussel({ categoryId }: { categoryId: number
                                                                <span className="text-4xl">{ressource.label}</span>
                                                         </div>
                                                         <div>
-                                                               <span>{ressource.description}</span>
+                                                               <Paragraph className="!text-white" ellipsis={{rows: 6}}>{`zefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozuezefnyuzefbneziufbnzifbneziofhuebnzfohiuzebfnhozue`}</Paragraph>
                                                         </div>
                                                  </div>
                                           ))}
