@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, Form, Input, message, Modal, notification, Select, Space, Switch } from "antd";
 import { AppstoreAddOutlined } from "@ant-design/icons";
 import axios, { AxiosError } from "axios";
-
+import Link from "next/link";
 
 export default function CreateCategoryForm({ refreshCategories }: { refreshCategories: Function }) {
        const [isModalOpen, setIsModalOpen] = useState(false);
@@ -157,6 +157,7 @@ export default function CreateCategoryForm({ refreshCategories }: { refreshCateg
                                    <Form.Item
                                           style={{ marginBottom: 0 }}
                                           label="Icône"
+                                          tooltip={<div>{`L'icône doit être selectionnée depuis le site`} <Link target="_blank" href="https://icon-sets.iconify.design/">Iconify</Link></div>}
                                           name="icon"
                                           rules={[
                                                  { required: true, message: 'Veuillez entrer une icône' }]}>
