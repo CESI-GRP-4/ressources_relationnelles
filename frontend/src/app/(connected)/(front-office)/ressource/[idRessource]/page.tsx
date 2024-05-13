@@ -70,7 +70,7 @@ export default function Ressource({ params }: { params: { idRessource: number } 
               {
                      label: <div className="flex flex-row items-center space-x-2"><Icon style={{ fontSize: "2rem" }} icon={"typcn:messages"} /> <span>{`Discussion`}</span></div>,
                      key: 'discussion',
-                     children: <CommentProvider><Comments comments={ressource?.comments || []} idRessource={ressource?.id || 0} /> </CommentProvider>
+                     children: <CommentProvider><Comments disableComment={ressource?.status !== "accepted"} comments={ressource?.comments || []} idRessource={ressource?.id || 0} /> </CommentProvider>
               },
        ];
 

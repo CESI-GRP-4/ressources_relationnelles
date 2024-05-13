@@ -10,15 +10,17 @@ import { useUser } from '@/providers/userProvider';
 dayjs.locale('fr');
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Icon } from '@iconify/react/dist/iconify.js';
+import Ressource from '@/app/(connected)/(front-office)/ressource/[idRessource]/page';
 dayjs.extend(relativeTime)
 const { Text, Link } = Typography;
 interface Props {
        comments: CommentType[];
        idRessource: number;
        isFirstComponent?: boolean;
+       disableComment?: boolean
 }
 
-export default function Comments({ comments, idRessource, isFirstComponent = true }: Props) {
+export default function Comments({ comments, idRessource, isFirstComponent = true, disableComment = false }: Props) {
        const [newComment, setNewComment] = useState('');
        const [visibleComments, setVisibleComments] = useState(5); // Initial number of comments to display
        const { idParent, replyingTo, handleSetReply, resetReply } = useCommentContext(); // Use context
@@ -145,7 +147,7 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
                                                         style={{ width: '100%' }}
                                                  >
                                                         <pre>{comment.comment}</pre>
-                                                        <Comments comments={comment.children} isFirstComponent={false} idRessource={idRessource} />
+                                                        <Comments comments={comment.children} isFirstComponent={false} idRessource={idRessource} disableComment = {disableComment} />
                                                  </Card>
                                           </List.Item>
                                    )}
@@ -185,7 +187,8 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
                                           placeholder="Rédigez un commentaire..."
                                    />
                             }
-                            <Button onClick={handleAddComment} type="primary" style={{ marginTop: '10px' }} loading={isLoading}>
+                            <Button onClick={handleAddComment} type="primary" style={{ marginTop: '10px' }} loading={isLoading} disabled={disableComment}
+>
                                    Commenter
                             </Button>
                      </div>}
