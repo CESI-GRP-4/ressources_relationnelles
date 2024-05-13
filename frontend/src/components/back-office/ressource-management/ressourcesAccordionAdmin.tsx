@@ -13,7 +13,7 @@ export default function RessourcesAccordionAdmin({ ressources, refreshRessources
        if (ressources.length === 0) {
               return (
                      <Card className='w-full' style={{ backgroundColor: "#f5f5f5" }}>
-                            <Empty></Empty>
+                            <Empty description="Aucune ressource"></Empty>
                      </Card>
               )
        }
