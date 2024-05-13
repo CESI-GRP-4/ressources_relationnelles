@@ -148,7 +148,7 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                                    />,
                                    label: (
                                           <ConditionalTooltip title="Commentaires acceptés">
-                                                 <Link href={'/gestion-commentaires/commentaires-acceptes'}>Acceptées</Link>
+                                                 <Link href={'/gestion-commentaires/commentaires-acceptes'}>Acceptés</Link>
                                           </ConditionalTooltip>
                                    ),
                                    key: 'commentaires-acceptes',
