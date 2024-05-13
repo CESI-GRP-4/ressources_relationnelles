@@ -2,7 +2,7 @@
 import axios from "axios"
 import { AxiosError } from "axios"
 import { useEffect, useState } from "react"
-import { Button, message, Skeleton } from "antd"
+import { Button, Empty, message, Skeleton } from "antd"
 import PageSummary from "@/components/pageSummary"
 import RessourcesAccordionAdmin from "@/components/back-office/ressource-management/ressourcesAccordionAdmin"
 import { Comment as CommentType } from "@/types/comment"
@@ -50,16 +50,29 @@ export default function AcceptedComments() {
                      <div className="flex md:flex-row flex-col justify-between md:space-x-5 space-x-0 md:space-y-0 space-y-5">
                             <PageSummary title={"Commentaires acceptés"} description={undefined}></PageSummary>
                      </div>
-                     <div className="flex-wrap flex mt-5 gap-5">
-
-                            {loading ?
+                     <div className="flex flex-wrap mt-5 gap-5 w-full justify-center">
+                            {loading ? (
                                    <Skeleton active />
-                                   :
-                                   comments.map((comment) => (
-                                          <Comment fetchComments={fetchAcceptedComments} displayDelete displayRefuse={false} displayAccept={false} key={comment.id} comment={comment}></Comment>
-                                   ))
-                            }
+                            ) : (
+                                   <>
+                                          {!comments.length ? (
+                                                 <Empty description="Aucun commentaire" />
+                                          ) : (
+                                                 comments.map((comment) => (
+                                                        <Comment
+                                                               fetchComments={fetchAcceptedComments}
+                                                               displayDelete
+                                                               displayRefuse={false}
+                                                               displayAccept={false}
+                                                               key={comment.id}
+                                                               comment={comment}
+                                                        />
+                                                 ))
+                                          )}
+                                   </>
+                            )}
                      </div>
+
               </div>
        );
 }
