@@ -316,7 +316,7 @@ class Utils{
      */
     public static function formatComment($comment){
         $user = User::find($comment->id_user);
-        if(auth()->user()->role_id == 4){
+        if(auth()->user()->id_role == 4){
             $user = self::getUserPublicData($user);
         }else{
             $user = self::getUserData($user);
@@ -333,7 +333,7 @@ class Utils{
     public static function getCommentCascade($ressourceId){
         $rootComments = Comment::whereNull('id_parent')
                         ->where('id_ressource', $ressourceId)
-                        ->where('id_status', 1) // pending
+                        ->where('id_status', 1) // accepted
                         ->get();
         return $rootComments->map(function ($comment) {
             return self::formatComment($comment);
@@ -342,7 +342,7 @@ class Utils{
 
     private static function getCommentChildren($parentId) {
         $children = Comment::where('id_parent', $parentId)
-            ->where('id_status', 2) // pending
+            ->where('id_status', 1) // accepted
             ->get();
         return $children->map(function ($child) {
             return self::formatComment($child);
