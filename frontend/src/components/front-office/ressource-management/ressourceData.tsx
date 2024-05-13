@@ -10,7 +10,10 @@ export default function RessourceData({ props, ressource }: { props?: TabsProps,
               {
                      label: <div className="flex flex-row items-center space-x-2"><Icon style={{ fontSize: "2rem" }} icon={"fluent:content-view-16-regular"} /> <span>{`Contenu de la ressource`}</span></div>,
                      key: 'content',
-                     children: <div><pre>{ressource.description}</pre></div>
+                     children: <div className='overflow-x-auto'>
+                     <pre className='whitespace-pre-wrap'>{ressource.description}</pre>
+                   </div>
+                   
               },
               {
                      label: <div className="flex flex-row items-center space-x-2"><Icon style={{ fontSize: "1.8rem" }} icon={"oui:documents"} /> <span>{`Documents`}</span></div>,
