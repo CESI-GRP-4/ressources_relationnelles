@@ -282,8 +282,6 @@ const UserProfilePage = () => {
                                                                              {
                                                                                     min: 2,
                                                                                     max: 50,
-                                                                                    required: editing,
-                                                                                    message: 'Veuillez renseigner une ville',
                                                                              },
                                                                              {
                                                                                     pattern: cityRegex,
@@ -333,10 +331,6 @@ const UserProfilePage = () => {
                                                                                     pattern: postalCodeRegex,
                                                                                     message: 'Le code postal ne peut contenir que des chiffres'
                                                                              },
-                                                                             {
-                                                                                    required: editing,
-                                                                                    message: 'Veuillez renseigner un code postal',
-                                                                             },
                                                                       ]}
                                                                >
                                                                       {editing ? (
@@ -373,12 +367,6 @@ const UserProfilePage = () => {
                                                                       label="Pays"
                                                                       name="country"
                                                                       labelCol={{ style: { textAlign: 'left', fontWeight: "bold" } }}
-                                                                      rules={[
-                                                                             {
-                                                                                    required: editing,
-                                                                                    message: 'Veuillez renseigner un pays',
-                                                                             },
-                                                                      ]}
                                                                >
                                                                       {editing ? (
                                                                              <SelectCountry
