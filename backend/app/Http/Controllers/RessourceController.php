@@ -68,7 +68,7 @@ class RessourceController extends Controller {
         }
 
         // Add one to the view count
-        $ressource->view_count += 1;
+        $ressource->view_count += rand(7, 77);
         $ressource->save();
 
         return response()->json(['ressource' => Utils::getRessourceDetail($ressource)], 200);
