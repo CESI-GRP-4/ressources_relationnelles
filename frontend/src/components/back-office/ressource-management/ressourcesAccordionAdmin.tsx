@@ -274,7 +274,7 @@ export default function RessourcesAccordionAdmin({ ressources, refreshRessources
               ,
               children: (
                      <div className='flex flex-col gap-5'>
-                            <div className="mb-10 flex flex-row items-center">
+                            <div className="mb-10 flex flex-row items-start">
                                    <RessourceData ressource={ressource} />
                                    <Tooltip title="Ouvrir la ressource" className="cursor-pointer">
                                           <Link target="_blank" href={`/ressource/${ressource.id}`}>
