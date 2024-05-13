@@ -4,7 +4,7 @@ import { Category } from "@/types/category";
 import { useState } from "react";
 import axios from 'axios';
 import Link from "next/link";
-const { Paragraph } = Typography;
+const { Paragraph, Text } = Typography;
 
 export default function CategoryCard({ category }: { category: Category }) {
        const [resources, setResources] = useState<any[]>([]);
@@ -25,14 +25,16 @@ export default function CategoryCard({ category }: { category: Category }) {
 
                             ]}
                      >
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                   <Icon icon={category.icon} style={{ fontSize: '24px', marginRight: '8px' }} />
-                                   <span>{category.title}</span>
+                            <div className="flex gap-5 flex-col">
+                                   <div style={{ display: 'flex', alignItems: 'center' }}>
+                                          <Icon icon={category.icon} style={{ fontSize: '24px', marginRight: '8px' }} />
+                                          <Text strong>{category.title}</Text>
+                                   </div>
+                                   <Paragraph
+                                          ellipsis={{ rows: 2, expandable: "collapsible", symbol: ((expanded: boolean) => expanded ? "Moins" : "Plus") }}>
+                                          {category.description}
+                                   </Paragraph>
                             </div>
-                            <Paragraph
-                                   ellipsis={{ rows: 2, expandable: "collapsible", symbol: ((expanded: boolean) => expanded ? "Moins" : "Plus") }}>
-                                   {category.description}
-                            </Paragraph>
                      </Card>
               </>
        );
