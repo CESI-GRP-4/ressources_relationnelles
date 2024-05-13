@@ -38,7 +38,7 @@ export default function RessourcesCaroussel({ categoryId }: { categoryId: number
                      :
                      <>
                             {ressources.length > 0 ?
-                                   (<Carousel className="sm:w-[600px] w-[350px] bg-[#6179c3] rounded-lg" autoplay autoplaySpeed={3000}>
+                                   (<Carousel className="sm:w-[600px] w-[350px] bg-[#6179c3] rounded-lg" autoplay autoplaySpeed={2200} draggable arrows infinite>
                                           {ressources.map((ressource: Ressource) => (
                                                  <div key={ressource.id} className="p-8 text-white space-y-6">
                                                         <div>
