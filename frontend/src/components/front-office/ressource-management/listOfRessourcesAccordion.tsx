@@ -189,10 +189,9 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
        const collapseItems = ressources.map((ressource) => ({
               key: ressource.id?.toString() ?? 'unknown',
               label: <div className='flex flex-row justify-between gap-5'>
-                     <div className="flex flex-row gap-5 items-start w-3/4">
-                            <Paragraph strong className='text-nowrap'>{ressource.label}</Paragraph>
-                            {/* <Paragraph ellipsis={{ rows: 2, expandable: true }} type='secondary'>{ressource.description}</Paragraph> */}
-                     </div>
+                     <div className="w-2/3">
+                                   <Paragraph ellipsis={{rows: 3, }} strong>{ressource.label}</Paragraph>
+                                   </div>
                      <div className='flex flex-row justify-start items-center'>
                             <Avatar
                                    src={ressource.user?.imgURL}
