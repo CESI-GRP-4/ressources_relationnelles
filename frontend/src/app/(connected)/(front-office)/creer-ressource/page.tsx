@@ -119,7 +119,7 @@ export default function CreateRessourceForm() {
                                           <Select
                                                  showSearch
                                                  style={{ width: '100%' }}
-                                                 placeholder="Select a category"
+                                                 placeholder="Selectionnez une catégorie"
                                                  optionFilterProp="children"
                                                  filterOption={(input, option) =>
                                                         option ? option.description.toLowerCase().includes(input.toLowerCase()) : false
