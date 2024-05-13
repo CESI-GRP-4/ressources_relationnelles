@@ -136,7 +136,7 @@ class RessourceController extends Controller {
 
         $validatedData = Validator::make($request->all(), [
             'label' => 'required|string|max:255',
-            'description' => 'required|string',
+            'description' => 'sometimes|string',
             'idCategory' => 'required|integer',
             'isPublic' => 'sometimes|boolean',
         ]);
