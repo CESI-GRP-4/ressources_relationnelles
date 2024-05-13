@@ -10,12 +10,28 @@ import { Category } from "@/types/category";
 const { Option } = Select;
 const { Title } = Typography;
 import PageSummary from "@/components/pageSummary";
+import { Icon } from '@iconify/react'; // Assuming you use Iconify React component
 
 export default function CreateRessourceForm() {
        const [form] = Form.useForm();
        const [isLoading, setIsLoading] = useState(false);
        const [categories, setCategories] = useState<Category[]>([]);
        const { user } = useUser();
+       const transformCategoriesToOptions = (categories) => {
+              return categories.map(category => ({
+                     label: (
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                   <Icon icon={category.icon} style={{ marginRight: 8, fontSize: '1.2em' }} />
+                                   {category.title}
+                            </div>
+                     ),
+                     value: category.id,
+                     description: category.description,
+                     icon: category.icon
+              }));
+       }
+
+       const options = transformCategoriesToOptions(categories); // Call this after categories are fetched
 
        useEffect(() => {
               fetchCategories();
@@ -35,6 +51,7 @@ export default function CreateRessourceForm() {
 
        const onFinish = async (ressourceForm: Ressource) => {
               const ressourceFormWithUserId = { ...ressourceForm };
+              console.log("🚀 ~ onFinish ~ ressourceFormWithUserId:", ressourceFormWithUserId);
 
               try {
                      setIsLoading(true);
@@ -101,18 +118,16 @@ export default function CreateRessourceForm() {
                                    >
                                           <Select
                                                  showSearch
-                                                 optionFilterProp="label"
+                                                 style={{ width: '100%' }}
+                                                 placeholder="Select a category"
+                                                 optionFilterProp="children"
                                                  filterOption={(input, option) =>
-                                                        (option?.label as string).toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                                        option ? option.description.toLowerCase().includes(input.toLowerCase()) : false
                                                  }
                                                  loading={isLoading}
-                                          >
-                                                 {(categories).map((category) => (
-                                                        <Option key={category.id} value={category.id} label={category.title}>
-                                                               {category.title}
-                                                        </Option>
-                                                 ))}
-                                          </Select>
+                                                 options={options}
+                                          />
+
                                    </Form.Item>
 
                                    <Form.Item
