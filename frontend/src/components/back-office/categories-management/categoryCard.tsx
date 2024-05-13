@@ -37,7 +37,7 @@ export default function CategoryCard({ category, refreshCategories }: { category
                                    }
                                    description={
                                           <Paragraph
-                                                 ellipsis={{ rows: 2, expandable: true, symbol: 'plus' }}>
+                                                 ellipsis={{ rows: 2, expandable: "collapsible", symbol: ((expanded: boolean) => expanded ? "Moins" : "Plus") }}>
                                                  {category.description}
                                           </Paragraph>
                                    }
