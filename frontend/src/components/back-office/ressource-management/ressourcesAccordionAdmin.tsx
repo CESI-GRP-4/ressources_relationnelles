@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Avatar, Collapse, Popover, Tag, Typography, Button, message, Popconfirm, Form, Input, Badge, Empty, Card } from 'antd';
+import { Avatar, Collapse, Popover, Tag, Typography, Button, message, Popconfirm, Form, Input, Badge, Empty, Card, Tooltip } from 'antd';
 import Ressource from '@/types/ressource';
 import { Icon } from '@iconify/react';
 const { Text, Paragraph } = Typography;
 import axios, { AxiosError } from 'axios';
 import RessourceData from '@/components/front-office/ressource-management/ressourceData';
+import Link from 'next/link';
 
 export default function RessourcesAccordionAdmin({ ressources, refreshRessources, showAccept, showRefuse, showDelete, showBlock }: { ressources: Ressource[], refreshRessources: Function, showAccept: boolean, showRefuse: boolean, showDelete: boolean, showBlock: boolean }) {
        const [loading, setLoading] = useState(false); // Used for loading state of buttons, but the global loading of the list is handle throught the parent component from the refreshRessources function
@@ -216,67 +217,70 @@ export default function RessourcesAccordionAdmin({ ressources, refreshRessources
        const collapseItems = ressources.map((ressource) => ({
               key: ressource.id?.toString() ?? 'unknown', // Ensure key is a string and unique; use a placeholder if id is not available
               label:
-                            <div className='flex flex-col sm:flex-row justify-between gap-3'>
-                                   <div className="w-2/3">
-                                   <Paragraph ellipsis={{rows: 3, }} strong>{ressource.label}</Paragraph>
-                                   </div>
-                                   <div className='flex flex-row items-center gap-5 justify-between'>
-                                          <Popover
+                     <div className='flex flex-col sm:flex-row justify-between gap-3'>
+                            <div className="w-2/3">
+                                   <Paragraph ellipsis={{ rows: 3, }} strong>{ressource.label}</Paragraph>
+                            </div>
+                            <div className='flex flex-row items-center gap-5 justify-between'>
+                                   <Popover
                                           content={<div className="mt-5 space-y-1 pr-7">
-                                                        <div className="flex flex-row gap-2">
-                                                               <Text type="secondary" className="whitespace-nowrap">Email</Text>
-                                                               <Typography.Link ellipsis copyable>{ressource.user?.email}</Typography.Link>
-                                                        </div>
-                                                        <div className="flex flex-row gap-2">
-                                                               <Text type="secondary" className="whitespace-nowrap">ID</Text>
-                                                               <Text ellipsis copyable>{ressource.user?.id}</Text>
-                                                        </div>
-                                                        <div className="flex flex-row gap-2">
-                                                               <Text type="secondary" className="whitespace-nowrap">Rôle</Text>
-                                                               <Text ellipsis>{ressource.user?.role}</Text>
-                                                        </div>
-                                                        <div className="flex flex-row gap-2">
-                                                               <Text type="secondary" className="whitespace-nowrap">Pays</Text>
-                                                               <Text ellipsis>{ressource.user?.country}</Text>
-                                                        </div>
-                                                        <div className="flex flex-row gap-2">
-                                                               <Text type="secondary" className="whitespace-nowrap">Adresse</Text>
-                                                               <Text ellipsis>{ressource.user?.city}</Text>
-                                                        </div>
-                                                        <div className="flex flex-row gap-2">
-                                                               <Text type="secondary" className="whitespace-nowrap">Code postal</Text>
-                                                               <Text ellipsis>{ressource.user?.postalCode}</Text>
-                                                        </div>
-                                                 </div>}
-
-
-
-                                                 title="Informations de l'utilisateur" trigger="hover">
-                                                 <div className='flex flex-row justify-start items-center' style={{ cursor: 'pointer' }}>
-                                                        <Avatar
-                                                               src={ressource.user?.imgURL}
-                                                               alt={`${ressource.user?.firstName} ${ressource.user?.lastName}`}
-                                                        />
-                                                        <div style={{ marginLeft: 8 }}>
-                                                               {`${ressource.user?.firstName} ${ressource.user?.lastName}`}
-                                                        </div>
+                                                 <div className="flex flex-row gap-2">
+                                                        <Text type="secondary" className="whitespace-nowrap">Email</Text>
+                                                        <Typography.Link ellipsis copyable>{ressource.user?.email}</Typography.Link>
                                                  </div>
-                                          </Popover>
-                                          <div className="flex flex-row items-center gap-2">
-                                                 <Tag color={ressource.category?.color || "blue"}>
-                                                        <div className="flex flex-row items-center gap-2">
-                                                               <Icon icon={ressource.category?.icon} fontSize={"20px"} /> <span className='text-lg'>{ressource.category?.title}</span>
-                                                        </div>
-                                                 </Tag>
-                                                 <Icon icon={ressource.isPublic ? 'fontisto:unlocked' : 'fontisto:locked'} style={{ color: ressource.isPublic ? 'green' : 'red' }} />
+                                                 <div className="flex flex-row gap-2">
+                                                        <Text type="secondary" className="whitespace-nowrap">ID</Text>
+                                                        <Text ellipsis copyable>{ressource.user?.id}</Text>
+                                                 </div>
+                                                 <div className="flex flex-row gap-2">
+                                                        <Text type="secondary" className="whitespace-nowrap">Rôle</Text>
+                                                        <Text ellipsis>{ressource.user?.role}</Text>
+                                                 </div>
+                                                 <div className="flex flex-row gap-2">
+                                                        <Text type="secondary" className="whitespace-nowrap">Pays</Text>
+                                                        <Text ellipsis>{ressource.user?.country}</Text>
+                                                 </div>
+                                                 <div className="flex flex-row gap-2">
+                                                        <Text type="secondary" className="whitespace-nowrap">Adresse</Text>
+                                                        <Text ellipsis>{ressource.user?.city}</Text>
+                                                 </div>
+                                                 <div className="flex flex-row gap-2">
+                                                        <Text type="secondary" className="whitespace-nowrap">Code postal</Text>
+                                                        <Text ellipsis>{ressource.user?.postalCode}</Text>
+                                                 </div>
+                                          </div>}
+
+                                          title="Informations de l'utilisateur" trigger="hover">
+                                          <div className='flex flex-row justify-start items-center' style={{ cursor: 'pointer' }}>
+                                                 <Avatar
+                                                        src={ressource.user?.imgURL}
+                                                        alt={`${ressource.user?.firstName} ${ressource.user?.lastName}`}
+                                                 />
+                                                 <div style={{ marginLeft: 8 }}>
+                                                        {`${ressource.user?.firstName} ${ressource.user?.lastName}`}
+                                                 </div>
                                           </div>
+                                   </Popover>
+                                   <div className="flex flex-row items-center gap-2">
+                                          <Tag color={ressource.category?.color || "blue"}>
+                                                 <div className="flex flex-row items-center gap-2">
+                                                        <Icon icon={ressource.category?.icon} fontSize={"20px"} /> <span className='text-lg'>{ressource.category?.title}</span>
+                                                 </div>
+                                          </Tag>
+                                          <Icon icon={ressource.isPublic ? 'fontisto:unlocked' : 'fontisto:locked'} style={{ color: ressource.isPublic ? 'green' : 'red' }} />
                                    </div>
                             </div>
+                     </div>
               ,
               children: (
                      <div className='flex flex-col gap-5'>
-                            <div className="mb-10">
+                            <div className="mb-10 flex flex-row items-center">
                                    <RessourceData ressource={ressource} />
+                                   <Tooltip title="Ouvrir la ressource" className="cursor-pointer">
+                                          <Link target="_blank" href={`/ressource/${ressource.id}`}>
+                                                 <Icon className="ml-3" style={{ fontSize: "2rem" }} icon={"ion:open-outline"}></Icon>
+                                          </Link>
+                                   </Tooltip>
                             </div>
 
                             {(ressource.status === 'rejected' || ressource.status === 'blocked') && (
