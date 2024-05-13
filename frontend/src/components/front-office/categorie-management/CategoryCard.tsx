@@ -17,7 +17,7 @@ export default function CategoryCard({ category }: { category: Category }) {
                             style={{ borderColor: category.isActive ? category.color : undefined, minWidth: '300px', maxWidth: '300px' }}
                             className="m-2 !cursor-default h-fit"
                             actions={[
-                                   <Link key="gotocat" href={`/category/${category.id}`}>
+                                   <Link key="gotocat" href={`/categorie/${category.id}`}>
                                           <Button type="link" key={"ViewResources"}>
                                                  Voir les ressources liées
                                           </Button>
