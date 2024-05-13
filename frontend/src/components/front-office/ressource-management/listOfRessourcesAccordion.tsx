@@ -193,7 +193,7 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
                             <div className="w-2/3">
                                    <Paragraph ellipsis={{ rows: 3, }} strong>{ressource.label}</Paragraph>
                             </div>
-                            <div className="flex flex-row justify-between">
+                            <div className="flex flex-row justify-between gap-5">
                                    <div className='flex flex-row justify-start items-center' style={{ cursor: 'pointer' }}>
                                           <Avatar
                                                  src={ressource.user?.imgURL}
