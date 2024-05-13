@@ -188,69 +188,70 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
        // Prepare items for the Collapse component
        const collapseItems = ressources.map((ressource) => ({
               key: ressource.id?.toString() ?? 'unknown',
-              label: <div className='flex flex-row justify-between gap-5'>
-                     <div className="w-2/3">
-                                   <Paragraph ellipsis={{rows: 3, }} strong>{ressource.label}</Paragraph>
-                                   </div>
-                     <div className='flex flex-row justify-start items-center'>
-                            <Avatar
-                                   src={ressource.user?.imgURL}
-                                   alt={`${ressource.user?.firstName} ${ressource.user?.lastName}`}
-                            />
-                            <div style={{ marginLeft: 8 }}>
-                                   {`${ressource.user?.firstName} ${ressource.user?.lastName}`}
+              label:
+                     <div className='flex flex-col sm:flex-row justify-between gap-3'>
+                            <div className="w-2/3">
+                                   <Paragraph ellipsis={{ rows: 3, }} strong>{ressource.label}</Paragraph>
                             </div>
-                     </div>
-                     <div className='flex flex-row items-center gap-5'>
-                            <div className="flex flex-row items-center gap-2">
-                                   <Tag color={ressource.category?.color || "blue"}>
-                                          <div className="flex flex-row items-center gap-2">
-                                                 <Icon icon={ressource.category?.icon} fontSize={"20px"} /> <span className='text-lg'>{ressource.category?.title}</span>
+                            <div className="flex flex-row justify-between">
+                                   <div className='flex flex-row justify-start items-center' style={{ cursor: 'pointer' }}>
+                                          <Avatar
+                                                 src={ressource.user?.imgURL}
+                                                 alt={`${ressource.user?.firstName} ${ressource.user?.lastName}`}
+                                          />
+                                          <div style={{ marginLeft: 8 }}>
+                                                 {`${ressource.user?.firstName} ${ressource.user?.lastName}`}
                                           </div>
-                                   </Tag>
-                                   <Icon icon={ressource.isPublic ? 'fontisto:unlocked' : 'fontisto:locked'} style={{ color: ressource.isPublic ? 'green' : 'red' }} />
+                                   </div>
+                                   <div className="flex flex-row items-center gap-2">
+                                          <Tag color={ressource.category?.color || "blue"}>
+                                                 <div className="flex flex-row items-center gap-2">
+                                                        <Icon icon={ressource.category?.icon} fontSize={"20px"} /> <span className='text-lg'>{ressource.category?.title}</span>
+                                                 </div>
+                                          </Tag>
+                                          <Icon icon={ressource.isPublic ? 'fontisto:unlocked' : 'fontisto:locked'} style={{ color: ressource.isPublic ? 'green' : 'red' }} />
+                                   </div>
                             </div>
                      </div>
-              </div>
               ,
               children: (
                      <>
-                            <div className="flex flex-col gap-10">
-                                   <div className="flex md:flex-row flex-col-reverse w-full md:justify-between md:items-start gap-5">
-                                          <RessourceData ressource={ressource}></RessourceData>
-                                          <div className='flex flex-row justify-end space-x-2'>
-                                                 <Tooltip title={ressource.isFavorite ? "Enlever des favoris" : "Ajouter aux favoris"}>
-                                                        {ressource.isFavorite ? (
-                                                               <Button size='large' loading={loading} onClick={() => {
-                                                                      removeFromFavorites(ressource.id);
-                                                               }}
-                                                                      shape="circle" icon={<Icon style={{ fontSize: "1.7rem", color: "gold" }} icon={"emojione-monotone:star"}></Icon>} />
-                                                        ) : (
-                                                               <Button loading={loading} onClick={() => {
-                                                                      addToFavorites(ressource.id);
-                                                               }}
-                                                                      size='large' shape="circle" icon={<Icon style={{ fontSize: "1.7rem" }} icon={"emojione-monotone:star"}></Icon>} />
-                                                        )}
-                                                 </Tooltip>
+                            <div className='flex flex-col gap-5'>
+                                   <div className="mb-10">
+                                          <RessourceData ressource={ressource} />
+                                   </div>
+                                   <div className='flex flex-row justify-end space-x-2'>
+                                          <Tooltip title={ressource.isFavorite ? "Enlever des favoris" : "Ajouter aux favoris"}>
+                                                 {ressource.isFavorite ? (
+                                                        <Button size='large' loading={loading} onClick={() => {
+                                                               removeFromFavorites(ressource.id);
+                                                        }}
+                                                               shape="circle" icon={<Icon style={{ fontSize: "1.7rem", color: "gold" }} icon={"emojione-monotone:star"}></Icon>} />
+                                                 ) : (
+                                                        <Button loading={loading} onClick={() => {
+                                                               addToFavorites(ressource.id);
+                                                        }}
+                                                               size='large' shape="circle" icon={<Icon style={{ fontSize: "1.7rem" }} icon={"emojione-monotone:star"}></Icon>} />
+                                                 )}
+                                          </Tooltip>
 
-                                                 <Tooltip title={ressource.isBookmark ? `Enlever des "A regarder plus tard"` : `Ajouter à "A regarder plus tard"`}>
-                                                        {ressource.isBookmark ? (
-                                                               <Button
-                                                                      loading={loading}
-                                                                      onClick={() => {
-                                                                             removeFromBookmarks(ressource.id);
-                                                                      }}
-                                                                      size='large' shape="circle" icon={<Icon style={{ fontSize: "1.7rem", color: "red" }} icon={"fluent:bookmark-off-24-regular"}></Icon>} />
-                                                        ) : (
-                                                               <Button
-                                                                      loading={loading}
-                                                                      onClick={() => {
-                                                                             addToBookmarks(ressource.id);
-                                                                      }}
-                                                                      size='large' shape="circle" icon={<Icon style={{ fontSize: "1.7rem", color: "blue" }} icon={"fluent:bookmark-add-24-regular"}></Icon>} />
-                                                        )}
-                                                 </Tooltip>
-                                          </div>
+                                          <Tooltip title={ressource.isBookmark ? `Enlever des "A regarder plus tard"` : `Ajouter à "A regarder plus tard"`}>
+                                                 {ressource.isBookmark ? (
+                                                        <Button
+                                                               loading={loading}
+                                                               onClick={() => {
+                                                                      removeFromBookmarks(ressource.id);
+                                                               }}
+                                                               size='large' shape="circle" icon={<Icon style={{ fontSize: "1.7rem", color: "red" }} icon={"fluent:bookmark-off-24-regular"}></Icon>} />
+                                                 ) : (
+                                                        <Button
+                                                               loading={loading}
+                                                               onClick={() => {
+                                                                      addToBookmarks(ressource.id);
+                                                               }}
+                                                               size='large' shape="circle" icon={<Icon style={{ fontSize: "1.7rem", color: "blue" }} icon={"fluent:bookmark-add-24-regular"}></Icon>} />
+                                                 )}
+                                          </Tooltip>
                                    </div>
                                    {(ressource.status === 'rejected' || ressource.status === 'blocked') && (
                                           <Badge.Ribbon text={"commentaire modérateur"} color="red">
