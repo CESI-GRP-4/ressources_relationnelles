@@ -96,9 +96,8 @@ export default function FilterRessources({ acceptedRessources, pendingRessources
        };
 
        return (
-              <Card title="Filtres" size="small" className="">
+              <Card title="Filtres" size="small" className="h-fit">
                      <Form
-
                             form={form}
                             layout='inline'
                             onValuesChange={() => {
