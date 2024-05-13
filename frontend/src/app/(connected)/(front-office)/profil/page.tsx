@@ -188,7 +188,7 @@ const UserProfilePage = () => {
                             (
                                    <Card
                                           loading={loading}
-                                          style={{ width: '100%', maxWidth: '1000px', marginTop: '2%', marginBottom: '2%', borderColor: '#aeaeaecc' }}
+                                          style={{ width: '100%', margin: 'auto', maxWidth: '1000px', marginTop: '2%', marginBottom: '2%', borderColor: '#aeaeaecc' }}
                                           actions={[
                                                  <Button
                                                         disabled={loading}
