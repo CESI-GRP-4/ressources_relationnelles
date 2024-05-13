@@ -94,8 +94,8 @@ const UserProfilePage = () => {
               let isFormValid = false;
               setLoading(true)
               try {
-                     await form.validateFields();
-                     const values = form.getFieldsValue();
+                     form.validateFields();
+                     const values = await form.getFieldsValue();
 
                      // Appel à l'API pour enregistrer les modifications de l'utilisateur
                      const response: AxiosResponse<{ message: string, user: User }> = await axios({
