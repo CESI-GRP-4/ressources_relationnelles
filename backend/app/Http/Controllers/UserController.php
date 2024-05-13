@@ -544,9 +544,9 @@ class UserController extends Controller
         DB::beginTransaction();
         try {
             $validator = Validator::make($request->all(), [
-                'password' => 'required|string|min:8',
-                'confirmPassword' => 'required|string|min:8',
-                'oldPassword' => 'required|string|min:8',
+                'password' => 'required|string',
+                'confirmPassword' => 'required|string',
+                'oldPassword' => 'required|string',
             ]);
 
             if ($validator->fails()) {
