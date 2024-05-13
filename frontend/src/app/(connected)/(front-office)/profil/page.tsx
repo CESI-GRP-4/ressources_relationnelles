@@ -166,7 +166,6 @@ const UserProfilePage = () => {
                             setEditing(false);
                      }
                      setLoading(false)
-
               }
        };
 
@@ -189,7 +188,7 @@ const UserProfilePage = () => {
                             (
                                    <Card
                                           loading={loading}
-                                          style={{ width: '100%', maxWidth: '1000px', margin: 'auto', marginTop: '2%', marginBottom: '2%', borderColor: '#aeaeaecc' }}
+                                          style={{ width: '100%', maxWidth: '1000px', marginTop: '2%', marginBottom: '2%', borderColor: '#aeaeaecc' }}
                                           actions={[
                                                  <Button
                                                         disabled={loading}
@@ -290,8 +289,6 @@ const UserProfilePage = () => {
                                                                       ]}
                                                                >
                                                                       {editing ? (
-
-
                                                                              <Select
                                                                                     loading={loading}
                                                                                     placeholder="custom dropdown render"
@@ -414,14 +411,14 @@ const UserProfilePage = () => {
                                                                headStyle={{ borderBottomColor: '#aeaeaecc' }}
                                                         >
                                                                <Tooltip title="Fonctionnalité bientôt disponible">
-                                                                      <Button size='large' type="primary" disabled={true} style={{ marginBottom: '8px', display: 'block' }}>Récupérer mes informations</Button>
+                                                                      <Button block type="primary" size='large' disabled={true}  style={{ whiteSpace: "normal", height: 'auto', marginBottom: '10px' }}>Récupérer mes informations</Button>
                                                                </Tooltip>
                                                                <Tooltip title="Fonctionnalité bientôt disponible">
-                                                                      <Button size='large' type="primary" disabled={true} style={{ marginBottom: '8px', display: 'block' }}>Supprimer mes informations</Button>
+                                                                      <Button block type="primary" size='large' disabled={true}  style={{ whiteSpace: "normal", height: 'auto', marginBottom: '10px' }}>Supprimer mes informations</Button>
                                                                </Tooltip>
 
                                                                <Tooltip title="Fonctionnalité bientôt disponible">
-                                                                      <Button size='large' type="primary" disabled={true} style={{ display: 'block' }}>Supprimer mon profil</Button>
+                                                                      <Button block type="primary" size='large' disabled={true}  style={{ whiteSpace: "normal", height: 'auto', marginBottom: '10px' }}>Supprimer mon profil</Button>
                                                                </Tooltip>
                                                         </Card>
                                                  </div>
