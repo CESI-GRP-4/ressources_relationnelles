@@ -24,7 +24,7 @@ export default function CategoryCard({ category, refreshCategories }: { category
                             <Card.Meta
                                    title={
                                           category.isActive ? (
-                                                 <Link href={`/categories/${category.title}`} style={{ display: 'flex', alignItems: 'center' }} className="text-inherit hover:text-blue">
+                                                 <Link href={`/categories/${category.id}`} style={{ display: 'flex', alignItems: 'center' }} className="text-inherit hover:text-blue">
                                                         <Icon icon={category.icon} style={{ fontSize: '24px', marginRight: '8px' }} />
                                                         <span>{category.title}</span>
                                                  </Link>
