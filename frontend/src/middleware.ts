@@ -19,7 +19,7 @@ const routeWithUserAuth = [
        '/creer-ressource',
        '/a-regarder-plus-tard',
        /^\/editer-ressource\/\d+$/,
-       /^\/category\/\d+$/
+       /^\/categorie\/\d+$/
 ];
 
 // Routes accessible to Moderators (Moderateur)
