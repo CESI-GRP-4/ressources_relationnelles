@@ -219,7 +219,7 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
                             <div className='flex flex-col gap-5'>
                                    <div className="mb-10 flex flex-row items-start">
                                           <RessourceData ressource={ressource} />
-                                          {ressource.status === "accepted" && <Tooltip title="Ouvrir la ressource" className="cursor-pointer">
+                                          {(ressource.status === "accepted" || user?.role !== "Utilisateur") && <Tooltip title="Ouvrir la ressource" className="cursor-pointer">
                                                  <Link target="_blank" href={`/ressource/${ressource.id}`}>
                                                         <Icon className="ml-3" style={{ fontSize: "2rem" }} icon={"ion:open-outline"}></Icon>
                                                  </Link>
