@@ -109,6 +109,7 @@ const UserProfilePage = () => {
                             responseType: 'json',
                             timeout: 10000,
                      });
+                     console.log(response.data.user)
                      setUser(response.data.user)
 
                      // Si la mise à jour est réussie, actualisez les données de l'utilisateur
@@ -122,7 +123,7 @@ const UserProfilePage = () => {
                      if (isFormValid) {
                             setEditing(false);
                      }
-              setLoading(false)
+                     setLoading(false)
 
               }
        };
@@ -149,7 +150,7 @@ const UserProfilePage = () => {
                                           style={{ width: '100%', maxWidth: '1000px', margin: 'auto', marginTop: '2%', marginBottom: '2%', borderColor: '#aeaeaecc' }}
                                           actions={[
                                                  <Button
-                                                        loading={loading}
+                                                        disabled={loading}
                                                         size='large'
                                                         icon={editing ? <LeftOutlined /> : <EditOutlined />}
                                                         onClick={editing ? handleCancel : handleEdit}
@@ -177,191 +178,182 @@ const UserProfilePage = () => {
                                                         country: user?.country,
                                                         role: user?.role,
                                                  }}
-                                                 labelCol={{ span: 8 }}
-                                                 wrapperCol={{ span: 16 }}
                                                  disabled={loading}
                                           >
-                                                 <Row gutter={16}>
-                                                        <Col span={12}>
-                                                               <Card title="Détails" bordered={true} style={{ marginBottom: 16, borderColor: '#aeaeaecc' }} headStyle={{ borderBottomColor: '#aeaeaecc' }}>
-                                                                      <Form.Item
-                                                                             label="Nom"
-                                                                             name="lastName"
-                                                                             labelCol={{ style: { textAlign: 'left' } }}
-                                                                             rules={[
-                                                                                    {
-                                                                                           required: editing,
-                                                                                           message: 'Veuillez renseigner un nom',
-                                                                                           pattern: lastNameRegex
-                                                                                    },
-                                                                             ]}
-                                                                      >
-                                                                             {editing ? <Input /> : <span>{user?.lastName}</span>}
-                                                                      </Form.Item>
-
-                                                                      <Form.Item
-                                                                             label="Prénom"
-                                                                             name="firstName"
-                                                                             labelCol={{ style: { textAlign: 'left' } }}
-                                                                             rules={[
-                                                                                    {
-                                                                                           required: editing,
-                                                                                           message: 'Veuillez renseigner un prénom',
-                                                                                           pattern: firstNameRegex
-                                                                                    },
-                                                                             ]}
-                                                                      >
-                                                                             {editing ? <Input /> : <span>{user?.firstName}</span>}
-                                                                      </Form.Item>
-
-                                                                      <Form.Item
-                                                                             label="Email"
-                                                                             name="email"
-                                                                             labelCol={{ style: { textAlign: 'left' } }}
-                                                                             rules={[
-                                                                                    {
-                                                                                           required: editing,
-                                                                                           message: 'Veuillez renseigner une adresse mail',
-                                                                                    },
-                                                                                    {
-                                                                                           min: 5,
-                                                                                           max: 100,
-                                                                                           type: 'email',
-                                                                                           pattern: emailRegex,
-                                                                                           message: 'Entrez une adresse mail valide',
-                                                                                    },
-                                                                             ]}
-                                                                      >
-                                                                             {editing ? <Input /> : <span>{user?.email}</span>}
-                                                                      </Form.Item>
-                                                               </Card>
-                                                        </Col>
-                                                        <Col span={12}>
-                                                               <Card title="Localisation" bordered={true} style={{ marginBottom: 16, borderColor: '#aeaeaecc' }} headStyle={{ borderBottomColor: '#aeaeaecc' }}>
-                                                                      <Form.Item
-                                                                             label="Ville"
-                                                                             name="city"
-                                                                             labelCol={{ style: { textAlign: 'left' } }}
-                                                                             rules={[
-                                                                                    {
-                                                                                           min: 2,
-                                                                                           max: 50,
-                                                                                           required: editing,
-                                                                                           message: 'Veuillez renseigner une ville',
-                                                                                    },
-                                                                                    {
-                                                                                           pattern: cityRegex,
-                                                                                           message: 'Le nom de la ville ne peut contenir que des lettres, des tirets et des apostrophes',
-                                                                                    }
-                                                                             ]}
-                                                                      >
-                                                                             {editing ? (
-                                                                                    <Select loading={loading}>
-                                                                                           {cities.map(city => (
-                                                                                                  <Option key={city.id} value={city.name}>{city.name}</Option>
-                                                                                           ))}
-                                                                                    </Select>
-
-                                                                             ) : (
-                                                                                    <span>{user?.city}</span>
-                                                                             )}
-                                                                      </Form.Item>
-
-                                                                      <Form.Item
-                                                                             label="Code postal"
-                                                                             name="postalCode"
-                                                                             labelCol={{ style: { textAlign: 'left' } }}
-                                                                             rules={[
-                                                                                    {
-                                                                                           required: editing,
-                                                                                           message: 'Veuillez renseigner un code postal',
-                                                                                    },
-                                                                             ]}
-                                                                      >
-                                                                             {editing ? (
-                                                                                    <Select>
-                                                                                           {postalCodes.map(postalCode => (
-                                                                                                  <Option key={postalCode.id} value={postalCode.postal_code}>{postalCode.postal_code}</Option>
-                                                                                           ))}
-                                                                                    </Select>
-
-                                                                             ) : (
-                                                                                    <span>{user?.postalCode}</span>
-                                                                             )}
-                                                                      </Form.Item>
-
-                                                                      <Form.Item
-                                                                             label="Pays"
-                                                                             name="country"
-                                                                             labelCol={{ style: { textAlign: 'left' } }}
-                                                                             rules={[
-                                                                                    {
-                                                                                           required: editing,
-                                                                                           message: 'Veuillez renseigner un pays',
-                                                                                    },
-                                                                             ]}
-                                                                      >
-                                                                             {editing ? (
-                                                                                    <SelectCountry
-                                                                                           value={selectedCountry}
-                                                                                           onChange={(value: any) => setSelectedCountry(value)}
-                                                                                    />
-                                                                             ) : (
-                                                                                    <Space>
-                                                                                           <Avatar src={`https://flagcdn.com/h240/${user?.countryCode?.toLowerCase()}.png`} />
-                                                                                           <span>{user?.country}</span>
-                                                                                    </Space>
-                                                                             )}
-                                                                      </Form.Item>
-                                                               </Card>
-                                                        </Col>
-                                                 </Row>
-                                                 <Row gutter={16}>
-                                                        <Col span={12}>
-                                                               <Card title="Vos accès" bordered={true} style={{ marginBottom: 16, borderColor: '#aeaeaecc' }} headStyle={{ borderBottomColor: '#aeaeaecc' }}>
-                                                                      <Form.Item
-                                                                             label="Role"
-                                                                             name="role"
-                                                                             style={{ width: '50%' }}
-                                                                             labelCol={{ style: { textAlign: 'left' } }}
-                                                                             rules={[
-                                                                             ]}
-                                                                      >
-                                                                             <span>{user?.role}</span>
-                                                                      </Form.Item>
-
-                                                                      {user?.isEmailVerified ? (
-                                                                             <span>
-                                                                                    {`Email vérifié, vous avez accès à toutes les fonctionnalités`}
-                                                                             </span>)
-                                                                             : (
-                                                                                    <span>
-                                                                                           {`Email non vérifié, vous n'avez pas accès à toutes les fonctionnalités`}
-                                                                                    </span>
-                                                                             )
-                                                                      }
-                                                               </Card>
-                                                        </Col>
-                                                        <Col span={12}>
-                                                               <Card
-                                                                      title="Vos données"
-                                                                      bordered={true}
-                                                                      style={{ marginBottom: 16, borderColor: '#aeaeaecc' }}
-                                                                      headStyle={{ borderBottomColor: '#aeaeaecc' }}
+                                                 <div className='flex flex-col mt-10 md:flex-row gap-5 md:justify-center justify-normal items-center md:items-start'>
+                                                        <Card title="Détails" bordered={true} style={{ marginBottom: 16, width: "100%", borderColor: '#aeaeaecc' }} headStyle={{ borderBottomColor: '#aeaeaecc' }}>
+                                                               <Form.Item
+                                                                      label="Nom :"
+                                                                      name="lastName"
+                                                                      labelCol={{ style: { textAlign: 'left', fontWeight: "bold" } }}
+                                                                      rules={[
+                                                                             {
+                                                                                    required: editing,
+                                                                                    message: 'Veuillez renseigner un nom',
+                                                                                    pattern: lastNameRegex
+                                                                             },
+                                                                      ]}
                                                                >
-                                                                      <Tooltip title="Fonctionnalité bientôt disponible">
-                                                                             <Button size='large' type="primary" disabled={true} style={{ marginBottom: '8px', display: 'block' }}>Récupérer mes informations</Button>
-                                                                      </Tooltip>
-                                                                      <Tooltip title="Fonctionnalité bientôt disponible">
-                                                                             <Button size='large' type="primary" disabled={true} style={{ marginBottom: '8px', display: 'block' }}>Supprimer mes informations</Button>
-                                                                      </Tooltip>
+                                                                      {editing ? <Input /> : <span>{user?.lastName}</span>}
+                                                               </Form.Item>
 
-                                                                      <Tooltip title="Fonctionnalité bientôt disponible">
-                                                                             <Button size='large' type="primary" disabled={true} style={{ display: 'block' }}>Supprimer mon profil</Button>
-                                                                      </Tooltip>
-                                                               </Card>
-                                                        </Col>
-                                                 </Row>
+                                                               <Form.Item
+                                                                      label="Prénom"
+                                                                      name="firstName"
+                                                                      labelCol={{ style: { textAlign: 'left', fontWeight: "bold" } }}
+                                                                      rules={[
+                                                                             {
+                                                                                    required: editing,
+                                                                                    message: 'Veuillez renseigner un prénom',
+                                                                                    pattern: firstNameRegex
+                                                                             },
+                                                                      ]}
+                                                               >
+                                                                      {editing ? <Input /> : <span>{user?.firstName}</span>}
+                                                               </Form.Item>
+
+                                                               <Form.Item
+                                                                      label="Email"
+                                                                      name="email"
+                                                                      labelCol={{ style: { textAlign: 'left', fontWeight: "bold" } }}
+                                                                      rules={[
+                                                                             {
+                                                                                    required: editing,
+                                                                                    message: 'Veuillez renseigner une adresse mail',
+                                                                             },
+                                                                             {
+                                                                                    min: 5,
+                                                                                    max: 100,
+                                                                                    type: 'email',
+                                                                                    pattern: emailRegex,
+                                                                                    message: 'Entrez une adresse mail valide',
+                                                                             },
+                                                                      ]}
+                                                               >
+                                                                      {editing ? <Input /> : <span>{user?.email}</span>}
+                                                               </Form.Item>
+                                                        </Card>
+                                                        <Card title="Localisation" bordered={true} style={{ marginBottom: 16, width: "100%", borderColor: '#aeaeaecc' }} headStyle={{ borderBottomColor: '#aeaeaecc' }}>
+                                                               <Form.Item
+                                                                      label="Ville"
+                                                                      name="city"
+                                                                      labelCol={{ style: { textAlign: 'left', fontWeight: "bold" } }}
+                                                                      rules={[
+                                                                             {
+                                                                                    min: 2,
+                                                                                    max: 50,
+                                                                                    required: editing,
+                                                                                    message: 'Veuillez renseigner une ville',
+                                                                             },
+                                                                             {
+                                                                                    pattern: cityRegex,
+                                                                                    message: 'Le nom de la ville ne peut contenir que des lettres, des tirets et des apostrophes',
+                                                                             }
+                                                                      ]}
+                                                               >
+                                                                      {editing ? (
+                                                                             <Select loading={loading}>
+                                                                                    {cities.map(city => (
+                                                                                           <Option key={city.id} value={city.name}>{city.name}</Option>
+                                                                                    ))}
+                                                                             </Select>
+
+                                                                      ) : (
+                                                                             <span>{user?.city}</span>
+                                                                      )}
+                                                               </Form.Item>
+
+                                                               <Form.Item
+                                                                      label="Code postal"
+                                                                      name="postalCode"
+                                                                      labelCol={{ style: { textAlign: 'left', fontWeight: "bold" } }}
+                                                                      rules={[
+                                                                             {
+                                                                                    required: editing,
+                                                                                    message: 'Veuillez renseigner un code postal',
+                                                                             },
+                                                                      ]}
+                                                               >
+                                                                      {editing ? (
+                                                                             <Select>
+                                                                                    {postalCodes.map(postalCode => (
+                                                                                           <Option key={postalCode.id} value={postalCode.postal_code}>{postalCode.postal_code}</Option>
+                                                                                    ))}
+                                                                             </Select>
+
+                                                                      ) : (
+                                                                             <span>{user?.postalCode}</span>
+                                                                      )}
+                                                               </Form.Item>
+
+                                                               <Form.Item
+                                                                      label="Pays"
+                                                                      name="country"
+                                                                      labelCol={{ style: { textAlign: 'left', fontWeight: "bold" } }}
+                                                                      rules={[
+                                                                             {
+                                                                                    required: editing,
+                                                                                    message: 'Veuillez renseigner un pays',
+                                                                             },
+                                                                      ]}
+                                                               >
+                                                                      {editing ? (
+                                                                             <SelectCountry
+                                                                                    value={selectedCountry}
+                                                                                    onChange={(value: any) => setSelectedCountry(value)}
+                                                                             />
+                                                                      ) : (
+                                                                             <Space>
+                                                                                    <Avatar src={`https://flagcdn.com/h240/${user?.countryCode?.toLowerCase()}.png`} />
+                                                                                    <span>{user?.country}</span>
+                                                                             </Space>
+                                                                      )}
+                                                               </Form.Item>
+                                                        </Card>
+                                                 </div>
+                                                 <div className='flex flex-col md:flex-row gap-5 md:justify-center justify-normal items-center md:items-start'>
+
+                                                        <Card title="Vos accès" bordered={true} style={{ marginBottom: 16, width: "100%", borderColor: '#aeaeaecc' }} headStyle={{ borderBottomColor: '#aeaeaecc' }}>
+                                                               <Form.Item
+                                                                      label="Role"
+                                                                      name="role"
+                                                                      style={{ width: '50%' }}
+                                                                      labelCol={{ style: { textAlign: 'left', fontWeight: "bold" } }}
+                                                                      rules={[
+                                                                      ]}
+                                                               >
+                                                                      <span>{user?.role}</span>
+                                                               </Form.Item>
+
+                                                               {user?.isEmailVerified ? (
+                                                                      <span>
+                                                                             {`Email vérifié, vous avez accès à toutes les fonctionnalités`}
+                                                                      </span>)
+                                                                      : (
+                                                                             <span>
+                                                                                    {`Email non vérifié, vous n'avez pas accès à toutes les fonctionnalités`}
+                                                                             </span>
+                                                                      )
+                                                               }
+                                                        </Card>
+                                                        <Card
+                                                               title="Vos données"
+                                                               bordered={true}
+                                                               style={{ marginBottom: 16, width: "100%", borderColor: '#aeaeaecc' }}
+                                                               headStyle={{ borderBottomColor: '#aeaeaecc' }}
+                                                        >
+                                                               <Tooltip title="Fonctionnalité bientôt disponible">
+                                                                      <Button size='large' type="primary" disabled={true} style={{ marginBottom: '8px', display: 'block' }}>Récupérer mes informations</Button>
+                                                               </Tooltip>
+                                                               <Tooltip title="Fonctionnalité bientôt disponible">
+                                                                      <Button size='large' type="primary" disabled={true} style={{ marginBottom: '8px', display: 'block' }}>Supprimer mes informations</Button>
+                                                               </Tooltip>
+
+                                                               <Tooltip title="Fonctionnalité bientôt disponible">
+                                                                      <Button size='large' type="primary" disabled={true} style={{ display: 'block' }}>Supprimer mon profil</Button>
+                                                               </Tooltip>
+                                                        </Card>
+                                                 </div>
 
                                           </Form>
                                           {editing && <PasswordForm />}
