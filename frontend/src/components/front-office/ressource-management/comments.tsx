@@ -168,7 +168,7 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
                                                  disabled={isLoading}
                                                  rows={4}
                                                  size='large'
-                                                 autoSize={{ minRows: 4, maxRows: 10 }}
+                                                 autoSize={{ minRows: 4 }}
                                                  value={newComment}
                                                  onChange={e => setNewComment(e.target.value)}
                                                  placeholder="Rédigez un commentaire..."
@@ -179,7 +179,7 @@ export default function Comments({ comments, idRessource, isFirstComponent = tru
                                           disabled={isLoading}
                                           rows={4}
                                           size='large'
-                                          autoSize={{ minRows: 4, maxRows: 10 }}
+                                          autoSize={{ minRows: 4 }}
                                           value={newComment}
                                           onChange={e => setNewComment(e.target.value)}
                                           placeholder="Rédigez un commentaire..."

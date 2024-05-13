@@ -257,7 +257,7 @@ export default function EditRessource({ params }: { params: { idRessource: numbe
                                    name="description"
                                    rules={[{ required: true, message: 'Veuillez selectionner une description!' }]}
                             >
-                                   <Input.TextArea autoSize={{ minRows: 4, maxRows: 10 }} />
+                                   <Input.TextArea autoSize={{ minRows: 4 }} />
                             </Form.Item>
 
                             <Form.Item
