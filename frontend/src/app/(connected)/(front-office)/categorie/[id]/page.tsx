@@ -41,9 +41,13 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
 
        return (
               <div className="flex flex-col gap-10">
-              <div className="flex md:flex-row flex-col justify-between md:space-x-5 space-x-0 md:space-y-0 space-y-5">
-                            <PageSummary title={(category?.title && category.icon) ? <div className="flex flex-row items-center gap-3"><Icon icon={category.icon}></Icon><span>{category.title}</span></div> :  "Page de la catégorie"} description={category?.description} />
-                            <FilterRessources hideIsPublicFilter hideCategoryFilter acceptedRessources={ressources} setFilteredRessources={setFilteredRessources}></FilterRessources>
+                     <div className="flex md:flex-row flex-col justify-between md:space-x-5 space-x-0 md:space-y-0 space-y-5">
+                            <div className="md:w-3/5">
+                                   <PageSummary title={(category?.title && category.icon) ? <div className="flex flex-row items-center gap-3"><Icon icon={category.icon}></Icon><span>{category.title}</span></div> : "Page de la catégorie"} description={category?.description} />
+                            </div>
+                            <div className="flex flex-row items-end">
+                                   <FilterRessources hideIsPublicFilter hideCategoryFilter acceptedRessources={ressources} setFilteredRessources={setFilteredRessources}></FilterRessources>
+                            </div>
                      </div>
 
                      {isLoading ?
