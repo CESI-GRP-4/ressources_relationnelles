@@ -77,7 +77,6 @@ export default function Home() {
                             {user ? <Header collapsed={true} setCollapsed={function (collapsed: boolean): void { }} /> : <OfflineHeader />}
                             <Content className="py-20 px-10 lg:px-32">
                                    <Card className=''>
-
                                           <div className="w-full h-full flex flex-col gap-16">
                                           <PageSummary
                                                  title={"(Re)Sources Relationnelles"}
@@ -96,16 +95,15 @@ export default function Home() {
                                                                <Text>{`Bienvenue sur (RE)Sources Relationnelles, une plateforme dynamique soutenue par le ministère des Solidarités et de la Santé, conçue pour enrichir les échanges interpersonnels et renforcer la cohésion sociale. Ici, vous accéderez à une vaste gamme de ressources soigneusement catégorisées, facilitant une navigation intuitive et personnalisée selon vos centres d'intérêt. Engagez-vous dans des discussions constructives, partagez vos connaissances et expériences, et participez à l'apprentissage collaboratif au sein de notre communauté. Ensemble, construisons un espace qui favorise un accès continu à la connaissance et qui soutient l'amélioration des relations interpersonnelles tout en restant adaptable aux besoins évolutifs de notre société. Rejoignez-nous pour faire avancer le bien-être individuel et la solidarité collective.`}</Text>
                                                         </div>}
                                           />
-                                          <div className="w-[300px] lg:w-[500px]">
+                                          <div className="w-full flex flex-row justify-center">
                                                  <AutoComplete
                                                         size='large'
-                                                        style={{ width: '100%' }}
+                                                        className='w-[300px] lg:w-[500px]'
                                                         options={options}
                                                         defaultActiveFirstOption={false}
                                                         onSearch={onSearch}
                                                         placeholder="Qu'est ce qui vous interesse ?"
                                                  >
-                                                        <Input.Search loading={isSearchLoading} size="large" />
                                                  </AutoComplete>
                                           </div>
                                           {isLoading ? (
