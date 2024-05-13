@@ -3089,24 +3089,33 @@
             }
         },
         "/search": {
-            "get": {
+            "post": {
                 "tags": [
                     "Search"
                 ],
                 "summary": "Search resources and categories",
-                "description": "Performs a search across resources and categories based on a provided search term. Returns matching resources and categories.",
+                "description": "Performs a search across resources and categories based on a given search value.",
                 "operationId": "searchRessourcesAndCategories",
-                "parameters": [
-                    {
-                        "name": "searchValue",
-                        "in": "query",
-                        "description": "The search term to query resources and categories",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                "requestBody": {
+                    "description": "Search payload",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "searchValue"
+                                ],
+                                "properties": {
+                                    "searchValue": {
+                                        "description": "The value to search for in resources and categories",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
                         }
                     }
-                ],
+                },
                 "responses": {
                     "200": {
                         "description": "Search results",
@@ -3115,14 +3124,14 @@
                                 "schema": {
                                     "properties": {
                                         "ressources": {
-                                            "description": "An array of matching resources",
+                                            "description": "An array of resources that match the search criteria",
                                             "type": "array",
                                             "items": {
                                                 "$ref": "#/components/schemas/RessourceDetail"
                                             }
                                         },
                                         "categories": {
-                                            "description": "An array of matching categories",
+                                            "description": "An array of categories that match the search criteria",
                                             "type": "array",
                                             "items": {
                                                 "$ref": "#/components/schemas/CategoryDetail"
@@ -3150,12 +3159,7 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ]
+                }
             }
         },
         "/stats/connections": {

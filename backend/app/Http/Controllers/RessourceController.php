@@ -1166,19 +1166,19 @@ class RessourceController extends Controller {
 
 
     /**
-     * @OA\Get(
+     * @OA\Post(
      *     path="/search",
      *     tags={"Search"},
      *     summary="Search resources and categories",
-     *     description="Performs a search across resources and categories based on a provided search term. Returns matching resources and categories.",
+     *     description="Performs a search across resources and categories based on a given search value.",
      *     operationId="searchRessourcesAndCategories",
-     *     security={{ "BearerAuth": {} }},
-     *     @OA\Parameter(
-     *         name="searchValue",
-     *         in="query",
-     *         description="The search term to query resources and categories",
+     *     @OA\RequestBody(
      *         required=true,
-     *         @OA\Schema(type="string")
+     *         description="Search payload",
+     *         @OA\JsonContent(
+     *             required={"searchValue"},
+     *             @OA\Property(property="searchValue", type="string", description="The value to search for in resources and categories")
+     *         )
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -1188,13 +1188,13 @@ class RessourceController extends Controller {
      *             @OA\Property(
      *                 property="ressources",
      *                 type="array",
-     *                 description="An array of matching resources",
+     *                 description="An array of resources that match the search criteria",
      *                 @OA\Items(ref="#/components/schemas/RessourceDetail")
      *             ),
      *             @OA\Property(
      *                 property="categories",
      *                 type="array",
-     *                 description="An array of matching categories",
+     *                 description="An array of categories that match the search criteria",
      *                 @OA\Items(ref="#/components/schemas/CategoryDetail")
      *             )
      *         )
@@ -1203,7 +1203,6 @@ class RessourceController extends Controller {
      *         response=400,
      *         description="Validation error",
      *         @OA\JsonContent(
-     *             type="object",
      *             @OA\Property(property="message", type="string", example="Valeur de recherche manquante")
      *         )
      *     )
