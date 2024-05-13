@@ -7,6 +7,7 @@ import ListOfRessourcesAccordion from "@/components/front-office/ressource-manag
 import PageSummary from "@/components/pageSummary";
 import FilterRessources from "@/components/filterRessources";
 import Ressource from "@/types/ressource";
+import { Icon } from '@iconify/react'; // Assuming you use Iconify React component
 
 export default function CategoryPage({ params }: { params: { id: string } }) {
        const [category, setCategory] = useState<Category>();
@@ -41,7 +42,7 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
        return (
               <div className="flex flex-col gap-10">
               <div className="flex md:flex-row flex-col justify-between md:space-x-5 space-x-0 md:space-y-0 space-y-5">
-                            <PageSummary title={category?.title || "Page de la catégorie"} description={category?.description} />
+                            <PageSummary title={(category?.title && category.icon) ? <div className="flex flex-row items-center gap-3"><Icon icon={category.icon}></Icon><span>{category.title}</span></div> :  "Page de la catégorie"} description={category?.description} />
                             <FilterRessources hideIsPublicFilter hideCategoryFilter acceptedRessources={ressources} setFilteredRessources={setFilteredRessources}></FilterRessources>
                      </div>
 

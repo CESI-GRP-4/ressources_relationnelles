@@ -17,7 +17,15 @@ export default function CreateRessourceForm() {
        const [isLoading, setIsLoading] = useState(false);
        const [categories, setCategories] = useState<Category[]>([]);
        const { user } = useUser();
-       const transformCategoriesToOptions = (categories) => {
+
+       interface OptionType {
+              label: JSX.Element;
+              value: number;
+              description: string;
+              icon: string;
+       }
+
+       const transformCategoriesToOptions = (categories: Category[]): OptionType[] => {
               return categories.map(category => ({
                      label: (
                             <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -29,7 +37,7 @@ export default function CreateRessourceForm() {
                      description: category.description,
                      icon: category.icon
               }));
-       }
+       };
 
        const options = transformCategoriesToOptions(categories); // Call this after categories are fetched
 
