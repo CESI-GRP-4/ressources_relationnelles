@@ -298,7 +298,7 @@ const UserProfilePage = () => {
                                                                                                   <Divider style={{ margin: '8px 0' }} />
                                                                                                   <Space style={{ padding: '0 8px 4px' }}>
                                                                                                          <Input
-                                                                                                                placeholder="Entrer une ville"
+                                                                                                                placeholder="Entrez une ville"
                                                                                                                 ref={inputRef}
                                                                                                                 value={cityName}
                                                                                                                 onChange={onCityNameChange}
@@ -340,7 +340,7 @@ const UserProfilePage = () => {
                                                                                            <Divider style={{ margin: '8px 0' }} />
                                                                                            <Space style={{ padding: '0 8px 4px' }}>
                                                                                                   <Input
-                                                                                                         placeholder="Entrer un code postal"
+                                                                                                         placeholder="Entrez un code postal"
                                                                                                          ref={inputRef}
                                                                                                          value={postalCodeName}
                                                                                                          onChange={onPostalCodeNameChange}
