@@ -2,10 +2,10 @@
 import { useEffect, useState } from "react";
 import RessourceType from "@/types/ressource";
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { Avatar, message, Result, Spin, Tabs, TabsProps, Typography, Tooltip, Button } from "antd";
+import { Avatar, message, Result, Spin, Tabs, TabsProps, Typography, Tooltip, Button, Statistic } from "antd";
 const { Title } = Typography
 import PageSummary from "@/components/pageSummary";
-import { UserOutlined } from "@ant-design/icons";
+import { UserOutlined, EyeOutlined } from "@ant-design/icons";
 import { Icon } from '@iconify/react';
 import { CommentProvider } from "@/contexts/CommentContext";
 import Comments from "@/components/front-office/ressource-management/comments";
@@ -259,38 +259,41 @@ export default function Ressource({ params }: { params: { idRessource: number } 
                                           <Tabs className='w-full' defaultActiveKey="content" items={items} />
                                    </div>
 
-                                   <div className='flex flex-row justify-end space-x-2'>
-                                          <Tooltip title={isFavorite ? "Enlever des favoris" : "Ajouter aux favoris"}>
-                                                 {isFavorite ? (
-                                                        <Button size='large' loading={loading} onClick={() => {
-                                                               removeFromFavorites(ressource.id);
-                                                        }}
-                                                               shape="circle" icon={<Icon style={{ fontSize: "1.7rem", color: "gold" }} icon={"emojione-monotone:star"}></Icon>} />
-                                                 ) : (
-                                                        <Button loading={loading} onClick={() => {
-                                                               addToFavorites(ressource.id);
-                                                        }}
-                                                               size='large' shape="circle" icon={<Icon style={{ fontSize: "1.7rem" }} icon={"emojione-monotone:star"}></Icon>} />
-                                                 )}
-                                          </Tooltip>
+                                   <div className='flex w-full flex-row justify-between items-center space-x-2'>
+                                          <Statistic title="Nombre de vues" value={ressource.viewCount} prefix={<EyeOutlined />} />
+                                          <div className='flex gap-3'>
+                                                 <Tooltip title={ressource.isFavorite ? "Enlever des favoris" : "Ajouter aux favoris"}>
+                                                        {ressource.isFavorite ? (
+                                                               <Button size='large' loading={loading} onClick={() => {
+                                                                      removeFromFavorites(ressource.id);
+                                                               }}
+                                                                      shape="circle" icon={<Icon style={{ fontSize: "1.7rem", color: "gold" }} icon={"emojione-monotone:star"}></Icon>} />
+                                                        ) : (
+                                                               <Button loading={loading} onClick={() => {
+                                                                      addToFavorites(ressource.id);
+                                                               }}
+                                                                      size='large' shape="circle" icon={<Icon style={{ fontSize: "1.7rem" }} icon={"emojione-monotone:star"}></Icon>} />
+                                                        )}
+                                                 </Tooltip>
 
-                                          <Tooltip title={isBookmark ? `Enlever des "A regarder plus tard"` : `Ajouter à "A regarder plus tard"`}>
-                                                 {isBookmark ? (
-                                                        <Button
-                                                               loading={loading}
-                                                               onClick={() => {
-                                                                      removeFromBookmarks(ressource.id);
-                                                               }}
-                                                               size='large' shape="circle" icon={<Icon style={{ fontSize: "1.7rem", color: "red" }} icon={"fluent:bookmark-off-24-regular"}></Icon>} />
-                                                 ) : (
-                                                        <Button
-                                                               loading={loading}
-                                                               onClick={() => {
-                                                                      addToBookmarks(ressource.id);
-                                                               }}
-                                                               size='large' shape="circle" icon={<Icon style={{ fontSize: "1.7rem", color: "blue" }} icon={"fluent:bookmark-add-24-regular"}></Icon>} />
-                                                 )}
-                                          </Tooltip>
+                                                 <Tooltip title={ressource.isBookmark ? `Enlever des "A regarder plus tard"` : `Ajouter à "A regarder plus tard"`}>
+                                                        {ressource.isBookmark ? (
+                                                               <Button
+                                                                      loading={loading}
+                                                                      onClick={() => {
+                                                                             removeFromBookmarks(ressource.id);
+                                                                      }}
+                                                                      size='large' shape="circle" icon={<Icon style={{ fontSize: "1.7rem", color: "red" }} icon={"fluent:bookmark-off-24-regular"}></Icon>} />
+                                                        ) : (
+                                                               <Button
+                                                                      loading={loading}
+                                                                      onClick={() => {
+                                                                             addToBookmarks(ressource.id);
+                                                                      }}
+                                                                      size='large' shape="circle" icon={<Icon style={{ fontSize: "1.7rem", color: "blue" }} icon={"fluent:bookmark-add-24-regular"}></Icon>} />
+                                                        )}
+                                                 </Tooltip>
+                                          </div>
                                    </div>
                             </>
                      ) : (
