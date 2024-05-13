@@ -1,7 +1,7 @@
 "use client"
-import React, { useEffect, useState, useCallback } from 'react';
-import { Card, Avatar, Typography, Spin, Button, message, Form, Space, Input, Select, Empty, Tooltip } from 'antd';
-import { EditOutlined, SaveOutlined, LeftOutlined } from '@ant-design/icons';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { Card, Avatar, Typography, Spin, Button, message, Form, Space, Input, Select, Empty, Tooltip, InputRef, Divider } from 'antd';
+import { EditOutlined, SaveOutlined, LeftOutlined, PlusOutlined } from '@ant-design/icons';
 import { UserOutlined } from '@ant-design/icons';
 import type User from '@/types/user';
 import type City from '@/types/city';
@@ -26,6 +26,39 @@ const UserProfilePage = () => {
        const [cities, setCities] = useState<City[]>([]);
        const [postalCodes, setPostalCodes] = useState<PostalCode[]>([]);
 
+       const [cityItems, setCityItems] = useState(cities.map(city => city.name));
+       const [postalCodeItems, setPostalCodeItems] = useState(postalCodes.map(postalcode => postalcode.postal_code));
+       const [cityName, setCityName] = useState('');
+       const [postalCodeName, setPostalCodeName] = useState('');
+       const inputRef = useRef<InputRef>(null);
+       let index = 0;
+
+       const onCityNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+              setCityName(event.target.value);
+       };
+
+       const onPostalCodeNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+              setPostalCodeName(event.target.value);
+       };
+
+       const addCityItem = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
+              e.preventDefault();
+              setCityItems([...cities.map(city => city.name), cityName || `New item ${index++}`]);
+              setCityName('');
+              setTimeout(() => {
+                     inputRef.current?.focus();
+              }, 0);
+       };
+
+       const addCodePostalItem = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
+              e.preventDefault();
+              setPostalCodeItems([...postalCodes.map(postalcode => postalcode.postal_code), postalCodeName || `New item ${index++}`]);
+              setPostalCodeName('');
+              setTimeout(() => {
+                     inputRef.current?.focus();
+              }, 0);
+       };
+
        useEffect(() => {
               fetchCities();
               fetchPostalCode();
@@ -48,6 +81,15 @@ const UserProfilePage = () => {
        useEffect(() => {
               setFormData();
        }, [user]);
+
+       useEffect(() => {
+              if (cities.length > 0) {
+                setCityItems(cities.map(city => city.name));
+              }
+              if (postalCodes.length > 0) {
+                     setPostalCodeItems(postalCodes.map(postalcode => postalcode.postal_code));
+                   }
+            }, [cities, postalCodes]);
 
        const fetchCities = async () => {
               setLoading(true)
@@ -180,6 +222,7 @@ const UserProfilePage = () => {
                                                  }}
                                                  onFinish={handleSave}
                                                  disabled={loading}
+                                                 name='profilForm'
                                           >
                                                  <div className='flex flex-col mt-10 md:flex-row gap-5 md:justify-center justify-normal items-center md:items-start'>
                                                         <Card title="Détails" bordered={true} style={{ marginBottom: 16, width: "100%", borderColor: '#aeaeaecc' }} headStyle={{ borderBottomColor: '#aeaeaecc' }}>
@@ -217,13 +260,14 @@ const UserProfilePage = () => {
                                                                       label="Email"
                                                                       name="email"
                                                                       labelCol={{ style: { textAlign: 'left', fontWeight: "bold" } }}
-                                                                      rules={[{     required: editing,
-                                                                                    min: 5,
-                                                                                    max: 100,
-                                                                                    type: 'email',
-                                                                                    pattern: emailRegex,
-                                                                                    message: 'Entrez une adresse mail valide',
-                                                                             },
+                                                                      rules={[{
+                                                                             required: editing,
+                                                                             min: 5,
+                                                                             max: 100,
+                                                                             type: 'email',
+                                                                             pattern: emailRegex,
+                                                                             message: 'Entrez une adresse mail valide',
+                                                                      },
                                                                       ]}
                                                                >
                                                                       {editing ? <Input /> : <span>{user?.email}</span>}
@@ -248,22 +292,47 @@ const UserProfilePage = () => {
                                                                       ]}
                                                                >
                                                                       {editing ? (
-                                                                             <Select loading={loading}>
-                                                                                    {cities.map(city => (
-                                                                                           <Option key={city.id} value={city.name}>{city.name}</Option>
-                                                                                    ))}
-                                                                             </Select>
+
+
+                                                                             <Select
+                                                                                    loading={loading}
+                                                                                    placeholder="custom dropdown render"
+                                                                                    dropdownRender={(menu) => (
+                                                                                           <>
+                                                                                                  {menu}
+                                                                                                  <Divider style={{ margin: '8px 0' }} />
+                                                                                                  <Space style={{ padding: '0 8px 4px' }}>
+                                                                                                         <Input
+                                                                                                                placeholder="Entrer une ville"
+                                                                                                                ref={inputRef}
+                                                                                                                value={cityName}
+                                                                                                                onChange={onCityNameChange}
+                                                                                                                onKeyDown={(e) => e.stopPropagation()}
+                                                                                                                style={{ minWidth: 100 }}
+                                                                                                         />
+                                                                                                         <Button type="text" icon={<PlusOutlined />} onClick={addCityItem}>
+                                                                                                                Ajouter
+                                                                                                         </Button>
+                                                                                                  </Space>
+                                                                                           </>
+                                                                                    )}
+                                                                                    options={cityItems.map((item) => ({ label: item, value: item }))}
+                                                                                    />
+
 
                                                                       ) : (
                                                                              <span>{user?.city}</span>
                                                                       )}
                                                                </Form.Item>
-
                                                                <Form.Item
                                                                       label="Code postal"
                                                                       name="postalCode"
                                                                       labelCol={{ style: { textAlign: 'left', fontWeight: "bold" } }}
                                                                       rules={[
+                                                                             {
+                                                                                    pattern: postalCodeRegex,
+                                                                                    message: 'Le code postal ne peut contenir que des chiffres'
+                                                                             },
                                                                              {
                                                                                     required: editing,
                                                                                     message: 'Veuillez renseigner un code postal',
@@ -271,12 +340,30 @@ const UserProfilePage = () => {
                                                                       ]}
                                                                >
                                                                       {editing ? (
-                                                                             <Select>
-                                                                                    {postalCodes.map(postalCode => (
-                                                                                           <Option key={postalCode.id} value={postalCode.postal_code}>{postalCode.postal_code}</Option>
-                                                                                    ))}
-                                                                             </Select>
-
+                                                                             <Select
+                                                                             loading={loading}
+                                                                             placeholder="custom dropdown render"
+                                                                             dropdownRender={(menu) => (
+                                                                                    <>
+                                                                                           {menu}
+                                                                                           <Divider style={{ margin: '8px 0' }} />
+                                                                                           <Space style={{ padding: '0 8px 4px' }}>
+                                                                                                  <Input
+                                                                                                         placeholder="Entrer un code postal"
+                                                                                                         ref={inputRef}
+                                                                                                         value={postalCodeName}
+                                                                                                         onChange={onPostalCodeNameChange}
+                                                                                                         onKeyDown={(e) => e.stopPropagation()}
+                                                                                                         style={{ minWidth: 100 }}
+                                                                                                  />
+                                                                                                  <Button type="text" icon={<PlusOutlined />} onClick={addCodePostalItem}>
+                                                                                                         Ajouter
+                                                                                                  </Button>
+                                                                                           </Space>
+                                                                                    </>
+                                                                             )}
+                                                                             options={postalCodeItems.map((item) => ({ label: item, value: item }))}
+                                                                             />
                                                                       ) : (
                                                                              <span>{user?.postalCode}</span>
                                                                       )}
@@ -351,15 +438,15 @@ const UserProfilePage = () => {
                                                         </Card>
                                                  </div>
                                                  {editing && (
-                                                 <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '1%' }} className='mb-5'>
-                                                        <Button loading={loading} size='large' type="primary" htmlType="submit" icon={<SaveOutlined />}>
-                                                               Enregistrer
-                                                        </Button>
-                                                 </div>
-                                          )}
+                                                        <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '1%' }} className='mb-5'>
+                                                               <Button loading={loading} size='large' type="primary" htmlType="submit" icon={<SaveOutlined />}>
+                                                                      Enregistrer
+                                                               </Button>
+                                                        </div>
+                                                 )}
                                           </Form>
                                           {editing && <PasswordForm />}
-                                          
+
                                    </Card>
                             )
                             : (
