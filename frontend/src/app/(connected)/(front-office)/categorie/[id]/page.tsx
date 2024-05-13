@@ -20,8 +20,8 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
        }, [])
 
        const fetchResources = async () => {
+              setIsLoading(true);
               try {
-                     setIsLoading(true);
                      const response = await axios({
                             method: 'GET',
                             baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
