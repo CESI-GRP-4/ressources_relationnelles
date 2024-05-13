@@ -68,8 +68,9 @@ export default function Ressource({ params }: { params: { idRessource: number } 
                      children: <div><pre>{ressource?.description}</pre></div>
               },
               {
-                     label: <div className="flex flex-row items-center space-x-2"><Icon style={{ fontSize: "1.8rem" }} icon={"oui:documents"} /> <span>{`Documents`}</span></div>,
+                     label: <Tooltip title="Fonctionnalité bientôt disponible"><div className="flex flex-row items-center space-x-2"><Icon style={{ fontSize: "1.8rem" }} icon={"oui:documents"} /> <span>{`Documents`}</span></div></Tooltip>,
                      key: 'documents',
+                     disabled:true,
               },
               {
                      label: <div className="flex flex-row items-center space-x-2"><Icon style={{ fontSize: "2rem" }} icon={"typcn:messages"} /> <span>{`Discussion`}</span></div>,
