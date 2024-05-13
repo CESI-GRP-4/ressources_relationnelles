@@ -1,11 +1,9 @@
-import { Avatar, Badge, Button, Card, Collapse, List, Spin, Tag, message } from "antd";
+import { Badge, Card, List, Spin, Tag, message } from "antd";
 import Link from "next/link";
-import { PlusCircleOutlined } from "@ant-design/icons";
 import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { Icon } from '@iconify/react';
 import { CommentsStats } from "@/types/commentsStats";
-const { Panel } = Collapse;
 
 export default function CommentsStatsPreviewCard() {
        const [commentsStats, setCommentsStats] = useState<CommentsStats>();

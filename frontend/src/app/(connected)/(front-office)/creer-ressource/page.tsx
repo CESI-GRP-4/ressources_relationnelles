@@ -7,8 +7,6 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import type Ressource from "@/types/ressource";
 import { useUser } from '@/providers/userProvider';
 import { Category } from "@/types/category";
-const { Option } = Select;
-const { Title } = Typography;
 import PageSummary from "@/components/pageSummary";
 import { Icon } from '@iconify/react'; // Assuming you use Iconify React component
 

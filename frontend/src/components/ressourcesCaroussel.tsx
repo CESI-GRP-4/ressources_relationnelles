@@ -1,8 +1,7 @@
-import { Carousel, Spin, Typography, Empty } from "antd";
+import { Carousel, Spin, Empty } from "antd";
 import Ressource from "@/types/ressource";
 import { useEffect, useState } from "react";
 import axios from "axios";
-const { Text, Title } = Typography;
 
 export default function RessourcesCaroussel({ categoryId }: { categoryId: number }) {
        const [ressources, setRessources] = useState<Ressource[]>([])

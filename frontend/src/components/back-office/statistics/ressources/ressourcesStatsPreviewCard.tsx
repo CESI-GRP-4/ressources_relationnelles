@@ -1,13 +1,9 @@
-import { Avatar, Badge, Button, Card, Collapse, List, Spin, Tag, message } from "antd";
+import { Badge, Card, List, Spin, Tag, message } from "antd";
 import Link from "next/link";
-import { PlusCircleOutlined } from "@ant-design/icons";
 import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { Icon } from '@iconify/react';
 import { RessourcesStats } from "@/types/ressourcesStats";
-import { color } from "chart.js/helpers";
-
-const { Panel } = Collapse;
 
 export default function RessourceStatsPreviewCard() {
        const [ressourcesStats, setRessourcesStats] = useState<RessourcesStats>();

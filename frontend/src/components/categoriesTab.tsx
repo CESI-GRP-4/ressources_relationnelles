@@ -1,6 +1,6 @@
 "use client"
 import { Category } from "@/types/category";
-import { TabsProps, Tabs, Carousel, message, Spin } from "antd";
+import { TabsProps, Tabs, message, Spin } from "antd";
 import axios, { AxiosError } from "axios";
 import { useState, useEffect } from "react";
 import RessourcesCaroussel from "./ressourcesCaroussel";

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Form, Input, message, Modal, Select, Space, notification, Popover, Typography } from "antd";
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios, { AxiosError } from "axios";
 import { emailRegex, firstNameRegex, lastNameRegex } from "@/utils/regex";
 import { UserAddOutlined, CopyOutlined } from "@ant-design/icons";
 import Link from "next/link";

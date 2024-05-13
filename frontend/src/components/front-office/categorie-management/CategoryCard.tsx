@@ -2,14 +2,10 @@ import { Button, Card, Typography } from "antd";
 import { Icon } from '@iconify/react';
 import { Category } from "@/types/category";
 import { useState } from "react";
-import axios from 'axios';
 import Link from "next/link";
 const { Paragraph, Text } = Typography;
 
 export default function CategoryCard({ category }: { category: Category }) {
-       const [resources, setResources] = useState<any[]>([]);
-       const [isLoading, setIsLoading] = useState<boolean>(false);
-
        return (
               <>
                      <Card

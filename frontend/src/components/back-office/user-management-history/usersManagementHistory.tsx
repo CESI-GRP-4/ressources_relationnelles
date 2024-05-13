@@ -1,11 +1,10 @@
 "use client"
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import User from '@/types/user';
 import { ColumnType } from 'antd/es/table';
 import { ReloadOutlined, RightCircleOutlined, CheckCircleOutlined, CloseCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import axios, { AxiosError } from 'axios';
 import { Table, Typography, Select, Button, message, Tooltip, Avatar, Tag, Popover, Card, List } from 'antd';
-import { useUser } from '@/providers/userProvider';
 const { Text } = Typography;
 import { getUserAttributeLabelsInFrench } from '@/utils/userAttributesToFrench';
 import { tableSettings } from '@/utils/tableParams';

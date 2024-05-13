@@ -1,11 +1,11 @@
-import { Button, Card, Tooltip, Typography } from "antd";
+import { Button, Card, Typography } from "antd";
 import { Icon } from '@iconify/react';
 import { Category } from "@/types/category";
 import Link from "next/link";
 import { useState } from "react";
 import ModifyCategoryModal from "@/components/back-office/categories-management/modifyCategoryModal";
 
-const { Text, Paragraph, Title } = Typography;
+const { Paragraph } = Typography;
 
 export default function CategoryCard({ category, refreshCategories }: { category: Category, refreshCategories: Function }) {
        const [isModalVisible, setIsModalVisible] = useState(false);

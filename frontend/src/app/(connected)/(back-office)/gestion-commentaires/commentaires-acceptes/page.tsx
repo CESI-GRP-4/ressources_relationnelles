@@ -1,10 +1,8 @@
 "use client"
-import axios from "axios"
-import { AxiosError } from "axios"
+import axios, { AxiosError } from "axios"
 import { useEffect, useState } from "react"
-import { Button, Empty, message, Skeleton } from "antd"
+import { Empty, message, Skeleton } from "antd"
 import PageSummary from "@/components/pageSummary"
-import RessourcesAccordionAdmin from "@/components/back-office/ressource-management/ressourcesAccordionAdmin"
 import { Comment as CommentType } from "@/types/comment"
 import Comment from "@/components/back-office/comments-management/comment"
 

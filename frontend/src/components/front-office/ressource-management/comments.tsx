@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Empty, Input, Button, List, message, Card, Badge, Avatar, Popconfirm, Tooltip, Typography } from 'antd';
 import { Comment as CommentType } from "@/types/comment";
 import axios, { AxiosError, AxiosResponse } from 'axios';
@@ -9,8 +9,6 @@ import 'dayjs/locale/fr';
 import { useUser } from '@/providers/userProvider';
 dayjs.locale('fr');
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { Icon } from '@iconify/react/dist/iconify.js';
-import Ressource from '@/app/(connected)/(front-office)/ressource/[idRessource]/page';
 dayjs.extend(relativeTime)
 const { Text, Link } = Typography;
 interface Props {

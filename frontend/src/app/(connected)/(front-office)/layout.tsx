@@ -1,9 +1,9 @@
 "use client"
 import React, { useState } from 'react';
-import { Layout, Divider, Card } from 'antd';
+import { Layout, Card } from 'antd';
 const { Content } = Layout;
 import Header from '@/components/header';
-import Footer from '@/components/footer';
+
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
        const [collapsed, setCollapsed] = useState(true);
 

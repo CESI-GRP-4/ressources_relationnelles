@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Avatar, Collapse, Popover, Tag, Typography, Button, message, Skeleton, Popconfirm, Form, Input, Badge, Empty, Card } from 'antd';
+import { Avatar, Collapse, Popover, Tag, Typography, Button, message, Popconfirm, Form, Input, Badge, Empty, Card } from 'antd';
 import Ressource from '@/types/ressource';
 import { Icon } from '@iconify/react';
-const { Title, Text, Paragraph } = Typography;
+const { Text, Paragraph } = Typography;
 import axios, { AxiosError } from 'axios';
 import RessourceData from '@/components/front-office/ressource-management/ressourceData';
 

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import type { Metadata } from 'next';
-import { Card } from 'antd';
+
 export const metadata: Metadata = {
        title: 'Connexion',
 };

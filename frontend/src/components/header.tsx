@@ -111,12 +111,13 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
        const dashboardItem = headerItems.find(item => item.key === 'tableau-de-bord');
 
        let dashboardItems = [];
-       if (user && ["Moderateur", "Administrateur", "SuperAdministrateur"].includes(user.role)) {
-              dashboardItems.push(dashboardItem); // Only include dashboard if user has the appropriate role
+       if (user && user.role && ["Moderateur", "Administrateur", "SuperAdministrateur"].includes(user.role)) {
+              if (dashboardItem) { // Also check if dashboardItem is found
+                     dashboardItems.push(dashboardItem);
+              }
        }
 
        const items = [...dashboardItems, ...userItems]; // Merge dashboard items and user items
-
 
        return (
               <AntdHeader style={{

@@ -1,7 +1,7 @@
 "use client"
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useUser } from '@/providers/userProvider';
-import { Carousel, Menu, Typography, type MenuProps, Button, Spin } from 'antd';
+import { Carousel, Menu, Typography, type MenuProps, Button } from 'antd';
 import { CarouselRef } from 'antd/es/carousel';
 import { LogoutOutlined } from '@ant-design/icons';
 

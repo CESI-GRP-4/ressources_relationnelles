@@ -1,9 +1,7 @@
 // page.tsx (default page at frontend/src/app/page.tsx)
 "use client"
-import axios from "axios";
-import { useEffect, useState } from "react";
 import React from 'react';
-import { Card, Layout, Tooltip, Typography, Tabs } from 'antd';
+import { Card, Layout, Tooltip, Typography, Input } from 'antd';
 import OfflineHeader from '@/components/offlineHeader';
 import Header from '@/components/header';
 const { Content } = Layout;
@@ -13,14 +11,12 @@ import PageSummary from "@/components/pageSummary";
 import logo from "/public/logo.png"
 import Image from 'next/image';
 import CategoriesTab from "@/components/categoriesTab";
-import { Input } from 'antd';
 import type { SearchProps } from 'antd/es/input/Search';
 
 const { Search } = Input;
 
 export default function Home() {
        const { user } = useUser();
-
        const onSearch: SearchProps['onSearch'] = (value, _e, info) => console.log(info?.source, value);
 
        return (

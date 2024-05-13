@@ -2,10 +2,9 @@
 "use client"
 import { useEffect, useState } from "react";
 import { Category } from "@/types/category";
-import axios from "axios";
 import CategoryCard from "@/components/front-office/categorie-management/CategoryCard";
 import { Skeleton, message } from "antd";
-import { AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
 import PageSummary from "@/components/pageSummary";
 
 export default function Categories() {

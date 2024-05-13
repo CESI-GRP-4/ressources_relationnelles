@@ -1,7 +1,6 @@
 "use client"
 import { useEffect, useState } from "react";
 import RessourceType from "@/types/ressource";
-import { useUser } from "@/providers/userProvider";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { Avatar, message, Result, Spin, Tabs, TabsProps, Typography } from "antd";
 const { Title } = Typography

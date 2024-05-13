@@ -1,7 +1,7 @@
 import { Comment as CommentType } from "@/types/comment"
 import { Button, message, Card, Avatar, Popconfirm, Tooltip, Typography } from 'antd';
 const { Text } = Typography;
-import { UserOutlined } from '@ant-design/icons';
+import { UserOutlined, DeleteOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import 'dayjs/locale/fr';
 dayjs.locale('fr');
@@ -9,7 +9,6 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime)
 import { Icon } from '@iconify/react';
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { DeleteOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { useState } from "react";
 import Link from "next/link";
 

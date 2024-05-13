@@ -7,8 +7,6 @@ import { useUser } from '@/providers/userProvider';
 import CategoryCard from "@/components/back-office/categories-management/categoryCard"
 import { Skeleton, message } from "antd"
 import { AxiosError } from "axios"
-import ModifyCategoryModal from "@/components/back-office/categories-management/modifyCategoryModal"
-import CreateUserForm from "@/components/back-office/user-management/createUserForm";
 import CreateCategoryForm from "@/components/back-office/categories-management/createCategoryFrom";
 
 export default function CategoryManagement() {

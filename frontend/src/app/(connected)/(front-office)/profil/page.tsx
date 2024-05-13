@@ -1,20 +1,17 @@
 "use client"
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { Card, Avatar, Typography, Spin, Button, message, Form, Space, Input, Select, Empty, Tooltip, InputRef, Divider } from 'antd';
-import { EditOutlined, SaveOutlined, LeftOutlined, PlusOutlined } from '@ant-design/icons';
-import { UserOutlined } from '@ant-design/icons';
+import { Card, Avatar, Button, message, Form, Space, Input, Select, Empty, Tooltip, InputRef, Divider } from 'antd';
+import { EditOutlined, SaveOutlined, LeftOutlined, PlusOutlined, UserOutlined } from '@ant-design/icons';
 import type User from '@/types/user';
 import type City from '@/types/city';
 import type PostalCode from '@/types/postalCode';
 import { useUser } from '@/providers/userProvider';
-import { Row, Col } from 'antd';
 import axios, { AxiosResponse } from 'axios';
 import SelectCountry from '@/components/selectCountry';
 import PageSummary from '@/components/pageSummary';
 import PasswordForm from '@/components/front-office/user-management/changeUserPassword'; // Importez le composant PasswordForm
 import { emailRegex, firstNameRegex, lastNameRegex, cityRegex, postalCodeRegex } from '@/utils/regex';
 const { Meta } = Card;
-const { Option } = Select;
 
 const UserProfilePage = () => {
        const [loading, setLoading] = useState(true);
@@ -84,12 +81,12 @@ const UserProfilePage = () => {
 
        useEffect(() => {
               if (cities.length > 0) {
-                setCityItems(cities.map(city => city.name));
+                     setCityItems(cities.map(city => city.name));
               }
               if (postalCodes.length > 0) {
                      setPostalCodeItems(postalCodes.map(postalcode => postalcode.postal_code));
-                   }
-            }, [cities, postalCodes]);
+              }
+       }, [cities, postalCodes]);
 
        const fetchCities = async () => {
               setLoading(true)
@@ -312,7 +309,7 @@ const UserProfilePage = () => {
                                                                                            </>
                                                                                     )}
                                                                                     options={cityItems.map((item) => ({ label: item, value: item }))}
-                                                                                    />
+                                                                             />
 
 
                                                                       ) : (
@@ -332,28 +329,28 @@ const UserProfilePage = () => {
                                                                >
                                                                       {editing ? (
                                                                              <Select
-                                                                             loading={loading}
-                                                                             placeholder="custom dropdown render"
-                                                                             dropdownRender={(menu) => (
-                                                                                    <>
-                                                                                           {menu}
-                                                                                           <Divider style={{ margin: '8px 0' }} />
-                                                                                           <Space style={{ padding: '0 8px 4px' }}>
-                                                                                                  <Input
-                                                                                                         placeholder="Entrez un code postal"
-                                                                                                         ref={inputRef}
-                                                                                                         value={postalCodeName}
-                                                                                                         onChange={onPostalCodeNameChange}
-                                                                                                         onKeyDown={(e) => e.stopPropagation()}
-                                                                                                         style={{ minWidth: 100 }}
-                                                                                                  />
-                                                                                                  <Button type="text" icon={<PlusOutlined />} onClick={addCodePostalItem}>
-                                                                                                         Ajouter
-                                                                                                  </Button>
-                                                                                           </Space>
-                                                                                    </>
-                                                                             )}
-                                                                             options={postalCodeItems.map((item) => ({ label: item, value: item }))}
+                                                                                    loading={loading}
+                                                                                    placeholder="custom dropdown render"
+                                                                                    dropdownRender={(menu) => (
+                                                                                           <>
+                                                                                                  {menu}
+                                                                                                  <Divider style={{ margin: '8px 0' }} />
+                                                                                                  <Space style={{ padding: '0 8px 4px' }}>
+                                                                                                         <Input
+                                                                                                                placeholder="Entrez un code postal"
+                                                                                                                ref={inputRef}
+                                                                                                                value={postalCodeName}
+                                                                                                                onChange={onPostalCodeNameChange}
+                                                                                                                onKeyDown={(e) => e.stopPropagation()}
+                                                                                                                style={{ minWidth: 100 }}
+                                                                                                         />
+                                                                                                         <Button type="text" icon={<PlusOutlined />} onClick={addCodePostalItem}>
+                                                                                                                Ajouter
+                                                                                                         </Button>
+                                                                                                  </Space>
+                                                                                           </>
+                                                                                    )}
+                                                                                    options={postalCodeItems.map((item) => ({ label: item, value: item }))}
                                                                              />
                                                                       ) : (
                                                                              <span>{user?.postalCode}</span>
@@ -411,14 +408,14 @@ const UserProfilePage = () => {
                                                                headStyle={{ borderBottomColor: '#aeaeaecc' }}
                                                         >
                                                                <Tooltip title="Fonctionnalité bientôt disponible">
-                                                                      <Button block type="primary" size='large' disabled={true}  style={{ whiteSpace: "normal", height: 'auto', marginBottom: '10px' }}>Récupérer mes informations</Button>
+                                                                      <Button block type="primary" size='large' disabled={true} style={{ whiteSpace: "normal", height: 'auto', marginBottom: '10px' }}>Récupérer mes informations</Button>
                                                                </Tooltip>
                                                                <Tooltip title="Fonctionnalité bientôt disponible">
-                                                                      <Button block type="primary" size='large' disabled={true}  style={{ whiteSpace: "normal", height: 'auto', marginBottom: '10px' }}>Supprimer mes informations</Button>
+                                                                      <Button block type="primary" size='large' disabled={true} style={{ whiteSpace: "normal", height: 'auto', marginBottom: '10px' }}>Supprimer mes informations</Button>
                                                                </Tooltip>
 
                                                                <Tooltip title="Fonctionnalité bientôt disponible">
-                                                                      <Button block type="primary" size='large' disabled={true}  style={{ whiteSpace: "normal", height: 'auto', marginBottom: '10px' }}>Supprimer mon profil</Button>
+                                                                      <Button block type="primary" size='large' disabled={true} style={{ whiteSpace: "normal", height: 'auto', marginBottom: '10px' }}>Supprimer mon profil</Button>
                                                                </Tooltip>
                                                         </Card>
                                                  </div>

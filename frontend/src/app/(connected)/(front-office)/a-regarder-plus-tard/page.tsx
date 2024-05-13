@@ -1,8 +1,7 @@
 "use client"
 import Ressource from "@/types/ressource";
-import { message, Spin, Skeleton  } from "antd";
-import { AxiosResponse } from "axios";
-import axios, { AxiosError } from "axios";
+import { message, Skeleton  } from "antd";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import ListOfRessourcesAccordion from "@/components/front-office/ressource-management/listOfRessourcesAccordion";
 import PageSummary from "@/components/pageSummary";
