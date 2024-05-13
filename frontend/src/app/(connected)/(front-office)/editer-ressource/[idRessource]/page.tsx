@@ -173,7 +173,8 @@ export default function EditRessource({ params }: { params: { idRessource: numbe
               <div className='flex flex-col gap-8'>
                      <PageSummary
                             title="Editer une ressource"
-                            description="Editer une ressource car elle a été rejettée par un modérateur, ou pour la mettre à jour. Elle repassera en attente de validation et ne sera plus accessible tant qu'elle ne sera pas accéptée par un modérateur."
+                            description={`
+                            Bienvenue sur la page "Éditer une Ressource" de notre plateforme. Accessible à tous les utilisateurs, cette section vous permet de modifier et de mettre à jour les ressources que vous avez précédemment soumises. Ici, vous pouvez apporter des changements aux contenus, ajuster les catégorisations, ou mettre à jour les informations associées à chaque ressource pour s'assurer qu'elles restent pertinentes et actuelles. Utilisez cette page pour améliorer la qualité et l'utilité de vos contributions, en les gardant alignées avec les besoins et les intérêts de la communauté. Cette fonctionnalité est essentielle pour maintenir un niveau élevé de contenu accessible sur la plateforme.`}
                      />
                      {ressource?.status === "blocked" && (
                             <Alert

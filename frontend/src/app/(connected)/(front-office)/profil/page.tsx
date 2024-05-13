@@ -183,7 +183,7 @@ const UserProfilePage = () => {
 
        return (
               <div>
-                     <PageSummary title={'Profil'} description={"Vous pouvez retrouver ici vos informations, les modifier, supprimer votre profil ou ses données ainsi qu'exporter vos données"}></PageSummary>
+                     <PageSummary title={'Profil'} description={`Bienvenue sur la page de profil de notre plateforme. Cette section est votre espace personnel où vous pouvez gérer vos informations de compte, ajuster vos paramètres de confidentialité, et personnaliser votre expérience utilisateur. Ici, vous avez la possibilité de mettre à jour vos données personnelles, modifier votre mot de passe, et configurer vos préférences de notification. Utilisez cette page pour vous assurer que votre profil reflète précisément vos attentes et besoins, permettant ainsi une interaction plus ciblée et efficace avec la communauté et les ressources de la plateforme.`}></PageSummary>
                      {(loading || user) ?
                             (
                                    <Card

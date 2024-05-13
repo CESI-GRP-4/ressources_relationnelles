@@ -57,9 +57,9 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
               // Ajouter le tableau de bord uniquement si l'utilisateur est un modérateur ou plus
               ...(user && (user.role === "Moderateur" || user.role === "Administrateur" || user.role === "SuperAdministrateur") ? [
                      {
-                            label: <Link href={"/dashboard"}>{`Dashboard`}</Link>,
+                            label: <Link href={"/tableau-de-bord"}>{`Tableau de bord`}</Link>,
                             icon: <DashboardOutlined />,
-                            key: "dashboard",
+                            key: "tableau-de-bord",
                             style: { marginLeft: '15px' },
                      }
               ] : []),
@@ -103,11 +103,20 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                             }
                      ]
               }
-       ].filter(item => item.key !== "dashboard" || (user && (user.role === "Moderateur" || user.role === "Administrateur" || user.role === "SuperAdministrateur")));
+       ].filter(item => item.key !== "tableau-de-bord" || (user && (user.role === "Moderateur" || user.role === "Administrateur" || user.role === "SuperAdministrateur")));
 
-       const items = user && (user.role === "Moderateur" || user.role === "Administrateur" || user.role === "SuperAdministrateur") ?
-              [headerItems[headerItems.length - 2], headerItems[headerItems.length - 1]] :
-              [headerItems[headerItems.length - 0], headerItems[headerItems.length - 1]];
+       // Assuming headerItems structure remains consistent in order and content
+       const mainItems = headerItems.filter(item => !['User', 'tableau-de-bord'].includes(item.key));
+       const userItems = headerItems.filter(item => item.key === 'User');
+       const dashboardItem = headerItems.find(item => item.key === 'tableau-de-bord');
+
+       let dashboardItems = [];
+       if (user && ["Moderateur", "Administrateur", "SuperAdministrateur"].includes(user.role)) {
+              dashboardItems.push(dashboardItem); // Only include dashboard if user has the appropriate role
+       }
+
+       const items = [...dashboardItems, ...userItems]; // Merge dashboard items and user items
+
 
        return (
               <AntdHeader style={{
@@ -143,15 +152,16 @@ export default function Header({ collapsed, setCollapsed }: { collapsed: Boolean
                             </Link>)}
                      <Menu
                             mode="horizontal"
-                            items={headerItems.slice(0, -2)} // Tous les éléments sauf les deux derniers
+                            items={mainItems} // Use mainItems for the main menu
                             theme="light"
                             selectedKeys={[selectedKey]}
                             className='flex-auto'
                             style={{ minWidth: 0, flex: "auto" }}
                      />
+
                      <Menu
                             mode="horizontal"
-                            items={items} // Les deux derniers éléments
+                            items={items} // Use items for the user and possibly dashboard
                             selectedKeys={[selectedKey]}
                             className="flex flex-row justify-end"
                             style={{ minWidth: 0, flex: "auto" }}

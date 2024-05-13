@@ -50,9 +50,14 @@ export default function AcceptedResources() {
        return (
               <div className="flex flex-col gap-10">
                      <div className="flex md:flex-row flex-col justify-between md:space-x-5 space-x-0 md:space-y-0 space-y-5">
-                            <PageSummary title={"Ressources acceptées"} description={undefined}></PageSummary>
-                            <FilterRessources acceptedRessources={ressources} setFilteredRessources={setFilteredRessources}></FilterRessources>
+                            <div className="md:w-3/5">
+                                   <PageSummary title={"Ressources acceptées"} description={`Cette section vous permet de voir toutes les ressources qui ont été approuvées et sont actuellement disponibles pour les utilisateurs. Ici, vous pouvez gérer ces ressources, y compris les mettre à jour, les archiver ou les supprimer si nécessaire. Utilisez cette page pour surveiller la qualité et la pertinence des contributions afin de garantir que le contenu disponible reste utile et conforme aux standards de la plateforme. C'est un outil essentiel pour maintenir l'intégrité et la valeur de notre communauté de partage de ressources.`}></PageSummary>
+                            </div>
+                            <div className="flex flex-row items-end">
+                                   <FilterRessources acceptedRessources={ressources} setFilteredRessources={setFilteredRessources}></FilterRessources>
+                            </div>
                      </div>
+
                      <div className="flex flex-row justify-center gap-3">
                             {loading ?
                                    <Skeleton active />

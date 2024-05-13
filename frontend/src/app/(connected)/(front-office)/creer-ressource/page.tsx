@@ -59,7 +59,6 @@ export default function CreateRessourceForm() {
 
        const onFinish = async (ressourceForm: Ressource) => {
               const ressourceFormWithUserId = { ...ressourceForm };
-              console.log("🚀 ~ onFinish ~ ressourceFormWithUserId:", ressourceFormWithUserId);
 
               try {
                      setIsLoading(true);
@@ -100,7 +99,7 @@ export default function CreateRessourceForm() {
 
        return (
               <div>
-                     <PageSummary title={"Créer une ressource"} description={"Créez une ressource pour la partager avec la communauté. Vous pouvez choisir de la rendre publique ou privée. Avant publication, un modérateur vérifiera le contenu de votre ressource."}></PageSummary>
+                     <PageSummary title={"Créer une ressource"} description={`Bienvenue sur la page "Créer une ressource" de notre plateforme. Ici, vous pouvez partager vos connaissances et expériences avec la communauté en soumettant vos propres contenus. Utilisez notre interface simple pour décrire et catégoriser votre contribution, la rendant ainsi accessible aux autres utilisateurs qui pourraient bénéficier de votre expertise. Contribuez dès aujourd'hui et aidez à enrichir notre collection de ressources relationnelles.`}></PageSummary>
                      <div className="flex flex-row justify-center w-full mt-10">
                             <Form
                                    form={form}

@@ -58,7 +58,7 @@ export default function SignUpForm() {
                             if (userData.role === 'Utilisateur') {
                                    router.push('/profil'); // * Redirect to the home page
                             } else {
-                                   router.push('/dashboard'); // * Redirect to the home page
+                                   router.push('/tableau-de-bord'); // * Redirect to the home page
                             }
                      }
                      return userData; // * Not sure if this is necessary. Information is already stored in the userProvider

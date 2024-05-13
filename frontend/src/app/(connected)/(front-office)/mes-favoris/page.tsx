@@ -45,7 +45,7 @@ export default function MesFavoris() {
 
        return (
               <div className="space-y-10">
-                     <PageSummary title="Mes favoris" description="Retrouvez ici toutes les ressources que vous avez ajoutées à vos favoris." />
+                     <PageSummary title="Mes favoris" description={`Cette section vous permet de retrouver rapidement toutes les ressources que vous avez marquées comme favorites. Ici, vous pouvez organiser et accéder facilement aux contenus que vous trouvez particulièrement utiles ou intéressants. Utilisez cette page pour revoir ces ressources à tout moment et continuer à approfondir vos connaissances ou compétences relationnelles. C'est l'endroit idéal pour garder une trace des outils et des informations qui vous inspirent le plus.`} />
                      {loading ?
                             <div className="w-full flex flex-row justify-center"><Skeleton active /></div>
                             :

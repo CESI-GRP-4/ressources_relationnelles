@@ -43,7 +43,7 @@ export default function LogInForm() {
                                    router.push('/profil'); // * Redirect to the home page
                             }else{
 
-                                   router.push('/dashboard'); // * Redirect to the home page
+                                   router.push('/tableau-de-bord'); // * Redirect to the home page
                             }
                      }
               } catch (error) {

@@ -46,7 +46,7 @@ export default function MyBookMarks() {
 
        return (
               <div className="space-y-10">
-                     <PageSummary title={`Mes "à regarder plus tard"`} description={`Retrouvez ici toutes les ressources que vous avez ajoutées à vos "a regarder plus tard".`} />
+                     <PageSummary title={`Mes "à regarder plus tard"`} description={`Cette section est conçue pour vous aider à garder une trace des ressources que vous souhaitez explorer ultérieurement. Ici, vous pouvez voir toutes les ressources que vous avez choisies de mettre de côté pour consultation future, vous permettant de les retrouver facilement lorsque vous aurez plus de temps à y consacrer. Utilisez cette fonctionnalité pour organiser votre apprentissage et vous assurer de ne jamais manquer des contenus précieux.`} />
                      {loading ?
                             <div className="w-full flex flex-row justify-center"><Skeleton active /></div>
                             :

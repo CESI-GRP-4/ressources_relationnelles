@@ -48,7 +48,7 @@ export default function PendingComments() {
        return (
               <div className="flex flex-col gap-10">
                      <div className="flex md:flex-row flex-col justify-between md:space-x-5 space-x-0 md:space-y-0 space-y-5">
-                            <PageSummary title={"Commentaires en attente"} description={undefined}></PageSummary>
+                            <PageSummary title={"Commentaires en attente"} description={`Bienvenue sur la page "Commentaires en Attente" du tableau de bord d'administration de notre plateforme. Cette section est réservée à la modération des commentaires soumis par les utilisateurs qui n'ont pas encore été approuvés pour publication. Ici, vous pouvez examiner chaque commentaire pour s'assurer qu'il respecte les directives de la communauté avant de décider de l'approuver, le rejeter ou demander une modification. Utilisez cette page pour garantir que les échanges sur la plateforme restent pertinents, respectueux et enrichissants, contribuant ainsi à une expérience positive pour tous les utilisateurs.`}></PageSummary>
                      </div>
 
 

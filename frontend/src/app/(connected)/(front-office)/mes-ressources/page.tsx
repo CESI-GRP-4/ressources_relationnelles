@@ -106,10 +106,13 @@ export default function MyRessources() {
        return (
               <div className="flex flex-col gap-10">
                      <div className="flex md:flex-row flex-col justify-between md:space-x-5 space-x-0 md:space-y-0 space-y-5">
-                            <PageSummary title={'Mes ressources'} description={undefined}></PageSummary>
-                            <FilterRessources acceptedRessources={acceptedRessources} pendingRessources={pendingRessources} rejectedRessources={rejectedRessources} blockedRessources={blockedRessources} setFilteredRessources={setFilteredRessources}></FilterRessources>
+                            <div className="md:w-3/5">
+                                   <PageSummary title={'Mes ressources'} description={`Cette section vous permet de visualiser et de gérer toutes les ressources que vous avez soumises. Ici, vous pouvez facilement suivre le statut de chaque contribution, classées en différentes catégories : acceptées, en attente, refusées, et bloquées. Utilisez cette page pour mettre à jour ou modifier vos ressources, ou pour comprendre les raisons d'un éventuel refus afin d'adapter vos futures soumissions. Gérez efficacement vos contributions et restez engagé dans l'enrichissement de notre communauté.`}></PageSummary>
+                            </div>
+                            <div className="flex flex-row items-end">
+                                   <FilterRessources acceptedRessources={acceptedRessources} pendingRessources={pendingRessources} rejectedRessources={rejectedRessources} blockedRessources={blockedRessources} setFilteredRessources={setFilteredRessources}></FilterRessources>
+                            </div>
                      </div>
-
                      <div className="flex flex-row justify-center gap-3">
                             {loading ?
                                    <Skeleton active />

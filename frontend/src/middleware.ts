@@ -25,7 +25,7 @@ const routeWithUserAuth = [
 // Routes accessible to Moderators (Moderateur)
 const routeForModerator = [
        ...routeWithUserAuth,
-       '/dashboard',
+       '/tableau-de-bord',
        '/gestion-ressources/ressources-acceptees',
        '/gestion-ressources/ressources-en-attente',
        '/gestion-ressources/ressources-refusees',
