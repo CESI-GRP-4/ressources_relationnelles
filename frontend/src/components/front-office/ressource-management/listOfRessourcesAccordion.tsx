@@ -217,8 +217,14 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
               children: (
                      <>
                             <div className='flex flex-col gap-5'>
-                                   <div className="mb-10">
+                                   <div className="mb-10 flex flex-row items-center">
                                           <RessourceData ressource={ressource} />
+                                          {ressource.status === "accepted" && <Tooltip title="Ouvrir la ressource" className="cursor-pointer">
+                                                 <Link target="_blank" href={`/ressource/${ressource.id}`}>
+                                                        <Icon className="ml-3" style={{ fontSize: "2rem" }} icon={"ion:open-outline"}></Icon>
+                                                 </Link>
+                                          </Tooltip>}
+                                          
                                    </div>
                                    <div className='flex flex-row justify-end space-x-2'>
                                           <Tooltip title={ressource.isFavorite ? "Enlever des favoris" : "Ajouter aux favoris"}>
