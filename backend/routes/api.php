@@ -26,6 +26,9 @@ Route::post('forgot-password/send-mail', [AuthController::class, 'forgotPassword
 Route::post('forgot-password/reset', [AuthController::class, 'resetPassword']);
 Route::get('countries', [CountryController::class, 'getCountries']);
 
+// Search Ressources and Categories
+Route::post('search', [RessourceController::class, 'searchRessourcesAndCategories']);
+
 // Categories
 Route::get('categories', [CategoryController::class, 'getActiveCategories']);
 Route::get('category/{id}', [CategoryController::class, 'getCategory']);

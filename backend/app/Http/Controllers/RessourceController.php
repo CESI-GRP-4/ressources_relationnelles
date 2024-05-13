@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bookmark;
+use App\Models\Category;
 use App\Models\Favorite;
 use App\Models\Ressource;
 use App\Utils\Utils;
@@ -1161,5 +1162,72 @@ class RessourceController extends Controller {
         }else{
             return response()->json(['message' => 'Ressource non trouvée dans les bookmarks'], 200);
         }
+    }
+
+
+    /**
+     * @OA\Get(
+     *     path="/search",
+     *     tags={"Search"},
+     *     summary="Search resources and categories",
+     *     description="Performs a search across resources and categories based on a provided search term. Returns matching resources and categories.",
+     *     operationId="searchRessourcesAndCategories",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Parameter(
+     *         name="searchValue",
+     *         in="query",
+     *         description="The search term to query resources and categories",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Search results",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="ressources",
+     *                 type="array",
+     *                 description="An array of matching resources",
+     *                 @OA\Items(ref="#/components/schemas/RessourceDetail")
+     *             ),
+     *             @OA\Property(
+     *                 property="categories",
+     *                 type="array",
+     *                 description="An array of matching categories",
+     *                 @OA\Items(ref="#/components/schemas/CategoryDetail")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Valeur de recherche manquante")
+     *         )
+     *     )
+     * )
+     */
+    public function searchRessourcesAndCategories(Request $request){
+        $validator = Validator::make($request->all(), [
+            'searchValue' => 'required|string'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => 'Valeur de recherche manquante'], 400);
+        }
+
+        $ressources = Ressource::where('label', 'like', '%'.$request->searchValue.'%')->get();
+        $ressources = Utils::mapRessourcesToDetails($ressources);
+
+        $categories = Category::where('title', 'like', '%'.$request->searchValue.'%')->get();
+        $categories = Utils::mapCategoriesToDetails($categories);
+
+        return response()->json([
+            'ressources' => $ressources,
+            'categories' => $categories
+        ], 200);
+
     }
 }

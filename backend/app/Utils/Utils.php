@@ -278,6 +278,11 @@ class Utils{
             return self::getRessourceDetail($ressource);
         });
     }
+    public static function mapCategoriesToDetails($categories){
+        return $categories->map(function ($category) {
+            return self::getCategoryDetail($category);
+        });
+    }
 
 
     public static function getRandomProfilePicture() {

@@ -3088,6 +3088,76 @@
                 ]
             }
         },
+        "/search": {
+            "get": {
+                "tags": [
+                    "Search"
+                ],
+                "summary": "Search resources and categories",
+                "description": "Performs a search across resources and categories based on a provided search term. Returns matching resources and categories.",
+                "operationId": "searchRessourcesAndCategories",
+                "parameters": [
+                    {
+                        "name": "searchValue",
+                        "in": "query",
+                        "description": "The search term to query resources and categories",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Search results",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "ressources": {
+                                            "description": "An array of matching resources",
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/RessourceDetail"
+                                            }
+                                        },
+                                        "categories": {
+                                            "description": "An array of matching categories",
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/CategoryDetail"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Valeur de recherche manquante"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
         "/stats/connections": {
             "get": {
                 "tags": [
@@ -3440,64 +3510,56 @@
                 ]
             }
         },
-        "/user/edit/{id}": {
+        "/profil/update": {
             "post": {
                 "tags": [
-                    "Users"
+                    "Profil"
                 ],
-                "summary": "Edit a user's details",
-                "description": "Allows editing user details. Note: Only Super Administrators can change the user's role.",
-                "operationId": "editUser",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "User ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
+                "summary": "Update the user's profile",
+                "description": "Allows authenticated users to update their own profile information. SuperAdministrateurs can update additional fields like 'role'.",
+                "operationId": "updateUserProfile",
                 "requestBody": {
-                    "description": "User data to update",
+                    "description": "Profile data to be updated",
+                    "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "properties": {
                                     "firstName": {
+                                        "description": "User's first name",
                                         "type": "string",
-                                        "example": "John"
+                                        "nullable": true
                                     },
                                     "lastName": {
+                                        "description": "User's last name",
                                         "type": "string",
-                                        "example": "Doe"
+                                        "nullable": true
                                     },
                                     "email": {
+                                        "description": "User's email address",
                                         "type": "string",
                                         "format": "email",
-                                        "example": "john.doe@example.com"
+                                        "nullable": true
                                     },
                                     "isEmailVerified": {
+                                        "description": "Whether the user's email is verified",
                                         "type": "boolean",
-                                        "example": true
+                                        "nullable": true
                                     },
                                     "country": {
+                                        "description": "User's country",
                                         "type": "string",
-                                        "example": "Japan"
+                                        "nullable": true
                                     },
                                     "city": {
+                                        "description": "User's city",
                                         "type": "string",
-                                        "example": "Paris"
+                                        "nullable": true
                                     },
                                     "postalCode": {
+                                        "description": "User's postal code",
                                         "type": "string",
-                                        "example": "75000"
-                                    },
-                                    "role": {
-                                        "description": "Role of the user. Can only be changed by Super Administrators.",
-                                        "type": "string",
-                                        "example": "User"
+                                        "nullable": true
                                     }
                                 },
                                 "type": "object"
@@ -3507,78 +3569,17 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "User updated successfully",
+                        "description": "User profile updated successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Utilisateur mis à jour avec succés"
+                                            "example": "Utilisateur mis à jour avec succès"
                                         },
                                         "user": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer",
-                                                    "example": 30
-                                                },
-                                                "email": {
-                                                    "type": "string",
-                                                    "format": "email",
-                                                    "example": "john.doe@example.com"
-                                                },
-                                                "firstName": {
-                                                    "type": "string",
-                                                    "example": "John"
-                                                },
-                                                "lastName": {
-                                                    "type": "string",
-                                                    "example": "Doe"
-                                                },
-                                                "isEmailVerified": {
-                                                    "type": "boolean",
-                                                    "example": true
-                                                },
-                                                "imgURL": {
-                                                    "type": "string",
-                                                    "example": "/path/to/picture/user_9.jpg"
-                                                },
-                                                "city": {
-                                                    "type": "string",
-                                                    "example": "Paris"
-                                                },
-                                                "country": {
-                                                    "type": "string",
-                                                    "example": "Japan"
-                                                },
-                                                "countryCode": {
-                                                    "type": "string",
-                                                    "example": "JP"
-                                                },
-                                                "postalCode": {
-                                                    "type": "string",
-                                                    "example": "75000"
-                                                },
-                                                "role": {
-                                                    "type": "string",
-                                                    "example": "User"
-                                                },
-                                                "createdAt": {
-                                                    "type": "string",
-                                                    "format": "date-time",
-                                                    "example": "2024-02-13T19:05:16.000000Z"
-                                                },
-                                                "updatedAt": {
-                                                    "type": "string",
-                                                    "format": "date-time",
-                                                    "example": "2024-02-20T19:45:22.000000Z"
-                                                },
-                                                "newUser": {
-                                                    "type": "boolean",
-                                                    "example": false
-                                                }
-                                            },
-                                            "type": "object"
+                                            "$ref": "#/components/schemas/UserDetail"
                                         }
                                     },
                                     "type": "object"
@@ -3587,10 +3588,65 @@
                         }
                     },
                     "400": {
-                        "description": "Validation error"
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "Validation errors during profile update",
+                                            "type": "string"
+                                        },
+                                        "errors": {
+                                            "description": "Detailed validation errors",
+                                            "type": "object",
+                                            "additionalProperties": [
+                                                {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "property": null
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
-                    "404": {
-                        "description": "User not found"
+                    "401": {
+                        "description": "Unauthorized - User must be logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Une erreur est survenue lors de la mise à jour de l'utilisateur."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [

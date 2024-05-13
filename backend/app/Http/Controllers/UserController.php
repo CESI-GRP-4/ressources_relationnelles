@@ -429,6 +429,68 @@ class UserController extends Controller
      *     )
      * )
      */
+    /**
+     * @OA\Post(
+     *     path="/profil/update",
+     *     tags={"Profil"},
+     *     summary="Update the user's profile",
+     *     description="Allows authenticated users to update their own profile information. SuperAdministrateurs can update additional fields like 'role'.",
+     *     operationId="updateUserProfile",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Profile data to be updated",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="firstName", type="string", nullable=true, description="User's first name"),
+     *             @OA\Property(property="lastName", type="string", nullable=true, description="User's last name"),
+     *             @OA\Property(property="email", type="string", format="email", nullable=true, description="User's email address"),
+     *             @OA\Property(property="isEmailVerified", type="boolean", nullable=true, description="Whether the user's email is verified"),
+     *             @OA\Property(property="country", type="string", nullable=true, description="User's country"),
+     *             @OA\Property(property="city", type="string", nullable=true, description="User's city"),
+     *             @OA\Property(property="postalCode", type="string", nullable=true, description="User's postal code"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User profile updated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Utilisateur mis à jour avec succès"),
+     *             @OA\Property(property="user", ref="#/components/schemas/UserDetail")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", description="Validation errors during profile update"),
+     *             @OA\Property(
+     *                 property="errors",
+     *                 type="object",
+     *                 additionalProperties={
+     *                     @OA\Property(type="array", @OA\Items(type="string"))
+     *                 },
+     *                 description="Detailed validation errors"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - User must be logged in",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthorized - User must be logged in")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Une erreur est survenue lors de la mise à jour de l'utilisateur.")
+     *         )
+     *     )
+     * )
+     */
     public function editUser(Request $request, $id = null) {
         DB::beginTransaction();
         try {
