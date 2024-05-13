@@ -1,6 +1,6 @@
 // page.tsx (default page at frontend/src/app/page.tsx)
 "use client"
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, Layout, Tooltip, Typography, Input } from 'antd';
 import OfflineHeader from '@/components/offlineHeader';
 import Header from '@/components/header';
@@ -12,12 +12,29 @@ import logo from "/public/logo.png"
 import Image from 'next/image';
 import CategoriesTab from "@/components/categoriesTab";
 import type { SearchProps } from 'antd/es/input/Search';
+import Ressource from '@/types/ressource';
+import { Category } from '@/types/category';
+import axios from 'axios';
 
 const { Search } = Input;
 
 export default function Home() {
        const { user } = useUser();
-       const onSearch: SearchProps['onSearch'] = (value, _e, info) => console.log(info?.source, value);
+       const [searchResults, setSearchResults] = useState<{ ressources: Ressource[], categories: Category[] }>({ ressources: [], categories: [] });
+       const [isLoading, setIsLoading] = useState(false);
+
+       const onSearch: SearchProps['onSearch'] = async (value) => {
+              setIsLoading(true);
+              try {
+                     const response = await axios(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/search`, { data: { searchValue : value }, withCredentials: true, method: "POST"});
+                     setSearchResults(response.data);
+                     console.log("🚀 ~ constonSearch:SearchProps['onSearch']= ~ response:", response);
+              } catch (error) {
+                     console.error("Error fetching search results:", error);
+              } finally {
+                     setIsLoading(false);
+              }
+       };
 
        return (
               <Layout style={{ minHeight: '100vh' }}>
