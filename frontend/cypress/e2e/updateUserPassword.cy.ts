@@ -1,7 +1,7 @@
 import { waitAndClick, loginAsSuperAdmin } from './utils';
 
 describe('Change password test', () => {
-  
+
   it('Change password with bad oldpassword', () => {
     cy.intercept('POST', '/api/profil/updatePassword').as('updatePassword');
     loginAsSuperAdmin();
@@ -26,6 +26,16 @@ describe('Change password test', () => {
     cy.get('.ant-form-item-control-input-content > .ant-btn').should('be.visible').click();
     cy.wait('@updatePassword').its('response.statusCode').should('eq', 200);
 
+    cy.get('.ant-menu-submenu-selected').should('be.visible').click();
+    cy.get('.ant-menu-item-danger').should('be.visible').click();
+    /* Partie Login */
+    cy.intercept('POST', '/api/login').as('loginRequest');
+    cy.wait(4000);
+    cy.visit('http://localhost:3000/connexion');
+    cy.get('#logInForm_email').should('be.visible').type('john.doe@example.com');
+    cy.get('#logInForm_password').should('be.visible').type('Testtest1@');
+    cy.get(':nth-child(4) > .ant-row > .ant-col > .ant-form-item-control-input > .ant-form-item-control-input-content > .ant-btn').should('be.visible').click();
+    cy.wait('@loginRequest').its('response.statusCode').should('eq', 200);
   });
 
 })
