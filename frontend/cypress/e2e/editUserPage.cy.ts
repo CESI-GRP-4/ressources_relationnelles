@@ -7,7 +7,7 @@ describe('Change user data test', () => {
     loginAsSuperAdmin();
     cy.visit('http://localhost:3000/profil');
     cy.get('li > :nth-child(1) > .ant-btn').click();
-    cy.get('#lastName').clear().type('Test');
+    cy.get('#profilForm_lastName').clear().type('Test');
     cy.get('[style="display: flex; justify-content: center; padding-top: 1%;"] > .ant-btn').click();
     cy.wait('@update').its('response.statusCode').should('eq', 200);
 
@@ -17,9 +17,9 @@ describe('Change user data test', () => {
     loginAsSuperAdmin();
     cy.visit('http://localhost:3000/profil');
     cy.get('li > :nth-child(1) > .ant-btn').click();
-    cy.get('#email').clear().type("hello, word !");
+    cy.get('#profilForm_email').clear().type("hello, word !");
     cy.get('[style="display: flex; justify-content: center; padding-top: 1%;"] > .ant-btn').click();
-    cy.get('#email_help > .ant-form-item-explain-error').should('be.visible').and('contain', 'Entrez une adresse mail valide');
+    cy.get('#profilForm_email_help > .ant-form-item-explain-error').should('be.visible').and('contain', 'Entrez une adresse mail valide');
   });
 
 })
