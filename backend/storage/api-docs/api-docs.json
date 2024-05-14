@@ -2468,6 +2468,90 @@
                 }
             }
         },
+        "/stats/ressources/count": {
+            "get": {
+                "tags": [
+                    "Statistics"
+                ],
+                "summary": "Retrieve resource statistics",
+                "description": "Fetches statistics for resources, including view counts and associated category details. Accessible only to moderators and higher.",
+                "operationId": "getRessourcesStatsCount",
+                "responses": {
+                    "200": {
+                        "description": "Resource statistics",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "ressources": {
+                                            "description": "An array of resources with their view counts and category details",
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "idRessource": {
+                                                        "description": "The unique identifier of the resource",
+                                                        "type": "integer"
+                                                    },
+                                                    "viewCount": {
+                                                        "description": "Number of views this resource has received",
+                                                        "type": "integer"
+                                                    },
+                                                    "label": {
+                                                        "description": "The label or title of the resource",
+                                                        "type": "string"
+                                                    },
+                                                    "category": {
+                                                        "description": "Details about the category this resource belongs to",
+                                                        "properties": {
+                                                            "idCategory": {
+                                                                "description": "The unique identifier of the category",
+                                                                "type": "integer"
+                                                            },
+                                                            "color": {
+                                                                "description": "Color associated with the category",
+                                                                "type": "string"
+                                                            },
+                                                            "icon": {
+                                                                "description": "Icon representing the category",
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in as a moderator or higher",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in as a moderator or higher"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
         "/ressources/block/{id}": {
             "post": {
                 "tags": [

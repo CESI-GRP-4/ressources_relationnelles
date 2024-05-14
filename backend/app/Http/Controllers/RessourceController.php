@@ -729,6 +729,67 @@ class RessourceController extends Controller {
     }
 
     /**
+     * @OA\Get(
+     *     path="/stats/ressources/count",
+     *     tags={"Statistics"},
+     *     summary="Retrieve resource statistics",
+     *     description="Fetches statistics for resources, including view counts and associated category details. Accessible only to moderators and higher.",
+     *     operationId="getRessourcesStatsCount",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Resource statistics",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="ressources",
+     *                 type="array",
+     *                 description="An array of resources with their view counts and category details",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="idRessource", type="integer", description="The unique identifier of the resource"),
+     *                     @OA\Property(property="viewCount", type="integer", description="Number of views this resource has received"),
+     *                     @OA\Property(property="label", type="string", description="The label or title of the resource"),
+     *                     @OA\Property(
+     *                         property="category",
+     *                         type="object",
+     *                         description="Details about the category this resource belongs to",
+     *                         @OA\Property(property="idCategory", type="integer", description="The unique identifier of the category"),
+     *                         @OA\Property(property="color", type="string", description="Color associated with the category"),
+     *                         @OA\Property(property="icon", type="string", description="Icon representing the category")
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - User must be logged in as a moderator or higher",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthorized - User must be logged in as a moderator or higher")
+     *         )
+     *     )
+     * )
+     */
+    public function getRessourcesStatsCount(){
+        $ressources = Ressource::all()->map(function($ressource){
+            $category = Category::find($ressource->id_category);
+            return [
+                'idRessource' => $ressource->id_ressource,
+                'viewCount' => $ressource->view_count,
+                'label' => $ressource->label,
+                'category' => [
+                    'idCategory' => $category->id_category,
+                    'color' => $category->color,
+                    'icon' => $category->icon
+                ]
+            ];
+        });
+
+        return response()->json(['ressources' => $ressources], 200);
+    }
+
+    /**
      * @OA\Post(
      *     path="/ressources/block/{id}",
      *     tags={"Ressource"},
