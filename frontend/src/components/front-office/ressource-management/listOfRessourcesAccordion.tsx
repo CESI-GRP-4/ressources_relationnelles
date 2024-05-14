@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Collapse, Tag, Typography, Button, Badge, Card, Empty, Popconfirm, Tooltip, message, Avatar, Statistic } from 'antd';
 import Ressource from '@/types/ressource';
 import { Icon } from '@iconify/react';
+import { ShareAltOutlined } from '@ant-design/icons';
 const { Text, Paragraph } = Typography;
 import Link from 'next/link';
 import { useUser } from '@/providers/userProvider';
@@ -260,7 +261,24 @@ export default function ListOfRessourcesAccordion({ ressources, refreshRessource
                                                                       }}
                                                                       size='large' shape="circle" icon={<Icon style={{ fontSize: "1.7rem", color: "blue" }} icon={"fluent:bookmark-add-24-regular"}></Icon>} />
                                                         )}
+
                                                  </Tooltip>
+
+                                                 <Button
+                                                        size='large' shape="circle">            
+                                                        <Paragraph
+                                                               copyable={{
+                                                                      icon: [<ShareAltOutlined key="copy-icon" style={{ fontSize: "1.6rem", color: "blue" }} />, <ShareAltOutlined key="copied-icon" style={{ fontSize: "1.6rem", color: "blue" }} />],
+                                                                      text: process.env.NEXT_PUBLIC_BACKEND_API_URL + `/ressource/${ressource.id}`,
+                                                                      tooltips: ['Partager la ressource', 'Lien copié'],
+                                                                      onCopy: () => {
+                                                                             message.success('Lien copié');
+                                                                      },
+                                                               }}
+                                                               style={{ display: 'inline-block' }}
+                                                        >
+                                                        </Paragraph>
+                                                 </Button>
                                           </div>
                                    </div>
                                    {(ressource.status === 'rejected' || ressource.status === 'blocked') && (
