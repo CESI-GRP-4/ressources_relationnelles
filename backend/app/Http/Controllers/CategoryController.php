@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Ressource;
 use App\Models\User;
 use App\Traits\FieldMappingTrait;
 use App\Utils\Utils;
@@ -362,5 +363,59 @@ class CategoryController extends Controller {
         }
     }
 
+    /**
+     * @OA\Get(
+     *     path="/stats/categories",
+     *     tags={"Statistics"},
+     *     summary="Retrieve category statistics",
+     *     description="Fetches statistics for categories, including the count of resources in each category. Accessible only to admins.",
+     *     operationId="getCategoriesStatsCount",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Category statistics",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="categories",
+     *                 type="array",
+     *                 description="An array of categories with their resource counts and details",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="id", type="integer", description="The unique identifier of the category"),
+     *                     @OA\Property(property="title", type="string", description="The title of the category"),
+     *                     @OA\Property(property="color", type="string", description="The color associated with the category"),
+     *                     @OA\Property(property="icon", type="string", description="The icon representing the category"),
+     *                     @OA\Property(property="ressourcesCount", type="integer", description="Number of resources in this category"),
+     *                     @OA\Property(property="isActive", type="boolean", description="Whether the category is active")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - Access restricted to admins",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthorized - Access restricted to admins")
+     *         )
+     *     )
+     * )
+     */
+    public function getCategoriesStatsCount()
+    {
+        $categories = Category::select('id_category', 'title', 'color', 'icon', 'is_active')->get();
+        $categories = $categories->map(function ($category) {
+            $ressourceCount = Ressource::where('id_category', $category->id_category)->count();
+            return [
+                'id' => $category->id_category,
+                'title' => $category->title,
+                'color' => $category->color,
+                'icon' => $category->icon,
+                'ressourcesCount' => $ressourceCount,
+                'isActive' => $category->is_active
+            ];
+        });
+        return response()->json(['categories' => $categories]);
+    }
 
 }

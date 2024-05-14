@@ -836,6 +836,84 @@
                 ]
             }
         },
+        "/stats/categories": {
+            "get": {
+                "tags": [
+                    "Statistics"
+                ],
+                "summary": "Retrieve category statistics",
+                "description": "Fetches statistics for categories, including the count of resources in each category. Accessible only to admins.",
+                "operationId": "getCategoriesStatsCount",
+                "responses": {
+                    "200": {
+                        "description": "Category statistics",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "categories": {
+                                            "description": "An array of categories with their resource counts and details",
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "description": "The unique identifier of the category",
+                                                        "type": "integer"
+                                                    },
+                                                    "title": {
+                                                        "description": "The title of the category",
+                                                        "type": "string"
+                                                    },
+                                                    "color": {
+                                                        "description": "The color associated with the category",
+                                                        "type": "string"
+                                                    },
+                                                    "icon": {
+                                                        "description": "The icon representing the category",
+                                                        "type": "string"
+                                                    },
+                                                    "ressourcesCount": {
+                                                        "description": "Number of resources in this category",
+                                                        "type": "integer"
+                                                    },
+                                                    "isActive": {
+                                                        "description": "Whether the category is active",
+                                                        "type": "boolean"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - Access restricted to admins",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - Access restricted to admins"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
         "/cities": {
             "get": {
                 "tags": [
