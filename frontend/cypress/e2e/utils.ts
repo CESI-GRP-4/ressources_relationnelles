@@ -9,7 +9,7 @@ export const loginAsSuperAdmin = () => {
        cy.visit('http://localhost:3000/connexion');
 
        // Enter the login credentials
-       cy.get('#logInForm_email').should('be.visible').type('john.doe@example.com');
+       cy.get('#logInForm_email').should('be.visible').type('c.arthur@gmail.com');
        cy.get('#logInForm_password').should('be.visible').type('aze');
 
        // Submit the form
