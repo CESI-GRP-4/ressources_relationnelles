@@ -116,6 +116,8 @@ Route::group(['middleware' => ['jwt.auth']], function () {
 
         // Statistics
         Route::group(['prefix' => 'stats'], function () {
+            Route::get('connections', [ConnectionController::class, 'getConnections']);
+            Route::get('categories', [CategoryController::class, 'getCategoriesStatsCount']);
             Route::get('ressources', [RessourceController::class, 'getRessourcesStats']);
             Route::get('ressources/count', [RessourceController::class, 'getRessourcesStatsCount']);
             Route::get('comments', [CommentController::class, 'getCommentsStats']);
@@ -152,9 +154,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
 
         // Statistics
         Route::group(['prefix' => 'stats'], function () {
-            Route::get('connections', [ConnectionController::class, 'getConnections']);
             Route::get('users', [UserController::class, 'getUsersInformation']);
-            Route::get('categories', [CategoryController::class, 'getCategoriesStatsCount']);
         });
     });
 
