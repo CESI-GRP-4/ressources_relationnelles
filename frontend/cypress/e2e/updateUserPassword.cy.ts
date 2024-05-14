@@ -1,5 +1,3 @@
-import { waitAndClick, loginAsSuperAdmin } from './utils';
-
 describe('Change password test', () => {
        it('Change password with bad oldpassword', () => {
               cy.intercept('POST', '/api/login').as('loginRequest');

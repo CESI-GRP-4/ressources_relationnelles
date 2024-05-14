@@ -16,7 +16,7 @@ describe('Ressource creation', () => {
               cy.get('#createRessourceForm_description').should('be.visible').and("be.enabled").and("not.be.disabled").type(randomDescription);
 
               // Handling search and select:
-              cy.get('#createRessourceForm_idCategory').type('voyages{enter}');
+              cy.get('#rc_select_1').type('voyages{enter}');
 
               cy.get('.ant-form-item-control-input-content > .ant-btn').click();
               cy.wait('@createRequest').should(({ response }) => {
