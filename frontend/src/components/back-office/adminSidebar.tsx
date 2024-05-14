@@ -239,6 +239,16 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                                    key: 'statistiques/connexions',
                                    title: 'connexions',
                             },
+                            {
+                                   icon: <LoginOutlined />,
+                                   label: (
+                                          <ConditionalTooltip title="Ressources">
+                                                 <Link href={'/statistiques/ressources'}>Ressources</Link>
+                                          </ConditionalTooltip>
+                                   ),
+                                   key: 'statistiques/ressources',
+                                   title: 'ressources',
+                            },
                      ]
               },
               {

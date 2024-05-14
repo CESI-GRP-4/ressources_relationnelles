@@ -1,59 +1,17 @@
-// /creer-ressource/page.tsx
 "use client"
-import { useState, useEffect } from "react";
-import { Form, Input, Select, Button, message, Typography, Checkbox, Tooltip } from "antd";
+import { useState } from "react";
+import { Form, Input, Button, message, Checkbox, Tooltip } from "antd";
 import { SaveOutlined } from "@ant-design/icons";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import type Ressource from "@/types/ressource";
 import { useUser } from '@/providers/userProvider';
-import { Category } from "@/types/category";
 import PageSummary from "@/components/pageSummary";
-import { Icon } from '@iconify/react'; // Assuming you use Iconify React component
+import SelectCategory from "@/components/selectCategory";
 
 export default function CreateRessourceForm() {
        const [form] = Form.useForm();
        const [isLoading, setIsLoading] = useState(false);
-       const [categories, setCategories] = useState<Category[]>([]);
        const { user } = useUser();
-
-       interface OptionType {
-              label: JSX.Element;
-              value: number;
-              description: string;
-              icon: string;
-       }
-
-       const transformCategoriesToOptions = (categories: Category[]): OptionType[] => {
-              return categories.map(category => ({
-                     label: (
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                   <Icon icon={category.icon} style={{ marginRight: 8, fontSize: '1.2em' }} />
-                                   {category.title}
-                            </div>
-                     ),
-                     value: category.id,
-                     description: category.description,
-                     icon: category.icon
-              }));
-       };
-
-       const options = transformCategoriesToOptions(categories); // Call this after categories are fetched
-
-       useEffect(() => {
-              fetchCategories();
-       }, []);
-
-       const fetchCategories = async () => {
-              try {
-                     setIsLoading(true);
-                     const categoriesResponse = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/categories`);
-                     setCategories(categoriesResponse.data.categories);
-              } catch (error) {
-                     console.error("Erreur lors de la récupération des catégories et des statuts:", error);
-              } finally {
-                     setIsLoading(false);
-              }
-       };
 
        const onFinish = async (ressourceForm: Ressource) => {
               const ressourceFormWithUserId = { ...ressourceForm };
@@ -74,21 +32,21 @@ export default function CreateRessourceForm() {
                      form.resetFields();
               } catch (error) {
                      console.error(error);
-                     const axiosError = error as AxiosError
+                     const axiosError = error as AxiosError;
 
                      if (axiosError.response) {
                             switch (axiosError.response.status) {
                                    case 403:
-                                          message.error("Vous n'êtes pas autorisé à créer une ressource. Est-ce que votre mail est vérifié ?")
+                                          message.error("Vous n'êtes pas autorisé à créer une ressource. Est-ce que votre mail est vérifié ?");
                                           break;
                                    case 422:
-                                          message.error("Erreur de validation des données")
+                                          message.error("Erreur de validation des données");
                                           break;
                                    default:
-                                          message.error("Erreur lors de la création de la ressource")
+                                          message.error("Erreur lors de la création de la ressource");
                             }
                      } else {
-                            message.error("Erreur lors de la création de la ressource")
+                            message.error("Erreur lors de la création de la ressource");
                      }
               } finally {
                      setIsLoading(false);
@@ -121,39 +79,19 @@ export default function CreateRessourceForm() {
                                           name="idCategory"
                                           rules={[{ required: true, message: "Sélectionnez une catégorie" }]}
                                    >
-                                          <Select
-                                                 showSearch
-                                                 style={{ width: '100%' }}
-                                                 placeholder="Selectionnez une catégorie"
-                                                 optionFilterProp="children"
-                                                 filterOption={(input, option) =>
-                                                        option ? option.description.toLowerCase().includes(input.toLowerCase()) : false
-                                                 }
-                                                 loading={isLoading}
-                                                 options={options}
-                                          />
-
+                                          <SelectCategory disabled={isLoading} />
                                    </Form.Item>
 
                                    <Form.Item
                                           label="Ressource publique"
                                           name="isPublic"
-                                          valuePropName="checked" // This sets the checkbox state
-                                          initialValue={true} // Default checked
+                                          valuePropName="checked"
+                                          initialValue={true}
                                           rules={[{ required: true }]}
-                                          style={{ display: 'flex', alignItems: 'center', marginBottom: '24px' }} // Ensures label and checkbox are on the same row
+                                          style={{ display: 'flex', alignItems: 'center', marginBottom: '24px' }}
                                    >
                                           <Checkbox disabled={isLoading} />
                                    </Form.Item>
-
-                                   {/* <Form.Item label="Fichiers" name="files" valuePropName="fileList" getValueFromEvent={(e) => e.fileList} >
-                                                 <Dragger style={{ width: "50%" }}>
-                                                        <p className="ant-upload-drag-icon">
-                                                               <InboxOutlined />
-                                                        </p>
-                                                        <p className="ant-upload-text">Cliquez ou faites glisser des fichiers ici</p>
-                                                 </Dragger>
-                                          </Form.Item> */}
 
                                    <Form.Item>
                                           {user?.isEmailVerified ? (
