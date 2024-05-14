@@ -148,7 +148,7 @@ const UserProfilePage = () => {
                             responseType: 'json',
                             timeout: 10000,
                      });
-                     console.log(response.data.user)
+                     console.log(response)
                      setUser(response.data.user)
 
                      // Si la mise à jour est réussie, actualisez les données de l'utilisateur
