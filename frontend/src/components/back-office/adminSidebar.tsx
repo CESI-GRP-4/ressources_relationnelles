@@ -182,7 +182,49 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                             },
                             // Ressources blocked (by an admin, it can be then re-activated by an admin):
                      ]
-              }
+              },
+              {
+                     key: "statistiques",
+                     icon: <LineChartOutlined />,
+                     label: (
+                            <ConditionalTooltip title="Statistiques">
+                                   Statistiques
+                            </ConditionalTooltip>
+                     ),
+                     title: 'statistiques',
+                     children: [
+                            {
+                                   icon: <LoginOutlined />,
+                                   label: (
+                                          <ConditionalTooltip title="Connexions">
+                                                 <Link href={'/statistiques/connexions'}>Connexions</Link>
+                                          </ConditionalTooltip>
+                                   ),
+                                   key: 'statistiques/connexions',
+                                   title: 'connexions',
+                            },
+                            {
+                                   icon: <LoginOutlined />,
+                                   label: (
+                                          <ConditionalTooltip title="Ressources">
+                                                 <Link href={'/statistiques/ressources'}>Ressources</Link>
+                                          </ConditionalTooltip>
+                                   ),
+                                   key: 'statistiques/ressources',
+                                   title: 'ressources',
+                            },
+                            {
+                                   icon: <LoginOutlined />,
+                                   label: (
+                                          <ConditionalTooltip title="Catégories">
+                                                 <Link href={'/statistiques/categories'}>Catégories</Link>
+                                          </ConditionalTooltip>
+                                   ),
+                                   key: 'statistiques/categories',
+                                   title: 'categories',
+                            },
+                     ]
+              },
        ]
 
        // Additional items for the "Administrateur" role
@@ -219,20 +261,6 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                             },
                      ]
               },
-              {
-                     key: "statistiques",
-                     icon: <LineChartOutlined />,
-                     label: (
-                            <ConditionalTooltip title="Statistiques">
-                                   Statistiques
-                            </ConditionalTooltip>
-                     ),
-                     title: 'statistiques',
-                     children: [
-                            {
-                                   icon: <LoginOutlined />,
-                                   label: (
-                                          <ConditionalTooltip title="Connexions">
               
               {
                      key: "gestion-categories",
