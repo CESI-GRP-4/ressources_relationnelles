@@ -20,7 +20,7 @@ export default function Footer() {
        return (
               <AntdFooter className="!bg-white">
                      <div className="flex flex-row w-full justify-end">
-                            <Switch checked={wcagEnabled || false} checkedChildren="option WCAG activée" unCheckedChildren="option WCAG désactivée" onChange={handleWCAGChange} />
+                            <Switch checked={wcagEnabled || false} checkedChildren="Option WCAG activée" unCheckedChildren="option WCAG désactivée" onChange={handleWCAGChange} />
                      </div>
                      {/* <Header collapsed={collapsed} setCollapsed={setCollapsed}/> */}
                      <div className="flex flex-col items-center">

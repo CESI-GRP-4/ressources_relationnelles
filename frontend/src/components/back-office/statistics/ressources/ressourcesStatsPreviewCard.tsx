@@ -4,10 +4,12 @@ import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { Icon } from '@iconify/react';
 import { RessourcesStats } from "@/types/ressourcesStats";
+import { useWCAG } from '@/contexts/wcagContext';
 
 export default function RessourceStatsPreviewCard() {
        const [ressourcesStats, setRessourcesStats] = useState<RessourcesStats>();
        const [isLoading, setIsLoading] = useState<boolean>(true);
+       const { wcagEnabled } = useWCAG();
 
        useEffect(() => {
               fetchRessourcesStats()
@@ -46,12 +48,12 @@ export default function RessourceStatsPreviewCard() {
        }
 
        const otherDataSource = [
-              { title: "Ressources acceptées", count: ressourcesStats?.accepted, color: "green", url: "/gestion-ressources/ressources-acceptees" },
-              { title: "Ressources en attente", count: ressourcesStats?.pending, color: "orange", url: "/gestion-ressources/ressources-en-attente" },
-              { title: "Ressources rejetées", count: ressourcesStats?.rejected, color: "red", url: "/gestion-ressources/ressources-refusees" },
-              { title: "Ressources bloquées", count: ressourcesStats?.blocked, color: "red", url: "/gestion-ressources/ressources-bloquees" },
-              { title: "Ressources publiques", count: ressourcesStats?.public, color: "blue" },
-              { title: "Ressources privées", count: ressourcesStats?.private, color: "blue" },
+              { title: "Ressources acceptées", count: ressourcesStats?.accepted, color: !wcagEnabled ? "green" : undefined, url: "/gestion-ressources/ressources-acceptees" },
+              { title: "Ressources en attente", count: ressourcesStats?.pending, color: !wcagEnabled ?"orange": undefined, url: "/gestion-ressources/ressources-en-attente" },
+              { title: "Ressources rejetées", count: ressourcesStats?.rejected, color: !wcagEnabled ?"red": undefined, url: "/gestion-ressources/ressources-refusees" },
+              { title: "Ressources bloquées", count: ressourcesStats?.blocked, color: !wcagEnabled ?"red": undefined, url: "/gestion-ressources/ressources-bloquees" },
+              { title: "Ressources publiques", count: ressourcesStats?.public, color: !wcagEnabled ?"blue": undefined },
+              { title: "Ressources privées", count: ressourcesStats?.private, color: !wcagEnabled ?"blue": undefined },
        ];
 
        return (
@@ -75,7 +77,7 @@ export default function RessourceStatsPreviewCard() {
                                                                       url && <Link href={url}><Icon style={{fontSize: "20px"}} icon={"lucide:link"}></Icon></Link>
                                                                }
                                                         </div>
-                                                        <Tag color={color || "blue"}>{count}</Tag>
+                                                        <Tag color={!wcagEnabled ? color || "blue" : undefined}>{count}</Tag>
                                                  </div>
                                           </List.Item>
                                    )}

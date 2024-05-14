@@ -4,17 +4,20 @@ import { Category } from "@/types/category";
 import Link from "next/link";
 import { useState } from "react";
 import ModifyCategoryModal from "@/components/back-office/categories-management/modifyCategoryModal";
+import { useWCAG } from '@/contexts/wcagContext';
 
 const { Paragraph } = Typography;
 
 export default function CategoryCard({ category, refreshCategories }: { category: Category, refreshCategories: Function }) {
        const [isModalVisible, setIsModalVisible] = useState(false);
        const showModal = () => setIsModalVisible(true);
+       const { wcagEnabled } = useWCAG();
+
        return (
               <>
                      <Card
                             hoverable
-                            style={{ borderColor: category.isActive ? category.color : undefined, minWidth: '300px', maxWidth: '300px' }}
+                            style={{ borderColor: (category.isActive && !wcagEnabled) ? category.color : undefined, minWidth: '300px', maxWidth: '300px' }}
 
                             className="m-2 !cursor-default h-fit"
                             actions={[
@@ -45,6 +48,5 @@ export default function CategoryCard({ category, refreshCategories }: { category
                      </Card >
                      <ModifyCategoryModal category={category} visible={isModalVisible} setVisible={setIsModalVisible} refreshCategories={refreshCategories} />
               </>
-
        );
 }

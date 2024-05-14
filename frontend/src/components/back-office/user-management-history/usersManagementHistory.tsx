@@ -9,6 +9,8 @@ const { Text } = Typography;
 import { getUserAttributeLabelsInFrench } from '@/utils/userAttributesToFrench';
 import { tableSettings } from '@/utils/tableParams';
 import Link from 'next/link';
+import { useWCAG } from '@/contexts/wcagContext';
+
 interface userHistory {
        userModified: User;
        modifyBy: User;
@@ -61,6 +63,7 @@ const getActionText = (action: 'Modify' | 'Delete' | 'Ban' | 'Unban' | 'Create')
        return actionText;
 };
 export default function UserManagementHistory({ isPreview = false }: { isPreview?: boolean }) {
+       const { wcagEnabled } = useWCAG();
        const [tableData, setTableData] = useState<userHistory[] | null>(null);
        const [tableParams, setTableParams] = useState(isPreview ? { perPage: 5, page: 1 } as tableSettings : { perPage: 10, page: 1 } as tableSettings);
        const [isTableLoading, setIsTableLoading] = useState(false);
@@ -144,7 +147,7 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
                                                                <div style={{ margin: '0 8px', display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
                                                                       <div>
                                                                              {`${item.userModified.firstName} ${item.userModified.lastName} a été `}
-                                                                             <Tag color={getTagColor(item.action)}>{getActionText(item.action)}</Tag>
+                                                                             <Tag color={!wcagEnabled ? getTagColor(item.action): undefined}>{getActionText(item.action)}</Tag>
                                                                              {` par `}
                                                                              <Typography.Link href={`mailto:${item.modifyBy.email}`}>
                                                                                     {item.modifyBy.email}
@@ -223,7 +226,7 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
                      key: 'action',
                      render: (action: 'Modify' | 'Delete' | 'Ban' | 'Unban' | 'Create') => {
                             return (
-                                   <Tag color={getTagColor(action)}>
+                                   <Tag color={!wcagEnabled ? getTagColor(action): undefined}>
                                           {getActionText(action).charAt(0).toUpperCase() + getActionText(action).slice(1)}
                                    </Tag>
                             );

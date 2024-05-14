@@ -5,11 +5,13 @@ import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { Category } from "@/types/category";
 import { Icon } from '@iconify/react';
+import { useWCAG } from '@/contexts/wcagContext';
 
 export default function CategoriesPreview() {
        const [categories, setCategories] = useState<Category[]>([]);
        const [isLoading, setIsLoading] = useState<boolean>(true);
        const [stats, setStats] = useState<{ noIconCount: number; inactiveCount: number }>({ noIconCount: 0, inactiveCount: 0 });
+       const { wcagEnabled } = useWCAG();
 
        useEffect(() => {
               fetchCategories()
@@ -81,7 +83,7 @@ export default function CategoriesPreview() {
                                                         <div className='flex flex-row justify-start items-center'>
                                                                <Icon icon={item.icon} style={{ fontSize: '32px', marginRight: 8 }} />
                                                                {item.description}
-                                                               <Tag color={getTagColor(item.count)} style={{ marginLeft: 8 }}>{item.count}</Tag>
+                                                               <Tag color={!wcagEnabled ? getTagColor(item.count): undefined} style={{ marginLeft: 8 }}>{item.count}</Tag>
                                                         </div>
                                                  </List.Item>
                                           )}

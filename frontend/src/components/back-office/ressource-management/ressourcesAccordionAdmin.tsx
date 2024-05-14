@@ -6,10 +6,12 @@ const { Text, Paragraph } = Typography;
 import axios, { AxiosError } from 'axios';
 import RessourceData from '@/components/front-office/ressource-management/ressourceData';
 import Link from 'next/link';
+import { useWCAG } from '@/contexts/wcagContext';
 
 export default function RessourcesAccordionAdmin({ ressources, refreshRessources, showAccept, showRefuse, showDelete, showBlock }: { ressources: Ressource[], refreshRessources: Function, showAccept: boolean, showRefuse: boolean, showDelete: boolean, showBlock: boolean }) {
        const [loading, setLoading] = useState(false); // Used for loading state of buttons, but the global loading of the list is handle throught the parent component from the refreshRessources function
        const [visiblePopoverId, setVisiblePopoverId] = useState<string | null>(null);
+       const { wcagEnabled } = useWCAG();
 
        if (ressources.length === 0) {
               return (
@@ -262,7 +264,7 @@ export default function RessourcesAccordionAdmin({ ressources, refreshRessources
                                           </div>
                                    </Popover>
                                    <div className="flex flex-row items-center gap-2">
-                                          <Tag color={ressource.category?.color || "blue"}>
+                                          <Tag color={wcagEnabled ? undefined : ressource.category?.color ? ressource.category?.color : "blue"}>
                                                  <div className="flex flex-row items-center gap-2">
                                                         <Icon icon={ressource.category?.icon} fontSize={"20px"} /> <span className='text-lg'>{ressource.category?.title}</span>
                                                  </div>

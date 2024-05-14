@@ -4,10 +4,12 @@ import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { Icon } from '@iconify/react';
 import { CommentsStats } from "@/types/commentsStats";
+import { useWCAG } from '@/contexts/wcagContext';
 
 export default function CommentsStatsPreviewCard() {
        const [commentsStats, setCommentsStats] = useState<CommentsStats>();
        const [isLoading, setIsLoading] = useState<boolean>(true);
+       const { wcagEnabled } = useWCAG();
 
        useEffect(() => {
               fetchCommentsStats()
@@ -72,7 +74,7 @@ export default function CommentsStatsPreviewCard() {
                                                                       url && <Link href={url}><Icon style={{fontSize: "20px"}} icon={"lucide:link"}></Icon></Link>
                                                                }
                                                         </div>
-                                                        <Tag color={color || "blue"}>{count}</Tag>
+                                                        <Tag color={!wcagEnabled ? color || "blue" : undefined}>{count}</Tag>
                                                  </div>
                                           </List.Item>
                                    )}

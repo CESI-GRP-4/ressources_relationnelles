@@ -4,12 +4,14 @@ import { PlusCircleOutlined } from "@ant-design/icons";
 import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { UserStats } from "@/types/usersStats";
+import { useWCAG } from '@/contexts/wcagContext';
 
 const { Panel } = Collapse;
 
 export default function UsersStatsPreviewCard() {
        const [usersStats, setUsersStats] = useState<UserStats>();
        const [isLoading, setIsLoading] = useState<boolean>(true);
+       const { wcagEnabled } = useWCAG();
 
        useEffect(() => {
               fetchUsersStats()
@@ -53,8 +55,8 @@ export default function UsersStatsPreviewCard() {
        })) || [];
 
        const otherDataSource = [
-              { title: "Utilisateurs bannis", count: usersStats?.bannedUsersCount, color: "red" },
-              { title: "Comptes non vérifiés", count: usersStats?.unverifiedEmailsCount, color: "orange" },
+              { title: "Utilisateurs bannis", count: usersStats?.bannedUsersCount, color: !wcagEnabled ? "red" : undefined },
+              { title: "Comptes non vérifiés", count: usersStats?.unverifiedEmailsCount, color: !wcagEnabled ?"orange": undefined },
        ];
 
        return (
@@ -79,7 +81,7 @@ export default function UsersStatsPreviewCard() {
                                                                       <List.Item>
                                                                              <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                                                                     <span>{title}</span>
-                                                                                    <Tag color="blue">{count}</Tag>
+                                                                                    <Tag color={!wcagEnabled ? "blue" : undefined}>{count}</Tag>
                                                                              </div>
                                                                       </List.Item>
                                                                )}
@@ -93,7 +95,7 @@ export default function UsersStatsPreviewCard() {
                                                         <List.Item>
                                                                <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                                                       <span>{title}</span>
-                                                                      <Tag color={color || "blue"}>{count}</Tag>
+                                                                      <Tag color={!wcagEnabled ? color || "blue" : undefined}>{count}</Tag>
                                                                </div>
                                                         </List.Item>
                                                  )}
