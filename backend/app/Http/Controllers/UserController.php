@@ -601,6 +601,48 @@ class UserController extends Controller
         }
     }
 
+    /**
+     * @OA\Post(
+     *     path="/profil/updatepassword",
+     *     tags={"Profil"},
+     *     summary="Update the user's password",
+     *     description="Allows an authenticated user to update their password. The user must provide their current password, and the new password must be confirmed.",
+     *     operationId="updateUserPassword",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Password update data",
+     *         @OA\JsonContent(
+     *             required={"password", "confirmPassword", "oldPassword"},
+     *             @OA\Property(property="password", type="string", description="The new password"),
+     *             @OA\Property(property="confirmPassword", type="string", description="Confirmation of the new password"),
+     *             @OA\Property(property="oldPassword", type="string", description="The current password")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Password updated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Mot de passe mis à jour avec succès")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Validation error or incorrect old password",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Ancien mot de passe incorrect")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Une erreur est survenue lors de la mise à jour de l'utilisateur.")
+     *         )
+     *     )
+     * )
+     */
     public function editUserPassword(Request $request)
     {
         DB::beginTransaction();
@@ -619,12 +661,12 @@ class UserController extends Controller
 
             // Vérifier si l'ancien mot de passe est correct
             if (!Hash::check($request->oldPassword, $user->password)) {
-                throw new \Exception('Ancien mot de passe incorrect');
+                return response()->json(['message' => 'Ancien mot de passe incorrect'], 400);
             }
 
             // Vérifier si le nouveau mot de passe est différent du mot de passe actuel
             if (Hash::check($request->password, $user->password)) {
-                throw new \Exception('Le nouveau mot de passe doit être différent du mot de passe actuel');
+                return response()->json(['message' => 'Le nouveau mot de passe doit être différent du mot de passe actuel'], 400);
             }
 
             // Mettre à jour le mot de passe

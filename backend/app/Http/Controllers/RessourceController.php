@@ -772,7 +772,9 @@ class RessourceController extends Controller {
      * )
      */
     public function getRessourcesStatsCount(){
-        $ressources = Ressource::all()->map(function($ressource){
+        $ressources = Ressource::all()
+            ->where('id_status', self::ID_ACCEPTED_STATUS)
+            ->map(function($ressource){
             $category = Category::find($ressource->id_category);
             return [
                 'idRessource' => $ressource->id_ressource,
