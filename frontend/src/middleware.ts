@@ -34,7 +34,10 @@ const routeForModerator = [
 
        '/gestion-commentaires/commentaires-en-attente',
        '/gestion-commentaires/commentaires-acceptes',
-       '/gestion-commentaires/commentaires-refuses'
+       '/gestion-commentaires/commentaires-refuses',
+       '/statistiques/connexions',
+       '/statistiques/ressources',
+       '/statistiques/categories',
 ];
 
 // Routes accessible to Admins (Administrateur)
@@ -42,7 +45,6 @@ const routeForAdmin = [
        ...routeForModerator,
        '/gestion-utilisateurs',
        '/gestion-utilisateurs-historique',
-       '/statistiques/connexions',
        '/gestion-categories',
 ];
 
