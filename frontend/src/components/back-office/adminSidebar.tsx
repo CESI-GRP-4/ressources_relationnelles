@@ -204,7 +204,7 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                                    title: 'connexions',
                             },
                             {
-                                   icon: <LoginOutlined />,
+                                   icon: <Icon icon="fluent-mdl2:entry-view"></Icon>,
                                    label: (
                                           <ConditionalTooltip title="Ressources">
                                                  <Link href={'/statistiques/ressources'}>Ressources</Link>
@@ -214,7 +214,7 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                                    title: 'ressources',
                             },
                             {
-                                   icon: <LoginOutlined />,
+                                   icon: <Icon icon="solar:pie-chart-2-broken"></Icon>,
                                    label: (
                                           <ConditionalTooltip title="Catégories">
                                                  <Link href={'/statistiques/categories'}>Catégories</Link>

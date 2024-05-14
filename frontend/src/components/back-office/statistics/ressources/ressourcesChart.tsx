@@ -52,7 +52,7 @@ export default function RessourcesChart({ isPreview = false }: { isPreview?: boo
        const [isGraphLoading, setIsGraphLoading] = useState(true);
        const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
        const [fullLabels, setFullLabels] = useState<string[]>([]);
-       const defaultColor = 'rgb(75, 192, 192)'; // Default color for bars when no category is selected
+       const defaultColor = 'rgb(163, 128, 194)';
 
        useEffect(() => {
               fetchData(selectedCategory);
