@@ -4,13 +4,16 @@ import { Category } from "@/types/category";
 import { useState } from "react";
 import Link from "next/link";
 const { Paragraph, Text } = Typography;
+import { useWCAG } from '@/contexts/wcagContext';
 
 export default function CategoryCard({ category }: { category: Category }) {
+       const { wcagEnabled } = useWCAG();
+
        return (
               <>
                      <Card
                             hoverable
-                            style={{ borderColor: category.isActive ? category.color : undefined, minWidth: '300px', maxWidth: '300px' }}
+                            style={{ borderColor: (category.isActive && !wcagEnabled) ? category.color : undefined, minWidth: '300px', maxWidth: '300px' }}
                             className="m-2 !cursor-default h-fit"
                             actions={[
                                    <Link key="gotocat" href={`/categorie/${category.id}`}>

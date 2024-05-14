@@ -8,10 +8,20 @@ import ArthurC from "/public/ArthurC.jpeg"
 import React from "react";
 import Link from 'next/link';
 const { Footer: AntdFooter } = Layout
+import { Switch } from 'antd';
+import { useWCAG } from '@/contexts/wcagContext';
 
 export default function Footer() {
+       const { wcagEnabled, setWCAGEnabled } = useWCAG();
+
+       const handleWCAGChange = (isActive: boolean) => {
+              setWCAGEnabled(isActive);
+       }
        return (
               <AntdFooter className="!bg-white">
+                     <div className="flex flex-row w-full justify-end">
+                            <Switch checked={wcagEnabled || false} checkedChildren="option WCAG activée" unCheckedChildren="option WCAG désactivée" onChange={handleWCAGChange} />
+                     </div>
                      {/* <Header collapsed={collapsed} setCollapsed={setCollapsed}/> */}
                      <div className="flex flex-col items-center">
                             <Image
@@ -49,7 +59,7 @@ export default function Footer() {
                                           </Tooltip>
                                           <Tooltip title="Kilian Breton" placement="top">
                                                  <a href="https://github.com/KilianBre" target="_blank">
-                                                        <Avatar alt="Photo de Kilian Breton" draggable={false} src={<Image alt={"Photo de Kilian Breton"} src={KilianB} width={32} height={32}></Image>}/>
+                                                        <Avatar alt="Photo de Kilian Breton" draggable={false} src={<Image alt={"Photo de Kilian Breton"} src={KilianB} width={32} height={32}></Image>} />
                                                  </a>
                                           </Tooltip>
                                           <Tooltip title="Arthur Crahé" placement="top">

@@ -4,6 +4,7 @@ import { TabsProps, Tabs, message, Spin, ConfigProvider } from "antd";
 import axios, { AxiosError } from "axios";
 import { useState, useEffect, useCallback } from "react";
 import RessourcesCaroussel from "./ressourcesCaroussel";
+import { useWCAG } from '@/contexts/wcagContext';
 
 interface TabItem {
        key: string;
@@ -13,6 +14,8 @@ interface TabItem {
 }
 
 export default function CategoriesTab() {
+       const { wcagEnabled } = useWCAG();
+
        const [categories, setCategories] = useState<Category[]>([]);
        const [tabs, setTabs] = useState<TabItem[]>([]);
        const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -78,7 +81,7 @@ export default function CategoriesTab() {
                                    theme={{
                                           token: {
                                                  // Seed Token
-                                                 colorPrimary: colorPrimary,
+                                                 colorPrimary: wcagEnabled ? "black" : colorPrimary,
                                                  borderRadius: 2,
                                                  // Alias Token
                                           },
