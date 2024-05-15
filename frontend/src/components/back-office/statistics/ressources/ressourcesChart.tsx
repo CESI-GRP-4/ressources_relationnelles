@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { message, Spin } from 'antd';
 import SelectCategory from "@/components/selectCategory";
+import { useWCAG } from '@/contexts/wcagContext';
 
 ChartJS.register(
        CategoryScale,
@@ -39,6 +40,7 @@ interface RessourcesResponse {
 }
 
 export default function RessourcesChart({ isPreview = false }: { isPreview?: boolean }) {
+       const { wcagEnabled } = useWCAG();
        const [data, setData] = useState<ChartData<'bar'>>({
               labels: [],
               datasets: [{
@@ -52,11 +54,11 @@ export default function RessourcesChart({ isPreview = false }: { isPreview?: boo
        const [isGraphLoading, setIsGraphLoading] = useState(true);
        const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
        const [fullLabels, setFullLabels] = useState<string[]>([]);
-       const defaultColor = 'rgb(163, 128, 194)';
+       const defaultColor = wcagEnabled ? 'rgb(168, 161, 171)' : 'rgb(163, 128, 194)';
 
        useEffect(() => {
               fetchData(selectedCategory);
-       }, [selectedCategory]);
+       }, [selectedCategory, wcagEnabled]);  // Add wcagEnabled as a dependency
 
        const fetchData = async (categoryId: number | null) => {
               setIsGraphLoading(true);
@@ -81,21 +83,15 @@ export default function RessourcesChart({ isPreview = false }: { isPreview?: boo
                                    filteredRessources = filteredRessources.filter(r => r.category.idCategory === categoryId);
                             }
 
-                            // Tri des ressources par nombre de consultations
-                            
-
                             // Limite aux 10 premières ressources si isPreview est true
                             if (isPreview) {
-                                   filteredRessources = filteredRessources.sort((a, b) => b.viewCount - a.viewCount);
-                                   filteredRessources = filteredRessources.slice(0, 10);
+                                   filteredRessources = filteredRessources.sort((a, b) => b.viewCount - a.viewCount).slice(0, 10);
                             }
 
                             const labels = filteredRessources.map(r => r.label);
                             const truncatedLabels = labels.map(label => label.split(' ').slice(0, 3).join(' ') + '...');
                             const viewCounts = filteredRessources.map(r => r.viewCount);
-                            const colors = categoryId
-                                   ? filteredRessources.map(r => r.category.color)
-                                   : new Array(filteredRessources.length).fill(defaultColor);
+                            const colors = filteredRessources.map(r => wcagEnabled ? defaultColor :  categoryId ? r.category.color : defaultColor);
 
                             setData({
                                    labels: truncatedLabels,
@@ -176,5 +172,3 @@ export default function RessourcesChart({ isPreview = false }: { isPreview?: boo
               </>
        );
 }
-
-
