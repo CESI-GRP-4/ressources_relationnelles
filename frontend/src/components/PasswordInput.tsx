@@ -2,9 +2,6 @@ import React, { useState } from 'react';
 import { Input, Form } from 'antd';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import {
-       emailRegex,
-       firstNameRegex,
-       lastNameRegex,
        minLengthPasswdRegex,
        oneLowerCasePasswdRegex,
        oneUpperCasePasswdRegex,

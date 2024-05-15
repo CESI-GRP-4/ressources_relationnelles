@@ -32,4 +32,16 @@ class Country extends Model {
     public $timestamps = false;
 
     protected $fillable = ['name', 'country_code'];
+
+    /**
+     * Recherche l'ID d'un pays par son nom.
+     *
+     * @param string $name Le nom du pays.
+     * @return int|null L'ID du pays s'il est trouvé, sinon null.
+     */
+    public function getIdByName(string $name): ?int
+    {
+        $country = self::where('name', $name)->first();
+        return $country ? $country->id_country : null;
+    }
 }

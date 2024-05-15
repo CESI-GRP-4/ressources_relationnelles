@@ -1,12 +1,12 @@
 import User from "./user";
 import { Category } from "./category";
-
+import { Comment } from "./comment";
 export default interface Ressource {
        label: string;
        description: string;
        category: Category;
        isPublic: boolean;
-       
+       comments: Comment[];
        id: number;
        viewCount?: number;
        user?: User;
@@ -16,4 +16,6 @@ export default interface Ressource {
        staffComment: string;
        // content: string;
        // comments: Comment[];
+       isFavorite?: boolean;
+       isBookmark?: boolean;
 }

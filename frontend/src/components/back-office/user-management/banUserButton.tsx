@@ -40,7 +40,6 @@ export default function BanUserButton({ user, isDisabled, onBanChange }: { user:
        }
 
        const handleBan = async () => {
-              console.log(banTimestamp)
               if (banTimestamp === 0 && !isPermanent) {
                      notification.error({
                             message: 'Erreur de validation des données. Champs manquants ou invalides.',

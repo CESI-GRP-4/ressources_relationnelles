@@ -83,12 +83,30 @@ class User extends Authenticatable implements JWTSubject {
         return $this->belongsTo(City::class, 'id_city');
     }
 
+    public function setCityByName($city) {
+        $city = City::firstOrCreate(['name' => $city]);
+        $this->id_city = $city->id_city;
+        $this->save();
+    }
+
     public function country() {
         return $this->belongsTo(Country::class, 'id_country');
     }
 
     public function postalCode() {
         return $this->belongsTo(PostalCode::class, 'id_postal_code');
+    }
+
+    public function setPostalCodeByName($postalCode) {
+        $postalCode = PostalCode::firstOrCreate(['name' => $postalCode]);
+        $this->id_postal_code = $postalCode->id_postal_code;
+        $this->save();
+    }
+    public function favorites() {
+        return $this->belongsToMany(Ressource::class, 'asso_user_favorite', 'id_user', 'id_ressource');
+    }
+    public function bookmarks() {
+        return $this->belongsToMany(Ressource::class, 'asso_user_bookmark', 'id_user', 'id_ressource');
     }
     public function getJWTIdentifier() {
         return $this->getKey();

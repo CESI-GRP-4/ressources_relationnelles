@@ -1,15 +1,17 @@
-import { Badge, Button, Card, List, Tag, message } from "antd";
+import { Badge, Button, Card, List, Tag, message, Spin } from "antd";
 import Link from "next/link";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { Category } from "@/types/category";
 import { Icon } from '@iconify/react';
+import { useWCAG } from '@/contexts/wcagContext';
 
 export default function CategoriesPreview() {
        const [categories, setCategories] = useState<Category[]>([]);
        const [isLoading, setIsLoading] = useState<boolean>(true);
        const [stats, setStats] = useState<{ noIconCount: number; inactiveCount: number }>({ noIconCount: 0, inactiveCount: 0 });
+       const { wcagEnabled } = useWCAG();
 
        useEffect(() => {
               fetchCategories()
@@ -29,7 +31,7 @@ export default function CategoriesPreview() {
                      setCategories(responseCategories.data.categories);
 
                      // Calculate stats
-                     const noIconCount = responseCategories.data.categories.filter((cat: Category) => !cat.icon).length;
+                     const noIconCount = responseCategories.data.categories.filter((cat: Category) => !cat.icon || cat.icon.trim() === '').length;
                      const inactiveCount = responseCategories.data.categories.filter((cat: Category) => !cat.isActive).length;
                      setStats({ noIconCount, inactiveCount });
               } catch (error) {
@@ -69,22 +71,25 @@ export default function CategoriesPreview() {
                             title="Catégories"
                             extra={<Link href="/gestion-categories"><Button type="text" shape="circle" icon={<PlusCircleOutlined style={{ color: "blue" }} />} /></Link>}
                      >
-                            <List
-                                   itemLayout="horizontal"
-                                   dataSource={[
-                                          { key: 'no_icon', icon: "solar:ghost-broken", description: 'Catégories sans icons', count: stats.noIconCount },
-                                          { key: 'inactive', icon: "mingcute:sleep-fill", description: 'Catégories inactives', count: stats.inactiveCount },
-                                   ]}
-                                   renderItem={(item) => (
-                                          <List.Item key={item.key}>
-                                                 <div className='flex flex-row justify-start items-center'>
-                                                        <Icon icon={item.icon} style={{ fontSize: '32px', marginRight: 8 }} />
-                                                        {item.description}
-                                                        <Tag color={getTagColor(item.count)} style={{ marginLeft: 8 }}>{item.count}</Tag>
-                                                 </div>
-                                          </List.Item>
-                                   )}
-                            />
+                            {isLoading ? <div className="flex flex-row justify-center w-full"><Spin></Spin></div> : (
+                                   <List
+                                          itemLayout="horizontal"
+                                          dataSource={[
+                                                 { key: 'no_icon', icon: "solar:ghost-broken", description: 'Catégories sans icons', count: stats.noIconCount },
+                                                 { key: 'inactive', icon: "mingcute:sleep-fill", description: 'Catégories inactives', count: stats.inactiveCount },
+                                          ]}
+                                          renderItem={(item) => (
+                                                 <List.Item key={item.key}>
+                                                        <div className='flex flex-row justify-start items-center'>
+                                                               <Icon icon={item.icon} style={{ fontSize: '32px', marginRight: 8 }} />
+                                                               {item.description}
+                                                               <Tag color={!wcagEnabled ? getTagColor(item.count): undefined} style={{ marginLeft: 8 }}>{item.count}</Tag>
+                                                        </div>
+                                                 </List.Item>
+                                          )}
+                                   />
+                            )}
+
                      </Card></Badge.Ribbon>
        );
 }

@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "title": "(Re)Sources Relationnelles",
-        "version": "0.26.2"
+        "version": "0.3.0"
     },
     "servers": [
         {
@@ -214,7 +214,7 @@
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Token de vérification invalide"
+                                            "example": "Wrong number of segments"
                                         }
                                     },
                                     "type": "object"
@@ -836,6 +836,731 @@
                 ]
             }
         },
+        "/stats/categories": {
+            "get": {
+                "tags": [
+                    "Statistics"
+                ],
+                "summary": "Retrieve category statistics",
+                "description": "Fetches statistics for categories, including the count of resources in each category. Accessible only to admins.",
+                "operationId": "getCategoriesStatsCount",
+                "responses": {
+                    "200": {
+                        "description": "Category statistics",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "categories": {
+                                            "description": "An array of categories with their resource counts and details",
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "description": "The unique identifier of the category",
+                                                        "type": "integer"
+                                                    },
+                                                    "title": {
+                                                        "description": "The title of the category",
+                                                        "type": "string"
+                                                    },
+                                                    "color": {
+                                                        "description": "The color associated with the category",
+                                                        "type": "string"
+                                                    },
+                                                    "icon": {
+                                                        "description": "The icon representing the category",
+                                                        "type": "string"
+                                                    },
+                                                    "ressourcesCount": {
+                                                        "description": "Number of resources in this category",
+                                                        "type": "integer"
+                                                    },
+                                                    "isActive": {
+                                                        "description": "Whether the category is active",
+                                                        "type": "boolean"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - Access restricted to admins",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - Access restricted to admins"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/cities": {
+            "get": {
+                "tags": [
+                    "City"
+                ],
+                "summary": "Retrieve all cities",
+                "description": "Fetches a list of all cities available in the database.",
+                "operationId": "getAllCities",
+                "responses": {
+                    "200": {
+                        "description": "A list of cities",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id_city": {
+                                                "description": "The unique identifier of the city",
+                                                "type": "integer"
+                                            },
+                                            "name": {
+                                                "description": "The name of the city",
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/comment/create": {
+            "post": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Create a comment on a resource",
+                "description": "Allows an authenticated user to post a comment on a specific resource. Comments can optionally be replies to existing comments.",
+                "operationId": "createComment",
+                "requestBody": {
+                    "description": "Data needed to create a new comment",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "idRessource",
+                                    "comment"
+                                ],
+                                "properties": {
+                                    "idRessource": {
+                                        "description": "The ID of the resource to which the comment is posted",
+                                        "type": "integer"
+                                    },
+                                    "comment": {
+                                        "description": "The content of the comment",
+                                        "type": "string"
+                                    },
+                                    "idParent": {
+                                        "description": "Optional ID of the parent comment if this is a reply",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Comment posted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Comment posted successfully"
+                                        },
+                                        "comment": {
+                                            "$ref": "#/components/schemas/CommentData"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "Validation message",
+                                            "type": "string"
+                                        },
+                                        "errors": {
+                                            "description": "Detailed validation errors",
+                                            "type": "object",
+                                            "additionalProperties": [
+                                                {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "property": null
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Parent not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Parent not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/comment/delete/{id}": {
+            "delete": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Delete a comment",
+                "description": "Allows an authenticated user to delete their own comment or a moderator to delete any comment. If the comment has replies, it is not removed but marked as deleted.",
+                "operationId": "deleteComment",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the comment to be deleted",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Comment deleted successfully or marked as deleted if it has replies",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Comment deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User can only delete their own comments or requires moderator rights",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - You can only delete your own comments"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Comment not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Commentaire non trouvé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/comment/accept/{id}": {
+            "patch": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Accept a comment",
+                "description": "Allows a moderator to accept a comment that is currently in a pending state. The comment can only be accepted if it is pending and, if it has a parent comment, the parent must also be accepted.",
+                "operationId": "acceptComment",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the comment to be accepted",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Comment accepted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Commentaire accepté"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Comment not in pending state or parent comment not accepted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Commentaire n'est pas en attente or Le commentaire parent n'est pas accepté"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Comment not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Commentaire non trouvé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in and have moderator privileges",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in and have moderator privileges"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/comment/reject/{id}": {
+            "patch": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Reject a comment",
+                "description": "Allows a moderator to reject a comment that is currently in a pending state. Only comments that are pending can be rejected.",
+                "operationId": "rejectComment",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the comment to be rejected",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Comment rejected successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Commentaire rejeté"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Comment not in pending state",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Commentaire n'est pas en attente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Comment not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Commentaire non trouvé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in and have moderator privileges",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in and have moderator privileges"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/comment/pending": {
+            "get": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Retrieve all pending comments",
+                "description": "Fetches a list of all comments that are currently in a pending state, formatted for display.",
+                "operationId": "getPendingComments",
+                "responses": {
+                    "200": {
+                        "description": "A list of pending comments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "comments": {
+                                            "description": "An array of formatted comments",
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/FormattedComment"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in and have the appropriate privileges (e.g., moderator)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in and have the appropriate privileges"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/comment/accepted": {
+            "get": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Retrieve all accepted comments",
+                "description": "Fetches a list of all comments that are currently in an accepted state, formatted for display.",
+                "operationId": "getAcceptedComments",
+                "responses": {
+                    "200": {
+                        "description": "A list of accepted comments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "comments": {
+                                            "description": "An array of formatted comments",
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/FormattedComment"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in and have the appropriate privileges (e.g., moderator)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in and have the appropriate privileges"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/comment/rejected": {
+            "get": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Retrieve all rejected comments",
+                "description": "Fetches a list of all comments that are currently in a rejected state, formatted for display.",
+                "operationId": "getRejectedComments",
+                "responses": {
+                    "200": {
+                        "description": "A list of rejected comments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "comments": {
+                                            "description": "An array of formatted comments",
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/FormattedComment"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in and have the appropriate privileges (e.g., moderator)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in and have the appropriate privileges"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/stats/comments": {
+            "get": {
+                "tags": [
+                    "Statistics"
+                ],
+                "summary": "Retrieve statistics about comments",
+                "description": "Fetches statistics about comments, including the total number of comments, the number of comments that are pending, accepted, and rejected, and the number of comments posted in the last week.",
+                "operationId": "getCommentsStats",
+                "responses": {
+                    "200": {
+                        "description": "Statistics about comments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "comments": {
+                                            "properties": {
+                                                "total": {
+                                                    "description": "The total number of comments",
+                                                    "type": "integer"
+                                                },
+                                                "pending": {
+                                                    "description": "The number of comments that are pending",
+                                                    "type": "integer"
+                                                },
+                                                "accepted": {
+                                                    "description": "The number of comments that are accepted",
+                                                    "type": "integer"
+                                                },
+                                                "rejected": {
+                                                    "description": "The number of comments that are rejected",
+                                                    "type": "integer"
+                                                },
+                                                "lastWeek": {
+                                                    "description": "The number of comments posted in the last week",
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in and have the appropriate privileges (e.g., moderator)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in and have the appropriate privileges"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
         "/countries": {
             "get": {
                 "tags": [
@@ -868,6 +1593,41 @@
                     },
                     "404": {
                         "description": "Not Found"
+                    }
+                }
+            }
+        },
+        "/postalCode": {
+            "get": {
+                "tags": [
+                    "Postal Code"
+                ],
+                "summary": "Retrieve all postal codes",
+                "description": "Fetches a list of all postal codes available in the database.",
+                "operationId": "getAllPostalCodes",
+                "responses": {
+                    "200": {
+                        "description": "A list of postal codes",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id_postal_code": {
+                                                "description": "The unique identifier of the postal code",
+                                                "type": "integer"
+                                            },
+                                            "postal_code": {
+                                                "description": "The value of the postal code",
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -983,6 +1743,22 @@
                                         "idRessource": {
                                             "description": "The ID of the newly created ressource",
                                             "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - User must verify their account before creating a ressource",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Vous devez vérifier votre compte avant de pouvoir créer une ressource"
                                         }
                                     },
                                     "type": "object"
@@ -1117,7 +1893,7 @@
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Vous n'avez pas les droits pour modifier cette ressource"
+                                            "example": "Vous n'avez pas les droits pour modifier cette ressource ou vous devez avoir un compte vérifié pour pouvoir modifier une ressource"
                                         }
                                     },
                                     "type": "object"
@@ -1779,6 +2555,151 @@
                 ]
             }
         },
+        "/stats/ressources": {
+            "get": {
+                "tags": [
+                    "Statistics"
+                ],
+                "summary": "Get statistics about ressources, Moderator and more",
+                "description": "Retrieves statistics about ressources, including totals, views, and status counts.",
+                "operationId": "getRessourcesStats",
+                "responses": {
+                    "200": {
+                        "description": "Statistics retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "ressources": {
+                                            "properties": {
+                                                "total": {
+                                                    "description": "Total number of ressources",
+                                                    "type": "integer"
+                                                },
+                                                "totalView": {
+                                                    "description": "Total views across all ressources",
+                                                    "type": "integer"
+                                                },
+                                                "public": {
+                                                    "description": "Count of public ressources",
+                                                    "type": "integer"
+                                                },
+                                                "private": {
+                                                    "description": "Count of private ressources",
+                                                    "type": "integer"
+                                                },
+                                                "pending": {
+                                                    "description": "Count of ressources pending moderation",
+                                                    "type": "integer"
+                                                },
+                                                "accepted": {
+                                                    "description": "Count of ressources accepted by moderators",
+                                                    "type": "integer"
+                                                },
+                                                "rejected": {
+                                                    "description": "Count of ressources rejected by moderators",
+                                                    "type": "integer"
+                                                },
+                                                "blocked": {
+                                                    "description": "Count of ressources blocked by moderators",
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/stats/ressources/count": {
+            "get": {
+                "tags": [
+                    "Statistics"
+                ],
+                "summary": "Retrieve resource statistics",
+                "description": "Fetches statistics for resources, including view counts and associated category details. Accessible only to moderators and higher.",
+                "operationId": "getRessourcesStatsCount",
+                "responses": {
+                    "200": {
+                        "description": "Resource statistics",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "ressources": {
+                                            "description": "An array of resources with their view counts and category details",
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "idRessource": {
+                                                        "description": "The unique identifier of the resource",
+                                                        "type": "integer"
+                                                    },
+                                                    "viewCount": {
+                                                        "description": "Number of views this resource has received",
+                                                        "type": "integer"
+                                                    },
+                                                    "label": {
+                                                        "description": "The label or title of the resource",
+                                                        "type": "string"
+                                                    },
+                                                    "category": {
+                                                        "description": "Details about the category this resource belongs to",
+                                                        "properties": {
+                                                            "idCategory": {
+                                                                "description": "The unique identifier of the category",
+                                                                "type": "integer"
+                                                            },
+                                                            "color": {
+                                                                "description": "Color associated with the category",
+                                                                "type": "string"
+                                                            },
+                                                            "icon": {
+                                                                "description": "Icon representing the category",
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in as a moderator or higher",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in as a moderator or higher"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
         "/ressources/block/{id}": {
             "post": {
                 "tags": [
@@ -1891,57 +2812,578 @@
                 ]
             }
         },
-        "/stats/ressources": {
+        "/ressource/favorite/get": {
             "get": {
                 "tags": [
-                    "Statistics"
+                    "Ressource"
                 ],
-                "summary": "Get statistics about ressources, Moderator and more",
-                "description": "Retrieves statistics about ressources, including totals, views, and status counts.",
-                "operationId": "getRessourcesStats",
+                "summary": "Get user's favorite resources",
+                "description": "Retrieves a list of favorite resources for the authenticated user, providing detailed information about each resource.",
+                "operationId": "getFavorites",
                 "responses": {
                     "200": {
-                        "description": "Statistics retrieved successfully",
+                        "description": "Favorites retrieved successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "ressources": {
-                                            "properties": {
-                                                "total": {
-                                                    "description": "Total number of ressources",
-                                                    "type": "integer"
-                                                },
-                                                "totalView": {
-                                                    "description": "Total views across all ressources",
-                                                    "type": "integer"
-                                                },
-                                                "public": {
-                                                    "description": "Count of public ressources",
-                                                    "type": "integer"
-                                                },
-                                                "private": {
-                                                    "description": "Count of private ressources",
-                                                    "type": "integer"
-                                                },
-                                                "pending": {
-                                                    "description": "Count of ressources pending moderation",
-                                                    "type": "integer"
-                                                },
-                                                "accepted": {
-                                                    "description": "Count of ressources accepted by moderators",
-                                                    "type": "integer"
-                                                },
-                                                "rejected": {
-                                                    "description": "Count of ressources rejected by moderators",
-                                                    "type": "integer"
-                                                },
-                                                "blocked": {
-                                                    "description": "Count of ressources blocked by moderators",
-                                                    "type": "integer"
-                                                }
-                                            },
-                                            "type": "object"
+                                            "description": "An array of the user's favorite resources",
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/RessourceDetail"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/ressource/favorite/add": {
+            "post": {
+                "tags": [
+                    "Ressource"
+                ],
+                "summary": "Add a resource to favorites",
+                "description": "Allows an authenticated user to add a resource to their favorites. Validates that the resource exists and is not already favorited by the user.",
+                "operationId": "addFavorite",
+                "requestBody": {
+                    "description": "Resource ID to add to favorites",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "ressourceId"
+                                ],
+                                "properties": {
+                                    "ressourceId": {
+                                        "description": "The ID of the resource to be added to favorites",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Resource added to favorites or already in favorites",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource ajoutée aux favoris or Ressource déjà ajoutée aux favoris"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Resource ID missing",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "ID de la ressource manquant"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource non trouvée"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/ressource/favorite/remove": {
+            "post": {
+                "tags": [
+                    "Ressource"
+                ],
+                "summary": "Remove a resource from favorites",
+                "description": "Allows an authenticated user to remove a resource from their favorites list. Validates that the resource exists in the user's favorites before removal.",
+                "operationId": "removeFavorite",
+                "requestBody": {
+                    "description": "Resource ID to remove from favorites",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "ressourceId"
+                                ],
+                                "properties": {
+                                    "ressourceId": {
+                                        "description": "The ID of the resource to be removed from favorites",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Resource removed from favorites successfully or not found in favorites",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource retirée des favoris or Ressource non trouvée dans les favoris"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Resource ID missing",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "ID de la ressource manquant"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource non trouvée"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/ressource/bookmark/get": {
+            "get": {
+                "tags": [
+                    "Ressource"
+                ],
+                "summary": "Get user's bookmarked resources",
+                "description": "Retrieves a list of bookmarked resources for the authenticated user, providing detailed information about each resource.",
+                "operationId": "getBookmarks",
+                "responses": {
+                    "200": {
+                        "description": "Bookmarks retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "ressources": {
+                                            "description": "An array of the user's bookmarked resources",
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/RessourceDetail"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/ressource/bookmark/add": {
+            "post": {
+                "tags": [
+                    "Ressource"
+                ],
+                "summary": "Add a bookmark to a resource",
+                "description": "Allows an authenticated user to add a bookmark to a resource. Ensures the resource exists and is not already bookmarked by the user.",
+                "operationId": "addBookmark",
+                "requestBody": {
+                    "description": "Provide the ID of the resource to be bookmarked",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "ressourceId"
+                                ],
+                                "properties": {
+                                    "ressourceId": {
+                                        "description": "The ID of the resource to be bookmarked",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Bookmark added successfully or already exists",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource ajoutée aux bookmarks or Ressource déjà ajoutée aux bookmarks"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Resource ID missing",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "ID de la ressource manquant"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource non trouvée"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/ressource/bookmark/remove": {
+            "post": {
+                "tags": [
+                    "Ressource"
+                ],
+                "summary": "Remove a bookmark from a resource",
+                "description": "Allows an authenticated user to remove a bookmark from a resource. Ensures the resource exists and is bookmarked by the user before removal.",
+                "operationId": "removeBookmark",
+                "requestBody": {
+                    "description": "Provide the ID of the resource to remove from bookmarks",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "ressourceId"
+                                ],
+                                "properties": {
+                                    "ressourceId": {
+                                        "description": "The ID of the resource whose bookmark is to be removed",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Bookmark removed successfully or not found in bookmarks",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource retirée des bookmarks or Ressource non trouvée dans les bookmarks"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Resource ID missing",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "ID de la ressource manquant"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ressource non trouvée"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User must be logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/search": {
+            "post": {
+                "tags": [
+                    "Search"
+                ],
+                "summary": "Search resources and categories",
+                "description": "Performs a search across resources and categories based on a given search value.",
+                "operationId": "searchRessourcesAndCategories",
+                "requestBody": {
+                    "description": "Search payload",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "searchValue"
+                                ],
+                                "properties": {
+                                    "searchValue": {
+                                        "description": "The value to search for in resources and categories",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Search results",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "ressources": {
+                                            "description": "An array of resources that match the search criteria",
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/RessourceDetail"
+                                            }
+                                        },
+                                        "categories": {
+                                            "description": "An array of categories that match the search criteria",
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/CategoryDetail"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Valeur de recherche manquante"
                                         }
                                     },
                                     "type": "object"
@@ -2304,64 +3746,56 @@
                 ]
             }
         },
-        "/user/edit/{id}": {
+        "/profil/update": {
             "post": {
                 "tags": [
-                    "Users"
+                    "Profil"
                 ],
-                "summary": "Edit a user's details",
-                "description": "Allows editing user details. Note: Only Super Administrators can change the user's role.",
-                "operationId": "editUser",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "User ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
+                "summary": "Update the user's profile",
+                "description": "Allows authenticated users to update their own profile information. SuperAdministrateurs can update additional fields like 'role'.",
+                "operationId": "updateUserProfile",
                 "requestBody": {
-                    "description": "User data to update",
+                    "description": "Profile data to be updated",
+                    "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "properties": {
                                     "firstName": {
+                                        "description": "User's first name",
                                         "type": "string",
-                                        "example": "John"
+                                        "nullable": true
                                     },
                                     "lastName": {
+                                        "description": "User's last name",
                                         "type": "string",
-                                        "example": "Doe"
+                                        "nullable": true
                                     },
                                     "email": {
+                                        "description": "User's email address",
                                         "type": "string",
                                         "format": "email",
-                                        "example": "john.doe@example.com"
+                                        "nullable": true
                                     },
                                     "isEmailVerified": {
+                                        "description": "Whether the user's email is verified",
                                         "type": "boolean",
-                                        "example": true
+                                        "nullable": true
                                     },
                                     "country": {
+                                        "description": "User's country",
                                         "type": "string",
-                                        "example": "Japan"
+                                        "nullable": true
                                     },
                                     "city": {
+                                        "description": "User's city",
                                         "type": "string",
-                                        "example": "Paris"
+                                        "nullable": true
                                     },
                                     "postalCode": {
+                                        "description": "User's postal code",
                                         "type": "string",
-                                        "example": "75000"
-                                    },
-                                    "role": {
-                                        "description": "Role of the user. Can only be changed by Super Administrators.",
-                                        "type": "string",
-                                        "example": "User"
+                                        "nullable": true
                                     }
                                 },
                                 "type": "object"
@@ -2371,78 +3805,17 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "User updated successfully",
+                        "description": "User profile updated successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Utilisateur mis à jour avec succés"
+                                            "example": "Utilisateur mis à jour avec succès"
                                         },
                                         "user": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer",
-                                                    "example": 30
-                                                },
-                                                "email": {
-                                                    "type": "string",
-                                                    "format": "email",
-                                                    "example": "john.doe@example.com"
-                                                },
-                                                "firstName": {
-                                                    "type": "string",
-                                                    "example": "John"
-                                                },
-                                                "lastName": {
-                                                    "type": "string",
-                                                    "example": "Doe"
-                                                },
-                                                "isEmailVerified": {
-                                                    "type": "boolean",
-                                                    "example": true
-                                                },
-                                                "imgURL": {
-                                                    "type": "string",
-                                                    "example": "/path/to/picture/user_9.jpg"
-                                                },
-                                                "city": {
-                                                    "type": "string",
-                                                    "example": "Paris"
-                                                },
-                                                "country": {
-                                                    "type": "string",
-                                                    "example": "Japan"
-                                                },
-                                                "countryCode": {
-                                                    "type": "string",
-                                                    "example": "JP"
-                                                },
-                                                "postalCode": {
-                                                    "type": "string",
-                                                    "example": "75000"
-                                                },
-                                                "role": {
-                                                    "type": "string",
-                                                    "example": "User"
-                                                },
-                                                "createdAt": {
-                                                    "type": "string",
-                                                    "format": "date-time",
-                                                    "example": "2024-02-13T19:05:16.000000Z"
-                                                },
-                                                "updatedAt": {
-                                                    "type": "string",
-                                                    "format": "date-time",
-                                                    "example": "2024-02-20T19:45:22.000000Z"
-                                                },
-                                                "newUser": {
-                                                    "type": "boolean",
-                                                    "example": false
-                                                }
-                                            },
-                                            "type": "object"
+                                            "$ref": "#/components/schemas/UserDetail"
                                         }
                                     },
                                     "type": "object"
@@ -2451,10 +3824,160 @@
                         }
                     },
                     "400": {
-                        "description": "Validation error"
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "Validation errors during profile update",
+                                            "type": "string"
+                                        },
+                                        "errors": {
+                                            "description": "Detailed validation errors",
+                                            "type": "object",
+                                            "additionalProperties": [
+                                                {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "property": null
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
-                    "404": {
-                        "description": "User not found"
+                    "401": {
+                        "description": "Unauthorized - User must be logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized - User must be logged in"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Une erreur est survenue lors de la mise à jour de l'utilisateur."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/profil/updatepassword": {
+            "post": {
+                "tags": [
+                    "Profil"
+                ],
+                "summary": "Update the user's password",
+                "description": "Allows an authenticated user to update their password. The user must provide their current password, and the new password must be confirmed.",
+                "operationId": "updateUserPassword",
+                "requestBody": {
+                    "description": "Password update data",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "password",
+                                    "confirmPassword",
+                                    "oldPassword"
+                                ],
+                                "properties": {
+                                    "password": {
+                                        "description": "The new password",
+                                        "type": "string"
+                                    },
+                                    "confirmPassword": {
+                                        "description": "Confirmation of the new password",
+                                        "type": "string"
+                                    },
+                                    "oldPassword": {
+                                        "description": "The current password",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Mot de passe mis à jour avec succès"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error or incorrect old password",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ancien mot de passe incorrect"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Une erreur est survenue lors de la mise à jour de l'utilisateur."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -2907,6 +4430,32 @@
                 },
                 "type": "object"
             },
+            "FormattedComment": {
+                "description": "Formatted information about a comment",
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier of the comment",
+                        "type": "integer"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/UserData"
+                    },
+                    "comment": {
+                        "description": "The content of the comment",
+                        "type": "string"
+                    },
+                    "createAt": {
+                        "description": "The date and time when the comment was created",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "ressourceId": {
+                        "description": "Ressource Id of the comment",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
             "Country": {
                 "properties": {
                     "id": {
@@ -3189,6 +4738,53 @@
                         "description": "The date and time when the resource was last updated",
                         "type": "string",
                         "format": "date-time"
+                    },
+                    "staffComment": {
+                        "description": "Staff comments on the resource, if any",
+                        "type": "string"
+                    },
+                    "isFavorite": {
+                        "description": "Indicates whether the resource is marked as a favorite by the current user",
+                        "type": "boolean"
+                    },
+                    "isBookmark": {
+                        "description": "Indicates whether the resource is bookmarked by the current user",
+                        "type": "boolean"
+                    },
+                    "comments": {
+                        "description": "List of comments associated with the resource",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CommentData"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "CommentData": {
+                "properties": {
+                    "id": {
+                        "description": "Comment ID",
+                        "type": "integer"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/UserData"
+                    },
+                    "comment": {
+                        "description": "The comment text",
+                        "type": "string"
+                    },
+                    "createAt": {
+                        "description": "The date and time when the comment was created",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "children": {
+                        "description": "An array of child comments",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CommentData"
+                        }
                     }
                 },
                 "type": "object"

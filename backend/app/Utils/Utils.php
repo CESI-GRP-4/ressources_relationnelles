@@ -3,6 +3,7 @@
 namespace App\Utils;
 
 use App\Models\Category;
+use App\Models\Comment;
 use App\Models\ProfilePicture;
 use App\Models\Ressource;
 use App\Models\StatusRessource;
@@ -12,6 +13,16 @@ use App\Models\UserHistory;
 class Utils{
 
     // USERS
+
+    public static function getUserPublicData($user){
+        return [
+            'firstName' => $user->first_name,
+            'imgURL' => $user->path_picture,
+            'id' => $user->id_user,
+            'role' => $user->role->name,
+        ];
+    }
+
     /**
      * @OA\Schema(
      *     schema="UserData",
@@ -188,7 +199,10 @@ class Utils{
      */
     public static function getCategoryDetailWithRessources($category) {
         $categoryData = self::getCategoryData($category);
-        $ressources = Ressource::where('id_category', $category->id_category)->get();
+        $ressources = Ressource::where('id_category', $category->id_category)
+            ->where('id_status', 1)
+            ->where('is_public', 1)
+            ->get();
         $categoryData['ressources'] = $ressources->map(function ($ressource) {
             return self::getRessourceDetail($ressource);
         });
@@ -220,12 +234,26 @@ class Utils{
      *         ref="#/components/schemas/UserData"
      *     ),
      *     @OA\Property(property="creationDate", type="string", format="date-time", description="The date and time when the resource was created"),
-     *     @OA\Property(property="lastModificationDate", type="string", format="date-time", description="The date and time when the resource was last updated")
+     *     @OA\Property(property="lastModificationDate", type="string", format="date-time", description="The date and time when the resource was last updated"),
+     *     @OA\Property(property="staffComment", type="string", description="Staff comments on the resource, if any"),
+     *     @OA\Property(property="isFavorite", type="boolean", description="Indicates whether the resource is marked as a favorite by the current user"),
+     *     @OA\Property(property="isBookmark", type="boolean", description="Indicates whether the resource is bookmarked by the current user"),
+     *     @OA\Property(
+     *         property="comments",
+     *         type="array",
+     *         description="List of comments associated with the resource",
+     *         @OA\Items(ref="#/components/schemas/CommentData")
+     *     )
      * )
      */
     public static function getRessourceDetail($ressource){
         $category = Category::find($ressource->id_category);
         $user = User::find($ressource->id_user);
+        if(auth()->user() AND auth()->user()->role_id == 4){
+            $user = self::getUserPublicData($user);
+        }else{
+            $user = self::getUserData($user);
+        }
         $status = StatusRessource::find($ressource->id_status);
         return [
             'id' => $ressource->id_ressource,
@@ -235,10 +263,13 @@ class Utils{
             'status' => $status->label,
             'category' => self::getCategoryData($category),
             'viewCount' => $ressource->view_count,
-            'user' => self::getUserData($user),
+            'user' => $user,
             'creationDate' => $ressource->created_at,
             'lastModificationDate' => $ressource->updated_at,
             'staffComment' => $ressource->staff_comment,
+            'comments' => self::getCommentCascade($ressource->id_ressource),
+            'isFavorite' => self::isFavorite($ressource->id_ressource),
+            'isBookmark' => self::isBookmark($ressource->id_ressource),
         ];
     }
 
@@ -247,11 +278,79 @@ class Utils{
             return self::getRessourceDetail($ressource);
         });
     }
+    public static function mapCategoriesToDetails($categories){
+        return $categories->map(function ($category) {
+            return self::getCategoryDetail($category);
+        });
+    }
 
 
     public static function getRandomProfilePicture() {
         $profilePictures = ProfilePicture::all();
         $randomIndex = rand(0, count($profilePictures) - 1);
         return $profilePictures[$randomIndex];
+    }
+
+    private static function isFavorite($ressource){
+        $user = auth()->user();
+        if ($user) {
+            return $user->favorites->contains($ressource);
+        }
+        return false;
+    }
+
+    private static function isBookmark($ressource){
+        $user = auth()->user();
+        if ($user) {
+            return $user->bookmarks->contains($ressource);
+        }
+        return false;
+    }
+
+    // COMMENTS
+    /**
+     * @OA\Schema(
+     *     schema="CommentData",
+     *     type="object",
+     *     @OA\Property(property="id", type="integer", description="Comment ID"),
+     *     @OA\Property(property="user", type="object", ref="#/components/schemas/UserData"),
+     *     @OA\Property(property="comment", type="string", description="The comment text"),
+     *     @OA\Property(property="createAt", type="string", format="date-time", description="The date and time when the comment was created"),
+     *     @OA\Property(property="children", type="array", description="An array of child comments", @OA\Items(ref="#/components/schemas/CommentData"))
+     * )
+     */
+    public static function formatComment($comment){
+        $user = User::find($comment->id_user);
+        if(auth()->user() AND auth()->user()->id_role == 4){
+            $user = self::getUserPublicData($user);
+        }else{
+            $user = self::getUserData($user);
+        }
+        return [
+            'id' => $comment->id_comment,
+            'user' => $user,
+            'comment' => $comment->comment,
+            'createAt' => $comment->created_at,
+            'children' => self::getCommentChildren($comment->id_comment),
+        ];
+    }
+
+    public static function getCommentCascade($ressourceId){
+        $rootComments = Comment::whereNull('id_parent')
+                        ->where('id_ressource', $ressourceId)
+                        ->where('id_status', 1) // accepted
+                        ->get();
+        return $rootComments->map(function ($comment) {
+            return self::formatComment($comment);
+        });
+    }
+
+    private static function getCommentChildren($parentId) {
+        $children = Comment::where('id_parent', $parentId)
+            ->where('id_status', 1) // accepted
+            ->get();
+        return $children->map(function ($child) {
+            return self::formatComment($child);
+        });
     }
 }

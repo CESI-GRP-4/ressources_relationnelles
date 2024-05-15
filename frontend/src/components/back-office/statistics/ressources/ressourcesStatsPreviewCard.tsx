@@ -1,17 +1,15 @@
-import { Avatar, Badge, Button, Card, Collapse, List, Tag, message } from "antd";
+import { Badge, Card, List, Spin, Tag, message } from "antd";
 import Link from "next/link";
-import { PlusCircleOutlined } from "@ant-design/icons";
 import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { Icon } from '@iconify/react';
 import { RessourcesStats } from "@/types/ressourcesStats";
-import { color } from "chart.js/helpers";
-
-const { Panel } = Collapse;
+import { useWCAG } from '@/contexts/wcagContext';
 
 export default function RessourceStatsPreviewCard() {
        const [ressourcesStats, setRessourcesStats] = useState<RessourcesStats>();
        const [isLoading, setIsLoading] = useState<boolean>(true);
+       const { wcagEnabled } = useWCAG();
 
        useEffect(() => {
               fetchRessourcesStats()
@@ -50,14 +48,12 @@ export default function RessourceStatsPreviewCard() {
        }
 
        const otherDataSource = [
-              { title: "Ressources acceptées", count: ressourcesStats?.accepted, color: "green", url: "/gestion-ressources/ressources-acceptees" },
-              { title: "Ressources en attente", count: ressourcesStats?.pending, color: "orange", url: "/gestion-ressources/ressources-en-attente" },
-              { title: "Ressources rejetées", count: ressourcesStats?.rejected, color: "red", url: "/gestion-ressources/ressources-refusees" },
-              { title: "Ressources bloquées", count: ressourcesStats?.blocked, color: "red", url: "/gestion-ressources/ressources-bloquees" },
-              { title: "Ressources publiques", count: ressourcesStats?.public, color: "blue" },
-              { title: "Ressources privées", count: ressourcesStats?.private, color: "blue" },
-
-              // { title: "Ressources désactivées", count: ressourcesStats?.disabled, color: "red"},
+              { title: "Ressources acceptées", count: ressourcesStats?.accepted, color: !wcagEnabled ? "green" : undefined, url: "/gestion-ressources/ressources-acceptees" },
+              { title: "Ressources en attente", count: ressourcesStats?.pending, color: !wcagEnabled ?"orange": undefined, url: "/gestion-ressources/ressources-en-attente" },
+              { title: "Ressources rejetées", count: ressourcesStats?.rejected, color: !wcagEnabled ?"red": undefined, url: "/gestion-ressources/ressources-refusees" },
+              { title: "Ressources bloquées", count: ressourcesStats?.blocked, color: !wcagEnabled ?"red": undefined, url: "/gestion-ressources/ressources-bloquees" },
+              { title: "Ressources publiques", count: ressourcesStats?.public, color: !wcagEnabled ?"blue": undefined },
+              { title: "Ressources privées", count: ressourcesStats?.private, color: !wcagEnabled ?"blue": undefined },
        ];
 
        return (
@@ -67,26 +63,26 @@ export default function RessourceStatsPreviewCard() {
                             title="Ressources"
                      // extra={<Link className="mr-20" href="/gestion-utilisateurs"><Button type="text" shape="circle" icon={<PlusCircleOutlined style={{ color: "blue" }} />} /></Link>}
                      >
+                            {isLoading ? <div className="flex flex-row w-full justify-center"><Spin></Spin></div> : 
+                            
                             <List
                                    itemLayout="horizontal"
                                    dataSource={otherDataSource}
                                    renderItem={({ title, count, color, url }) => (
                                           <List.Item>
-
                                                  <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                                         <div className="flex flex-row items-center gap-2">
                                                                <span>{title}</span>
                                                                {
                                                                       url && <Link href={url}><Icon style={{fontSize: "20px"}} icon={"lucide:link"}></Icon></Link>
                                                                }
-
-
                                                         </div>
-                                                        <Tag color={color || "blue"}>{count}</Tag>
+                                                        <Tag color={!wcagEnabled ? color || "blue" : undefined}>{count}</Tag>
                                                  </div>
                                           </List.Item>
                                    )}
-                            />
+                            />}
+                            
                      </Card>
               </Badge.Ribbon>
        );

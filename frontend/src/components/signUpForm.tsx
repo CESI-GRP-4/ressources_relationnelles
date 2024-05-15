@@ -11,10 +11,12 @@ import {
        firstNameRegex,
        lastNameRegex,
 } from '@/utils/regex';
+import { useRouter } from 'next/navigation';
 
 export default function SignUpForm() {
        const { setUser } = useUser();
        const [isSignUpLoading, setSignUpLoading] = useState(false);
+       const router = useRouter();
 
        type SignUpForm = {
               email: string;
@@ -35,7 +37,7 @@ export default function SignUpForm() {
               pattern: new RegExp(lastNameRegex),
               message: "Le nom de famille n'est pas valide",
        };
-  
+
        async function handleSignUpForm(form: SignUpForm): Promise<User | null> {
               setSignUpLoading(true);
               try {
@@ -46,12 +48,19 @@ export default function SignUpForm() {
                             data: form,
                             withCredentials: true,
                             responseType: 'json',
-                            timeout: 10000, // * Increased value because we had some timeout errors
                      });
 
                      const userData: User = response.data.user;
-                     setUser(userData);
-                     message.success('Inscription réussie. Bienvenue ! 🎉');
+
+                     if (userData && response.status === 200) {
+                            setUser(userData);
+                            message.success('Inscription réussie. Bienvenue ! 🎉');
+                            if (userData.role === 'Utilisateur') {
+                                   router.push('/profil'); // * Redirect to the home page
+                            } else {
+                                   router.push('/tableau-de-bord'); // * Redirect to the home page
+                            }
+                     }
                      return userData; // * Not sure if this is necessary. Information is already stored in the userProvider
               } catch (error) {
                      const axiosError = error as AxiosError;

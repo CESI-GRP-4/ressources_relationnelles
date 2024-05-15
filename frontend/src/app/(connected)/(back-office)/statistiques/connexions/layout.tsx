@@ -3,7 +3,7 @@ import React from 'react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-       title: 'Statistiques - Connexions - Ressources relationnelles',
+       title: 'Statistiques de connexions',
 };
 
 export default function Layout({

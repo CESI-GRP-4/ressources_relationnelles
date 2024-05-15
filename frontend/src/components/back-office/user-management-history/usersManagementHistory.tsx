@@ -1,15 +1,16 @@
 "use client"
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import User from '@/types/user';
 import { ColumnType } from 'antd/es/table';
 import { ReloadOutlined, RightCircleOutlined, CheckCircleOutlined, CloseCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import axios, { AxiosError } from 'axios';
 import { Table, Typography, Select, Button, message, Tooltip, Avatar, Tag, Popover, Card, List } from 'antd';
-import { useUser } from '@/providers/userProvider';
 const { Text } = Typography;
 import { getUserAttributeLabelsInFrench } from '@/utils/userAttributesToFrench';
 import { tableSettings } from '@/utils/tableParams';
 import Link from 'next/link';
+import { useWCAG } from '@/contexts/wcagContext';
+
 interface userHistory {
        userModified: User;
        modifyBy: User;
@@ -62,6 +63,7 @@ const getActionText = (action: 'Modify' | 'Delete' | 'Ban' | 'Unban' | 'Create')
        return actionText;
 };
 export default function UserManagementHistory({ isPreview = false }: { isPreview?: boolean }) {
+       const { wcagEnabled } = useWCAG();
        const [tableData, setTableData] = useState<userHistory[] | null>(null);
        const [tableParams, setTableParams] = useState(isPreview ? { perPage: 5, page: 1 } as tableSettings : { perPage: 10, page: 1 } as tableSettings);
        const [isTableLoading, setIsTableLoading] = useState(false);
@@ -128,6 +130,7 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
               return (
                      <div>
                             <Card
+                                   loading={isTableLoading}
                                    title="Actions récentes sur les utilisateurs"
                                    extra={<Link href="/gestion-utilisateurs-historique"><Button type="text" shape="circle" icon={<PlusCircleOutlined style={{ color: "blue" }} />} /></Link>}
                             >
@@ -144,7 +147,7 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
                                                                <div style={{ margin: '0 8px', display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
                                                                       <div>
                                                                              {`${item.userModified.firstName} ${item.userModified.lastName} a été `}
-                                                                             <Tag color={getTagColor(item.action)}>{getActionText(item.action)}</Tag>
+                                                                             <Tag color={!wcagEnabled ? getTagColor(item.action): undefined}>{getActionText(item.action)}</Tag>
                                                                              {` par `}
                                                                              <Typography.Link href={`mailto:${item.modifyBy.email}`}>
                                                                                     {item.modifyBy.email}
@@ -223,7 +226,7 @@ export default function UserManagementHistory({ isPreview = false }: { isPreview
                      key: 'action',
                      render: (action: 'Modify' | 'Delete' | 'Ban' | 'Unban' | 'Create') => {
                             return (
-                                   <Tag color={getTagColor(action)}>
+                                   <Tag color={!wcagEnabled ? getTagColor(action): undefined}>
                                           {getActionText(action).charAt(0).toUpperCase() + getActionText(action).slice(1)}
                                    </Tag>
                             );

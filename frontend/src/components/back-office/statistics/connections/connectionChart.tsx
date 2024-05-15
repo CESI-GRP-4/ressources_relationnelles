@@ -14,8 +14,7 @@ import { useEffect, useState } from 'react';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { message } from 'antd';
 import dayjs from 'dayjs';
-import { Card, Typography, Spin } from "antd";
-const { Paragraph } = Typography;
+import { Spin } from "antd";
 import AverageDisplay from './average';
 import AverageConnection from '@/types/averageConnection';
 ChartJS.register(
@@ -107,7 +106,7 @@ export default function ConnectionsChart({ dateRange, isPreview = false }: { dat
                             throw new Error('Invalid status code')
                      }
               } catch (error) {
-                     console.log("🚀 ~ fetchData ~ error", error);
+                     console.error("🚀 ~ fetchData ~ error", error);
                      const axiosError = error as AxiosError;
                      if (axiosError.response) {
                             switch (axiosError.response.status) {

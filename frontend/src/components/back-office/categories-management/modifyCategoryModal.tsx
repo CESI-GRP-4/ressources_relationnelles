@@ -1,7 +1,6 @@
 import { Category } from "@/types/category";
 import { Modal, Button, Form, Input, message, Switch } from "antd";
 import React, { useState } from "react";
-import { DeleteOutlined } from "@ant-design/icons";
 import axios, { AxiosError } from "axios";
 import DeleteCategory from "@/components/back-office/categories-management/deleteCategory";
 
@@ -13,7 +12,6 @@ export default function ModifyCategoryModal({ category, visible, setVisible, ref
        }
 
        const onSubmit = async (values: any) => {
-              console.log(values.title, values.description, values.color, values.isActive);
               setIsModifyingCategoryLoading(true);
 
               try {
@@ -34,7 +32,6 @@ export default function ModifyCategoryModal({ category, visible, setVisible, ref
                      });
                      if (response.status === 200) {
                             message.success("Catégorie modifiée avec succès")
-                            console.log(response.data)
                             refreshCategories();
                      }
               } catch (error) {

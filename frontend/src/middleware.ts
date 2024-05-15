@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const routeForEveryone = ['/', '/ressources', '/creer-ressource', '/^\/une-ressource(?:\/\d+)?$/', '/verification-mail'];
+const routeForEveryone = ['/', /^\/ressource\/\d+$/, '/verification-mail'];
 
 // Routes accessible without authentication
 const routeWithoutAuth = [
@@ -14,19 +14,30 @@ const routeWithUserAuth = [
        ...routeForEveryone,
        '/categories',
        '/mes-ressources',
+       '/mes-favoris',
        '/profil',
-       /^\/editer-ressource\/\d+$/
+       '/creer-ressource',
+       '/a-regarder-plus-tard',
+       /^\/editer-ressource\/\d+$/,
+       /^\/categorie\/\d+$/
 ];
 
 // Routes accessible to Moderators (Moderateur)
 const routeForModerator = [
        ...routeWithUserAuth,
-       '/dashboard',
+       '/tableau-de-bord',
        '/gestion-ressources/ressources-acceptees',
        '/gestion-ressources/ressources-en-attente',
        '/gestion-ressources/ressources-refusees',
        '/gestion-ressources/ressources-bloquees',
        '/gestion-ressources/ressources-desactivees',
+
+       '/gestion-commentaires/commentaires-en-attente',
+       '/gestion-commentaires/commentaires-acceptes',
+       '/gestion-commentaires/commentaires-refuses',
+       '/statistiques/connexions',
+       '/statistiques/ressources',
+       '/statistiques/categories',
 ];
 
 // Routes accessible to Admins (Administrateur)
@@ -34,7 +45,6 @@ const routeForAdmin = [
        ...routeForModerator,
        '/gestion-utilisateurs',
        '/gestion-utilisateurs-historique',
-       '/statistiques/connexions',
        '/gestion-categories',
 ];
 
@@ -82,7 +92,6 @@ export const config = {
 export function middleware(request: NextRequest) {
        const path = request.nextUrl.pathname;
        const userRole = getUserRole(request);
-       console.log("🚀 ~ middleware ~ userRole:", userRole);
 
        // Redirect authenticated users trying to access routeWithoutAuth paths
        if (userRole && routeWithoutAuth.includes(path)) {

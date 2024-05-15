@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -97,7 +98,8 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function getUsers(Request $request) {
+    public function getUsers(Request $request)
+    {
 
         $validator = Validator::make($request->all(), [
             'perPage' => 'integer|min:1',
@@ -322,7 +324,8 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function create(Request $request) {
+    public function create(Request $request)
+    {
 
         $validator = Validator::make($request->all(), [
             'firstName' => 'required|string|max:255',
@@ -426,9 +429,74 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function editUser(Request $request, $id) {
+    /**
+     * @OA\Post(
+     *     path="/profil/update",
+     *     tags={"Profil"},
+     *     summary="Update the user's profile",
+     *     description="Allows authenticated users to update their own profile information. SuperAdministrateurs can update additional fields like 'role'.",
+     *     operationId="updateUserProfile",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Profile data to be updated",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="firstName", type="string", nullable=true, description="User's first name"),
+     *             @OA\Property(property="lastName", type="string", nullable=true, description="User's last name"),
+     *             @OA\Property(property="email", type="string", format="email", nullable=true, description="User's email address"),
+     *             @OA\Property(property="isEmailVerified", type="boolean", nullable=true, description="Whether the user's email is verified"),
+     *             @OA\Property(property="country", type="string", nullable=true, description="User's country"),
+     *             @OA\Property(property="city", type="string", nullable=true, description="User's city"),
+     *             @OA\Property(property="postalCode", type="string", nullable=true, description="User's postal code"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User profile updated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Utilisateur mis à jour avec succès"),
+     *             @OA\Property(property="user", ref="#/components/schemas/UserDetail")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", description="Validation errors during profile update"),
+     *             @OA\Property(
+     *                 property="errors",
+     *                 type="object",
+     *                 additionalProperties={
+     *                     @OA\Property(type="array", @OA\Items(type="string"))
+     *                 },
+     *                 description="Detailed validation errors"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized - User must be logged in",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthorized - User must be logged in")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Une erreur est survenue lors de la mise à jour de l'utilisateur.")
+     *         )
+     *     )
+     * )
+     */
+    public function editUser(Request $request, $id = null) {
         DB::beginTransaction();
         try {
+            if ($id === null) {
+                $id = auth()->user()->id_user;
+            }
             $user = User::findOrFail($id);
             $isSuperAdmin = auth()->user()->role->name === 'SuperAdministrateur';
             $authUserId = auth()->user()->id_user;
@@ -524,11 +592,96 @@ class UserController extends Controller
 
             $user->save();
             DB::commit();
+            $user = User::findOrFail($id);
 
             return response()->json(['message' => 'Utilisateur mis à jour avec succès', 'user' => Utils::getAllUserData($user)], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => 'Une erreur est survenue lors de la mise à jour de l\'utilisateur.'], 500);
+        }
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/profil/updatepassword",
+     *     tags={"Profil"},
+     *     summary="Update the user's password",
+     *     description="Allows an authenticated user to update their password. The user must provide their current password, and the new password must be confirmed.",
+     *     operationId="updateUserPassword",
+     *     security={{ "BearerAuth": {} }},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Password update data",
+     *         @OA\JsonContent(
+     *             required={"password", "confirmPassword", "oldPassword"},
+     *             @OA\Property(property="password", type="string", description="The new password"),
+     *             @OA\Property(property="confirmPassword", type="string", description="Confirmation of the new password"),
+     *             @OA\Property(property="oldPassword", type="string", description="The current password")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Password updated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Mot de passe mis à jour avec succès")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Validation error or incorrect old password",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Ancien mot de passe incorrect")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Une erreur est survenue lors de la mise à jour de l'utilisateur.")
+     *         )
+     *     )
+     * )
+     */
+    public function editUserPassword(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $validator = Validator::make($request->all(), [
+                'password' => 'required|string',
+                'confirmPassword' => 'required|string',
+                'oldPassword' => 'required|string',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), 400);
+            }
+
+            $user = User::findOrFail(auth()->id());
+
+            // Vérifier si l'ancien mot de passe est correct
+            if (!Hash::check($request->oldPassword, $user->password)) {
+                return response()->json(['message' => 'Ancien mot de passe incorrect'], 400);
+            }
+
+            // Vérifier si le nouveau mot de passe est différent du mot de passe actuel
+            if (Hash::check($request->password, $user->password)) {
+                return response()->json(['message' => 'Le nouveau mot de passe doit être différent du mot de passe actuel'], 400);
+            }
+
+            // Mettre à jour le mot de passe
+            if ($request->password === $request->confirmPassword) {
+                $user->password = Hash::make($request->password);
+                $user->save();
+            } else {
+                return response()->json(['message' => 'Les mots de passe ne correspondent pas'], 400);
+            }
+            DB::commit();
+
+            return response()->json(['message' => 'Mot de passe mis à jour avec succès'], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
@@ -665,7 +818,8 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function banUser(Request $request, $id) {
+    public function banUser(Request $request, $id)
+    {
 
         $rules = [
             'isPermanent' => 'boolean',
@@ -695,7 +849,7 @@ class UserController extends Controller
         } else if ($request->filled('banTimestamp')) {
 
             // unix timestamp milliseconds
-            if ($request->banTimestamp < Carbon::now()->getTimestamp()*1000) {
+            if ($request->banTimestamp < Carbon::now()->getTimestamp() * 1000) {
                 return response()->json(['message' => 'La date de fin de bannissement doit être dans le futur.'], 422);
             } else {
                 $user->ban_until = $request->banTimestamp;
@@ -818,7 +972,8 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function getUsersInformation(){
+    public function getUsersInformation()
+    {
         $totalUsers = $this->getTotalUsers();
         $usersByRole = $this->getUsersByRole();
         $bannedUsersCount = $this->getBannedUsersCount();
@@ -832,22 +987,26 @@ class UserController extends Controller
         ]);
     }
 
-    protected function getTotalUsers() {
+    protected function getTotalUsers()
+    {
         return User::count();
     }
 
-    protected function getUsersByRole() {
+    protected function getUsersByRole()
+    {
         return User::select('roles.name', DB::raw('count(users.id_user) as userCount'))
             ->join('roles', 'users.id_role', '=', 'roles.id_role')
             ->groupBy('roles.name')
             ->get();
     }
 
-    protected function getBannedUsersCount() {
+    protected function getBannedUsersCount()
+    {
         return User::where('ban_until', '>', now())->count();
     }
 
-    protected function getUnverifiedEmailsCount() {
+    protected function getUnverifiedEmailsCount()
+    {
         return User::where('is_verified', false)->count();
     }
 }

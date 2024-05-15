@@ -125,34 +125,106 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                                    key: 'ressources-bloquees',
                                    title: 'ressources-bloquees',
                             },
-                            // Ressources disabled (by the user, it can be then re-activated by the user):
-                            // {
-                            //        icon: <Icon icon={"line-md:switch-off"}
-                            //               style={{ fontSize: '20px' }}
-                            //        />,
-                            //        label: (
-                            //               <ConditionalTooltip title={`Ressources désactivées (par l'auteur)`}>
-                            //                      <Link href={'/gestion-ressources/ressources-desactivees'}>{`Désactivées`}</Link>
-                            //               </ConditionalTooltip>
-                            //        ),
-                            //        key: 'ressources-desactivees',
-                            //        title: 'ressources-desactivees',
-                            // },
-                            // History of actions on resources:
+                     ]
+              },
+              {
+                     key: "comments",
+                     icon: <Icon icon={"typcn:messages"}
+                            style={{ fontSize: '20px' }}
+
+                     />,
+                     label: (
+                            <ConditionalTooltip title="Commentaires">
+                                   {`Commentaires`}
+                            </ConditionalTooltip>
+                     ),
+                     title: 'Commentaires',
+                     children: [
+                            // Ressources accepted:
                             {
-                                   icon: <Icon icon={"line-md:backup-restore"}
+                                   icon: <Icon icon={"line-md:circle-to-confirm-circle-transition"}
+                                          style={{ fontSize: '20px' }}
+
+                                   />,
+                                   label: (
+                                          <ConditionalTooltip title="Commentaires acceptés">
+                                                 <Link href={'/gestion-commentaires/commentaires-acceptes'}>Acceptés</Link>
+                                          </ConditionalTooltip>
+                                   ),
+                                   key: 'commentaires-acceptes',
+                                   title: 'commentaires-acceptes',
+                            },
+                            // Ressources waiting for validation:
+                            {
+                                   icon: <Icon icon={"line-md:loading-twotone-loop"}
                                           style={{ fontSize: '20px' }}
                                    />,
                                    label: (
-                                          <ConditionalTooltip title="Historique">
-                                                 <Link href={'/gestion-ressources/historique'}>Historique</Link>
+                                          <ConditionalTooltip title="Commentaires en attente">
+                                                 <Link href={'/gestion-commentaires/commentaires-en-attente'}>En attente</Link>
                                           </ConditionalTooltip>
                                    ),
-                                   key: 'historique',
-                                   title: 'historique',
+                                   key: 'commentaires-en-attente',
+                                   title: 'commentaires-en-attente',
+                            },
+                            // Ressources refused (waiting for modifications from the user, it will be then re-submitted for validation):
+                            {
+                                   icon: <Icon icon={"line-md:close-circle"}
+                                          style={{ fontSize: '20px' }}
+                                   />,
+                                   label: (
+                                          <ConditionalTooltip title={`Commenaires refusés`}>
+                                                 <Link href={'/gestion-commentaires/commentaires-refuses'}>{`Refusés`}</Link>
+                                          </ConditionalTooltip>
+                                   ),
+                                   key: 'commentaires-refuses',
+                                   title: 'commentaires-refuses',
+                            },
+                            // Ressources blocked (by an admin, it can be then re-activated by an admin):
+                     ]
+              },
+              {
+                     key: "statistiques",
+                     icon: <LineChartOutlined />,
+                     label: (
+                            <ConditionalTooltip title="Statistiques">
+                                   Statistiques
+                            </ConditionalTooltip>
+                     ),
+                     title: 'statistiques',
+                     children: [
+                            {
+                                   icon: <LoginOutlined />,
+                                   label: (
+                                          <ConditionalTooltip title="Connexions">
+                                                 <Link href={'/statistiques/connexions'}>Connexions</Link>
+                                          </ConditionalTooltip>
+                                   ),
+                                   key: 'statistiques/connexions',
+                                   title: 'connexions',
+                            },
+                            {
+                                   icon: <Icon icon="fluent-mdl2:entry-view"></Icon>,
+                                   label: (
+                                          <ConditionalTooltip title="Ressources">
+                                                 <Link href={'/statistiques/ressources'}>Ressources</Link>
+                                          </ConditionalTooltip>
+                                   ),
+                                   key: 'statistiques/ressources',
+                                   title: 'ressources',
+                            },
+                            {
+                                   icon: <Icon icon="solar:pie-chart-2-broken"></Icon>,
+                                   label: (
+                                          <ConditionalTooltip title="Catégories">
+                                                 <Link href={'/statistiques/categories'}>Catégories</Link>
+                                          </ConditionalTooltip>
+                                   ),
+                                   key: 'statistiques/categories',
+                                   title: 'categories',
                             },
                      ]
-              }
+              },
        ]
 
        // Additional items for the "Administrateur" role
@@ -189,28 +261,7 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                             },
                      ]
               },
-              {
-                     key: "statistiques",
-                     icon: <LineChartOutlined />,
-                     label: (
-                            <ConditionalTooltip title="Statistiques">
-                                   Statistiques
-                            </ConditionalTooltip>
-                     ),
-                     title: 'statistiques',
-                     children: [
-                            {
-                                   icon: <LoginOutlined />,
-                                   label: (
-                                          <ConditionalTooltip title="Connexions">
-                                                 <Link href={'/statistiques/connexions'}>Connexions</Link>
-                                          </ConditionalTooltip>
-                                   ),
-                                   key: 'statistiques/connexions',
-                                   title: 'connexions',
-                            },
-                     ]
-              },
+              
               {
                      key: "gestion-categories",
                      icon: <FileDoneOutlined />,
@@ -259,7 +310,7 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                             }}
                             style={{ height: '100vh', position: 'fixed', left: 0, top: 0 }}
                      >
-                            <div className="flex justify-center">
+                            <Link href={'/'} className="flex flex-row items-center justify-center" >
                                    <Tooltip title="(Re)Sources Relationnelles - Ministère des solidarités et de la santé ">
                                           <Image
                                                  draggable={false}
@@ -270,7 +321,7 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                                                  height={150}
                                           />
                                    </Tooltip>
-                            </div>
+                            </Link>
                             <div className="custom-scrollbar">
                                    <Menu
                                           mode="inline"

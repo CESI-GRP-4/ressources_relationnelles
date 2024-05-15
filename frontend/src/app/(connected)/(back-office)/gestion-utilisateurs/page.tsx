@@ -1,7 +1,7 @@
 "use client"
 import EditableTable from "@/components/back-office/user-management/usersManagementTable";
-import { Typography } from "antd";
 import PageSummary from "@/components/pageSummary";
+
 export default function GestionUtilisateurs() {
        return (
               <div className="flex flex-col">

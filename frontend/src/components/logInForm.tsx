@@ -11,11 +11,9 @@ import { useConsent } from '@/contexts/CookiesConsentContext';
 
 export default function LogInForm() {
        const { consentStatus, setConsent } = useConsent();
-
        const router = useRouter();
        const { setUser } = useUser();
        const [isLoginLoading, setLoginLoading] = useState(false);
-
        const [form] = Form.useForm(); // Using useForm hook to create form instance
 
        type LogInForm = {
@@ -23,6 +21,10 @@ export default function LogInForm() {
               password: string;
               remember: boolean;
        };
+
+       interface ErrorResponse {
+              message: string;
+       }
 
        async function handleLoginForm(formData: LogInForm) {
               setLoginLoading(true);
@@ -41,15 +43,15 @@ export default function LogInForm() {
                      if (userData) {
                             setUser(userData, formData.remember);
                             message.success('Connexion réussie');
-                            if(userData.role === 'Utilisateur'){
+                            if (userData.role === 'Utilisateur') {
                                    router.push('/profil'); // * Redirect to the home page
-                            }else{
+                            } else {
 
-                                   router.push('/dashboard'); // * Redirect to the home page
+                                   router.push('/tableau-de-bord'); // * Redirect to the home page
                             }
                      }
               } catch (error) {
-                     const axiosError = error as AxiosError;
+                     const axiosError = error as AxiosError<ErrorResponse>;
                      form.resetFields(); // Reset form fields on login failure
                      console.error('Erreur lors de la connexion. Axios error :', axiosError);
 
@@ -59,7 +61,7 @@ export default function LogInForm() {
                                           message.error('Email ou mot de passe incorrect');
                                           break;
                                    case 403:
-                                          message.error('Compte banni');
+                                          message.error(axiosError.response.data.message);
                                           break;
                                    case 429:
                                           message.error('Trop de tentatives de connexion');

@@ -1,15 +1,15 @@
 "use client"
-import axios from "axios"
-import { AxiosError } from "axios"
+import axios, { AxiosError } from "axios"
 import { useEffect, useState } from "react"
-import { Button, message, Skeleton } from "antd"
+import { message, Skeleton } from "antd"
 import Ressource from "@/types/ressource"
-import { Typography } from "antd"
 import PageSummary from "@/components/pageSummary"
 import RessourcesAccordionAdmin from "@/components/back-office/ressource-management/ressourcesAccordionAdmin"
+import FilterRessources from "@/components/filterRessources"
 
 export default function AcceptedResources() {
-       const [ressources, setRessources] = useState<Ressource[]>([])
+       const [ressources, setRessources] = useState<Ressource[]>([]);
+       const [filteredRessources, setFilteredRessources] = useState<Ressource[][]>([[], [], [], []]);
        const [loading, setLoading] = useState(true)
 
        useEffect(() => {
@@ -45,19 +45,24 @@ export default function AcceptedResources() {
               }
        };
 
-       if (loading) {
-              return (
-                     <div>
-                            <PageSummary title={"Ressources acceptées"} description={undefined}></PageSummary>
-                            <Skeleton active />
-                     </div>
-              )
-       }
-
        return (
-              <div>
-                     <PageSummary title={"Ressources acceptées"} description={undefined}></PageSummary>
-                     <RessourcesAccordionAdmin ressources={ressources} refreshRessources={fetchRessources} showAccept={false} showRefuse={true} showDelete={true} showBlock={true} />
+              <div className="flex flex-col gap-10">
+                     <div className="flex md:flex-row flex-col justify-between md:space-x-5 space-x-0 md:space-y-0 space-y-5">
+                            <div className="md:w-3/5">
+                                   <PageSummary title={"Ressources acceptées"} description={`Cette section vous permet de voir toutes les ressources qui ont été approuvées et sont actuellement disponibles pour les utilisateurs. Ici, vous pouvez gérer ces ressources, y compris les mettre à jour, les archiver ou les supprimer si nécessaire. Utilisez cette page pour surveiller la qualité et la pertinence des contributions afin de garantir que le contenu disponible reste utile et conforme aux standards de la plateforme. C'est un outil essentiel pour maintenir l'intégrité et la valeur de notre communauté de partage de ressources.`}></PageSummary>
+                            </div>
+                            <div className="flex flex-row items-end">
+                                   <FilterRessources acceptedRessources={ressources} setFilteredRessources={setFilteredRessources}></FilterRessources>
+                            </div>
+                     </div>
+
+                     <div className="flex flex-row justify-center gap-3">
+                            {loading ?
+                                   <Skeleton active />
+                                   :
+                                   <RessourcesAccordionAdmin ressources={filteredRessources[0]} refreshRessources={fetchRessources} showAccept={false} showRefuse={true} showDelete={true} showBlock={true} />
+                            }
+                     </div>
               </div>
        )
 }

@@ -1,10 +1,8 @@
 "use client"
 import React from 'react';
-import { Layout, Divider } from 'antd';
+import { Layout, Card } from 'antd';
 import AdminSidebar from '@/components/back-office/adminSidebar';
 import Header from '@/components/header';
-import Footer from '@/components/footer';
-import { Card } from 'antd';
 
 const { Content } = Layout;
 
