@@ -109,6 +109,7 @@ export default function CategoryDoughnutChart({ isPreview = false }: { isPreview
               responsive: true,
               maintainAspectRatio: false,  // Allow the chart to resize freely
               plugins: {
+                     legend: isPreview ? { display: false } : { display: true },  // Conditionally hide the legend
                      tooltip: {
                             callbacks: {
                                    label: (context: TooltipItem<'doughnut'>) => {
@@ -128,7 +129,7 @@ export default function CategoryDoughnutChart({ isPreview = false }: { isPreview
                                    <Spin></Spin>
                             </div>
                      ) : (
-                            <div className="relative w-full h-[550px]">  {/* Ensure the container has a height */}
+                            <div className={`relative w-full ${isPreview ? "h-[350px]" : "h-[550px]"}`}>  {/* Ensure the container has a height */}
                                    <Doughnut data={data} options={options} />
                             </div>
                      )}

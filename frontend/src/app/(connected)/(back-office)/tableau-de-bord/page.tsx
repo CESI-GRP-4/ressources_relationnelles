@@ -10,7 +10,7 @@ import UsersStatsPreviewCard from "@/components/back-office/statistics/users/use
 import RessourceStatsPreviewCard from "@/components/back-office/statistics/ressources/ressourcesStatsPreviewCard";
 import CommentsStatsPreviewCard from "@/components/back-office/statistics/comments/commentsStatsPreviewCard";
 import RessourcePreviewCard from "@/components/back-office/statistics/connections/ressourcePreviewCard";
-
+import CategoriesreviewCard from "@/components/back-office/statistics/categories/categoriesPreviewCard";
 export default function AdminDashboard() {
        const { user } = useUser();
 
@@ -31,6 +31,8 @@ export default function AdminDashboard() {
                             {(user?.role === 'Administrateur' || user?.role === 'SuperAdministrateur') && <ConnectionPreviewCard />}
                             {(user?.role && user?.role !== "Utilisateur") && <CommentsStatsPreviewCard />}
                             {(user?.role === 'Administrateur' || user?.role === 'SuperAdministrateur') && <RessourcePreviewCard />}
+                            {(user?.role === 'Administrateur' || user?.role === 'SuperAdministrateur') && <CategoriesreviewCard />}
+
 
 
                      </div>
