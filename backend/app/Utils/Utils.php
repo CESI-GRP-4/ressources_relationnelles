@@ -249,7 +249,7 @@ class Utils{
     public static function getRessourceDetail($ressource){
         $category = Category::find($ressource->id_category);
         $user = User::find($ressource->id_user);
-        if(auth()->user()->role_id == 4){
+        if(auth()->user() AND auth()->user()->role_id == 4){
             $user = self::getUserPublicData($user);
         }else{
             $user = self::getUserData($user);
@@ -321,7 +321,7 @@ class Utils{
      */
     public static function formatComment($comment){
         $user = User::find($comment->id_user);
-        if(auth()->user()->id_role == 4){
+        if(auth()->user() AND auth()->user()->id_role == 4){
             $user = self::getUserPublicData($user);
         }else{
             $user = self::getUserData($user);
