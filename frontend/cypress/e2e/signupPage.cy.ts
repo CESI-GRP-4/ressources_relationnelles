@@ -85,7 +85,7 @@ export function generateRandomPassword() {
        const digits = '0123456789';
        const specialChars = '@$!%*?&';
 
-       function getRandomChar(chars) {
+       function getRandomChar(chars: string) {
               return chars.charAt(Math.floor(Math.random() * chars.length));
        }
 
