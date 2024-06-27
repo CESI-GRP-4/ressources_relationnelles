@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  laravel:
+    build:
+      context: ./backend
+    ports:
+      - "80:80"
+    depends_on:
+      - mariadb
+    networks:
+      - laravel-network
+    environment:
+      DB_HOST: mariadb
+      DB_DATABASE: ressources_relationnelles
+      DB_USERNAME: root
+      DB_PASSWORD: secret  # Assurez-vous que le mot de passe est défini ici
+    volumes:
+      - ./backend/.env:/var/www/html/.env
+
+  mariadb:
+    image: mariadb:latest
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: secret  # Spécifiez le mot de passe root ici
+      MYSQL_DATABASE: ressources_relationnelles
+      MYSQL_USER: laraveluser
+      MYSQL_PASSWORD: secret
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./DB/ressources_relationnelles.sql:/docker-entrypoint-initdb.d/ressources_relationnelles.sql
+    networks:
+      - laravel-network
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    networks:
+      - laravel-network
+    volumes:
+      - ./frontend/.env:/frontend/.env
+
+networks:
+  laravel-network:
+
+volumes:
+  mariadb_data:
