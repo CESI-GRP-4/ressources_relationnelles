@@ -23,7 +23,8 @@ COPY .htaccess /var/www/html/.htaccess
 
 # Configurer les permissions
 RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage
+    && chmod -R 755 /var/www/html/storage \
+    && chmod 664 /var/www/html/.env
 
 # Installer les dépendances PHP via Composer
 RUN composer install --no-interaction --optimize-autoloader --prefer-dist
