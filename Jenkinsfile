@@ -1,35 +1,29 @@
-pipeline {
+```pipeline {
     agent any
     stages {
         stage('Checkout') {
             steps {
                 git 'https://github.com/CESI-GRP-4/ressources_relationnelles'
-            }
-        }
-        stage('Build') {
-            steps {
-                echo 'Building...'
-            }
-        }
-        stage('Test') {
-            steps {
-                script {
-                    docker.image('cypress/included:7.0.0').inside {
-                        sh '''
-                            cd front-end
-                            npx cypress run
-                        '''
-                    }
+                script{
+                    sh 'ls'
                 }
             }
         }
-        stage('Deploy') {
+        stage('Build and Test') {
             steps {
-                echo 'Deploying...'
+                script {
+                    // Démarrer les services Docker Compose
+                    sh 'docker-compose up -d --build'
+
+                    // Exécute les tests
+                    sh 'docker-compose run app npx cypress run'
+
+                    // Arrêter les services Docker Compose
+                    sh 'docker-compose down'
+                }
             }
         }
     }
-
     post {
         success {
             echo 'Build et déploiement terminés avec succès !'
@@ -40,5 +34,5 @@ pipeline {
         always {
             cleanWs()
         }
-    }   
+    }
 }
