@@ -16,6 +16,7 @@ pipeline {
 
                     // Exécute les tests
                     sh 'docker-compose run app npx cypress run'
+                    sh 'docker-compose exec app php artisan test'
 
                     // Arréter les services Docker Compose
                     sh 'docker-compose down'
