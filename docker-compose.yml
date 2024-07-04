@@ -35,7 +35,8 @@ services:
       - ./backend/.env:/var/www/html/.env
 
   mariadb:
-    image: mariadb:latest
+    build:
+      context: ./DB
     ports:
       - "3306:3306"
     environment:
@@ -45,7 +46,6 @@ services:
       MYSQL_PASSWORD: secret
     volumes:
       - mariadb_data:/var/lib/mysql
-      - ./DB/ressources_relationnelles.sql:/docker-entrypoint-initdb.d/ressources_relationnelles.sql
     networks:
       - cube-network
 
