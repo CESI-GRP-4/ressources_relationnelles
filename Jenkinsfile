@@ -15,6 +15,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
+                    sh 'cd frontend'
                     sh 'npm install'
                 }
             }
@@ -22,6 +23,7 @@ pipeline {
         stage('Build') {
             steps {
                 script {
+                    sh 'cd frontend'
                     sh 'npm run build'
                 }
             }
