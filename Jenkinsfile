@@ -11,6 +11,7 @@ pipeline {
             steps {
                 script {
                     // Démarrer les services Docker Compose
+                    sh 'ls'
                     sh 'docker-compose up -d --build'
 
                     // Exécute les tests
