@@ -11,6 +11,7 @@ pipeline {
                 script {
                     docker.image('cypress/included:7.0.0').inside {
                         sh 'npx cypress run'
+                    }
                 }
             }
         }
