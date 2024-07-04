@@ -3,19 +3,36 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/CESI-GRP-4/ressources_relationnelles'
-                script{
-                    sh 'ls'
+                // Vérification du dépôt
+                git branch: 'Jenkinsfile', url: 'https://github.com/CESI-GRP-4/ressources_relationnelles'
+                
+                // Afficher le contenu du répertoire pour débogage
+                script {
+                    sh 'ls -la'
                 }
             }
         }
-        stage('Build and Test') {
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    sh 'npm install'
+                }
+            }
+        }
+        stage('Build') {
+            steps {
+                script {
+                    sh 'npm run build'
+                }
+            }
+        }
+        stage('Test') {
             steps {
                 script {
                     // Démarrer les services Docker Compose
                     sh 'docker-compose up -d --build'
-
-                    // Exécute les tests
+                    
+                    // Exécuter les tests
                     sh 'docker-compose run app npx cypress run'
 
                     // Arrêter les services Docker Compose
