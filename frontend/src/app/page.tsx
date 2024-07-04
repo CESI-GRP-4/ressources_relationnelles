@@ -82,17 +82,17 @@ export default function Home() {
                                                  title={"(Re)Sources Relationnelles"}
                                                  description={
                                                         <div className="flex md:flex-row flex-col items-start gap-5 justify-center">
-                                                               <Tooltip title="(Re)Sources Relationnelles - Ministère des solidarités et de la santé ">
+                                                               <Tooltip title="(Re)Sources Relationnelles - Cube">
                                                                       <Image
                                                                              draggable={false}
                                                                              className='rounded-none pl-8 py-2'
                                                                              src={logo}
-                                                                             alt="Logo du ministère des solidarités et de la santé"
+                                                                             alt="Logo (Re)Sources Relationnelles - Cube"
                                                                              width={200}
                                                                              height={220}
                                                                       />
                                                                </Tooltip>
-                                                               <Text>{`Bienvenue sur (RE)Sources Relationnelles, une plateforme dynamique soutenue par le ministère des Solidarités et de la Santé, conçue pour enrichir les échanges interpersonnels et renforcer la cohésion sociale. Ici, vous accéderez à une vaste gamme de ressources soigneusement catégorisées, facilitant une navigation intuitive et personnalisée selon vos centres d'intérêt. Engagez-vous dans des discussions constructives, partagez vos connaissances et expériences, et participez à l'apprentissage collaboratif au sein de notre communauté. Ensemble, construisons un espace qui favorise un accès continu à la connaissance et qui soutient l'amélioration des relations interpersonnelles tout en restant adaptable aux besoins évolutifs de notre société. Rejoignez-nous pour faire avancer le bien-être individuel et la solidarité collective.`}</Text>
+                                                               <Text>{`Bienvenue sur (RE)Sources Relationnelles, une plateforme dynamique, conçue pour enrichir les échanges interpersonnels et renforcer la cohésion sociale. Ici, vous accéderez à une vaste gamme de ressources soigneusement catégorisées, facilitant une navigation intuitive et personnalisée selon vos centres d'intérêt. Engagez-vous dans des discussions constructives, partagez vos connaissances et expériences, et participez à l'apprentissage collaboratif au sein de notre communauté. Ensemble, construisons un espace qui favorise un accès continu à la connaissance et qui soutient l'amélioration des relations interpersonnelles tout en restant adaptable aux besoins évolutifs de notre société. Rejoignez-nous pour faire avancer le bien-être individuel et la solidarité collective.`}</Text>
                                                         </div>}
                                           />
                                           <div className="w-full flex flex-row justify-center">
