@@ -27,14 +27,14 @@ export default function Footer() {
                             <Image
                                    className='m-2 rounded-lg'
                                    src={logo}
-                                   alt="Logo du ministère des solidarités et de la santé"
+                                   alt="Logo (Re)Sources Relationnelles - Cube"
                                    width={140}
                                    height={160}
                                    draggable={false}
                             />
                             <p>{`© 2024 (RE)Sources Relationnelles.`}</p>
-                            <p>Ministère des solidarités et de la santé</p>
-                            <Link href="/mentions-legales"><p>Mentions légales</p></Link>
+                            <p>{`Cube`}</p>
+                            <Link href="/mentions-legales"><p>{`Mentions légales`}</p></Link>
                             <div className="mt-6 flex flex-row items-center">
                                    <Tooltip title="CESI Aix-en-Provence | Groupe n°4" placement="top">
                                           <Image
