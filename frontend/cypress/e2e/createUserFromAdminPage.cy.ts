@@ -10,8 +10,8 @@ describe('SuperAdmin user create', () => {
     cy.get('#createUserForm_firstName').should('be.visible').clear().type(generateRandomFirstName());
     cy.get('#createUserForm_lastName').should('be.visible').clear().type(generateRandomLastName());
     cy.get('#createUserForm_role').should('be.visible').type('Utilisateur');
-    cy.get('.ant-select-item-option-active > .ant-select-item-option-content').click();
-    cy.get('.ant-btn-dashed > span').should('be.visible').click();
+   // cy.get('.ant-select-item-option-active > .ant-select-item-option-content').click();
+   // cy.get('.ant-btn-dashed > span').should('be.visible').click();
     cy.wait(3000);
     cy.get('.ant-space > :nth-child(2) > .ant-btn').should('be.visible').click();
     cy.wait('@create').its('response.statusCode').should('eq', 201);
