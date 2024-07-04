@@ -3,21 +3,21 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Vérification du dépôt
+                // VÃ©rification du dÃ©pÃ´t
                 git branch: 'Jenkinsfile', url: 'https://github.com/CESI-GRP-4/ressources_relationnelles', credentialsId: '71d93206-f0a4-45be-ae69-c769b4a82d72'
             }
         }
         stage('Build and Test') {
             steps {
                 script {
-                    // Démarrer les services Docker Compose
+                    // DÃ©marrer les services Docker Compose
                     sh 'ls'
                     sh 'docker-compose up -d --build'
 
-                    // Exécute les tests
+                    // ExÃ©cute les tests
                     sh 'docker-compose run app npx cypress run'
 
-                    // Arrêter les services Docker Compose
+                    // ArrÃ©ter les services Docker Compose
                     sh 'docker-compose down'
                 }
             }
@@ -25,10 +25,10 @@ pipeline {
     }
     post {
         success {
-            echo 'Build et déploiement terminés avec succès !'
+            echo 'Build et dÃ©ploiement terminÃ©s avec succÃ¨s !'
         }
         failure {
-            echo 'Échec du build ou du déploiement'
+            echo 'Echec du build ou du dÃ©ploiement'
         }
         always {
             cleanWs()
