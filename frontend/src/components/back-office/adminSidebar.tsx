@@ -311,12 +311,12 @@ export default function AdminSidebar({ collapsed, setCollapsed }: { collapsed: b
                             style={{ height: '100vh', position: 'fixed', left: 0, top: 0 }}
                      >
                             <Link href={'/'} className="flex flex-row items-center justify-center" >
-                                   <Tooltip title="(Re)Sources Relationnelles - Ministère des solidarités et de la santé ">
+                                   <Tooltip title="(Re)Sources Relationnelles - Cube">
                                           <Image
                                                  draggable={false}
                                                  className='m-2 rounded-none'
                                                  src={logo}
-                                                 alt="Logo du ministère des solidarités et de la santé"
+                                                 alt="Logo (Re)Sources Relationnelles - Cube"
                                                  width={130}
                                                  height={150}
                                           />

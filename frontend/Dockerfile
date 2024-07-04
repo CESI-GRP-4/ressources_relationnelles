@@ -1,57 +1,3 @@
-# Get started
-
-## Requirements
-
-- [Node.js](https://nodejs.org/en/) >= v20.10.0 (LTS)
-- [NPM](https://www.npmjs.com/) >= v10.2.3 (Should be installed with Node.js, check with `npm -v` if you have it installed before installing it again) 
-
-## clone the repo
-
-```bash
-git clone https://github.com/CESI-GRP-4/ressources_relationnelles.git
-```
-
-## Go to the frontend folder
-
-```bash
-cd frontend
-```
-
-## Install dependencies
-
-```bash
-npm install
-```
-
-## Usage
-
-Start the development server
-```bash
-npm run dev
-```
-Access the frontend at:
-```bash
- http://localhost:3000
-```
-## Build
-
-```bash
-npm run build
-npm run start
-```
-Access the frontend at:
-```bash
- http://localhost:3000
-```
-
-
-
-# Create docker image
-
-
-## Create Dockerfile
-
-```Dockerfile
 # Étape 1 : Construire l'application Next.js
 FROM node:18.17.0 AS build
 
@@ -90,17 +36,3 @@ ENV HOST 0.0.0.0
 
 # Démarrer le serveur Next.js
 CMD ["npx", "next", "start", "--port", "3000", "--hostname", "0.0.0.0"]
-```
-
-
-## Build Image
-
-```shell
-docker build -t nextjs -f Dockerfile .
-```
-
-## Création conteneur
-
-```shell
-docker run -it -p 3000:3000 --name ressource_relationnelles nextjs
-```
