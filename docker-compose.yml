@@ -45,9 +45,10 @@ services:
       MYSQL_USER: laraveluser
       MYSQL_PASSWORD: secret
     volumes:
-      - mariadb_data:/var/lib/mysql
+      - /srv/aio-tools/data_ressources_relationnelles/:/var/lib/mysql
     networks:
       - cube-network
+    user: "aiouser"
 
   frontend:
     build:
