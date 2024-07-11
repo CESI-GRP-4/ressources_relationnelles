@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - laravel
+      - frontend
+    networks:
+      - cube-network
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./frontend/build:/usr/share/nginx/html
+      - ./ssl/cloudflare.crt:/etc/ssl/certs/cloudflare.crt
+      - ./ssl/cloudflare.key:/etc/ssl/private/cloudflare.key
+
+  laravel:
+    build:
+      context: ./backend
+    ports:
+      - "8081:80"
+    depends_on:
+      - mariadb
+    networks:
+      - cube-network
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./backend/.env:/var/www/html/.env
+
+  mariadb:
+    build:
+      context: ./DB
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - /srv/aio-tools/data_ressources_relationnelles/:/var/lib/mysql
+    networks:
+      - cube-network
+    user: "root"
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    networks:
+      - cube-network
+    volumes:
+      - ./frontend/.env:/frontend/.env
+
+networks:
+  cube-network:
+
+volumes:
+  mariadb_data:
