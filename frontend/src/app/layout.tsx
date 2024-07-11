@@ -15,13 +15,13 @@ export const metadata: Metadata = {
        description: 'CESI school project',
        generator: "Next.js",
        manifest: "/manifest.json",
-       keywords: ["nextjs", "nextjs13", "next13", "pwa", "next-pwa"],
+       keywords: ["Ressources Relationnelles",
+              "CESI",
+              "Groupe 4",
+              "Aix-en-Provence",
+              "Cube"],
        authors: [
-              { name: "Rajesh Prajapati" },
-              {
-                     name: "Rajesh Prajapati",
-                     url: "https://www.linkedin.com/in/raazeshp96/",
-              },
+              { name: "Groupe 4" },
        ],
        icons: [
               { rel: "apple-touch-icon", url: "/logo.png" },

@@ -1,7 +1,8 @@
 {
        "name": "ressources_relationnelles",
-       "version": "0.1.0",
+       "version": "1.0",
        "private": true,
+       "description": "",
        "scripts": {
               "dev": "next dev",
               "build": "next build",
@@ -9,6 +10,18 @@
               "lint": "next lint",
               "devHTTPS": "next dev --experimental-https -p 4000"
        },
+       "repository": {
+              "type": "git",
+              "url": "https://github.com/CESI-GRP-4/ressources_relationnelles"
+       },
+       "author": "Tristan Roos (https://github.com/Tristan13R) ; Nicolas Chwiej (https://github.com/Capryc0rne) ; Kilian Breton (https://github.com/KilianBre) ; Arthur Crahé (https://github.com/khylpe)",
+       "keywords": [
+              "Ressources Relationnelles",
+              "CESI",
+              "Groupe 4",
+              "Aix-en-Provence",
+              "Cube"
+       ],
        "dependencies": {
               "@ant-design/nextjs-registry": "^1.0.0",
               "antd": "^5.14.2",
