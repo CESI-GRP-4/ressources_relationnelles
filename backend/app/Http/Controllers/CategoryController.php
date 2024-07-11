@@ -86,6 +86,7 @@ class CategoryController extends Controller {
      * )
      */
     public function getActiveCategories() {
+        // throw new Exception('My first Sentry error!');
         $activeCategories = Category::where('is_active', 1)->get();
         $activeCategoriesTransformed = $activeCategories->map(function ($category) {
             return Utils::getCategoryDetail($category, false);
