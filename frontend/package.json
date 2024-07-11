@@ -24,6 +24,7 @@
        ],
        "dependencies": {
               "@ant-design/nextjs-registry": "^1.0.0",
+              "@sentry/nextjs": "^8.14.0",
               "antd": "^5.14.2",
               "axios": "^1.6.5",
               "chart.js": "^4.4.2",
