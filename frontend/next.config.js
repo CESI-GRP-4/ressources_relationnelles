@@ -51,7 +51,7 @@ module.exports = withSentryConfig(
     // For all available options, see:
     // https://github.com/getsentry/sentry-webpack-plugin#options
 
-    org: "aio-tools",
+    org: "cesigrp4",
     project: "front-end",
 
     // Only print logs for uploading source maps in CI
