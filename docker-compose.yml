@@ -27,10 +27,10 @@ services:
     networks:
       - cube-network
     environment:
-      DB_HOST: mariadb
-      DB_DATABASE: ressources_relationnelles
-      DB_USERNAME: root
-      DB_PASSWORD: secret
+      DB_HOST: ${DB_HOST}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
     volumes:
       - ./backend/.env:/var/www/html/.env
 
@@ -40,15 +40,15 @@ services:
     ports:
       - "3306:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: secret
-      MYSQL_DATABASE: ressources_relationnelles
-      MYSQL_USER: laraveluser
-      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - /srv/aio-tools/data_ressources_relationnelles/:/var/lib/mysql
     networks:
       - cube-network
-    user: "aiouser"
+    user: "root"
 
   frontend:
     build:
