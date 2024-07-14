@@ -11,15 +11,27 @@ pipeline {
             steps {
                 script {
                     // Démarrer les services Docker Compose
-                    sh 'pwd'
-                    sh 'docker-compose up -d --build'
+                    dir('/srv/aio-tools/secure_ressources_relationnelles') {
+                        sh 'pwd'
+                        sh 'docker-compose up -d --build'
+                    }
 
-                    // Exécute les tests
-                    sh 'docker-compose run app npx cypress run'
-                    sh 'docker-compose exec app php artisan test'
+                    // Exécuter les tests Cypress 
+                    dir('/srv/aio-tools/secure_ressources_relationnelles/frontend') {
+                        sh 'pwd'
+                        sh 'docker-compose run app npx cypress run'
+                    }
 
-                    // Arréter les services Docker Compose
-                    sh 'docker-compose down'
+                    // Exécuter les tests Artisan 
+                    dir('/srv/aio-tools/secure_ressources_relationnelles/backend') {
+                        sh 'pwd'
+                        sh 'docker-compose exec app php artisan test'
+                    }
+
+                    // Arrêter les services Docker Compose
+                    dir('/srv/aio-tools/secure_ressources_relationnelles') {
+                        sh 'docker-compose down'
+                    }
                 }
             }
         }
