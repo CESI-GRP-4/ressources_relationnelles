@@ -44,14 +44,6 @@ pipeline {
             }
         }
 
-        stage('Pause for Verification') {
-            steps {
-                script {
-                    input message: "Vérifiez les conteneurs et les connexions, puis appuyez sur 'Continuer' pour continuer le build."
-                }
-            }
-        }
-
         stage('Run Backend Tests') {
             steps {
                 // Tests PHPUnit
@@ -60,6 +52,15 @@ pipeline {
                 }
             }
         }
+
+        stage('Pause for Verification') {
+            steps {
+                script {
+                    input message: "Vérifiez les conteneurs et les connexions, puis appuyez sur 'Continuer' pour continuer le build."
+                }
+            }
+        }
+
 
         stage('Run Frontend Tests') {
             steps {
