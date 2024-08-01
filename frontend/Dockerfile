@@ -10,8 +10,7 @@ COPY package.json package-lock.json ./
 # Installer les dépendances
 RUN npm install
 
-# Installer Cypress et ses dépendances
-RUN npm install cypress --save-dev
+# Installer les dépendances nécessaires pour Cypress
 RUN apt-get update && apt-get install -y xvfb
 
 # Copier le reste du code source
