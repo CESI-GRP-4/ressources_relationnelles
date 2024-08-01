@@ -42,13 +42,6 @@ pipeline {
             }
         }
 
-        stage('Pause for Verification') {
-            steps {
-                script {
-                    input message: "AAAAAAAA"
-                }
-            }
-        }
 
         stage('Run Backend Tests') {
             steps {
@@ -60,6 +53,13 @@ pipeline {
         }
 
 
+        stage('Pause for Verification') {
+            steps {
+                script {
+                    input message: "AAAAAAAA"
+                }
+            }
+        }
 
 
         stage('Run Frontend Tests') {
