@@ -12,7 +12,7 @@ pipeline {
                 sh 'cp /srv/aio-tools/secure_ressources_relationnelles/.env .env'
                 sh 'cp /srv/aio-tools/secure_ressources_relationnelles/backend/.env backend/.env'
                 sh 'cp /srv/aio-tools/secure_ressources_relationnelles/frontend/.env frontend/.env'
-                sh 'sudo chmod 644 backend/.env'
+                sh 'chmod 644 backend/.env'
             }
         }
         stage('Build Docker Containers') {
