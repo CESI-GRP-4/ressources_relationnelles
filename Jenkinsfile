@@ -2,11 +2,21 @@ pipeline {
     agent any
     environment {
         DB_PORT = '3307'
+        FRONTEND_PORT = '3001'
     }
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
+            }
+        }
+
+        stage('Modify docker-compose.yml') {
+            steps {
+                sh '''
+                    sed -i "s/3306:3306/$DB_PORT:3306/" docker-compose.yml
+                    sed -i "s/3000:3000/$FRONTEND_PORT:3000/" docker-compose.yml
+                '''
             }
         }
 
@@ -16,14 +26,17 @@ pipeline {
                 sh 'cp /srv/aio-tools/secure_ressources_relationnelles/backend/.env backend/.env'
                 sh 'cp /srv/aio-tools/secure_ressources_relationnelles/frontend/.env frontend/.env'
                 sh 'chmod 644 backend/.env'
+                // Modifier le fichier .env du backend pour utiliser le nouveau port
                 sh 'sed -i "s/DB_PORT=.*/DB_PORT=$DB_PORT/" backend/.env'
             }
         }
+
         stage('Build Docker Containers') {
             steps {
                 sh 'docker-compose up -d --build'
             }
         }
+
         stage('Run Backend Tests') {
             steps {
                 // Tests PHPUnit
@@ -32,6 +45,7 @@ pipeline {
                 }
             }
         }
+
         stage('Run Frontend Tests') {
             steps {
                 // Tests Cypress
