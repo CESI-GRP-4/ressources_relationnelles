@@ -3,48 +3,50 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Vérification du dépôt
-                git branch: 'Jenkinsfile', url: 'https://github.com/CESI-GRP-4/ressources_relationnelles', credentialsId: '71d93206-f0a4-45be-ae69-c769b4a82d72'
+                checkout scm
             }
         }
-        stage('Build and Test') {
+
+        stage('Retrieve .env files') {
             steps {
-                script {
-                    // Démarrer les services Docker Compose
-                    dir('/srv/aio-tools/secure_ressources_relationnelles') {
-                        sh 'pwd'
-                        sh 'docker-compose up -d --build'
-                    }
-
-                    // Exécuter les tests Cypress 
-                    dir('/srv/aio-tools/secure_ressources_relationnelles/frontend') {
-                        sh 'pwd'
-                        sh 'docker-compose run app npx cypress run'
-                    }
-
-                    // Exécuter les tests Artisan 
-                    dir('/srv/aio-tools/secure_ressources_relationnelles/backend') {
-                        sh 'pwd'
-                        sh 'docker-compose exec app php artisan test'
-                    }
-
-                    // Arrêter les services Docker Compose
-                    dir('/srv/aio-tools/secure_ressources_relationnelles') {
-                        sh 'docker-compose down'
-                    }
+                sh 'cp /srv/aio-tools/secure_ressources_relationnelles/.env .env'
+                sh 'cp /srv/aio-tools/secure_ressources_relationnelles/backend/.env backend/.env'
+                sh 'cp /srv/aio-tools/secure_ressources_relationnelles/frontend/.env frontend/.env'
+                sh 'sudo chmod 644 backend/.env'
+            }
+        }
+        stage('Build Docker Containers') {
+            steps {
+                sh 'docker-compose up -d --build'
+            }
+        }
+        stage('Run Backend Tests') {
+            steps {
+                // Tests PHPUnit
+                dir('backend') {
+                    sh 'docker-compose exec -T backend php artisan test'
+                }
+            }
+        }
+        stage('Run Frontend Tests') {
+            steps {
+                // Tests Cypress
+                dir('frontend') {
+                    sh 'docker-compose exec -T frontend npx cypress run'
                 }
             }
         }
     }
+
     post {
         success {
-            echo 'Build et déploiement terminés avec succès !'
+            echo 'Build and tests succeeded!'
         }
         failure {
-            echo 'Echec du build ou du déploiement'
+            echo 'Build or tests failed.'
         }
         always {
-            cleanWs()
+            sh 'docker-compose down'
         }
     }
 }
