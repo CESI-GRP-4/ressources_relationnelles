@@ -29,24 +29,16 @@ pipeline {
 
         stage('Retrieve .env files') {
             steps {
-                sh 'cp /srv/aio-tools/secure_ressources_relationnelles/.env .env'
-                sh 'cp /srv/aio-tools/secure_ressources_relationnelles/backend/.env backend/.env'
-                sh 'cp /srv/aio-tools/secure_ressources_relationnelles/frontend/.env frontend/.env'
-                sh 'chmod 644 backend/.env'
+                sh 'sudo cp /srv/aio-tools/secure_ressources_relationnelles/.env .env'
+                sh 'sudo cp /srv/aio-tools/secure_ressources_relationnelles/backend/.env backend/.env'
+                sh 'sudo cp /srv/aio-tools/secure_ressources_relationnelles/frontend/.env frontend/.env'
+                sh 'sudo chmod 644 backend/.env'
             }
         }
 
         stage('Build Docker Containers') {
             steps {
                 sh 'docker-compose up -d --build'
-            }
-        }
-
-        stage('Pause for Verification') {
-            steps {
-                script {
-                    input message: "AAAAAAAA"
-                }
             }
         }
 
@@ -58,9 +50,6 @@ pipeline {
                 }
             }
         }
-
-
-
 
         stage('Run Frontend Tests') {
             steps {
