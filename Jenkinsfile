@@ -40,6 +40,7 @@ pipeline {
         stage('Build Docker Containers') {
             steps {
                 sh 'docker-compose up -d --build'
+                sh 'sleep 30'
             }
         }
 
