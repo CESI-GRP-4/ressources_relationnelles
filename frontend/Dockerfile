@@ -10,9 +10,6 @@ COPY package.json package-lock.json ./
 # Installer les dépendances
 RUN npm install
 
-# Installer Cypress
-RUN npm install cypress --save-dev
-
 # Copier le reste du code source
 COPY . .
 
