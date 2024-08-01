@@ -1,8 +1,9 @@
 pipeline {
     agent any
     environment {
-        DB_PORT = '3307'
-        FRONTEND_PORT = '3001'
+        DB_PORT = '3307'  // Nouvelle variable d'environnement pour le port DB
+        FRONTEND_PORT = '3001'  // Nouvelle variable d'environnement pour le port Frontend
+        BACKEND_PORT = '8081'  // Nouvelle variable d'environnement pour le port Backend
     }
     stages {
         stage('Checkout') {
@@ -16,6 +17,7 @@ pipeline {
                 sh '''
                     sed -i "s/3306:3306/$DB_PORT:3306/" docker-compose.yml
                     sed -i "s/3000:3000/$FRONTEND_PORT:3000/" docker-compose.yml
+                    sed -i "s/8080:8080/$BACKEND_PORT:8080/" docker-compose.yml
                 '''
             }
         }
