@@ -1,11 +1,11 @@
 pipeline {
     agent any
     environment {
-        DB_PORT = '3307'  // Nouvelle variable d'environnement pour le port DB
-        FRONTEND_PORT = '3001'  // Nouvelle variable d'environnement pour le port Frontend
-        BACKEND_PORT = '8077'  // Nouvelle variable d'environnement pour le port Backend
-        NGINX_HTTP_PORT = '8099'  // Nouvelle variable d'environnement pour le port HTTP de Nginx
-        NGINX_HTTPS_PORT = '8443'  // Nouvelle variable d'environnement pour le port HTTPS de Nginx
+        DB_PORT = '3307'
+        FRONTEND_PORT = '3001'
+        BACKEND_PORT = '8077'
+        NGINX_HTTP_PORT = '8099'
+        NGINX_HTTPS_PORT = '8443'
     }
     stages {
         stage('Checkout') {
@@ -61,9 +61,15 @@ pipeline {
 
         stage('Run Frontend Tests') {
             steps {
-                // Tests Cypress
+                // Run Cypress tests using the Cypress Docker image
                 dir('frontend') {
-                    sh 'docker-compose exec -T frontend xvfb-run -- npx cypress run'
+                    sh '''
+                        docker run -i --rm \
+                        -v $PWD:/e2e \
+                        -w /e2e \
+                        --network host \
+                        cypress/included:13.7.2
+                    '''
                 }
             }
         }
