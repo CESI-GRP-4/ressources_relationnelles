@@ -40,7 +40,14 @@ pipeline {
         stage('Build Docker Containers') {
             steps {
                 sh 'docker-compose up -d --build'
-                sh 'sleep 30'
+            }
+        }
+
+        stage('Pause for Verification') {
+            steps {
+                script {
+                    input message: "Vérifiez les conteneurs et les connexions, puis appuyez sur 'Continuer' pour continuer le build."
+                }
             }
         }
 
