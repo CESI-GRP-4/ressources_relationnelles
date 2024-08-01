@@ -42,27 +42,11 @@ pipeline {
             }
         }
 
-        stage('Install Cypress') {
-            steps {
-                dir('frontend') {
-                    sh 'docker-compose exec -T frontend npx cypress install'
-                }
-            }
-        }
-
         stage('Run Backend Tests') {
             steps {
                 // Tests PHPUnit
                 dir('backend') {
                     sh 'docker-compose exec -T laravel php artisan test'
-                }
-            }
-        }
-
-        stage('Pause for Verification') {
-            steps {
-                script {
-                    input message: "Pause for verification"
                 }
             }
         }
