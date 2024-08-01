@@ -44,6 +44,14 @@ pipeline {
             }
         }
 
+        stage('Pause for Verification') {
+            steps {
+                script {
+                    input message: "AAAAAAAA"
+                }
+            }
+        }
+
         stage('Run Backend Tests') {
             steps {
                 // Tests PHPUnit
@@ -52,6 +60,9 @@ pipeline {
                 }
             }
         }
+
+
+
 
         stage('Run Frontend Tests') {
             steps {
