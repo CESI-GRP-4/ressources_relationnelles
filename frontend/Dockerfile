@@ -30,6 +30,9 @@ COPY --from=build /frontend/.next /frontend/.next
 COPY --from=build /frontend/node_modules /frontend/node_modules
 COPY --from=build /frontend/package.json /frontend/package.json
 
+# Installer les dépendances nécessaires pour Cypress
+RUN apt-get update && apt-get install -y xvfb
+
 # Exposer le port utilisé par Next.js
 EXPOSE 3000
 

@@ -63,7 +63,7 @@ pipeline {
             steps {
                 // Tests Cypress
                 dir('frontend') {
-                    sh 'docker-compose exec -T frontend npx cypress run'
+                    sh 'docker-compose exec -T frontend xvfb-run -- npx cypress run'
                 }
             }
         }
