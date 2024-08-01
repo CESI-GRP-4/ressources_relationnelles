@@ -1,9 +1,9 @@
 pipeline {
     agent any
     environment {
-        DB_PORT = '3307'  // Nouvelle variable d'environnement pour le port DB
-        FRONTEND_PORT = '3001'  // Nouvelle variable d'environnement pour le port Frontend
-        BACKEND_PORT = '8081'  // Nouvelle variable d'environnement pour le port Backend
+        DB_PORT = '3307'
+        FRONTEND_PORT = '3001'
+        BACKEND_PORT = '8077'
     }
     stages {
         stage('Checkout') {
@@ -17,7 +17,7 @@ pipeline {
                 sh '''
                     sed -i "s/3306:3306/$DB_PORT:3306/" docker-compose.yml
                     sed -i "s/3000:3000/$FRONTEND_PORT:3000/" docker-compose.yml
-                    sed -i "s/8080:8080/$BACKEND_PORT:8080/" docker-compose.yml
+                    sed -i "s/8081:80/$BACKEND_PORT:80/" docker-compose.yml
                 '''
             }
         }
@@ -43,7 +43,7 @@ pipeline {
             steps {
                 // Tests PHPUnit
                 dir('backend') {
-                    sh 'docker-compose exec -T backend php artisan test'
+                    sh 'docker-compose exec -T laravel php artisan test'
                 }
             }
         }
