@@ -64,8 +64,7 @@ pipeline {
                 dir('frontend') {
                     sh 'docker-compose exec -T frontend npm install'
                     sh 'docker-compose exec -T frontend npx cypress install'
-                    sh 'docker-compose exec -T frontend sudo apt-get update '
-                    sh 'docker-compose exec -T frontend sudo apt-get install  libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb'                }
+                }
             }
         }
 
