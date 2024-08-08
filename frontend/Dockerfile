@@ -10,10 +10,6 @@ COPY package.json package-lock.json ./
 # Installer les dépendances
 RUN npm install
 
-# Install necessary libraries
-RUN apt-get update && \
-    apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb
-
 # Copier le reste du code source
 COPY . .
 

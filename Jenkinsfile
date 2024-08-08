@@ -59,19 +59,11 @@ pipeline {
             }
         }
 
-        stage('Install Cypress') {
+        stage('Run Frontend Tests') {
             steps {
+                // Tests Cypress
                 dir('frontend') {
-                    sh 'docker-compose exec -T frontend npm install'
-                    sh 'docker-compose exec -T frontend npx cypress install'
-                }
-            }
-        }
-
-        stage('Run Frontend Tests (Cypress)') {
-            steps {
-                dir('frontend') {
-                    sh 'docker-compose exec -T frontend npx cypress run'
+                    sh 'docker run -v $PWD:/app -w /app cypress/included:10.8.0 npx cypress run'
                 }
             }
         }
