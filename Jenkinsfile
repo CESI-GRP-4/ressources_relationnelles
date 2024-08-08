@@ -42,6 +42,7 @@ pipeline {
             }
         }
 
+
         stage('Wait for DB to be ready') {
             steps {
                 echo 'Waiting for 20 seconds to ensure the database is ready...'
@@ -59,14 +60,15 @@ pipeline {
         }
 
         stage('Run Frontend Tests (Cypress)') {
-            steps {
-                dir('frontend') {
-                    sh '''
-                        docker-compose exec -T frontend sh -c "npm install"
-                        docker-compose exec -T cypress sh -c "npm install && npm install cypress && npx cypress run"
-                    '''
-                }
-            }
+           steps {
+               dir('frontend') {
+                   sh '''
+                   docker-compose exec -T frontend sh -c "npm install && npm install cypress
+                   apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb -y
+                   npx cypress run
+                   '''
+               }
+           }
         }
     }
 
