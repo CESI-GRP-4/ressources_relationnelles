@@ -43,6 +43,13 @@ pipeline {
         }
 
 
+        stage('Wait for DB to be ready') {
+            steps {
+                echo 'Waiting for 20 seconds to ensure the database is ready...'
+                sh 'sleep 20'
+            }
+        }
+
         stage('Run Backend Tests') {
             steps {
                 // Tests PHPUnit
