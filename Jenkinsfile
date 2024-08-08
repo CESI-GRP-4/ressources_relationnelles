@@ -24,14 +24,10 @@ pipeline {
                     sed -i "s/443:443/$NGINX_HTTPS_PORT:443/" docker-compose.yml
                     sed -i "s|/srv/aio-tools/data_ressources_relationnelles/:/var/lib/mysql|/srv/aio-tools/test_data_ressources_relationnelles/:/var/lib/mysql|" docker-compose.yml
 
-                    echo '
-                    cypress:
-                        image: cypress/base:12.16.1
-                        working_dir: /e2e
-                        volumes:
-                            - .:/e2e
-                        entrypoint: tail -f /dev/null
-                    ' >> docker-compose.yml
+
+                    awk '/volumes:/ {print $0; print \"  cypress_data:\"; next}1' docker-compose.yml > docker-compose.yml.tmp && mv docker-compose.yml.tmp docker-compose.yml
+
+                    awk '/networks:/ {print \"  cypress:\\n    image: cypress/base:12.16.1\\n    working_dir: /e2e\\n    volumes:\\n      - .:/e2e\\n    entrypoint: tail -f /dev/null\\n\"; print $0; next}1' docker-compose.yml > docker-compose.yml.tmp && mv docker-compose.yml.tmp docker-compose.yml
                 '''
             }
         }
