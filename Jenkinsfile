@@ -59,24 +59,12 @@ pipeline {
             }
         }
 
-        stage('Run Frontend Tests') {
-            steps {
-                script {
-                    def cypressDockerCompose = '''
-                    version: '3'
-                    services:
-                      cypress:
-                        image: cypress/included:12.3.0
-                        working_dir: /e2e
-                        volumes:
-                          - ./frontend:/e2e
-                        environment:
-                          - CYPRESS_baseUrl=http://localhost:${FRONTEND_PORT}
-                    '''
-                    writeFile file: 'cypress-docker-compose.yml', text: cypressDockerCompose
-                    sh 'docker-compose -f cypress-docker-compose.yml run cypress'
-                }
-            }
+        stage('Run Frontend Tests (Cypress)') {
+           steps {
+               dir('frontend') {
+                   sh 'docker-compose exec -T frontend sh -c "npm install && npx cypress run"'
+               }
+           }
         }
     }
 
