@@ -59,8 +59,10 @@ pipeline {
             }
         }
 
-        stage('Run Frontend Tests (not yet implemented)') {
-
+        stage('Run Frontend Tests') {
+            steps {
+                echo 'Frontend tests not yet implemented.'
+            }
         }
     }
 
