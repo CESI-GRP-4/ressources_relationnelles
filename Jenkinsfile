@@ -59,20 +59,21 @@ pipeline {
             }
         }
 
+        stage('Install Cypress') {
+            steps {
+                dir('frontend') {
+                    sh 'npm install'
+                    sh 'npx cypress install'
+                }
+            }
+        }
+
         stage('Run Frontend Tests (Cypress)') {
-           steps {
-               dir('frontend') {
-                  sh '''
-                  docker-compose exec -T frontend sh -c "npm install && npm install cypress"
-                  docker-compose exec -T frontend sh -c "apt-get update && apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xvfb"
-                  '''
-                  // Ensure Cypress configuration file is present
-                  sh 'docker-compose exec -T frontend sh -c "ls -la"'
-                  sh 'docker-compose exec -T frontend sh -c "ls -la cypress.json || ls -la cypress.config.js"'
-                  // Run Cypress tests
-                  sh 'docker-compose exec -T frontend sh -c "npx cypress run"'
-              }
-           }
+            steps {
+                dir('frontend') {
+                    sh 'npx cypress run'
+                }
+            }
         }
     }
 
