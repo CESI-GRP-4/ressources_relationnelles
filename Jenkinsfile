@@ -62,8 +62,8 @@ pipeline {
         stage('Install Cypress') {
             steps {
                 dir('frontend') {
-                    sh 'npm install'
-                    sh 'npx cypress install'
+                    sh 'docker-compose exec -T frontend npm install'
+                    sh 'docker-compose exec -T frontend npx cypress install'
                 }
             }
         }
@@ -71,7 +71,7 @@ pipeline {
         stage('Run Frontend Tests (Cypress)') {
             steps {
                 dir('frontend') {
-                    sh 'npx cypress run'
+                    sh 'docker-compose exec -T frontend npx cypress run'
                 }
             }
         }
