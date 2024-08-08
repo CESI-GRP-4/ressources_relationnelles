@@ -60,6 +60,13 @@ services:
     volumes:
       - ./frontend/.env:/frontend/.env
 
+  cypress:
+    image: cypress/base:12.16.1
+    working_dir: /e2e
+    volumes:
+      - .:/e2e
+    entrypoint: tail -f /dev/null
+
 networks:
   cube-network:
 
