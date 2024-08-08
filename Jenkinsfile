@@ -59,21 +59,12 @@ pipeline {
             }
         }
 
-        stage('Compile TypeScript for Cypress') {
-            steps {
-                dir('frontend') {
-                    sh 'npm install'
-                    sh 'npx tsc'
-                }
-            }
-        }
-
         stage('Run Frontend Tests (Cypress)') {
-            steps {
-                dir('frontend') {
-                    sh 'docker-compose -f cypress-docker-compose.yml run cypress'
-                }
-            }
+           steps {
+               dir('frontend') {
+                   sh 'docker-compose exec -T frontend sh -c "npm install && npm install cypress && npx cypress run"'
+               }
+           }
         }
     }
 
