@@ -23,6 +23,15 @@ pipeline {
                     sed -i "s/80:80/$NGINX_HTTP_PORT:80/" docker-compose.yml
                     sed -i "s/443:443/$NGINX_HTTPS_PORT:443/" docker-compose.yml
                     sed -i "s|/srv/aio-tools/data_ressources_relationnelles/:/var/lib/mysql|/srv/aio-tools/test_data_ressources_relationnelles/:/var/lib/mysql|" docker-compose.yml
+
+                    echo '
+                    cypress:
+                        image: cypress/base:12.16.1
+                        working_dir: /e2e
+                        volumes:
+                            - .:/e2e
+                        entrypoint: tail -f /dev/null
+                    ' >> docker-compose.yml
                 '''
             }
         }
@@ -42,7 +51,6 @@ pipeline {
             }
         }
 
-
         stage('Wait for DB to be ready') {
             steps {
                 echo 'Waiting for 20 seconds to ensure the database is ready...'
@@ -60,11 +68,14 @@ pipeline {
         }
 
         stage('Run Frontend Tests (Cypress)') {
-           steps {
-               dir('frontend') {
-                   sh 'docker-compose exec -T frontend sh -c "npm install && npm install cypress && npx cypress run"'
-               }
-           }
+            steps {
+                dir('frontend') {
+                    sh '''
+                        docker-compose exec -T frontend sh -c "npm install"
+                        docker-compose exec -T cypress sh -c "npm install && npm install cypress && npx cypress run"
+                    '''
+                }
+            }
         }
     }
 
