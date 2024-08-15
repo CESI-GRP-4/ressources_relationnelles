@@ -74,7 +74,7 @@ pipeline {
             docker run --rm --network ${NETWORK_NAME} alpine:latest sh -c '
                 apk add --no-cache curl;
                 echo "Testing connectivity to frontend:";
-                curl -I http://cube_link_github_test-frontend-1:3000 || echo "Failed to connect to frontend"
+                curl -I http://frontend:3001 || echo "Failed to connect to frontend"
             '
 
             # Debugging: List containers in the network to ensure services are running
