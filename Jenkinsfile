@@ -59,7 +59,7 @@ pipeline {
             }
         }
 
-        stage('Run Frontend Tests') {
+       stage('Run Frontend Tests') {
     steps {
         dir('frontend') {
             // Get the Docker network name used by your services
@@ -70,18 +70,26 @@ pipeline {
             echo "Waiting for frontend service to be ready..."
             sleep 30
 
-            # Run Cypress tests
+            # Check if frontend is accessible
             docker run --rm \
                 --network ${NETWORK_NAME} \
                 -v $PWD:/e2e \
                 -w /e2e \
                 cypress/included:13.13.3 \
                 sh -c 'curl -I http://frontend:3000 || echo "Failed to connect to frontend"'
+
+            # Run Cypress tests
+            docker run --rm \
+                --network ${NETWORK_NAME} \
+                -v $PWD:/e2e \
+                -w /e2e \
+                cypress/included:13.13.3 \
                 npx cypress run
             '''
         }
     }
 }
+
 
 
 
