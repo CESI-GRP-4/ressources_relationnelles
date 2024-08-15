@@ -66,16 +66,23 @@ pipeline {
             sh '''
             NETWORK_NAME=$(docker-compose ps -q | xargs docker inspect -f '{{json .NetworkSettings.Networks }}' | jq -r 'keys[]' | head -n 1)
 
+            # Wait for frontend to be ready
+            echo "Waiting for frontend service to be ready..."
+            sleep 30
+
+            # Run Cypress tests
             docker run --rm \
                 --network ${NETWORK_NAME} \
                 -v $PWD:/e2e \
                 -w /e2e \
                 cypress/included:13.13.3 \
+                sh -c 'curl -I http://frontend:3000 || echo "Failed to connect to frontend"'
                 npx cypress run
             '''
         }
     }
 }
+
 
 
 
