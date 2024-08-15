@@ -60,17 +60,21 @@ pipeline {
         }
 
         stage('Run Frontend Tests') {
-              steps {
-                     dir('frontend') {
-                            sh 'docker-compose exec -T frontend npm install cypress'
+    steps {
+        dir('frontend') {
+            // Install Cypress
+            sh 'docker-compose exec -T frontend npm install cypress'
+            
+            // Install dependencies including Xvfb as root user
+            sh 'docker-compose exec -T frontend --user root apt-get update'
+            sh 'docker-compose exec -T frontend --user root apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb'
+            
+            // Run Cypress tests
+            sh 'docker-compose exec -T frontend npx cypress run'
+        }
+    }
+}
 
-                            // Install dependencies including Xvfb
-                            sh 'docker-compose exec -T frontend apt-get update && apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb'
-                            // Run Cypress tests
-                            sh 'docker-compose exec -T frontend npx cypress run'
-                     }
-              }
-       }
 
     }
 
