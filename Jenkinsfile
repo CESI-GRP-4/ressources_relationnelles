@@ -60,12 +60,14 @@ pipeline {
         }
 
         stage('Run Frontend Tests') {
-            steps {
-              dir('frontend') {
-                     sh 'docker-compose exec -T frontend npx cypress run'
+              steps {
+                     dir('frontend') {
+                            sh 'docker-compose exec -T frontend npm install cypress'
+                            sh 'docker-compose exec -T frontend npx cypress run'
+                     }
               }
-            }
-        }
+       }
+
     }
 
     post {
