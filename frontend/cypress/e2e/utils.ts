@@ -6,7 +6,7 @@ export const loginAsSuperAdmin = () => {
        cy.intercept('POST', '/api/login').as('loginRequest');
 
        // Visit the login page
-       cy.visit('http://localhost:3000/connexion');
+       cy.visit('http://frontend:3000/connexion');
 
        // Enter the login credentials
        cy.get('#logInForm_email').should('be.visible').type('c.arthur@gmail.com');
