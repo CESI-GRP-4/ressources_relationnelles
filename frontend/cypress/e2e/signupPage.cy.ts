@@ -2,7 +2,7 @@ import { generateRandomPassword, generateRandomEmail, generateRandomFirstName, g
 
 describe('Signup page', () => {
        it('Signup with empty email and password', () => {
-              cy.visit('http://frontend:3001/connexion');
+              cy.visit('http://frontend:3000/connexion');
               cy.get('[style="opacity:1;order:1"] > .ant-menu-title-content > .ant-typography').click();
               cy.get(':nth-child(5) > .ant-row > .ant-col > .ant-form-item-control-input > .ant-form-item-control-input-content > .ant-btn > span').should('be.visible').click();
 
@@ -20,7 +20,7 @@ describe('Signup page', () => {
               const randomFirstName = generateRandomFirstName();
               const randomLastName = generateRandomLastName();
               const randomPassword = generateRandomPassword();
-              cy.visit('http://frontend:3001/connexion');
+              cy.visit('http://frontend:3000/connexion');
               cy.get('[style="opacity:1;order:1"] > .ant-menu-title-content > .ant-typography').should('be.visible').click();
               cy.get('#signUpForm_email').should('be.visible').should('not.be.disabled').type(randomEmail);
               cy.get('#signUpForm_firstName').should('be.visible').should('not.be.disabled').type(randomFirstName);
@@ -37,7 +37,7 @@ describe('Signup page', () => {
               const randomFirstName = generateRandomFirstName();
               const randomLastName = generateRandomLastName();
               const randomPassword = generateRandomPassword();
-              cy.visit('http://frontend:3001/connexion');
+              cy.visit('http://frontend:3000/connexion');
               cy.get('[style="opacity:1;order:1"] > .ant-menu-title-content > .ant-typography').should('be.visible').click();
               cy.get('#signUpForm_email').should('be.visible').should('not.be.disabled').type("john.doe@example.com");
               cy.get('#signUpForm_firstName').should('be.visible').should('not.be.disabled').type(randomFirstName);
@@ -54,7 +54,7 @@ describe('Signup page', () => {
               const randomFirstName = generateRandomFirstName();
               const randomLastName = generateRandomLastName();
               const randomPassword = generateRandomPassword();
-              cy.visit('http://frontend:3001/connexion');
+              cy.visit('http://frontend:3000/connexion');
               cy.get('[style="opacity:1;order:1"] > .ant-menu-title-content > .ant-typography').should('be.visible').click();
               cy.get('#signUpForm_email').should('be.visible').should('not.be.disabled').type("John.sup@example.com");
               cy.get('#signUpForm_firstName').should('be.visible').should('not.be.disabled').type(randomFirstName);

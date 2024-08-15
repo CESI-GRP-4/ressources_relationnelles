@@ -3,14 +3,14 @@ import { waitAndClick, loginAsSuperAdmin } from './utils';
 describe('Categories management', () => {
        it("Check if a super admin can access the categories management page", () => {
               loginAsSuperAdmin();
-              cy.visit('http://frontend:3001/gestion-categories');
-              cy.url().should('eq', 'http://frontend:3001/gestion-categories');
+              cy.visit('http://frontend:3000/gestion-categories');
+              cy.url().should('eq', 'http://frontend:3000/gestion-categories');
        });
 
        it("create a category ", () => {
               loginAsSuperAdmin();
-              cy.visit('http://frontend:3001/gestion-categories');
-              cy.url().should('eq', 'http://frontend:3001/gestion-categories');
+              cy.visit('http://frontend:3000/gestion-categories');
+              cy.url().should('eq', 'http://frontend:3000/gestion-categories');
               cy.get('.ant-btn > :nth-child(2)').should("be.visible").click();
 
               const randomTitle = generateRandomText(10); // Change 10 to the desired length of the random text
