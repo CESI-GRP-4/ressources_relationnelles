@@ -4,7 +4,7 @@ describe('Logout', () => {
        it('Login then logout, should work.', () => {
               loginAsSuperAdmin();
               cy.intercept('POST', '/api/logout').as('logout');
-              cy.visit('http://frontend:3000/profil');
+              cy.visit('http://frontend:3001/profil');
 
               cy.get('.ant-menu-title-content > .ant-avatar > img').should('be.visible').click();
               cy.get('.ant-menu-item-danger').should('be.visible').click();

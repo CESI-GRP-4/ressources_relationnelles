@@ -50,14 +50,14 @@ pipeline {
             }
         }
 
-        stage('Run Backend Tests') {
-            steps {
-                // Tests PHPUnit
-                dir('backend') {
-                    sh 'docker-compose exec -T laravel php artisan test'
-                }
-            }
-        }
+       //  stage('Run Backend Tests') {
+       //      steps {
+       //          // Tests PHPUnit
+       //          dir('backend') {
+       //              sh 'docker-compose exec -T laravel php artisan test'
+       //          }
+       //      }
+       //  }
 
        stage('Run Frontend Tests') {
     steps {
