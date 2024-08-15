@@ -73,9 +73,7 @@ pipeline {
             # Check if frontend is accessible
             docker run --rm \
                 --network ${NETWORK_NAME} \
-                -v $PWD:/e2e \
-                -w /e2e \
-                cypress/included:13.13.3 \
+                busybox:latest \
                 sh -c 'curl -I http://frontend:3000 || echo "Failed to connect to frontend"'
 
             # Run Cypress tests
@@ -89,6 +87,7 @@ pipeline {
         }
     }
 }
+
 
 
 
