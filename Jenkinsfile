@@ -73,8 +73,8 @@ pipeline {
             # Check if frontend is accessible
             docker run --rm \
                 --network ${NETWORK_NAME} \
-                busybox:latest \
-                sh -c 'curl -I http://frontend:3000 || echo "Failed to connect to frontend"'
+                alpine:latest \
+                sh -c 'apk add --no-cache curl && curl -I http://frontend:3000 || echo "Failed to connect to frontend"'
 
             # Run Cypress tests
             docker run --rm \
@@ -87,6 +87,7 @@ pipeline {
         }
     }
 }
+
 
 
 
