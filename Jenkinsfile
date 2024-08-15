@@ -50,21 +50,21 @@ pipeline {
             }
         }
 
-        stage('Check Frontend Status') {
-              steps {
-                  script {
-                      // Wait for the frontend container to be in a running state
-                      sh 'docker-compose ps -q frontend | xargs docker inspect -f \'{{.State.Status}}\' | grep -q "running" || (echo "Frontend container is not running" && exit 1)'
-                      
-                      // Wait for the frontend to be accessible
-                      sh 'timeout 60s bash -c "until curl -s http://localhost:$FRONTEND_PORT > /dev/null; do sleep 5; done" || (echo "Frontend is not accessible after 60 seconds" && exit 1)'
-                      
-                      // Optional: Check for a specific element in the frontend response
-                 //      sh 'curl -s http://localhost:$FRONTEND_PORT | grep -q "<title>" || (echo "Frontend response does not contain expected content" && exit 1)'
-                  }
-              }
-}
+        stage('Wait for Frontend to be Healthy') {
+    steps {
+        script {
+            // Get the name of the Next.js container from docker-compose.yml
+            def frontendContainerName = sh(returnStdout: true, script: "grep -oP '(?<=container_name: )\\w+' docker-compose.yml | grep -i frontend").trim()
 
+            timeout(time: 2, unit: 'MINUTES') { // Set a timeout to avoid waiting indefinitely
+                waitUntil {
+                    def healthStatus = sh(returnStdout: true, script: "docker inspect --format='{{json .State.Health.Status}}' $frontendContainerName").trim()
+                    return healthStatus == '"healthy"'
+                }
+            }
+        }
+    }
+}
         stage('Run Backend Tests') {
             steps {
                 // Tests PHPUnit
