@@ -50,21 +50,6 @@ pipeline {
             }
         }
 
-        stage('Wait for Frontend to be Healthy') {
-    steps {
-        script {
-            // Get the name of the Next.js container from docker-compose.yml
-            def frontendContainerName = sh(returnStdout: true, script: "grep -oP '(?<=container_name: )\\w+' docker-compose.yml | grep -i frontend").trim()
-
-            timeout(time: 2, unit: 'MINUTES') { // Set a timeout to avoid waiting indefinitely
-                waitUntil {
-                    def healthStatus = sh(returnStdout: true, script: "docker inspect --format='{{json .State.Health.Status}}' $frontendContainerName").trim()
-                    return healthStatus == '"healthy"'
-                }
-            }
-        }
-    }
-}
         stage('Run Backend Tests') {
             steps {
                 // Tests PHPUnit
@@ -76,7 +61,7 @@ pipeline {
 
         stage('Run Frontend Tests') {
             steps {
-                echo 'Frontend tests not yet implemented.'
+              sh 'docker run -v $PWD:/app -w /app cypress/included:10.8.0 npx cypress run'
             }
         }
     }
