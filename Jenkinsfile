@@ -62,6 +62,7 @@ pipeline {
         stage('Run Frontend Tests') {
     steps {
         dir('frontend') {
+              
             sh 'docker run -v $PWD:/e2e -w /e2e cypress/included:13.13.3'
         }
     }
