@@ -61,7 +61,9 @@ pipeline {
 
         stage('Run Frontend Tests') {
             steps {
-              sh 'docker run -v $PWD:/app -w /app cypress/included:10.8.0 npx cypress run'
+              dir('frontend') {
+                     sh 'docker run -v $PWD:/app -w /app cypress/included:10.8.0 npx cypress run'
+              }
             }
         }
     }
