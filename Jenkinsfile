@@ -62,21 +62,11 @@ pipeline {
         stage('Run Frontend Tests') {
     steps {
         dir('frontend') {
-            // Install Cypress
-            sh 'docker-compose exec -T frontend npm install cypress'
-            
-            // Run the command as root using docker exec instead of docker-compose exec
-            sh '''
-                CONTAINER_ID=$(docker-compose ps -q frontend)
-                docker exec -u 0 -T $CONTAINER_ID apt-get update
-                docker exec -u 0 -T $CONTAINER_ID apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb
-            '''
-            
-            // Run Cypress tests
-            sh 'docker-compose exec -T frontend npx cypress run'
+            sh 'docker run -v $PWD:/e2e -w /e2e cypress/included:13.13.3'
         }
     }
 }
+
 
 
 
