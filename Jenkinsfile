@@ -62,7 +62,7 @@ pipeline {
         stage('Run Frontend Tests') {
             steps {
               dir('frontend') {
-                     sh 'docker run -v $PWD:/app -w /app cypress/included:10.8.0 npx cypress run'
+                     sh 'docker-compose exec -T frontend npx cypress run'
               }
             }
         }
