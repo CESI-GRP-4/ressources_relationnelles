@@ -65,7 +65,7 @@ pipeline {
             // Get the Docker network name used by your services
             sh '''
             NETWORK_NAME=$(docker-compose ps -q | xargs docker inspect -f '{{json .NetworkSettings.Networks }}' | jq -r 'keys[]' | head -n 1)
-
+echo "Network name: ${NETWORK_NAME}"
             # Wait for frontend to be ready
             echo "Waiting for frontend service to be ready..."
             sleep 30
@@ -81,15 +81,6 @@ pipeline {
         }
     }
 }
-
-
-
-
-
-
-
-
-
 
     }
 
