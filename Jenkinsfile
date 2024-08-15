@@ -70,10 +70,6 @@ pipeline {
             echo "Waiting for frontend service to be ready..."
             sleep 30
 
-
-            # Debugging: List containers in the network to ensure services are running
-            docker network inspect ${NETWORK_NAME} --format "{{json .Containers}}" | jq .
-
             # Run Cypress tests
             docker run --rm \
                 --network ${NETWORK_NAME} \
