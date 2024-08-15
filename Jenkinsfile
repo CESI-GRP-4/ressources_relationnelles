@@ -66,14 +66,19 @@ pipeline {
             sh '''
             NETWORK_NAME=$(docker-compose ps -q | xargs docker inspect -f '{{json .NetworkSettings.Networks }}' | jq -r 'keys[]' | head -n 1)
 
-            // echo the network name
-                echo "Network name: ${NETWORK_NAME}"
-                
             # Wait for frontend to be ready
             echo "Waiting for frontend service to be ready..."
             sleep 30
 
+            # Debugging: Check if frontend is accessible
+            docker run --rm --network ${NETWORK_NAME} alpine:latest sh -c '
+                apk add --no-cache curl;
+                echo "Testing connectivity to frontend:";
+                curl -I http://frontend:3000 || echo "Failed to connect to frontend"
+            '
 
+            # Debugging: List containers in the network to ensure services are running
+            docker network inspect ${NETWORK_NAME} --format "{{json .Containers}}" | jq .
 
             # Run Cypress tests
             docker run --rm \
