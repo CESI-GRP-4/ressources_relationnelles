@@ -62,11 +62,21 @@ pipeline {
         stage('Run Frontend Tests') {
     steps {
         dir('frontend') {
-              
-            sh 'docker run -v $PWD:/e2e -w /e2e cypress/included:13.13.3'
+            // Get the Docker network name used by your services
+            sh '''
+            NETWORK_NAME=$(docker-compose ps -q | xargs docker inspect -f '{{json .NetworkSettings.Networks }}' | jq -r 'keys[]' | head -n 1)
+
+            docker run --rm \
+                --network ${NETWORK_NAME} \
+                -v $PWD:/e2e \
+                -w /e2e \
+                cypress/included:13.13.3 \
+                npx cypress run
+            '''
         }
     }
 }
+
 
 
 
