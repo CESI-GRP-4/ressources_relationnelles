@@ -66,17 +66,23 @@ pipeline {
             sh '''
             NETWORK_NAME=$(docker-compose ps -q | xargs docker inspect -f '{{json .NetworkSettings.Networks }}' | jq -r 'keys[]' | head -n 1)
 echo "Network name: ${NETWORK_NAME}"
+
             # Wait for frontend to be ready
             echo "Waiting for frontend service to be ready..."
             sleep 30
 
+            docker run --rm \
+    --network ${NETWORK_NAME} \
+    appropriate/curl \
+    -v http://frontend:3000
+
             # Run Cypress tests
             docker run --rm \
-                --network ${NETWORK_NAME} \
-                -v $PWD:/e2e \
-                -w /e2e \
-                cypress/included:13.13.3 \
-                npx cypress run
+    --network host \
+    -v $PWD:/e2e \
+    -w /e2e \
+    cypress/included:13.13.3 \
+    npx cypress run
             '''
         }
     }
