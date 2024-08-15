@@ -50,6 +50,21 @@ pipeline {
             }
         }
 
+        stage('Check Frontend Status') {
+              steps {
+                  script {
+                      // Wait for the frontend container to be in a running state
+                      sh 'docker-compose ps -q frontend | xargs docker inspect -f \'{{.State.Status}}\' | grep -q "running" || (echo "Frontend container is not running" && exit 1)'
+                      
+                      // Wait for the frontend to be accessible
+                      sh 'timeout 60s bash -c "until curl -s http://localhost:$FRONTEND_PORT > /dev/null; do sleep 5; done" || (echo "Frontend is not accessible after 60 seconds" && exit 1)'
+                      
+                      // Optional: Check for a specific element in the frontend response
+                 //      sh 'curl -s http://localhost:$FRONTEND_PORT | grep -q "<title>" || (echo "Frontend response does not contain expected content" && exit 1)'
+                  }
+              }
+}
+
         stage('Run Backend Tests') {
             steps {
                 // Tests PHPUnit
