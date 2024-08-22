@@ -64,18 +64,16 @@ pipeline {
        //      }
        //  }
 
-        stage('Pause Before Frontend Tests') {
-            steps {
-                input message: 'Proceed to run the frontend tests?', ok: 'Yes, continue'
-            }
-        }
-
         stage('Run Frontend Tests') {
             steps {
                 dir('frontend') {
                     // Get the Docker network name used by your services
                     sh '''
                     NETWORK_NAME=$(docker-compose ps -q | xargs docker inspect -f '{{json .NetworkSettings.Networks }}' | jq -r 'keys[]' | head -n 1)
+
+                    # Wait for frontend to be ready
+                    echo "Waiting for frontend service to be ready..."
+                    sleep 30
 
                     # Run Cypress tests
                     docker run --rm \
