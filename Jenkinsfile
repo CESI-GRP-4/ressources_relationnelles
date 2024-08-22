@@ -95,6 +95,7 @@ pipeline {
                     docker-compose down
                     git fetch
                     git checkout jenkins
+                    git pull
                     docker-compose up --build -d
                 '''
             }
