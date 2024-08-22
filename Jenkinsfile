@@ -90,9 +90,8 @@ pipeline {
             sh 'docker-compose down'
 
             // Deploy the application
-            dir('/srv/aio-tools/ressources_relationnelles') {
+            dir('/srv/aio-tools/ressources_relationnelles/') {
                 sh '''
-                    pwd
                     docker-compose down
                     git fetch
                     git checkout jenkins
