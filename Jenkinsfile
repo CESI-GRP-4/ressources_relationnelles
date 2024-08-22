@@ -33,6 +33,11 @@ pipeline {
                 sh 'cp /srv/aio-tools/secure_ressources_relationnelles/backend/.env backend/.env'
                 sh 'cp /srv/aio-tools/secure_ressources_relationnelles/frontend/.env frontend/.env'
                 sh 'chmod 644 backend/.env'
+
+                // Update the frontend .env file
+                sh '''
+                    sed -i "s|https://cube.aio-tools.com/api|http://backend/api|" frontend/.env
+                '''
             }
         }
 
@@ -43,12 +48,12 @@ pipeline {
         }
 
 
-        stage('Wait for DB to be ready') {
-            steps {
-                echo 'Waiting for 20 seconds to ensure the database is ready...'
-                sh 'sleep 20'
-            }
-        }
+        //stage('Wait for DB to be ready') {
+        //    steps {
+        //        echo 'Waiting for 20 seconds to ensure the database is ready...'
+        //        sh 'sleep 20'
+        //    }
+        //}
 
        //  stage('Run Backend Tests') {
        //      steps {
@@ -58,6 +63,11 @@ pipeline {
        //          }
        //      }
        //  }
+       stage('Pause Before Frontend Tests') {
+           steps {
+               input message: 'Proceed to run the frontend tests?', ok: 'Yes, continue'
+           }
+       }
 
         stage('Run Frontend Tests') {
             steps {
