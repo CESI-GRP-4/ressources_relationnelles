@@ -59,38 +59,24 @@ pipeline {
        //      }
        //  }
 
-       stage('Run Frontend Tests') {
-    steps {
-        dir('frontend') {
-            // Get the Docker network name used by your services
-            sh '''
-            NETWORK_NAME=$(docker-compose ps -q | xargs docker inspect -f '{{json .NetworkSettings.Networks }}' | jq -r 'keys[]' | head -n 1)
+        stage('Run Frontend Tests') {
+            steps {
+                dir('frontend') {
+                    // Get the Docker network name used by your services
+                    sh '''
+                    NETWORK_NAME=$(docker-compose ps -q | xargs docker inspect -f '{{json .NetworkSettings.Networks }}' | jq -r 'keys[]' | head -n 1)
 
-            # Wait for frontend to be ready
-            echo "Waiting for frontend service to be ready..."
-            sleep 30
-
-            # Run Cypress tests
-            docker run --rm \
-                --network ${NETWORK_NAME} \
-                -v $PWD:/e2e \
-                -w /e2e \
-                cypress/included:13.13.3 \
-                npx cypress run
-            '''
+                    # Run Cypress tests
+                    docker run --rm \
+                        --network ${NETWORK_NAME} \
+                        -v $PWD:/e2e \
+                        -w /e2e \
+                        cypress/included:13.13.3 \
+                        npx cypress run
+                    '''
+                }
+            }
         }
-    }
-}
-
-
-
-
-
-
-
-
-
-
     }
 
     post {
