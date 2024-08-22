@@ -73,7 +73,7 @@ pipeline {
 
                     # Wait for frontend to be ready
                     echo "Waiting for frontend service to be ready..."
-                    sleep 30
+                    sleep 300
 
                     # Run Cypress tests
                     docker run --rm \
