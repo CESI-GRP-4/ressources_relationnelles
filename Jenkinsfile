@@ -77,6 +77,7 @@ pipeline {
                         --network ${NETWORK_NAME} \
                         -v $PWD:/e2e \
                         -w /e2e \
+                        -e NO_COLOR=1 \
                         cypress/included:13.13.3 \
                         npx cypress run
                     '''
