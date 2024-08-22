@@ -47,22 +47,21 @@ pipeline {
             }
         }
 
+        stage('Wait for DB to be ready') {
+            steps {
+                echo 'Waiting for 20 seconds to ensure the database is ready...'
+                sh 'sleep 20'
+            }
+        }
 
-        //stage('Wait for DB to be ready') {
-        //    steps {
-        //        echo 'Waiting for 20 seconds to ensure the database is ready...'
-        //        sh 'sleep 20'
-        //    }
-        //}
-
-       //  stage('Run Backend Tests') {
-       //      steps {
-       //          // Tests PHPUnit
-       //          dir('backend') {
-       //              sh 'docker-compose exec -T laravel php artisan test'
-       //          }
-       //      }
-       //  }
+        stage('Run Backend Tests') {
+            steps {
+                // Tests PHPUnit
+                dir('backend') {
+                    sh 'docker-compose exec -T laravel php artisan test'
+                }
+            }
+        }
 
         stage('Run Frontend Tests') {
             steps {
