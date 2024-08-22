@@ -87,6 +87,18 @@ pipeline {
     post {
         success {
             echo 'Build and tests succeeded!'
+            sh 'docker-compose down'
+
+            // Deploy the application
+            dir('/srv/aio-tools/ressources_relationnelles') {
+                sh '''
+                    docker-compose down
+                    git fetch
+                    git checkout jenkins
+                    docker-compose up --build -d
+                '''
+            }
+
         }
         failure {
             echo 'Build or tests failed.'
