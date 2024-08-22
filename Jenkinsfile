@@ -36,7 +36,7 @@ pipeline {
 
                 // Update the frontend .env file
                 sh '''
-                    sed -i "s|https://cube.aio-tools.com/api|http://backend/api|" frontend/.env
+                    sed -i "s|https://cube.aio-tools.com/api|http://91.108.112.237/api|" frontend/.env
                 '''
             }
         }
