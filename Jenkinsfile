@@ -64,6 +64,11 @@ pipeline {
        //      }
        //  }
 
+        stage('Pause Before Frontend Tests') {
+            steps {
+                input message: 'Proceed to run the frontend tests?', ok: 'Yes, continue'
+            }
+        }
 
         stage('Run Frontend Tests') {
             steps {
