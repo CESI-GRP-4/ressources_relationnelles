@@ -4,8 +4,8 @@ pipeline {
         DB_PORT = '3307'
         FRONTEND_PORT = '3001'
         BACKEND_PORT = '8077'
-        NGINX_HTTP_PORT = '8099'
-        NGINX_HTTPS_PORT = '8443'
+        NGINX_HTTP_PORT = '8086'
+        NGINX_HTTPS_PORT = '8444'
     }
     stages {
         stage('Checkout') {
@@ -20,8 +20,8 @@ pipeline {
                     sed -i "s/3306:3306/$DB_PORT:3306/" docker-compose.yml
                     sed -i "s/3000:3000/$FRONTEND_PORT:3000/" docker-compose.yml
                     sed -i "s/8081:80/$BACKEND_PORT:80/" docker-compose.yml
-                    sed -i "s/80:80/$NGINX_HTTP_PORT:80/" docker-compose.yml
-                    sed -i "s/443:443/$NGINX_HTTPS_PORT:443/" docker-compose.yml
+                    sed -i "s/8085:80/$NGINX_HTTP_PORT:80/" docker-compose.yml
+                    sed -i "s/8443:443/$NGINX_HTTPS_PORT:443/" docker-compose.yml
                     sed -i "s|/srv/aio-tools/data_ressources_relationnelles/:/var/lib/mysql|/srv/aio-tools/test_data_ressources_relationnelles/:/var/lib/mysql|" docker-compose.yml
                 '''
             }
