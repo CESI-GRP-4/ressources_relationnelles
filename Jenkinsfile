@@ -87,6 +87,7 @@ pipeline {
     post {
         success {
             echo 'Build and tests succeeded!'
+            
        //      sh 'docker-compose down'
 
             // Deploy the application
