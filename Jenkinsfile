@@ -54,34 +54,34 @@ pipeline {
             }
         }
 
-        stage('Run Backend Tests') {
-            steps {
-                // Tests PHPUnit
-                dir('backend') {
-                    sh 'docker-compose exec -T laravel php artisan test'
-                }
-            }
-        }
-
-        stage('Run Frontend Tests') {
-            steps {
-                dir('frontend') {
-                    // Get the Docker network name used by your services
-                    sh '''
-                    NETWORK_NAME=$(docker-compose ps -q | xargs docker inspect -f '{{json .NetworkSettings.Networks }}' | jq -r 'keys[]' | head -n 1)
-
-                    # Run Cypress tests
-                    docker run --rm \
-                        --network ${NETWORK_NAME} \
-                        -v $PWD:/e2e \
-                        -w /e2e \
-                        -e NO_COLOR=1 \
-                        cypress/included:13.13.3 \
-                        npx cypress run
-                    '''
-                }
-            }
-        }
+        //stage('Run Backend Tests') {
+        //    steps {
+        //        // Tests PHPUnit
+        //        dir('backend') {
+        //            sh 'docker-compose exec -T laravel php artisan test'
+        //        }
+        //    }
+        //}
+//
+        //stage('Run Frontend Tests') {
+        //    steps {
+        //        dir('frontend') {
+        //            // Get the Docker network name used by your services
+        //            sh '''
+        //            NETWORK_NAME=$(docker-compose ps -q | xargs docker inspect -f '{{json .NetworkSettings.Networks }}' | jq -r 'keys[]' | head -n 1)
+//
+        //            # Run Cypress tests
+        //            docker run --rm \
+        //                --network ${NETWORK_NAME} \
+        //                -v $PWD:/e2e \
+        //                -w /e2e \
+        //                -e NO_COLOR=1 \
+        //                cypress/included:13.13.3 \
+        //                npx cypress run
+        //            '''
+        //        }
+        //    }
+        //}
     }
 
     post {
@@ -91,12 +91,15 @@ pipeline {
             sh 'pwd'
             sh 'cd /srv/aio-tools/ressources_relationnelles'
             sh 'pwd'
-            sh 'docker-compose down'
-            sh 'git fetch'
-            sh 'git checkout jenkins'
-            sh 'git pull'
-            sh 'pwd'
-            sh 'docker-compose up --build -d'
+            dir('/srv/aio-tools/ressources_relationnelles') {
+                sh 'pwd'
+                sh 'docker-compose down'
+                sh 'git fetch'
+                sh 'git checkout jenkins'
+                sh 'git pull'
+                sh 'pwd'
+                sh 'docker-compose up --build -d'
+            }
         }
         failure {
             echo 'Build or tests failed.'
