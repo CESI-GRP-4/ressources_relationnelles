@@ -88,7 +88,7 @@ pipeline {
         success {
             echo 'Build and tests succeeded!'
             sh 'cd /srv/aio-tools/ressources_relationnelles'
-            sh 'ls -la'
+            sh 'docker-compose down'
             
        //      dir('/srv/aio-tools/') {
        //               echo 'Build and tests succeeded!'
