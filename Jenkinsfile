@@ -98,7 +98,7 @@ pipeline {
             echo 'Build or tests failed.'
         }
         always {
-       //      sh 'docker-compose down'
+            sh 'pwd'
         }
     }
 }
