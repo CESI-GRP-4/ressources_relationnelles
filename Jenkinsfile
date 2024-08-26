@@ -54,52 +54,48 @@ pipeline {
             }
         }
 
-        //stage('Run Backend Tests') {
-        //    steps {
-        //        // Tests PHPUnit
-        //        dir('backend') {
-        //            sh 'docker-compose exec -T laravel php artisan test'
-        //        }
-        //    }
-        //}
-//
-        //stage('Run Frontend Tests') {
-        //    steps {
-        //        dir('frontend') {
-        //            // Get the Docker network name used by your services
-        //            sh '''
-        //            NETWORK_NAME=$(docker-compose ps -q | xargs docker inspect -f '{{json .NetworkSettings.Networks }}' | jq -r 'keys[]' | head -n 1)
-//
-        //            # Run Cypress tests
-        //            docker run --rm \
-        //                --network ${NETWORK_NAME} \
-        //                -v $PWD:/e2e \
-        //                -w /e2e \
-        //                -e NO_COLOR=1 \
-        //                cypress/included:13.13.3 \
-        //                npx cypress run
-        //            '''
-        //        }
-        //    }
-        //}
+        stage('Run Backend Tests') {
+            steps {
+                // Tests PHPUnit
+                dir('backend') {
+                    sh 'docker-compose exec -T laravel php artisan test'
+                }
+            }
+        }
+
+        stage('Run Frontend Tests') {
+            steps {
+                dir('frontend') {
+                    // Get the Docker network name used by your services
+                    sh '''
+                    NETWORK_NAME=$(docker-compose ps -q | xargs docker inspect -f '{{json .NetworkSettings.Networks }}' | jq -r 'keys[]' | head -n 1)
+
+                    # Run Cypress tests
+                    docker run --rm \
+                        --network ${NETWORK_NAME} \
+                        -v $PWD:/e2e \
+                        -w /e2e \
+                        -e NO_COLOR=1 \
+                        cypress/included:13.13.3 \
+                        npx cypress run
+                    '''
+                }
+            }
+        }
     }
 
     post {
         success {
             echo 'Build and tests succeeded!'
-            sh 'pwd'
             sh 'docker-compose down'
             sh'''
                 cd /srv/aio-tools/ressources_relationnelles
-                pwd
                 docker-compose down
                 git fetch
                 git checkout jenkins
                 git pull
-                pwd
                 docker-compose up --build -d
             '''
-            sh 'pwd'
         }
         failure {
             echo 'Build or tests failed.'
