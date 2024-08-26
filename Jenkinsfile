@@ -91,17 +91,10 @@ pipeline {
             sh 'docker-compose down'
                  dir('/srv/aio-tools/ressources_relationnelles') {
                      echo 'Build and tests succeeded!'
-                     /*
-                            sh '''
-                                docker-compose down
-                                git fetch
-                                git checkout jenkins
-                                git pull
-                                docker-compose up --build -d
-                            '''
-                            */
+                     sh '''
+                            docker-compose down
+                     '''
                  }
-
         }
         failure {
             echo 'Build or tests failed.'
