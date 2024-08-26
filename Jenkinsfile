@@ -89,10 +89,10 @@ pipeline {
             echo 'Build and tests succeeded!'
             sh 'cd /srv/aio-tools/ressources_relationnelles'
             sh 'docker-compose down'
-                     sh '           git fetch'
-                         sh '       git checkout jenkins'
-                         sh '       git pull'
-                         sh '       docker-compose up --build -d'
+                     sh 'git fetch'
+                         sh 'git checkout jenkins'
+                         sh 'git pull'
+                         sh 'docker-compose up --build -d'
         }
         failure {
             echo 'Build or tests failed.'
