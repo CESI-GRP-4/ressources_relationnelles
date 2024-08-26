@@ -27,19 +27,19 @@ pipeline {
        //      }
        //  }
 
-       //  stage('Retrieve .env files') {
-       //      steps {
-       //          sh 'cp /srv/aio-tools/secure_ressources_relationnelles/.env .env'
-       //          sh 'cp /srv/aio-tools/secure_ressources_relationnelles/backend/.env backend/.env'
-       //          sh 'cp /srv/aio-tools/secure_ressources_relationnelles/frontend/.env frontend/.env'
-       //          sh 'chmod 644 backend/.env'
+        stage('Retrieve .env files') {
+            steps {
+                sh 'cp /srv/aio-tools/secure_ressources_relationnelles/.env .env'
+                sh 'cp /srv/aio-tools/secure_ressources_relationnelles/backend/.env backend/.env'
+                sh 'cp /srv/aio-tools/secure_ressources_relationnelles/frontend/.env frontend/.env'
+                sh 'chmod 644 backend/.env'
 
-       //          // Update the frontend .env file
-       //          sh '''
-       //              sed -i "s|https://cube.aio-tools.com/api|http://91.108.112.237:$BACKEND_PORT/api|" frontend/.env
-       //          '''
-       //      }
-       //  }
+                // Update the frontend .env file
+                sh '''
+                    sed -i "s|https://cube.aio-tools.com/api|http://91.108.112.237:$BACKEND_PORT/api|" frontend/.env
+                '''
+            }
+        }
 
        //  stage('Build Docker Containers') {
        //      steps {
@@ -87,13 +87,15 @@ pipeline {
     post {
         success {
             echo 'Build and tests succeeded!'
+            sh 'cd /srv/aio-tools/ressources_relationnelles'
+            sh 'ls -la'
             
-            dir('/srv/aio-tools/') {
-                     echo 'Build and tests succeeded!'
-                     sh '''
-                            ls -la
-                     '''
-                 }
+       //      dir('/srv/aio-tools/') {
+       //               echo 'Build and tests succeeded!'
+       //               sh '''
+       //                      ls -la
+       //               '''
+       //           }
 
               //    dir('/srv/aio-tools/ressources_relationnelles') {
               //        echo 'Build and tests succeeded!'
