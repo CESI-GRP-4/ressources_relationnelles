@@ -88,27 +88,19 @@ pipeline {
         success {
             echo 'Build and tests succeeded!'
             
-       //      sh 'docker-compose down'
-
-            // Deploy the application
-            
-              //    dir('/srv/aio-tools/ressources_relationnelles') {
-              //        echo 'Build and tests succeeded!'
-              //               sh '''
-              //                      if [ ! -d "/srv/aio-tools/ressources_relationnelles@tmp" ]; then
-              //                      mkdir -p /srv/aio-tools/ressources_relationnelles@tmp
-              //                      chown -R jenkins:jenkins /srv/aio-tools/ressources_relationnelles@tmp
-              //                      fi
-              //               '''
-
-              //               sh '''
-              //                   docker-compose down
-              //                   git fetch
-              //                   git checkout jenkins
-              //                   git pull
-              //                   docker-compose up --build -d
-              //               '''
-              //    }
+            sh 'docker-compose down'
+                 dir('/srv/aio-tools/ressources_relationnelles') {
+                     echo 'Build and tests succeeded!'
+                     /*
+                            sh '''
+                                docker-compose down
+                                git fetch
+                                git checkout jenkins
+                                git pull
+                                docker-compose up --build -d
+                            '''
+                            */
+                 }
 
         }
         failure {
