@@ -87,7 +87,6 @@ pipeline {
     post {
         success {
             echo 'Build and tests succeeded!'
-            sh 'docker-compose down'
             sh'''
                 cd /srv/aio-tools/ressources_relationnelles
                 docker-compose down
@@ -99,6 +98,8 @@ pipeline {
         }
         failure {
             echo 'Build or tests failed.'
+        }
+        always{
             sh 'docker-compose down'
         }
     }
