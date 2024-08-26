@@ -89,20 +89,7 @@ pipeline {
             echo 'Build and tests succeeded!'
             sh 'cd /srv/aio-tools/ressources_relationnelles'
             sh 'docker-compose down'
-            
-       //      dir('/srv/aio-tools/') {
-       //               echo 'Build and tests succeeded!'
-       //               sh '''
-       //                      ls -la
-       //               '''
-       //           }
-
-              //    dir('/srv/aio-tools/ressources_relationnelles') {
-              //        echo 'Build and tests succeeded!'
-              //        sh '''
-              //               docker-compose down
-              //        '''
-              //    }
+                     sh 'docker-compose down'
         }
         failure {
             echo 'Build or tests failed.'
