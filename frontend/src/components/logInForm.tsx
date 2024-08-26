@@ -32,7 +32,7 @@ export default function LogInForm() {
                      const logInResponse: AxiosResponse<LogInResponse> = await axios({
                             method: 'post',
                             baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
-                            url: "/loginn",
+                            url: "/login",
                             data: formData,
                             withCredentials: true,
                             responseType: 'json',
