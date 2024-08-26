@@ -88,17 +88,18 @@ pipeline {
         success {
             echo 'Build and tests succeeded!'
             sh 'pwd'
+            sh 'docker-compose down'
             sh'''
                 cd /srv/aio-tools/ressources_relationnelles
                 pwd
+                docker-compose down
+                git fetch
+                git checkout jenkins
+                git pull
+                pwd
+                docker-compose up --build -d
             '''
-            //sh 'docker-compose down'
-            //sh 'docker-compose down'
-            //sh 'git fetch'
-            //sh 'git checkout jenkins'
-            //sh 'git pull'
-            //sh 'pwd'
-            //sh 'docker-compose up --build -d'
+            sh 'pwd'
         }
         failure {
             echo 'Build or tests failed.'
